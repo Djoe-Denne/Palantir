@@ -1,4 +1,5 @@
 #include "window/overlay_window.hpp"
+#include "utils/logger.hpp"
 #include <windows.h>
 #include <dwmapi.h>
 
@@ -9,10 +10,12 @@ namespace {
         switch (uMsg) {
             case WM_CLOSE:
                 if (window) {
+                    DEBUG_LOG("Window close requested");
                     window->setRunning(false);
                 }
                 return 0;
             case WM_DESTROY:
+                DEBUG_LOG("Window being destroyed");
                 PostQuitMessage(0);
                 return 0;
             case WM_PAINT:
@@ -39,9 +42,12 @@ namespace {
 
 class OverlayWindow::Impl {
 public:
-    Impl() : hwnd(nullptr), running(false) {}
+    Impl() : hwnd(nullptr), running(false) {
+        DEBUG_LOG("Creating OverlayWindow implementation");
+    }
     
     void create() {
+        DEBUG_LOG("Beginning window creation");
         WNDCLASSEXW wc = {};
         wc.cbSize = sizeof(WNDCLASSEXW);
         wc.lpfnWndProc = WindowProc;
@@ -64,6 +70,7 @@ public:
         );
         
         if (hwnd) {
+            DEBUG_LOG("Window created successfully");
             // Store the this pointer
             SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
             
@@ -74,6 +81,9 @@ public:
             // Hide initially
             ShowWindow(hwnd, SW_HIDE);
             running = true;
+            DEBUG_LOG("Window initialization complete");
+        } else {
+            DEBUG_LOG("Failed to create window");
         }
     }
     
@@ -81,13 +91,14 @@ public:
         if (!hwnd) return;
         
         if (IsWindowVisible(hwnd)) {
+            DEBUG_LOG("Hiding window");
             ShowWindow(hwnd, SW_HIDE);
         } else {
+            DEBUG_LOG("Showing window");
             ShowWindow(hwnd, SW_SHOW);
             SetForegroundWindow(hwnd);
-            UpdateWindow(hwnd); // Ensure the window is updated
+            UpdateWindow(hwnd);
         }
-
     }
     
     void update() {
@@ -100,6 +111,7 @@ public:
     
     void close() {
         if (hwnd) {
+            DEBUG_LOG("Closing window");
             DestroyWindow(hwnd);
             hwnd = nullptr;
         }
@@ -115,7 +127,16 @@ public:
     }
     
     void setRunning(bool state) {
+        DEBUG_LOG("Setting running state to: %d", state);
         running = state;
+    }
+    
+    ~Impl() {
+        DEBUG_LOG("Destroying window implementation");
+        if (hwnd) {
+            DestroyWindow(hwnd);
+            hwnd = nullptr;
+        }
     }
     
 private:
@@ -123,7 +144,9 @@ private:
     bool running;
 };
 
-OverlayWindow::OverlayWindow() : pImpl(std::make_unique<Impl>()) {}
+OverlayWindow::OverlayWindow() : pImpl(std::make_unique<Impl>()) {
+    DEBUG_LOG("Creating OverlayWindow");
+}
 OverlayWindow::~OverlayWindow() = default;
 
 void OverlayWindow::create() { pImpl->create(); }

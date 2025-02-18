@@ -35,12 +35,19 @@ set(PLATFORM_COMMON_SOURCES
     src/platform/application.cpp
 )
 
+# Common include directories
+set(COMMON_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/utils
+)
+
 # Platform-specific configuration and sources
 if(WIN32)
     set(PLATFORM_SOURCES
         src/platform/windows/input.cpp
         src/platform/windows/window/overlay_window.cpp
         src/platform/windows/windows_application.cpp
+        src/platform/windows/logger.cpp
     )
     
     add_executable(${PROJECT_NAME} WIN32 
@@ -54,7 +61,7 @@ if(WIN32)
     )
     
     target_include_directories(${PROJECT_NAME} PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${COMMON_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/include/platform/windows
     )
     
@@ -68,6 +75,7 @@ elseif(APPLE)
         src/platform/macos/input.mm
         src/platform/macos/window/overlay_window.mm
         src/platform/macos/macos_application.mm
+        src/platform/macos/logger.mm
     )
     
     add_executable(${PROJECT_NAME} MACOSX_BUNDLE 

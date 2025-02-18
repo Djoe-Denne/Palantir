@@ -1,11 +1,6 @@
 #include "window/overlay_window.hpp"
+#include "utils/logger.hpp"
 #import <Cocoa/Cocoa.h>
-
-#ifdef DEBUG
-#define DebugLog(format, ...) NSLog(@"%s:%d - " format, __FUNCTION__, __LINE__, ##__VA_ARGS__)
-#else
-#define DebugLog(format, ...)
-#endif
 
 @interface OverlayWindowDelegate : NSObject<NSWindowDelegate>
 @property (nonatomic, assign) OverlayWindow* owner;
@@ -13,7 +8,7 @@
 
 @implementation OverlayWindowDelegate
 - (BOOL)windowShouldClose:(NSWindow *)sender {
-    DebugLog(@"Window close requested");
+    DEBUG_LOG("Window close requested");
     if (self.owner) {
         self.owner->setRunning(false);
     }
@@ -21,19 +16,19 @@
 }
 
 - (void)windowDidResize:(NSNotification *)notification {
-    DebugLog(@"Window resized to: %@", NSStringFromRect([((NSWindow *)notification.object) frame]));
+    DEBUG_LOG("Window resized to: %@", NSStringFromRect([((NSWindow *)notification.object) frame]));
 }
 
 - (void)windowDidMove:(NSNotification *)notification {
-    DebugLog(@"Window moved to: %@", NSStringFromRect([((NSWindow *)notification.object) frame]));
+    DEBUG_LOG("Window moved to: %@", NSStringFromRect([((NSWindow *)notification.object) frame]));
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)notification {
-    DebugLog(@"Window became key");
+    DEBUG_LOG("Window became key");
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification {
-    DebugLog(@"Window resigned key");
+    DEBUG_LOG("Window resigned key");
 }
 @end
 
@@ -53,11 +48,11 @@
 class OverlayWindow::Impl {
 public:
     Impl() : window(nil), delegate(nil) {
-        DebugLog(@"Creating OverlayWindow implementation");
+        DEBUG_LOG("Creating OverlayWindow implementation");
     }
     
     void create() {
-        DebugLog(@"Beginning window creation");
+        DEBUG_LOG("Beginning window creation");
         NSRect frame = NSMakeRect(100, 100, 400, 600);
         NSUInteger styleMask = NSWindowStyleMaskTitled |
                               NSWindowStyleMaskClosable |
@@ -69,7 +64,7 @@ public:
                                              backing:NSBackingStoreBuffered
                                                defer:NO];
         
-        DebugLog(@"Window created with frame: %@", NSStringFromRect(frame));
+        DEBUG_LOG("Window created with frame: %@", NSStringFromRect(frame));
         
         [window setTitle:@"Interview Notes"];
         [window setReleasedWhenClosed:NO];
@@ -81,7 +76,7 @@ public:
                                     NSWindowCollectionBehaviorStationary];
         [window setSharingType:NSWindowSharingNone];
         
-        DebugLog(@"Window behavior configured");
+        DEBUG_LOG("Window behavior configured");
         
         // Make it a non-activating panel
         [(NSPanel*)window setBecomesKeyOnlyIfNeeded:YES];
@@ -91,17 +86,17 @@ public:
         [window setAcceptsMouseMovedEvents:YES];
         [window setBackgroundColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.95]];
         
-        DebugLog(@"Window panel properties set");
+        DEBUG_LOG("Window panel properties set");
         
         setupContentView();
         positionWindow();
         
-        DebugLog(@"Window creation complete");
+        DEBUG_LOG("Window creation complete");
         [window orderOut:nil];
     }
     
     void setupContentView() {
-        DebugLog(@"Setting up content view");
+        DEBUG_LOG("Setting up content view");
         
         // Create and configure scroll view
         NSScrollView* scrollView = [[NSScrollView alloc] initWithFrame:[[window contentView] bounds]];
@@ -123,7 +118,7 @@ public:
         delegate.owner = (__bridge OverlayWindow*)this;
         [window setDelegate:delegate];
         
-        DebugLog(@"Content view setup complete");
+        DEBUG_LOG("Content view setup complete");
     }
     
     void configureTextView(NSTextView* textView) {
@@ -161,21 +156,21 @@ public:
         windowFrame.origin.x = screenFrame.origin.x + screenFrame.size.width - windowFrame.size.width - 20;
         windowFrame.origin.y = screenFrame.origin.y + screenFrame.size.height - windowFrame.size.height - 20;
         [window setFrame:windowFrame display:NO];
-        DebugLog(@"Window positioned at: %@", NSStringFromRect(windowFrame));
+        DEBUG_LOG("Window positioned at: %@", NSStringFromRect(windowFrame));
     }
     
     void show() {
         if ([window isVisible]) {
-            DebugLog(@"Hiding window");
+            DEBUG_LOG("Hiding window");
             [window orderOut:nil];
         } else {
-            DebugLog(@"Showing window");
+            DEBUG_LOG("Showing window");
             [window orderFrontRegardless];
         }
     }
     
     void close() {
-        DebugLog(@"Closing window");
+        DEBUG_LOG("Closing window");
         [window close];
     }
     
@@ -184,7 +179,7 @@ public:
     }
     
     ~Impl() {
-        DebugLog(@"Destroying window implementation");
+        DEBUG_LOG("Destroying window implementation");
         if (window) {
             [window setDelegate:nil];
             [window close];
@@ -198,13 +193,13 @@ private:
 };
 
 OverlayWindow::OverlayWindow() : pImpl(std::make_unique<Impl>()), running(false) {
-    DebugLog(@"Creating OverlayWindow");
+    DEBUG_LOG("Creating OverlayWindow");
 }
 
 OverlayWindow::~OverlayWindow() = default;
 
 void OverlayWindow::create() {
-    DebugLog(@"Creating window");
+    DEBUG_LOG("Creating window");
     pImpl->create();
     running = true;
 }
@@ -218,7 +213,7 @@ void OverlayWindow::update() {
 }
 
 void OverlayWindow::close() {
-    DebugLog(@"Closing window and setting running to false");
+    DEBUG_LOG("Closing window and setting running to false");
     pImpl->close();
     running = false;
 }
@@ -232,6 +227,6 @@ bool OverlayWindow::isRunning() const {
 }
 
 void OverlayWindow::setRunning(bool runningState) {
-    DebugLog(@"Setting running state to: %d", runningState);
+    DEBUG_LOG("Setting running state to: %d", runningState);
     running = runningState;
 } 
