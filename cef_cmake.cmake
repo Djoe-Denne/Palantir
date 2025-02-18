@@ -58,3 +58,28 @@ elseif(CEF_CMAKE_OS_MACOSX)
 else()
     set(CEF_CMAKE_EXECUTABLE_RESOURCES)
 endif()
+
+if(APPLE)
+    # macOS specific CEF configuration
+    set_target_properties(${CEF_TARGET} PROPERTIES
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist
+    )
+    
+    # Copy CEF framework into app bundle
+    add_custom_command(
+        TARGET ${CEF_TARGET}
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CEF_ROOT}/Release/Chromium Embedded Framework.framework"
+            "$<TARGET_FILE_DIR:${CEF_TARGET}>/../Frameworks/Chromium Embedded Framework.framework"
+    )
+    
+    # Add necessary frameworks for macOS
+    target_link_libraries(${CEF_TARGET} PRIVATE
+        "-framework Cocoa"
+        "-framework CoreFoundation"
+        "-framework IOKit"
+        "-framework Security"
+    )
+endif()
