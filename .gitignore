@@ -1,0 +1,6 @@
+# Ignore build directory
+build/
+
+# Ignore all files in cef directory except .txt files
+cef/*
+!cef/*.txt
