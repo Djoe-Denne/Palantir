@@ -7,7 +7,7 @@
 class Input : public IInput {
 public:
     Input();
-    ~Input() override = default;
+    ~Input() override;
     
     bool isKeyPressed() const override;
     bool isModifierActive() const override;
