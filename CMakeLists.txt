@@ -38,10 +38,6 @@ file(GLOB_RECURSE SOURCES
 
 add_executable(InterviewCheater ${SOURCES})
 
-<<<<<<< HEAD:cMakeLists.txt
-# Link required Windows libraries
-target_link_libraries(InterviewCheater PRIVATE gdi32 dwmapi user32)
-=======
 # Link required Windows libraries and CEF
 target_link_libraries(InterviewCheater PRIVATE gdi32 dwmapi user32 cefdll_wrapper)
 
@@ -74,4 +70,3 @@ if(APPLE)
     set(CMAKE_INSTALL_RPATH "@executable_path")
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif()
->>>>>>> a53c2bc4cfed264eec5c9b53189db20bafdce3e1:CMakeLists.txt

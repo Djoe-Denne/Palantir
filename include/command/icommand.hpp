@@ -1,4 +1,3 @@
-// filepath: /interview-cheater/interview-cheater/src/ICommand.hpp
 #pragma once
 
 #ifndef ICOMMAND_HPP
