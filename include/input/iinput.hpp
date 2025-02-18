@@ -4,7 +4,11 @@
 class IInput {
 public:
     virtual ~IInput() = default;
-    virtual bool isCtrlF1Pressed() const = 0;
+    
+    // Platform-agnostic input state methods
+    virtual bool isKeyPressed() const = 0;
+    virtual bool isModifierActive() const = 0;
+    virtual void update() = 0;
 };
 
 #endif // IINPUT_HPP
