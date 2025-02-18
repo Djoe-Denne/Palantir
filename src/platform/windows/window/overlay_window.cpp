@@ -15,6 +15,22 @@ namespace {
             case WM_DESTROY:
                 PostQuitMessage(0);
                 return 0;
+            case WM_PAINT:
+                if (window) {
+                    PAINTSTRUCT ps;
+                    HDC hdc = BeginPaint(hwnd, &ps);
+                    RECT rect;
+                    GetClientRect(hwnd, &rect);
+                    int width = rect.right;
+                    int height = rect.bottom;
+                    HBRUSH brush = CreateSolidBrush(RGB(255, 0, 0));
+                    RECT square = {width / 4, height / 4, 3 * width / 4, 3 * height / 4};
+                    FillRect(hdc, &square, brush);
+                    DeleteObject(brush);
+                    EndPaint(hwnd, &ps);
+                    return 0;
+                }
+                return 0;
         }
         
         return DefWindowProcW(hwnd, uMsg, wParam, lParam);
@@ -53,10 +69,7 @@ public:
             
             // Make the window semi-transparent
             SetLayeredWindowAttributes(hwnd, 0, 240, LWA_ALPHA);
-            
-            // Exclude from screen capture
-            DWORD value = 1;
-            DwmSetWindowAttribute(hwnd, DWMWA_CLOAK, &value, sizeof(value));
+            SetWindowDisplayAffinity(hwnd, WDA_EXCLUDEFROMCAPTURE);
             
             // Hide initially
             ShowWindow(hwnd, SW_HIDE);
@@ -72,7 +85,9 @@ public:
         } else {
             ShowWindow(hwnd, SW_SHOW);
             SetForegroundWindow(hwnd);
+            UpdateWindow(hwnd); // Ensure the window is updated
         }
+
     }
     
     void update() {
@@ -117,4 +132,4 @@ void OverlayWindow::update() { pImpl->update(); }
 void OverlayWindow::close() { pImpl->close(); }
 void* OverlayWindow::getNativeHandle() const { return pImpl->getNativeHandle(); }
 bool OverlayWindow::isRunning() const { return pImpl->isRunning(); }
-void OverlayWindow::setRunning(bool runningState) { pImpl->setRunning(runningState); } 
+void OverlayWindow::setRunning(bool runningState) { pImpl->setRunning(runningState); }
