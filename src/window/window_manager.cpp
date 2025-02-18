@@ -24,6 +24,6 @@ bool WindowManager::hasRunningWindows() const {
 
 void WindowManager::executeCommand(std::unique_ptr<ICommand> command) {
     if (command) {
-        command->execute();
+    command->execute();
     }
 }

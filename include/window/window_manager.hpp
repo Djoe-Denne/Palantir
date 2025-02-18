@@ -16,7 +16,7 @@ public:
     IWindow* getFirstWindow() const;
     bool hasRunningWindows() const;
     void executeCommand(std::unique_ptr<ICommand> command);
-    
+
 private:
     std::vector<std::unique_ptr<IWindow>> windows;
 };

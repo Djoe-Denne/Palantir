@@ -7,7 +7,8 @@
 #include "command/show_command.hpp"
 #include "platform/application.hpp"
 
-int main(int argc, char* argv[]) {
+// Platform-agnostic application code
+int run_app() {
     WindowManager manager;
     SignalManager signalManager;
     
@@ -25,3 +26,14 @@ int main(int argc, char* argv[]) {
     auto app = Application::getInstance(signalManager);
     return app->run();
 }
+
+// Entry point that works for both Windows and macOS
+#if defined(_WIN32) && !defined(_CONSOLE)
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+    return run_app();
+}
+#else
+int main(int argc, char* argv[]) {
+    return run_app();
+}
+#endif
