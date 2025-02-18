@@ -94,3 +94,14 @@ if (WIN32)
         COMMENT "Copying required DLLs to the output directory"
     )
 endif()
+
+# Add macOS specific settings
+if(APPLE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment version")
+    
+    # Enable @rpath for macOS builds
+    set(CMAKE_SKIP_BUILD_RPATH FALSE)
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+    set(CMAKE_INSTALL_RPATH "@executable_path")
+    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+endif()
