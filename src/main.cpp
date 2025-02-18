@@ -1,9 +1,9 @@
 #include <memory>
 #include "window/window_manager.hpp"
 #include "signal/signal_manager.hpp"
-#include "signal/ctrl_f1_signal.hpp"
+#include "signal/toggle_signal.hpp"
 #include "window/overlay_window.hpp"
-#include "platform/macos/input.hpp"
+#include "input/input_factory.hpp"
 #include "command/show_command.hpp"
 #include "platform/application.hpp"
 
@@ -18,8 +18,8 @@ int main(int argc, char* argv[]) {
     auto showCmd = std::make_unique<ShowCommand>(*(manager.getFirstWindow()));
     manager.executeCommand(std::move(showCmd));
     
-    auto input = std::make_unique<Input>();
-    signalManager.addSignal(std::make_unique<CtrlF1Signal>(manager, *input));
+    auto input = InputFactory::create();
+    signalManager.addSignal(std::make_unique<ToggleSignal>(manager, *input));
     signalManager.startSignals();
     
     auto app = Application::getInstance(signalManager);

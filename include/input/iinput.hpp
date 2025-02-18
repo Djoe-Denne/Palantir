@@ -6,11 +6,8 @@ public:
     virtual ~IInput() = default;
     
     // Platform-agnostic input state methods
-    virtual bool isKeyPressed(int keyCode) const = 0;
-    virtual bool isKeyReleased(int keyCode) const = 0;
-    virtual bool isModifierActive(int modifier) const = 0;
-    
-    // Update input state
+    virtual bool isKeyPressed() const = 0;
+    virtual bool isModifierActive() const = 0;
     virtual void update() = 0;
 };
 

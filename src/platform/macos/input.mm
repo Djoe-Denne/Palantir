@@ -4,42 +4,24 @@
 
 class Input::Impl {
 public:
-    bool isKeyPressed(int keyCode) const {
+    bool isKeyPressed() const {
         KeyMap keyMap;
         GetKeys(keyMap);
-        uint8_t keyIndex = keyCode >> 3;  // Divide by 8
-        uint8_t keyBit = keyCode & 0x7;   // Modulo 8
+        const uint8_t keyIndex = KeyCodes::KEY_SEMICOLON >> 3;
+        const uint8_t keyBit = KeyCodes::KEY_SEMICOLON & 0x7;
         return (((uint8_t*)keyMap)[keyIndex] & (1 << keyBit)) != 0;
     }
     
-    bool isKeyReleased(int keyCode) const {
-        return !isKeyPressed(keyCode);
+    bool isModifierActive() const {
+        return (CGEventSourceFlagsState(kCGEventSourceStateHIDSystemState) & KeyCodes::COMMAND_MODIFIER) != 0;
     }
     
-    bool isModifierActive(int modifier) const {
-        return (CGEventSourceFlagsState(kCGEventSourceStateHIDSystemState) & modifier) != 0;
-    }
-    
-    void update() {
-        // Nothing to do for macOS implementation
-    }
+    void update() {} // No-op for macOS
 };
 
 Input::Input() : pImpl(std::make_unique<Impl>()) {}
 Input::~Input() = default;
 
-bool Input::isKeyPressed(int keyCode) const {
-    return pImpl->isKeyPressed(keyCode);
-}
-
-bool Input::isKeyReleased(int keyCode) const {
-    return pImpl->isKeyReleased(keyCode);
-}
-
-bool Input::isModifierActive(int modifier) const {
-    return pImpl->isModifierActive(modifier);
-}
-
-void Input::update() {
-    pImpl->update();
-} 
+bool Input::isKeyPressed() const { return pImpl->isKeyPressed(); }
+bool Input::isModifierActive() const { return pImpl->isModifierActive(); }
+void Input::update() { pImpl->update(); } 

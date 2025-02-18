@@ -1,5 +1,5 @@
-#ifndef MACOS_INPUT_HPP
-#define MACOS_INPUT_HPP
+#ifndef WINDOWS_INPUT_HPP
+#define WINDOWS_INPUT_HPP
 
 #include <memory>
 #include "input/iinput.hpp"
@@ -7,7 +7,7 @@
 class Input : public IInput {
 public:
     Input();
-    ~Input() override;
+    ~Input() override = default;
     
     bool isKeyPressed() const override;
     bool isModifierActive() const override;
@@ -18,4 +18,4 @@ private:
     std::unique_ptr<Impl> pImpl;
 };
 
-#endif // MACOS_INPUT_HPP 
+#endif // WINDOWS_INPUT_HPP 
