@@ -7,6 +7,11 @@
 #include "command/show_command.hpp"
 #include "platform/application.hpp"
 
+#if defined(_WIN32) && !defined(_CONSOLE)
+    #include <windows.h>
+#endif
+
+
 // Platform-agnostic application code
 int run_app() {
     WindowManager manager;
