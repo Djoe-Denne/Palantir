@@ -11,7 +11,7 @@ std::shared_ptr<Application> Application::instance;
 std::shared_ptr<Application> Application::getInstance(SignalManager& signalManager) {
     if (!instance) {
 #ifdef _WIN32
-        instance = std::make_shared<WindowsApplication>();
+        instance = std::make_shared<WindowsApplication>(signalManager);
 #elif defined(__APPLE__)
         instance = std::make_shared<MacOSApplication>(signalManager);
 #else

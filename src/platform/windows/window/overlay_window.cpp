@@ -17,7 +17,7 @@ namespace {
                 return 0;
         }
         
-        return DefWindowProc(hwnd, uMsg, wParam, lParam);
+        return DefWindowProcW(hwnd, uMsg, wParam, lParam);
     }
 }
 
@@ -26,15 +26,15 @@ public:
     Impl() : hwnd(nullptr), running(false) {}
     
     void create() {
-        WNDCLASSEX wc = {};
-        wc.cbSize = sizeof(WNDCLASSEX);
+        WNDCLASSEXW wc = {};
+        wc.cbSize = sizeof(WNDCLASSEXW);
         wc.lpfnWndProc = WindowProc;
-        wc.hInstance = GetModuleHandle(nullptr);
+        wc.hInstance = GetModuleHandleW(nullptr);
         wc.lpszClassName = L"InterviewCheaterClass";
         
-        RegisterClassEx(&wc);
+        RegisterClassExW(&wc);
         
-        hwnd = CreateWindowEx(
+        hwnd = CreateWindowExW(
             WS_EX_LAYERED | WS_EX_TOPMOST,
             L"InterviewCheaterClass",
             L"Interview Cheater",
@@ -43,7 +43,7 @@ public:
             800, 600,
             nullptr,
             nullptr,
-            GetModuleHandle(nullptr),
+            GetModuleHandleW(nullptr),
             nullptr
         );
         
@@ -77,9 +77,9 @@ public:
     
     void update() {
         MSG msg;
-        while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+        while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            DispatchMessageW(&msg);
         }
     }
     
