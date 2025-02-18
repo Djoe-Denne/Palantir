@@ -6,7 +6,7 @@
 
 class ShowCommand : public ICommand {
 public:
-    ShowCommand(IWindow& window);
+    explicit ShowCommand(IWindow& window);
     void execute() override;
 
 private:

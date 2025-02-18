@@ -1,18 +1,18 @@
-#include <windows.h>
 #include <memory>
 #include "window/window_manager.hpp"
 #include "signal/signal_manager.hpp"
 #include "signal/ctrl_f1_signal.hpp"
 #include "window/overlay_window.hpp"
-#include "input/input.hpp"
+#include "platform/macos/input.hpp"
 #include "command/show_command.hpp"
+#include "platform/application.hpp"
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+int main(int argc, char* argv[]) {
     WindowManager manager;
     SignalManager signalManager;
     
     auto window = std::make_unique<OverlayWindow>();
-    window->create(hInstance);
+    window->create();
     manager.addWindow(std::move(window));
 
     auto showCmd = std::make_unique<ShowCommand>(*(manager.getFirstWindow()));
@@ -22,11 +22,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     signalManager.addSignal(std::make_unique<CtrlF1Signal>(manager, *input));
     signalManager.startSignals();
     
-    MSG msg;
-    while (manager.hasRunningWindows() && GetMessage(&msg, NULL, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-    
-    return 0;
+    auto app = Application::getInstance(signalManager);
+    return app->run();
 }

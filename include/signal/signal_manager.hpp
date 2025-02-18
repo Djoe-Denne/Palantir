@@ -9,6 +9,8 @@ class SignalManager {
 public:
     void addSignal(std::unique_ptr<ISignal> signal);
     void startSignals();
+    void stopSignals();
+    void checkSignals();
 
 private:
     std::vector<std::unique_ptr<ISignal>> signals_;

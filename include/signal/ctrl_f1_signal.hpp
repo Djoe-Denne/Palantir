@@ -3,20 +3,22 @@
 
 #include "signal/isignal.hpp"
 #include "window/window_manager.hpp"
-#include "windows/input/input.hpp"
-#include <windows.h>
+#include "input/iinput.hpp"
 
 class CtrlF1Signal : public ISignal {
 public:
-    CtrlF1Signal(WindowManager& manager, Input& input);
-    ~CtrlF1Signal();
+    CtrlF1Signal(WindowManager& manager, IInput& input);
+    
     void start() override;
-
+    void stop() override;
+    bool isActive() const override;
+    void check() override;
+    
 private:
-    static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
-    static HHOOK hHook_;
-    static WindowManager* manager_;
-    static Input* input_;
+    WindowManager& manager_;
+    IInput& input_;
+    bool active_;
+    long long lastTriggerTime_;  // For debouncing
 };
 
 #endif // CTRL_F1_SIGNAL_HPP

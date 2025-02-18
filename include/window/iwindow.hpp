@@ -1,18 +1,25 @@
 #ifndef IWINDOW_HPP
 #define IWINDOW_HPP
 
-#include <windows.h>
+#include <memory>
 
 class IWindow {
 public:
     virtual ~IWindow() = default;
-    virtual void create(HINSTANCE hInstance) = 0;
+    
+    // Platform-agnostic window lifecycle methods
+    virtual void create() = 0;
     virtual void show() = 0;
     virtual void update() = 0;
     virtual void close() = 0;
-    virtual HWND getHandle() const = 0;
+    
+    // Window state methods
     virtual bool isRunning() const = 0;
     virtual void setRunning(bool runningState) = 0;
+    
+    // Native handle accessor - returns void* to avoid platform-specific types
+    // The actual implementation will cast this to the appropriate type
+    virtual void* getNativeHandle() const = 0;
 };
 
 #endif // IWINDOW_HPP
