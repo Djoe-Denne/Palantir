@@ -2,7 +2,6 @@
 #define WINDOWS_OVERLAY_WINDOW_HPP
 
 #include "window/iwindow.hpp"
-#include "include/cef_app.h"
 
 class OverlayWindow : public IWindow {
 public:

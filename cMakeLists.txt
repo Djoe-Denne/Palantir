@@ -1,19 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 
-# Set the system name explicitly
-if(WIN32)
-    set(CMAKE_SYSTEM_NAME "Windows")
-elseif(UNIX AND NOT APPLE)
-    set(CMAKE_SYSTEM_NAME "Linux")
-elseif(APPLE)
-    set(CMAKE_SYSTEM_NAME "Darwin")
-else()
-    message(FATAL_ERROR "Unsupported target platform")
-endif()
-
-# Include CEF configuration
-include(${CMAKE_SOURCE_DIR}/cef_cmake.cmake)
-
 project(InterviewCheater)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -29,24 +15,6 @@ if(MSVC)
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MD")
 elseif(MINGW)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mwindows")
-endif()
-
-# Disable CEF sandbox to avoid runtime library conflicts
-set(CEF_USE_SANDBOX OFF)
-
-# Set the runtime output directory
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-# Ensure CEF_CMAKE_OUTPUT_DIR or CMAKE_RUNTIME_OUTPUT_DIRECTORY is set
-if(NOT DEFINED CEF_CMAKE_OUTPUT_DIR AND NOT DEFINED CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-    message(FATAL_ERROR "Neither CEF_CMAKE_OUTPUT_DIR nor CMAKE_RUNTIME_OUTPUT_DIRECTORY is defined. Please set one of these variables.")
-else()
-    if(DEFINED CEF_CMAKE_OUTPUT_DIR)
-        message(STATUS "CEF_CMAKE_OUTPUT_DIR is set to ${CEF_CMAKE_OUTPUT_DIR}")
-    endif()
-    if(DEFINED CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-        message(STATUS "CMAKE_RUNTIME_OUTPUT_DIRECTORY is set to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-    endif()
 endif()
 
 # Conditionally add include/windows to the include path if building on Windows
@@ -68,29 +36,7 @@ file(GLOB_RECURSE SOURCES
     src/windows/window/*.cpp
 )
 
-# Add CEF library
-add_subdirectory(${CMAKE_SOURCE_DIR}/cef)
-
 add_executable(InterviewCheater ${SOURCES})
 
-# Link required Windows libraries and CEF
-target_link_libraries(InterviewCheater PRIVATE gdi32 dwmapi user32 cefdll_wrapper)
-
-# Add a post-build step to copy required DLLs to the output directory
-if (WIN32)
-    add_custom_command(TARGET InterviewCheater POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Redist/MSVC/14.28.29333/debug_nonredist/x64/Microsoft.VC142.DebugCRT/vcruntime140d.dll"
-            "$<TARGET_FILE_DIR:InterviewCheater>/vcruntime140d.dll"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Redist/MSVC/14.28.29333/debug_nonredist/x64/Microsoft.VC142.DebugCRT/vcruntime140_1d.dll"
-            "$<TARGET_FILE_DIR:InterviewCheater>/vcruntime140_1d.dll"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Redist/MSVC/14.28.29333/debug_nonredist/x64/Microsoft.VC142.DebugCRT/msvcp140d.dll"
-            "$<TARGET_FILE_DIR:InterviewCheater>/msvcp140d.dll"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Redist/MSVC/14.28.29333/debug_nonredist/x64/Microsoft.VC142.DebugCRT/ucrtbased.dll"
-            "$<TARGET_FILE_DIR:InterviewCheater>/ucrtbased.dll"
-        COMMENT "Copying required DLLs to the output directory"
-    )
-endif()
+# Link required Windows libraries
+target_link_libraries(InterviewCheater PRIVATE gdi32 dwmapi user32)

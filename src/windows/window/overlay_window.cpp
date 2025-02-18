@@ -1,38 +1,8 @@
 #include "windows/window/overlay_window.hpp"
 #include <iostream>
 #include <dwmapi.h>
-#include "include/cef_app.h"
-#include "include/wrapper/cef_helpers.h"
-#include "include/cef_client.h"
-#include "include/cef_browser.h"
-#include "include/cef_command_line.h"
 
 #define WINDOW_SIZE_PERCENT 50
-
-class SimpleHandler : public CefClient, public CefLifeSpanHandler {
-public:
-    SimpleHandler() = default;
-    CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override {
-        return this;
-    }
-    void OnAfterCreated(CefRefPtr<CefBrowser> browser) override {
-        CEF_REQUIRE_UI_THREAD();
-        browser_list_.push_back(browser);
-    }
-    void OnBeforeClose(CefRefPtr<CefBrowser> browser) override {
-        CEF_REQUIRE_UI_THREAD();
-        auto it = std::find(browser_list_.begin(), browser_list_.end(), browser);
-        if (it != browser_list_.end()) {
-            browser_list_.erase(it);
-        }
-        if (browser_list_.empty()) {
-            CefQuitMessageLoop();
-        }
-    }
-private:
-    std::vector<CefRefPtr<CefBrowser>> browser_list_;
-    IMPLEMENT_REFCOUNTING(SimpleHandler);
-};
 
 OverlayWindow::OverlayWindow() : hwnd_(nullptr), running_(true) {}
 
@@ -75,26 +45,6 @@ void OverlayWindow::create(HINSTANCE hInstance) {
         std::cerr << "Failed to set window display affinity." << std::endl;
         return;
     }
-
-    CefMainArgs main_args(hInstance);
-    CefRefPtr<CefApp> app;
-    CefSettings settings;
-    settings.no_sandbox = true;
-    
-    if (!CefInitialize(main_args, settings, app, nullptr)) {
-        std::cerr << "Failed to initialize CEF." << std::endl;
-        return;
-    }
-
-    CefWindowInfo window_info;
-    window_info.SetAsChild(hwnd_, {0, 0, overlaySize, overlaySize});
-    CefBrowserSettings browser_settings;
-    CefRefPtr<SimpleHandler> handler(new SimpleHandler());
-    
-    if (!CefBrowserHost::CreateBrowser(window_info, handler, "http://www.google.fr", browser_settings, nullptr, nullptr)) {
-        std::cerr << "Failed to create CEF browser." << std::endl;
-        return;
-    }
 }
 
 void OverlayWindow::show() {
@@ -110,7 +60,6 @@ void OverlayWindow::update() {
 void OverlayWindow::close() {
     running_ = false;
     DestroyWindow(hwnd_);
-    CefShutdown();
 }
 
 HWND OverlayWindow::getHandle() const {
