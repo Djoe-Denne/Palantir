@@ -1,4 +1,4 @@
-#include "plaform_application.hpp"
+#include "platform_application.hpp"
 #include "input/key_codes.hpp"
 #import <Cocoa/Cocoa.h>
 
