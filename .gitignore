@@ -124,6 +124,7 @@ bloaty-build/
 .cache/*
 .vscode/*
 .history/
+*.code-workspace
 # Clion artifacts
 cmake-build-debug/
 # Benchmark outputs

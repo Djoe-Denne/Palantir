@@ -3,25 +3,31 @@
 #include <windows.h>
 
 namespace interview_cheater::input {
-
 class Input::Impl {
 public:
-    bool isKeyPressed() const {
-        return (GetAsyncKeyState(KeyCodes::KEY_F1) & 0x8000) != 0;
-    }
-    
-    bool isModifierActive() const {
-        return (GetAsyncKeyState(KeyCodes::CONTROL_MODIFIER) & 0x8000) != 0;
-    }
-    
-    void update() {} // No-op for Windows
+  [[nodiscard]] static auto isKeyPressed() -> bool {
+    constexpr uint16_t KEY_PRESSED_MASK = 0x8000;
+    return (static_cast<uint16_t>(GetAsyncKeyState(KeyCodes::KEY_F1)) &
+            KEY_PRESSED_MASK) != 0;
+  }
+
+  [[nodiscard]] static auto isModifierActive() -> bool {
+    constexpr uint16_t KEY_PRESSED_MASK = 0x8000;
+    return (static_cast<uint16_t>(
+                GetAsyncKeyState(KeyCodes::CONTROL_MODIFIER)) &
+            KEY_PRESSED_MASK) != 0;
+  }
+
+  void update() {} // No-op for Windows
 };
 
 Input::Input() : pImpl(std::make_unique<Impl>()) {}
 Input::~Input() = default;
 
-bool Input::isKeyPressed() const { return pImpl->isKeyPressed(); }
-bool Input::isModifierActive() const { return pImpl->isModifierActive(); }
+auto Input::isKeyPressed() const -> bool { return Impl::isKeyPressed(); }
+auto Input::isModifierActive() const -> bool {
+  return Impl::isModifierActive();
+}
 void Input::update() { pImpl->update(); }
 
 } // namespace interview_cheater::input

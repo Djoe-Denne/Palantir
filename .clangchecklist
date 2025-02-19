@@ -1,0 +1,10 @@
+-*
+clang-analyzer-*
+bugprone-*
+concurrency-*
+google-*
+hicpp-*
+modernize-*
+objc-*
+performance-*
+readability-*

@@ -2,10 +2,14 @@
 #define WINDOWS_APPLICATION_HPP
 
 #include "platform/application.hpp"
-#include "signal/signal_manager.hpp"
 #include <memory>
 
 namespace interview_cheater {
+    namespace signal {
+    // Forward declaration for SignalManager
+    class SignalManager;
+    }
+
     class PlatformApplication : public Application {
     public:
         explicit PlatformApplication(signal::SignalManager& signalManager);
@@ -20,4 +24,4 @@ namespace interview_cheater {
     };
 }
 
-#endif // WINDOWS_APPLICATION_HPP 
+#endif // WINDOWS_APPLICATION_HPP
