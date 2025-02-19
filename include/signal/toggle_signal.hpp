@@ -5,9 +5,11 @@
 #include "window/window_manager.hpp"
 #include "input/iinput.hpp"
 
+namespace interview_cheater::signal {
+
 class ToggleSignal : public ISignal {
 public:
-    ToggleSignal(WindowManager& manager, IInput& input);
+    ToggleSignal(window::WindowManager& manager, input::IInput& input);
     ~ToggleSignal() override = default;
     
     void start() override;
@@ -16,10 +18,12 @@ public:
     void check() override;
     
 private:
-    WindowManager& manager_;
-    IInput& input_;
+    window::WindowManager& manager_;
+    input::IInput& input_;
     bool active_{false};
     long long lastTriggerTime_{0};
 };
 
-#endif // TOGGLE_SIGNAL_HPP 
+} // namespace interview_cheater::signal
+
+#endif // TOGGLE_SIGNAL_HPP

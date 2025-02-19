@@ -1,5 +1,5 @@
-#include "platform/macos/macos_application.hpp"
-#include "platform/macos/key_codes.hpp"
+#include "plaform_application.hpp"
+#include "input/key_codes.hpp"
 #import <Cocoa/Cocoa.h>
 
 #ifdef DEBUG
@@ -78,9 +78,11 @@
 
 @end
 
+namespace interview_cheater {
+
 class MacOSApplication::Impl {
 public:
-    Impl(SignalManager& signalManager) : signalManager_(signalManager), signalChecker(nil) {
+    Impl(signal::SignalManager& signalManager) : signalManager_(signalManager), signalChecker(nil) {
         DebugLog(@"Initializing MacOSApplication");
         [NSApplication sharedApplication];
         [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
@@ -119,11 +121,11 @@ public:
     }
     
 private:
-    SignalManager& signalManager_;
+    signal::SignalManager& signalManager_;
     SignalChecker* signalChecker;
 };
 
-MacOSApplication::MacOSApplication(SignalManager& signalManager) 
+MacOSApplication::MacOSApplication(signal::SignalManager& signalManager) 
     : pImpl(std::make_unique<Impl>(signalManager)) {}
 
 MacOSApplication::~MacOSApplication() = default;
@@ -134,4 +136,6 @@ int MacOSApplication::run() {
 
 void MacOSApplication::quit() {
     pImpl->quit();
-} 
+}
+
+} // namespace interview_cheater

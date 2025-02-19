@@ -50,6 +50,8 @@
 
 @end
 
+namespace interview_cheater::window {
+
 class OverlayWindow::Impl {
 public:
     Impl() : window(nil), delegate(nil) {
@@ -234,4 +236,6 @@ bool OverlayWindow::isRunning() const {
 void OverlayWindow::setRunning(bool runningState) {
     DebugLog(@"Setting running state to: %d", runningState);
     running = runningState;
-} 
+}
+
+} // namespace interview_cheater::window

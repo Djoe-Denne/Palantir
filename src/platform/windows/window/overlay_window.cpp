@@ -1,7 +1,10 @@
+
+
 #include "window/overlay_window.hpp"
 #include <windows.h>
 #include <dwmapi.h>
 
+namespace interview_cheater::window {
 namespace {
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         OverlayWindow* window = reinterpret_cast<OverlayWindow*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
@@ -133,3 +136,5 @@ void OverlayWindow::close() { pImpl->close(); }
 void* OverlayWindow::getNativeHandle() const { return pImpl->getNativeHandle(); }
 bool OverlayWindow::isRunning() const { return pImpl->isRunning(); }
 void OverlayWindow::setRunning(bool runningState) { pImpl->setRunning(runningState); }
+
+} // namespace interview_cheater::platform::windows::window
