@@ -1,5 +1,3 @@
-
-
 #include "window/overlay_window.hpp"
 #include <dwmapi.h>
 #include <windows.h>
