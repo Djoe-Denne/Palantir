@@ -65,7 +65,7 @@ if(WIN32)
     )
 elseif(APPLE)
     set(PLATFORM_SOURCES
-        src/platform/macos/input.mm
+        src/platform/macos/input/input.mm
         src/platform/macos/window/overlay_window.mm
         src/platform/macos/platform_application.mm
     )
