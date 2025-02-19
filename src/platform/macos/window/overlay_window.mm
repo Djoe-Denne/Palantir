@@ -8,7 +8,7 @@
 #endif
 
 @interface OverlayWindowDelegate : NSObject<NSWindowDelegate>
-@property (nonatomic, assign) OverlayWindow* owner;
+@property (nonatomic, assign) interview_cheater::window::OverlayWindow* owner;
 @end
 
 @implementation OverlayWindowDelegate
