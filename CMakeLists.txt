@@ -6,8 +6,12 @@ set(CMAKE_CXX_STANDARD 17)
 # Set CMake to look in the cmake/ folder for additional scripts
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
+# Include setup script first
+include(setup-clang-tools)
+# Call the setup function
+setup_clang_tools()
+
 # Include your custom Clang formatting/linting script
-include(clang-ignore)
 include(format-lint)
 
 
@@ -42,12 +46,25 @@ set(PLATFORM_COMMON_SOURCES
     src/platform/application.cpp
 )
 
+
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(COMMON_INCLUDES
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mode/debug
+    )
+else ()
+    set(COMMON_INCLUDES
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mode/release
+    )
+endif()
+
 # Platform-specific configuration and sources
 if(WIN32)
     set(PLATFORM_SOURCES
         src/platform/windows/input/input.cpp
         src/platform/windows/window/overlay_window.cpp
         src/platform/windows/platform_application.cpp
+            src/platform/windows/utils/logger.cpp
     )
     
     add_executable(${PROJECT_NAME} WIN32 
@@ -61,6 +78,7 @@ if(WIN32)
     )
     
     target_include_directories(${PROJECT_NAME} PRIVATE
+            ${COMMON_INCLUDES}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/include/platform/windows
     )
@@ -75,6 +93,7 @@ elseif(APPLE)
         src/platform/macos/input/input.mm
         src/platform/macos/window/overlay_window.mm
         src/platform/macos/platform_application.mm
+            src/platform/macos/utils/logger.mm
     )
     
     add_executable(${PROJECT_NAME} MACOSX_BUNDLE 
@@ -88,10 +107,11 @@ elseif(APPLE)
     )
     
     target_include_directories(${PROJECT_NAME} PRIVATE
+            ${COMMON_INCLUDES}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/include/platform/macos
     )
-    
+
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE TRUE
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist
