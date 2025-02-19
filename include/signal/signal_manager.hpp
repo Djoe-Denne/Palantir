@@ -3,17 +3,22 @@
 
 #include <vector>
 #include <memory>
-#include "signal/isignal.hpp"
 
-class SignalManager {
-public:
-    void addSignal(std::unique_ptr<ISignal> signal);
-    void startSignals();
-    void stopSignals();
-    void checkSignals();
+namespace interview_cheater::signal {
+    // Forward declaration for ISignal
+    class ISignal;
 
-private:
-    std::vector<std::unique_ptr<ISignal>> signals_;
-};
+    class SignalManager {
+    public:
+        void addSignal(std::unique_ptr<ISignal> signal);
+        void startSignals();
+        void stopSignals();
+        void checkSignals();
+
+    private:
+        std::vector<std::unique_ptr<ISignal>> signals_;
+    };
+
+} // namespace interview_cheater::signal
 
 #endif // SIGNAL_MANAGER_HPP

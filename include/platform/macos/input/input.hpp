@@ -4,6 +4,7 @@
 #include <memory>
 #include "input/iinput.hpp"
 
+namespace interview_cheater::input {
 class Input : public IInput {
 public:
     Input();
@@ -17,5 +18,5 @@ private:
     class Impl;
     std::unique_ptr<Impl> pImpl;
 };
-
+}
 #endif // MACOS_INPUT_HPP 

@@ -1,6 +1,9 @@
+#ifndef INTERVIEW_CHEATER_WINDOW_COMPONENT_WEBVIEW_IWEBVIEW_HPP
+#define INTERVIEW_CHEATER_WINDOW_COMPONENT_WEBVIEW_IWEBVIEW_HPP
 #include <string>
 #include <functional>
 
+namespace interview_cheater::window::component {
 /**
  * @class WebView
  * @brief An abstract class representing a web view component.
@@ -102,4 +105,6 @@ class WebView {
     virtual void destroy() = 0;
 
 };
-    
+}
+
+#endif // INTERVIEW_CHEATER_WINDOW_COMPONENT_WEBVIEW_IWEBVIEW_HPP

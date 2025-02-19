@@ -3,7 +3,7 @@
 
 #include <windows.h>
 
-namespace KeyCodes {
+namespace interview_cheater::KeyCodes {
     constexpr int KEY_F1 = VK_F1;  // F1 key
     constexpr int CONTROL_MODIFIER = VK_CONTROL;  // Control key modifier
 }
