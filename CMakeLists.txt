@@ -40,7 +40,7 @@ if(WIN32)
     set(PLATFORM_SOURCES
         src/platform/windows/input.cpp
         src/platform/windows/window/overlay_window.cpp
-        src/platform/windows/windows_application.cpp
+        src/platform/windows/platform_application.cpp
     )
     
     add_executable(${PROJECT_NAME} WIN32 
@@ -65,9 +65,9 @@ if(WIN32)
     )
 elseif(APPLE)
     set(PLATFORM_SOURCES
-        src/platform/macos/input.mm
+        src/platform/macos/input/input.mm
         src/platform/macos/window/overlay_window.mm
-        src/platform/macos/macos_application.mm
+        src/platform/macos/platform_application.mm
     )
     
     add_executable(${PROJECT_NAME} MACOSX_BUNDLE 

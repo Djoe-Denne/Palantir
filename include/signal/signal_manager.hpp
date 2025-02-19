@@ -5,6 +5,8 @@
 #include <memory>
 #include "signal/isignal.hpp"
 
+namespace interview_cheater::signal {
+
 class SignalManager {
 public:
     void addSignal(std::unique_ptr<ISignal> signal);
@@ -15,5 +17,7 @@ public:
 private:
     std::vector<std::unique_ptr<ISignal>> signals_;
 };
+
+} // namespace interview_cheater::signal
 
 #endif // SIGNAL_MANAGER_HPP

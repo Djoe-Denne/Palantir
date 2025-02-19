@@ -8,7 +8,7 @@
 #endif
 
 @interface OverlayWindowDelegate : NSObject<NSWindowDelegate>
-@property (nonatomic, assign) OverlayWindow* owner;
+@property (nonatomic, assign) interview_cheater::window::OverlayWindow* owner;
 @end
 
 @implementation OverlayWindowDelegate
@@ -49,6 +49,8 @@
 }
 
 @end
+
+namespace interview_cheater::window {
 
 class OverlayWindow::Impl {
 public:
@@ -234,4 +236,6 @@ bool OverlayWindow::isRunning() const {
 void OverlayWindow::setRunning(bool runningState) {
     DebugLog(@"Setting running state to: %d", runningState);
     running = runningState;
-} 
+}
+
+} // namespace interview_cheater::window

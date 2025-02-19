@@ -1,5 +1,6 @@
 #include "signal/signal_manager.hpp"
 
+using namespace interview_cheater::signal;
 void SignalManager::addSignal(std::unique_ptr<ISignal> signal) {
     signals_.push_back(std::move(signal));
 }

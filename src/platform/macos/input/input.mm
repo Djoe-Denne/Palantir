@@ -1,5 +1,5 @@
-#include "platform/macos/input.hpp"
-#include "platform/macos/key_codes.hpp"
+#include "input/input.hpp"
+#include "input/key_codes.hpp"
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 
@@ -23,7 +23,7 @@
 
 - (void)handleEvent:(NSEvent *)event {
     if (event.type == NSEventTypeKeyDown || event.type == NSEventTypeKeyUp) {
-        if (event.keyCode == KeyCodes::KEY_SLASH) {
+        if (event.keyCode == interview_cheater::input::KeyCodes::KEY_SLASH) {
             self.keyPressed = (event.type == NSEventTypeKeyDown);
         }
     } else if (event.type == NSEventTypeFlagsChanged) {
@@ -58,27 +58,33 @@
 
 @end
 
-class Input::Impl {
-public:
-    Impl() : monitor([[GlobalEventMonitor alloc] init]) {}
-    
-    bool isKeyPressed() const {
-        return [monitor keyPressed];
-    }
-    
-    bool isModifierActive() const {
-        return [monitor modifierActive];
-    }
-    
-    void update() {} // No-op for macOS as we use event-based monitoring
+namespace interview_cheater::input {
 
-private:
-    GlobalEventMonitor* monitor;
-};
+    class Input::Impl {
+    public:
+        Impl() : monitor([[GlobalEventMonitor alloc] init]) {}
+        
+        bool isKeyPressed() const {
+            return [monitor keyPressed];
+        }
+        
+        bool isModifierActive() const {
+            return [monitor modifierActive];
+        }
+        
+        void update() { 
+            // No-op for macOS as we use event-based monitoring 
+        }
+        
+    private:
+        GlobalEventMonitor* monitor;
+    };
+    
+} // namespace interview_cheater::input
 
-Input::Input() : pImpl(std::make_unique<Impl>()) {}
-Input::~Input() = default;
-
-bool Input::isKeyPressed() const { return pImpl->isKeyPressed(); }
-bool Input::isModifierActive() const { return pImpl->isModifierActive(); }
-void Input::update() { pImpl->update(); } 
+// Use the fully-qualified namespace for definitions
+interview_cheater::input::Input::Input() : pImpl(std::make_unique<interview_cheater::input::Input::Impl>()) {}
+interview_cheater::input::Input::~Input() = default;
+bool interview_cheater::input::Input::isKeyPressed() const { return pImpl->isKeyPressed(); }
+bool interview_cheater::input::Input::isModifierActive() const { return pImpl->isModifierActive(); }
+void interview_cheater::input::Input::update() { pImpl->update(); }

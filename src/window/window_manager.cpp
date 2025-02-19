@@ -1,6 +1,7 @@
 #include "window/window_manager.hpp"
 #include <algorithm>
 
+using namespace interview_cheater::window;
 void WindowManager::addWindow(std::unique_ptr<IWindow> window) {
     windows.push_back(std::move(window));
 }
@@ -22,7 +23,7 @@ bool WindowManager::hasRunningWindows() const {
                       [](const auto& w) { return w->isRunning(); });
 }
 
-void WindowManager::executeCommand(std::unique_ptr<ICommand> command) {
+void WindowManager::executeCommand(std::unique_ptr<interview_cheater::command::ICommand> command) {
     if (command) {
     command->execute();
     }

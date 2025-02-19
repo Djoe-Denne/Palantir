@@ -1,7 +1,8 @@
 #include "command/show_command.hpp"
 
-ShowCommand::ShowCommand(IWindow& window) : window_(window) {}
+using namespace interview_cheater;
+command::ShowCommand::ShowCommand(window::IWindow& window) : window_(window) {}
 
-void ShowCommand::execute() {
+void command::ShowCommand::execute() {
     window_.show();
 }

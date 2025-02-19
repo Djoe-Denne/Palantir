@@ -2,22 +2,23 @@
 #include "command/show_command.hpp"
 #include <chrono>
 
-ToggleSignal::ToggleSignal(WindowManager& manager, IInput& input)
+using namespace interview_cheater;
+signal::ToggleSignal::ToggleSignal(window::WindowManager& manager, input::IInput& input)
     : manager_(manager), input_(input) {}
 
-void ToggleSignal::start() {
+void signal::ToggleSignal::start() {
     active_ = true;
 }
 
-void ToggleSignal::stop() {
+void signal::ToggleSignal::stop() {
     active_ = false;
 }
 
-bool ToggleSignal::isActive() const {
+bool signal::ToggleSignal::isActive() const {
     return active_;
 }
 
-void ToggleSignal::check() {
+void signal::ToggleSignal::check() {
     if (!active_) return;
     
     auto currentTime = std::chrono::steady_clock::now().time_since_epoch().count();
@@ -26,7 +27,7 @@ void ToggleSignal::check() {
     if (input_.isKeyPressed() && input_.isModifierActive()) {
         if (currentTime - lastTriggerTime_ > DEBOUNCE_TIME) {
             if (auto window = manager_.getFirstWindow()) {
-                manager_.executeCommand(std::make_unique<ShowCommand>(*window));
+                manager_.executeCommand(std::make_unique<command::ShowCommand>(*window));
                 lastTriggerTime_ = currentTime;
             }
         }

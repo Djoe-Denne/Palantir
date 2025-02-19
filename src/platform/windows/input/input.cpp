@@ -1,10 +1,9 @@
-
-
 #include "input/input.hpp"
 #include "input/key_codes.hpp"
 #include <windows.h>
 
 namespace interview_cheater::input {
+
 class Input::Impl {
 public:
     bool isKeyPressed() const {
@@ -25,4 +24,4 @@ bool Input::isKeyPressed() const { return pImpl->isKeyPressed(); }
 bool Input::isModifierActive() const { return pImpl->isModifierActive(); }
 void Input::update() { pImpl->update(); }
 
-} // namespace interview_cheater::platform::windows
+} // namespace interview_cheater::input

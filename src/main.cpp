@@ -11,6 +11,11 @@
     #include <windows.h>
 #endif
 
+using namespace interview_cheater;
+using namespace interview_cheater::window;
+using namespace interview_cheater::signal;
+using namespace interview_cheater::command;
+using namespace interview_cheater::input;
 
 // Platform-agnostic application code
 int run_app() {

@@ -1,7 +1,7 @@
 #ifndef MACOS_KEY_CODES_HPP
 #define MACOS_KEY_CODES_HPP
 
-namespace KeyCodes {
+namespace interview_cheater::input::KeyCodes {
     // Virtual key codes for macOS
     // Reference: https://stackoverflow.com/questions/3202629/where-can-i-find-a-list-of-mac-virtual-key-codes
     constexpr int KEY_SLASH = 44;  // Forward slash (/) key - virtual keycode 44

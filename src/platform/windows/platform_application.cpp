@@ -1,9 +1,12 @@
-#include "platform/windows/windows_application.hpp"
+
+#include "platform_application.hpp"
 #include <windows.h>
 
-class WindowsApplication::Impl {
+namespace interview_cheater {
+
+class PlatformApplication::Impl {
 public:
-    Impl(SignalManager& signalManager) : signalManager_(signalManager), running_(true) {}
+    Impl(signal::SignalManager& signalManager) : signalManager_(signalManager), running_(true) {}
     
     int run() {
         while (running_) {
@@ -32,19 +35,21 @@ public:
     }
     
 private:
-    SignalManager& signalManager_;
+    signal::SignalManager& signalManager_;
     bool running_;
 };
 
-WindowsApplication::WindowsApplication(SignalManager& signalManager)
+PlatformApplication::PlatformApplication(signal::SignalManager& signalManager)
     : pImpl(std::make_unique<Impl>(signalManager)) {}
 
-WindowsApplication::~WindowsApplication() = default;
+PlatformApplication::~PlatformApplication() = default;
 
-int WindowsApplication::run() {
+int PlatformApplication::run() {
     return pImpl->run();
 }
 
-void WindowsApplication::quit() {
+void PlatformApplication::quit() {
     pImpl->quit();
-} 
+}
+
+} // namespace interview_cheater

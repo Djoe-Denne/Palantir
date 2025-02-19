@@ -3,6 +3,8 @@
 
 #include <memory>
 
+namespace interview_cheater::window {
+
 class IWindow {
 public:
     virtual ~IWindow() = default;
@@ -21,5 +23,7 @@ public:
     // The actual implementation will cast this to the appropriate type
     virtual void* getNativeHandle() const = 0;
 };
+
+} // namespace interview_cheater::window
 
 #endif // IWINDOW_HPP

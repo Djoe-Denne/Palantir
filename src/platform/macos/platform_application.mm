@@ -1,5 +1,5 @@
-#include "platform/macos/macos_application.hpp"
-#include "platform/macos/key_codes.hpp"
+#include "platform_application.hpp"
+#include "input/key_codes.hpp"
 #import <Cocoa/Cocoa.h>
 
 #ifdef DEBUG
@@ -9,15 +9,15 @@
 #endif
 
 @interface SignalChecker : NSObject
-@property (nonatomic, assign) SignalManager* signalManager;
+@property (nonatomic, assign) interview_cheater::signal::SignalManager* signalManager;
 @property (nonatomic, strong) id globalMonitor;
 @property (nonatomic, strong) id localMonitor;
-- (instancetype)initWithSignalManager:(SignalManager*)signalManager;
+- (instancetype)initWithSignalManager:(interview_cheater::signal::SignalManager*)signalManager;
 @end
 
 @implementation SignalChecker
 
-- (instancetype)initWithSignalManager:(SignalManager*)signalManager {
+- (instancetype)initWithSignalManager:(interview_cheater::signal::SignalManager*)signalManager {
     if (self = [super init]) {
         DebugLog(@"Initializing SignalChecker");
         self.signalManager = signalManager;
@@ -53,7 +53,7 @@
 - (void)handleKeyEvent:(NSEvent *)event {
     // Check for Command + / combination
     if (event.type == NSEventTypeKeyDown &&
-        event.keyCode == KeyCodes::KEY_SLASH &&
+        event.keyCode == interview_cheater::input::KeyCodes::KEY_SLASH &&
         (event.modifierFlags & NSEventModifierFlagCommand)) {
         DebugLog(@"Hotkey combination detected (Command + /)");
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -78,10 +78,12 @@
 
 @end
 
-class MacOSApplication::Impl {
+namespace interview_cheater {
+
+class PlatformApplication::Impl {
 public:
-    Impl(SignalManager& signalManager) : signalManager_(signalManager), signalChecker(nil) {
-        DebugLog(@"Initializing MacOSApplication");
+    Impl(signal::SignalManager& signalManager) : signalManager_(signalManager), signalChecker(nil) {
+        DebugLog(@"Initializing ");
         [NSApplication sharedApplication];
         [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
         
@@ -119,19 +121,21 @@ public:
     }
     
 private:
-    SignalManager& signalManager_;
+    signal::SignalManager& signalManager_;
     SignalChecker* signalChecker;
 };
 
-MacOSApplication::MacOSApplication(SignalManager& signalManager) 
+PlatformApplication::PlatformApplication(interview_cheater::signal::SignalManager& signalManager) 
     : pImpl(std::make_unique<Impl>(signalManager)) {}
 
-MacOSApplication::~MacOSApplication() = default;
+PlatformApplication::~PlatformApplication() = default;
 
-int MacOSApplication::run() {
+int PlatformApplication::run() {
     return pImpl->run();
 }
 
-void MacOSApplication::quit() {
+void PlatformApplication::quit() {
     pImpl->quit();
-} 
+}
+
+} // namespace interview_cheater
