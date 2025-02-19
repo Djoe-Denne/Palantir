@@ -3,20 +3,24 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleIdentifier</key>
-    <string>com.yourcompany.appname</string>
+    <string>com.interviewcheater.app</string>
     <key>CFBundleName</key>
-    <string>${MACOSX_BUNDLE_BUNDLE_NAME}</string>
+    <string>InterviewCheater</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
     <string>1.0</string>
-    <key>CFBundleSignature</key>
-    <string>????</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>LSMinimumSystemVersion</key>
     <string>${CMAKE_OSX_DEPLOYMENT_TARGET}</string>
+    <key>LSUIElement</key>
+    <true/>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>NSInputMonitoringUsageDescription</key>
+    <string>This app needs to monitor keyboard events to respond to global shortcuts.</string>
+    <key>NSAccessibilityUsageDescription</key>
+    <string>This app needs accessibility permissions to create and manage overlay windows.</string>
 </dict>
 </plist> 

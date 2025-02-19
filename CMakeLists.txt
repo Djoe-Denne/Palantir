@@ -4,6 +4,11 @@ project(InterviewCheater)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# Add debug definitions
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-DDEBUG)
+endif()
+
 # Define source groups
 set(CORE_SOURCES
     src/main.cpp
