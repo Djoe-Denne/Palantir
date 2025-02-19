@@ -3,7 +3,7 @@
 
 #include <memory>
 #include "input/iinput.hpp"
-
+namespace interview_cheater::input {
 class InputFactory {
 public:
     static std::unique_ptr<IInput> create();
@@ -11,5 +11,5 @@ public:
 private:
     InputFactory() = delete;
 };
-
+}
 #endif // INPUT_FACTORY_HPP 

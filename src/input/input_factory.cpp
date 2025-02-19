@@ -1,11 +1,10 @@
 #include "input/input_factory.hpp"
+#include "input/iinput.hpp"
+#include "input/input.hpp"
+#include <memory>
 
-#ifdef _WIN32
-#include "platform/windows/input.hpp"
-#elif defined(__APPLE__)
-#include "platform/macos/input.hpp"
-#endif
-
-std::unique_ptr<IInput> InputFactory::create() {
-    return std::make_unique<Input>();
-} 
+namespace interview_cheater::input {
+auto InputFactory::create() -> std::unique_ptr<IInput> {
+  return std::make_unique<interview_cheater::input::Input>();
+}
+} // namespace interview_cheater::input

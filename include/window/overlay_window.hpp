@@ -4,6 +4,8 @@
 #include "window/iwindow.hpp"
 #include <memory>
 
+namespace interview_cheater::window {
+
 class OverlayWindow : public IWindow {
 public:
     OverlayWindow();
@@ -24,4 +26,6 @@ private:
     bool running;
 };
 
-#endif // OVERLAY_WINDOW_HPP 
+} // namespace interview_cheater::window
+
+#endif // OVERLAY_WINDOW_HPP
