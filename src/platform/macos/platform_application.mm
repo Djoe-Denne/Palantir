@@ -80,10 +80,10 @@
 
 namespace interview_cheater {
 
-class MacOSApplication::Impl {
+class ::Impl {
 public:
     Impl(signal::SignalManager& signalManager) : signalManager_(signalManager), signalChecker(nil) {
-        DebugLog(@"Initializing MacOSApplication");
+        DebugLog(@"Initializing ");
         [NSApplication sharedApplication];
         [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
         
@@ -125,16 +125,16 @@ private:
     SignalChecker* signalChecker;
 };
 
-MacOSApplication::MacOSApplication(signal::SignalManager& signalManager) 
+::(signal::SignalManager& signalManager) 
     : pImpl(std::make_unique<Impl>(signalManager)) {}
 
-MacOSApplication::~MacOSApplication() = default;
+::~() = default;
 
-int MacOSApplication::run() {
+int ::run() {
     return pImpl->run();
 }
 
-void MacOSApplication::quit() {
+void ::quit() {
     pImpl->quit();
 }
 
