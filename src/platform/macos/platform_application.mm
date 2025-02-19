@@ -9,15 +9,15 @@
 #endif
 
 @interface SignalChecker : NSObject
-@property (nonatomic, assign) SignalManager* signalManager;
+@property (nonatomic, assign) interview_cheater::signal::SignalManager* signalManager;
 @property (nonatomic, strong) id globalMonitor;
 @property (nonatomic, strong) id localMonitor;
-- (instancetype)initWithSignalManager:(SignalManager*)signalManager;
+- (instancetype)initWithSignalManager:(interview_cheater::signal::SignalManager*)signalManager;
 @end
 
 @implementation SignalChecker
 
-- (instancetype)initWithSignalManager:(SignalManager*)signalManager {
+- (instancetype)initWithSignalManager:(interview_cheater::signal::SignalManager*)signalManager {
     if (self = [super init]) {
         DebugLog(@"Initializing SignalChecker");
         self.signalManager = signalManager;
@@ -53,7 +53,7 @@
 - (void)handleKeyEvent:(NSEvent *)event {
     // Check for Command + / combination
     if (event.type == NSEventTypeKeyDown &&
-        event.keyCode == KeyCodes::KEY_SLASH &&
+        event.keyCode == interview_cheater::input::KeyCodes::KEY_SLASH &&
         (event.modifierFlags & NSEventModifierFlagCommand)) {
         DebugLog(@"Hotkey combination detected (Command + /)");
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -80,7 +80,7 @@
 
 namespace interview_cheater {
 
-class ::Impl {
+class PlatformApplication::Impl {
 public:
     Impl(signal::SignalManager& signalManager) : signalManager_(signalManager), signalChecker(nil) {
         DebugLog(@"Initializing ");
@@ -125,16 +125,16 @@ private:
     SignalChecker* signalChecker;
 };
 
-::(signal::SignalManager& signalManager) 
+PlatformApplication::PlatformApplication(interview_cheater::signal::SignalManager& signalManager) 
     : pImpl(std::make_unique<Impl>(signalManager)) {}
 
-::~() = default;
+PlatformApplication::~PlatformApplication() = default;
 
-int ::run() {
+int PlatformApplication::run() {
     return pImpl->run();
 }
 
-void ::quit() {
+void PlatformApplication::quit() {
     pImpl->quit();
 }
 
