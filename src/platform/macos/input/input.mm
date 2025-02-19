@@ -23,7 +23,7 @@
 
 - (void)handleEvent:(NSEvent *)event {
     if (event.type == NSEventTypeKeyDown || event.type == NSEventTypeKeyUp) {
-        if (event.keyCode == KeyCodes::KEY_SLASH) {
+        if (event.keyCode == interview_cheater::input::KeyCodes::KEY_SLASH) {
             self.keyPressed = (event.type == NSEventTypeKeyDown);
         }
     } else if (event.type == NSEventTypeFlagsChanged) {
