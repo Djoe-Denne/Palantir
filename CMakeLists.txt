@@ -3,6 +3,13 @@ cmake_minimum_required(VERSION 3.10)
 project(InterviewCheater)
 
 set(CMAKE_CXX_STANDARD 17)
+# Set CMake to look in the cmake/ folder for additional scripts
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+# Include your custom Clang formatting/linting script
+include(clang-ignore)
+include(format-lint)
+
 
 # Add debug definitions
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -38,7 +45,7 @@ set(PLATFORM_COMMON_SOURCES
 # Platform-specific configuration and sources
 if(WIN32)
     set(PLATFORM_SOURCES
-        src/platform/windows/input.cpp
+        src/platform/windows/input/input.cpp
         src/platform/windows/window/overlay_window.cpp
         src/platform/windows/platform_application.cpp
     )
