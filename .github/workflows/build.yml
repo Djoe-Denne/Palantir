@@ -35,26 +35,6 @@ jobs:
     # Step 1: Check out the repository code
     - uses: actions/checkout@v4
     
-    # Step 2a: Install and configure LLVM/Clang tools for Windows
-    # Uses Chocolatey package manager and adds to PATH
-    - name: Setup LLVM and Clang (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
-        # Install LLVM toolchain using Chocolatey
-        choco install llvm -y
-        # Add LLVM binaries to PATH for clang-format and clang-tidy
-        echo "C:\Program Files\LLVM\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-    
-    # Step 2b: Install and configure LLVM/Clang tools for macOS
-    # Uses Homebrew package manager and adds to PATH
-    - name: Setup LLVM and Clang (macOS)
-      if: matrix.os == 'macos-latest'
-      run: |
-        # Install LLVM toolchain using Homebrew
-        brew install llvm
-        # Add LLVM binaries to PATH for clang-format and clang-tidy
-        echo "/usr/local/opt/llvm/bin" >> $GITHUB_PATH
-    
     # Step 3: Configure CMake in Release mode
     # This generates the build system and enables our custom targets
     - name: Configure CMake
