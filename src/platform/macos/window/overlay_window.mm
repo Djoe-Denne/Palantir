@@ -123,12 +123,10 @@ class OverlayWindow::Impl {
         // Set up view hierarchy
         [scrollView setDocumentView:textView];
         [window_ setContentView:scrollView];
-        [scrollView release];
-        [textView release];
 
         // Set up delegate
         delegate_ = [[OverlayWindowDelegate alloc] init];
-        delegate_.overlayWindow = (__bridge OverlayWindow*)this;
+        delegate_.overlayWindow = (__bridge_retained interview_cheater::window::OverlayWindow*)this;
         [window_ setDelegate:delegate_];
 
         DEBUG_LOG("Content view setup complete");
@@ -194,11 +192,9 @@ class OverlayWindow::Impl {
         if (window_ != nil) {
             [window_ setDelegate:nil];
             [window_ close];
-            [window_ release];
             window_ = nil;
         }
         if (delegate_ != nil) {
-            [delegate_ release];
             delegate_ = nil;
         }
     }
@@ -210,11 +206,11 @@ class OverlayWindow::Impl {
 
 auto OverlayWindow::create() -> void {
     DEBUG_LOG("Creating window");
-    pImpl->create();
+    pImpl_->create();
     running_ = true;
 }
 
-auto OverlayWindow::show() -> void { pImpl->show(); }
+auto OverlayWindow::show() -> void { pImpl_->show(); }
 
 auto OverlayWindow::update() -> void {
     // No update needed
@@ -222,11 +218,11 @@ auto OverlayWindow::update() -> void {
 
 auto OverlayWindow::close() -> void {
     DEBUG_LOG("Closing window and setting running to false");
-    pImpl->close();
+    pImpl_->close();
     running_ = false;
 }
 
-[[nodiscard]] auto OverlayWindow::getNativeHandle() const -> void* { return pImpl->getNativeHandle(); }
+[[nodiscard]] auto OverlayWindow::getNativeHandle() const -> void* { return pImpl_->getNativeHandle(); }
 
 [[nodiscard]] auto OverlayWindow::isRunning() const -> bool { return running_; }
 
