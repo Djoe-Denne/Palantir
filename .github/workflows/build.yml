@@ -53,18 +53,48 @@ jobs:
       id: lint  # ID used for referencing in the results comment
       continue-on-error: true  # Don't fail the workflow immediately
       run: |
-        # Run clang-tidy and generate report
-        cmake --build ${{github.workspace}}/build --target lint-check
-        # Count the number of warnings in the report
-        ls ${{github.workspace}}/build/lint-reports
-        cat ${{github.workspace}}/build/lint-reports/report.txt
-        lint_warnings=$(cat ${{github.workspace}}/build/lint-reports/report.txt | grep -c "warning:" || true)
-        # Export warning count for use in the comment
-        echo "LINT_WARNINGS=$lint_warnings" >> $GITHUB_ENV
-        # Fail if we have more than 5 warnings
-        if [ "$lint_warnings" -gt 5 ]; then
-          echo "Too many lint warnings: $lint_warnings (threshold: 5)"
-          exit 1
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          # Windows-specific commands using PowerShell
+          cmake --build ${{github.workspace}}/build --target lint-check
+          if (Test-Path "${{github.workspace}}/build/lint-reports") {
+            Get-ChildItem "${{github.workspace}}/build/lint-reports"
+            if (Test-Path "${{github.workspace}}/build/lint-reports/report.txt") {
+              Get-Content "${{github.workspace}}/build/lint-reports/report.txt"
+              $lint_warnings = (Select-String -Path "${{github.workspace}}/build/lint-reports/report.txt" -Pattern "warning:" -AllMatches).Matches.Count
+              echo "LINT_WARNINGS=$lint_warnings" >> $env:GITHUB_ENV
+              if ($lint_warnings -gt 5) {
+                echo "Too many lint warnings: $lint_warnings (threshold: 5)"
+                exit 1
+              }
+            } else {
+              echo "Report file not found"
+              exit 1
+            }
+          } else {
+            echo "Lint reports directory not found"
+            exit 1
+          }
+        else
+          # Unix-based commands (macOS/Linux)
+          cmake --build ${{github.workspace}}/build --target lint-check
+          if [ -d "${{github.workspace}}/build/lint-reports" ]; then
+            ls -la "${{github.workspace}}/build/lint-reports"
+            if [ -f "${{github.workspace}}/build/lint-reports/report.txt" ]; then
+              cat "${{github.workspace}}/build/lint-reports/report.txt"
+              lint_warnings=$(grep -c "warning:" "${{github.workspace}}/build/lint-reports/report.txt" || echo "0")
+              echo "LINT_WARNINGS=$lint_warnings" >> $GITHUB_ENV
+              if [ "$lint_warnings" -gt 5 ]; then
+                echo "Too many lint warnings: $lint_warnings (threshold: 5)"
+                exit 1
+              fi
+            else
+              echo "Report file not found"
+              exit 1
+            fi
+          else
+            echo "Lint reports directory not found"
+            exit 1
+          fi
         fi
     
     # Step 6: Post results as a PR comment
