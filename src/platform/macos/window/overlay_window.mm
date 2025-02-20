@@ -59,6 +59,7 @@ namespace interview_cheater::window {
 class OverlayWindow::Impl {
    public:
     Impl() = delete;
+    explicit Impl(OverlayWindow* parent) : parent_(parent) {}
     Impl(const Impl&) = delete;
     Impl(Impl&&) = delete;
     auto operator=(const Impl&) -> Impl& = delete;
@@ -126,7 +127,7 @@ class OverlayWindow::Impl {
 
         // Set up delegate
         delegate_ = [[OverlayWindowDelegate alloc] init];
-        delegate_.overlayWindow = (__bridge_retained interview_cheater::window::OverlayWindow*)this;
+        delegate_.overlayWindow = parent_;
         [window_ setDelegate:delegate_];
 
         DEBUG_LOG("Content view setup complete");
@@ -202,7 +203,11 @@ class OverlayWindow::Impl {
    private:
     NSWindow* window_{nil};
     OverlayWindowDelegate* delegate_{nil};
+    OverlayWindow* parent_;
 };
+
+OverlayWindow::OverlayWindow() : pImpl_(std::make_unique<Impl>(this)) {}
+OverlayWindow::~OverlayWindow() = default;
 
 auto OverlayWindow::create() -> void {
     DEBUG_LOG("Creating window");
