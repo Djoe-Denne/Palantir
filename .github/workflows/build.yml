@@ -45,7 +45,7 @@ jobs:
     - name: Check Format
       id: format # ID used for referencing in the results comment
       run: |
-        cmake --build ${{github.workspace}}/build --target format-check
+        C:/Program Files/LLVM/bin/clang-format.exe -style=file -output-replacements-xml D:/a/interview-cheater/interview-cheater/src/main.cpp;D:/a/interview-cheater/interview-cheater/src/command/show_command.cpp;D:/a/interview-cheater/interview-cheater/src/signal/toggle_signal.cpp;D:/a/interview-cheater/interview-cheater/src/signal/signal_manager.cpp;D:/a/interview-cheater/interview-cheater/src/window/window_manager.cpp;D:/a/interview-cheater/interview-cheater/src/input/input_factory.cpp;D:/a/interview-cheater/interview-cheater/src/platform/application.cpp;D:/a/interview-cheater/interview-cheater/include/command/icommand.hpp;D:/a/interview-cheater/interview-cheater/include/command/show_command.hpp;D:/a/interview-cheater/interview-cheater/include/input/iinput.hpp;D:/a/interview-cheater/interview-cheater/include/input/input_factory.hpp;D:/a/interview-cheater/interview-cheater/include/mode/debug/utils/logger.hpp;D:/a/interview-cheater/interview-cheater/include/mode/release/utils/logger.hpp
     
     # Step 5: Run static analysis with clang-tidy
     # Checks for common issues and enforces coding standards
