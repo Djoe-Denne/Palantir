@@ -56,6 +56,8 @@ jobs:
         # Run clang-tidy and generate report
         cmake --build ${{github.workspace}}/build --target lint-check
         # Count the number of warnings in the report
+        ls ${{github.workspace}}/build/lint-reports
+        cat ${{github.workspace}}/build/lint-reports/report.txt
         lint_warnings=$(cat ${{github.workspace}}/build/lint-reports/report.txt | grep -c "warning:" || true)
         # Export warning count for use in the comment
         echo "LINT_WARNINGS=$lint_warnings" >> $GITHUB_ENV
