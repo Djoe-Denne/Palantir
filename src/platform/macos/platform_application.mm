@@ -83,8 +83,8 @@ class PlatformApplication::Impl {
    public:
     Impl(const Impl& other) = delete;
     auto operator=(const Impl& other) -> Impl& = delete;
-    Impl(Impl&& other) noexcept = default;
-    auto operator=(Impl&& other) noexcept -> Impl& = default;
+    Impl(Impl&& other) noexcept = delete;  // Can't move because of reference member
+    auto operator=(Impl&& other) noexcept -> Impl& = delete;  // Can't move because of reference member
 
     explicit Impl(signal::SignalManager& signalManager) : signalManager_(signalManager) {
         DEBUG_LOG("Initializing ");
@@ -92,7 +92,7 @@ class PlatformApplication::Impl {
         [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
 
         // Request accessibility permissions if needed
-        NSDictionary* options = @{(id)kAXTrustedCheckOptionPrompt : @YES};
+        NSDictionary* options = @{(__bridge id)kAXTrustedCheckOptionPrompt : @YES};
         bool accessibilityEnabled = AXIsProcessTrustedWithOptions((CFDictionaryRef)options);
 
         DEBUG_LOG("Accessibility status: %s", accessibilityEnabled ? "Enabled" : "Disabled");
