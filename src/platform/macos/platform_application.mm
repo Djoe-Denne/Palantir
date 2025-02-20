@@ -69,18 +69,15 @@
     DEBUG_LOG("Cleaning up SignalChecker");
     if (self.globalMonitor != nil) {
         [NSEvent removeMonitor:self.globalMonitor];
-        [self.globalMonitor release];
     }
     if (self.localMonitor != nil) {
         [NSEvent removeMonitor:self.localMonitor];
-        [self.localMonitor release];
     }
-    [super dealloc];
 }
 
 @end
 
-namespace interview_cheater::window {
+namespace interview_cheater {
 
 class PlatformApplication::Impl {
    public:
@@ -118,7 +115,6 @@ class PlatformApplication::Impl {
     auto quit() -> void {
         DEBUG_LOG("Application quitting");
         if (signalChecker_ != nil) {
-            [signalChecker_ release];
             signalChecker_ = nil;
         }
         [NSApp terminate:nil];
@@ -127,7 +123,6 @@ class PlatformApplication::Impl {
     ~Impl() {
         DEBUG_LOG("Application being destroyed");
         if (signalChecker_ != nil) {
-            [signalChecker_ release];
             signalChecker_ = nil;
         }
     }
@@ -137,13 +132,13 @@ class PlatformApplication::Impl {
     SignalChecker* signalChecker_{nil};
 };
 
-PlatformApplication::PlatformApplication(interview_cheater::signal::SignalManager& signalManager)
-    : pImpl(std::make_unique<Impl>(signalManager)) {}
+PlatformApplication::PlatformApplication(signal::SignalManager& signalManager)
+    : pImpl_(std::make_unique<Impl>(signalManager)) {}
 
 PlatformApplication::~PlatformApplication() = default;
 
-[[nodiscard]] auto PlatformApplication::run() -> int { return pImpl->run(); }
+[[nodiscard]] auto PlatformApplication::run() -> int { return pImpl_->run(); }
 
-auto PlatformApplication::quit() -> void { pImpl->quit(); }
+auto PlatformApplication::quit() -> void { pImpl_->quit(); }
 
-}  // namespace interview_cheater::window
+}  // namespace interview_cheater
