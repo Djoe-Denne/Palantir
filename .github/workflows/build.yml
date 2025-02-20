@@ -1,44 +1,160 @@
+# Main workflow for building and checking code quality
 name: Build
 
+# Trigger the workflow on push and pull request events for the master branch
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
 
+# Prevent multiple workflows from running simultaneously on the same ref
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Global environment variables
 env:
-  FORCE_COLOR: 1 
-  TERM: xterm-256color
+  FORCE_COLOR: 1  # Enable colored output in logs
+  TERM: xterm-256color  # Terminal type for better formatting
 
 jobs:
+  # First parallel job: Code quality checks (formatting and linting)
+  # This job focuses on code quality without blocking the build
+  code-quality:
+    name: Code Quality-${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Don't fail fast - we want to see results from all platforms
+      fail-fast: false
+      matrix:
+        # Run on both Windows and macOS to catch platform-specific issues
+        os: [windows-latest, macos-latest]
+    
+    steps:
+    # Step 1: Check out the repository code
+    - uses: actions/checkout@v4
+    
+    # Step 2a: Install and configure LLVM/Clang tools for Windows
+    # Uses Chocolatey package manager and adds to PATH
+    - name: Setup LLVM and Clang (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        # Install LLVM toolchain using Chocolatey
+        choco install llvm -y
+        # Add LLVM binaries to PATH for clang-format and clang-tidy
+        echo "C:\Program Files\LLVM\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+    
+    # Step 2b: Install and configure LLVM/Clang tools for macOS
+    # Uses Homebrew package manager and adds to PATH
+    - name: Setup LLVM and Clang (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        # Install LLVM toolchain using Homebrew
+        brew install llvm
+        # Add LLVM binaries to PATH for clang-format and clang-tidy
+        echo "/usr/local/opt/llvm/bin" >> $GITHUB_PATH
+    
+    # Step 3: Configure CMake in Release mode
+    # This generates the build system and enables our custom targets
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
+    
+    # Step 4: Check code formatting
+    # Runs clang-format in check mode (no modifications)
+    - name: Check Format
+      id: format  # ID used for referencing in the results comment
+      continue-on-error: true  # Don't fail the workflow immediately
+      run: cmake --build ${{github.workspace}}/build --target format-check
+    
+    # Step 5: Run static analysis with clang-tidy
+    # Checks for common issues and enforces coding standards
+    - name: Run Lint Check
+      id: lint  # ID used for referencing in the results comment
+      continue-on-error: true  # Don't fail the workflow immediately
+      run: |
+        # Run clang-tidy and generate report
+        cmake --build ${{github.workspace}}/build --target lint-check
+        # Count the number of warnings in the report
+        lint_warnings=$(cat ${{github.workspace}}/build/lint-reports/report.txt | grep -c "warning:" || true)
+        # Export warning count for use in the comment
+        echo "LINT_WARNINGS=$lint_warnings" >> $GITHUB_ENV
+        # Fail if we have more than 5 warnings
+        if [ "$lint_warnings" -gt 5 ]; then
+          echo "Too many lint warnings: $lint_warnings (threshold: 5)"
+          exit 1
+        fi
+    
+    # Step 6: Post results as a PR comment
+    # Creates or updates a comment with detailed results
+    - name: Post Code Quality Results
+      if: always() && github.event_name == 'pull_request'  # Run even if previous steps failed, but only on PRs
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          // Convert step outcomes to emoji
+          const formatStatus = '${{ steps.format.outcome }}' === 'success' ? '✅' : '❌';
+          const lintStatus = '${{ steps.lint.outcome }}' === 'success' ? '✅' : '❌';
+          const lintWarnings = process.env.LINT_WARNINGS || 'N/A';
+          
+          // Construct a detailed comment with results and instructions
+          const body = `## Code Quality Check Results
+          
+          ### Format Check: ${formatStatus}
+          ${formatStatus === '❌' ? '- Code formatting issues found. Please run `cmake --build . --target format` locally.' : '- No formatting issues.'}
+          
+          ### Lint Check: ${lintStatus}
+          - Found ${lintWarnings} lint warnings
+          ${lintWarnings > 5 ? '- ⚠️ Too many lint warnings (threshold: 5)' : ''}
+          ${lintStatus === '❌' ? '- Please run `cmake --build . --target lint` locally to fix issues.' : ''}
+          
+          ${formatStatus === '❌' || lintStatus === '❌' ? '### How to fix:
+          1. Clone the PR branch locally
+          2. Run \`cmake -B build\`
+          3. Run \`cmake --build build --target fix-all\`
+          4. Commit and push the changes' : ''}`;
+          
+          // Post the comment to the PR
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: body
+          });
+
+  # Second parallel job: Build the project
+  # Runs independently of code-quality to speed up overall workflow
   build:
     name: Build-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false  # Explicitly set to false to ensure builds run independently
+      fail-fast: false  # Don't cancel other platforms if one fails
       matrix:
         os: [windows-latest, macos-latest]
         include:
+          # Windows-specific settings
           - os: windows-latest
             artifact_name: InterviewCheater-Windows
             artifact_path: build/Release/InterviewCheater.exe
+          # macOS-specific settings
           - os: macos-latest
             artifact_name: InterviewCheater-macOS
             artifact_path: build/InterviewCheater.app
     
     steps:
+    # Step 1: Check out the repository code
     - uses: actions/checkout@v4
     
+    # Step 2: Configure CMake in Release mode
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
     
+    # Step 3: Build the project
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config Release
     
+    # Step 4: Upload the built application as an artifact
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:

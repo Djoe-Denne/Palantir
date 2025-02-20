@@ -35,30 +35,31 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         # Export compile commands for clang-tidy
         set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "Enable/Disable output of compile commands during generation." FORCE)
 
-        # Create a list of include directories
-        set(INCLUDE_DIRS
+        # Create a list of include directories and compiler flags
+        set(COMPILER_FLAGS
+            -std=c++17
             -I${PROJECT_ROOT}/include
             -I${PROJECT_ROOT}/include/mode/debug
             -I${PROJECT_ROOT}/include/mode/release
         )
         if(WIN32)
-            list(APPEND INCLUDE_DIRS -I${PROJECT_ROOT}/include/platform/windows)
+            list(APPEND COMPILER_FLAGS -I${PROJECT_ROOT}/include/platform/windows)
         elseif(APPLE)
-            list(APPEND INCLUDE_DIRS -I${PROJECT_ROOT}/include/platform/macos)
+            list(APPEND COMPILER_FLAGS -I${PROJECT_ROOT}/include/platform/macos)
         endif()
 
         # Add lint target with compile_commands.json
         add_custom_target(lint
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/lint-reports
             COMMAND ${CLANG_TIDY_EXEC} 
-                -p=${CMAKE_BINARY_DIR} 
                 ${ALL_SOURCES} 
-                --
-                ${INCLUDE_DIRS}
+                -p=${CMAKE_BINARY_DIR} 
                 --quiet
                 --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
                 --format-style=file
                 --fix
+                --
+                ${COMPILER_FLAGS}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "Running clang-tidy to fix issues"
             VERBATIM
@@ -68,13 +69,13 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         add_custom_target(lint-check
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/lint-reports
             COMMAND ${CLANG_TIDY_EXEC} 
-                -p=${CMAKE_BINARY_DIR} 
                 ${ALL_SOURCES} 
-                --
-                ${INCLUDE_DIRS}
+                -p=${CMAKE_BINARY_DIR} 
                 --quiet
                 --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
                 --format-style=file
+                --
+                ${COMPILER_FLAGS}
                 > ${CMAKE_BINARY_DIR}/lint-reports/report.txt
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "Running clang-tidy check"
