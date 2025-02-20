@@ -1,32 +1,38 @@
 #ifndef OVERLAY_WINDOW_HPP
 #define OVERLAY_WINDOW_HPP
 
-#include "window/iwindow.hpp"
-
 #include <memory>
 
-namespace interview_cheater::window
-{
+#include "window/iwindow.hpp"
 
-class OverlayWindow : public IWindow
-{
+namespace interview_cheater::window {
+
+class OverlayWindow : public IWindow {
 public:
     OverlayWindow();
     ~OverlayWindow() override;
 
-    void  create() override;
-    void  show() override;
-    void  update() override;
-    void  close() override;
-    void* getNativeHandle() const override;
+    // Delete copy operations
+    OverlayWindow(const OverlayWindow&) = delete;
+    auto operator=(const OverlayWindow&) -> OverlayWindow& = delete;
 
-    bool isRunning() const override;
-    void setRunning(bool runningState) override;
+    // Define move operations
+    OverlayWindow(OverlayWindow&&) noexcept = default;
+    auto operator=(OverlayWindow&&) noexcept -> OverlayWindow& = default;
+
+    auto create() -> void override;
+    auto show() -> void override;
+    auto update() -> void override;
+    auto close() -> void override;
+    [[nodiscard]] auto getNativeHandle() const -> void* override;
+
+    [[nodiscard]] auto isRunning() const -> bool override;
+    auto setRunning(bool runningState) -> void override;
 
 private:
     class Impl;
-    std::unique_ptr<Impl> pImpl;
-    bool                  running;
+    std::unique_ptr<Impl> pImpl_;
+    bool running_ = false;
 };
 
 }  // namespace interview_cheater::window

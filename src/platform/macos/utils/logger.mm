@@ -1,16 +1,13 @@
-#import <Foundation/Foundation.h>
 #include "utils/logger.hpp"
-#include <cstdarg>
-#include <cstdio>
+#import <Foundation/Foundation.h>
+#include <sstream>
 
-void platform_log(const char* function, int line, const char* format, ...) {
-    va_list args;
-    va_start(args, format);
+namespace interview_cheater::utils {
 
-    char buffer[1024];
-    vsnprintf(buffer, sizeof(buffer), format, args);
-
-    va_end(args);
-
-    NSLog(@"%s:%d - %s", function, line, buffer);
+[[nodiscard]] auto PlatformLog(std::string_view function, int line, const std::string& message) -> void { // NOLINT(bugprone-easily-swappable-parameters)
+    std::ostringstream finalStream;
+    finalStream << function << ":" << line << " - " << message;
+    NSLog(@"%s", finalStream.str().c_str());
 }
+
+} // namespace interview_cheater::utils
