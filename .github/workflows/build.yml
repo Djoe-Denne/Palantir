@@ -1,44 +1,97 @@
+# Main workflow for building and checking code quality
 name: Build
 
+# Trigger the workflow on push and pull request events for the master branch
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
 
+# Prevent multiple workflows from running simultaneously on the same ref
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Global environment variables
 env:
-  FORCE_COLOR: 1 
-  TERM: xterm-256color
+  FORCE_COLOR: 1  # Enable colored output in logs
+  TERM: xterm-256color  # Terminal type for better formatting
 
 jobs:
+  # First parallel job: Code quality checks (formatting and linting)
+  # This job focuses on code quality without blocking the build
+  code-quality:
+    name: Code Quality-${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Don't fail fast - we want to see results from all platforms
+      fail-fast: false
+      matrix:
+        # Run on both Windows and macOS to catch platform-specific issues
+        os: [windows-latest, macos-latest]
+    
+    steps:
+    # Step 1: Check out the repository code
+    - uses: actions/checkout@v4
+    
+    # Step 3: Configure CMake in Release mode
+    # This generates the build system and enables our custom targets
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
+    
+    # Step 4: Check code formatting
+    # Runs clang-format in check mode (no modifications)
+    - name: Check Format
+      id: format # ID used for referencing in the results comment
+      run: |
+        cmake --build ${{github.workspace}}/build --target format-check
+    
+    # Step 5: Run static analysis with clang-tidy
+    # Checks for common issues and enforces coding standards
+    - name: Run Lint Check
+      id: lint
+      continue-on-error: true
+      run: |
+        cmake --build ${{github.workspace}}/build --target lint-check
+
+    # Step 6: Analyze lint results using CMake target
+    - name: Analyze Lint Results
+      run: |
+        cmake --build ${{github.workspace}}/build --target lint-analyze
+    
+  # Second parallel job: Build the project
+  # Runs independently of code-quality to speed up overall workflow
   build:
     name: Build-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false  # Explicitly set to false to ensure builds run independently
+      fail-fast: false  # Don't cancel other platforms if one fails
       matrix:
         os: [windows-latest, macos-latest]
         include:
+          # Windows-specific settings
           - os: windows-latest
             artifact_name: InterviewCheater-Windows
             artifact_path: build/Release/InterviewCheater.exe
+          # macOS-specific settings
           - os: macos-latest
             artifact_name: InterviewCheater-macOS
             artifact_path: build/InterviewCheater.app
     
     steps:
+    # Step 1: Check out the repository code
     - uses: actions/checkout@v4
     
+    # Step 2: Configure CMake in Release mode
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
     
+    # Step 3: Build the project
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config Release
     
+    # Step 4: Upload the built application as an artifact
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:

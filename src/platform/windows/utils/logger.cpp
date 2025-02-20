@@ -1,5 +1,7 @@
 #include "utils/logger.hpp"
+
 #include <Windows.h>
+
 #include <sstream>
 
 namespace interview_cheater::utils {
@@ -10,4 +12,4 @@ auto PlatformLog(std::string_view function, int line, const std::string& message
     OutputDebugStringA(finalStream.str().c_str());
 }
 
-} // namespace interview_cheater::utils
+}  // namespace interview_cheater::utils

@@ -8,8 +8,6 @@
 
 namespace interview_cheater::input {
 
-auto InputFactory::createInput() -> std::unique_ptr<IInput> {
-    return std::make_unique<Input>();
-}
+auto InputFactory::createInput() -> std::unique_ptr<IInput> { return std::make_unique<Input>(); }
 
 }  // namespace interview_cheater::input

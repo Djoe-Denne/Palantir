@@ -13,20 +13,11 @@ find_program_or_warn(CLANG_TIDY_EXEC clang-tidy)
 if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
     message(STATUS "✅ Clang tools found: ${CLANG_FORMAT_EXEC}, ${CLANG_TIDY_EXEC}")
 
-    # Collect all source files for formatting/linting
-    file(GLOB_RECURSE SOURCE_FILES
-        "${CMAKE_SOURCE_DIR}/src/*.cpp"
-        "${CMAKE_SOURCE_DIR}/src/*.hpp"
-        "${CMAKE_SOURCE_DIR}/src/*.mm"
-        "${CMAKE_SOURCE_DIR}/include/*.hpp"
-        "${CMAKE_SOURCE_DIR}/include/*.h"
-    )
-
-    if (SOURCE_FILES)
+    if (ALL_SOURCES)
         # Add format target
         add_custom_target(format
             COMMAND ${CMAKE_COMMAND} -E echo "Running clang-format..."
-            COMMAND ${CLANG_FORMAT_EXEC} -style=file -i ${SOURCE_FILES}
+            COMMAND ${CLANG_FORMAT_EXEC} -style=file -i ${ALL_SOURCES}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "Formatting source files"
             VERBATIM
@@ -35,8 +26,11 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         # Add format-check target (verify formatting without changing files)
         add_custom_target(format-check
             COMMAND ${CMAKE_COMMAND} -E echo "Checking formatting..."
-            COMMAND ${CLANG_FORMAT_EXEC} -style=file -output-replacements-xml ${SOURCE_FILES} | tee ${CMAKE_BINARY_DIR}/clang-format.xml | grep -c "<replacement " > /dev/null && exit 1 || exit 0
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/format-reports
+            COMMAND ${CLANG_FORMAT_EXEC} -style=file -output-replacements-xml -verbose ${ALL_SOURCES} > ${CMAKE_BINARY_DIR}/format-reports/clang-format.xml
+            COMMAND ${CMAKE_COMMAND} -E echo "Analyzing format check results..."
+            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/cmake/analyze-format.cmake
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} 
             COMMENT "Checking if sources are properly formatted"
             VERBATIM
         )
@@ -44,16 +38,31 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         # Export compile commands for clang-tidy
         set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "Enable/Disable output of compile commands during generation." FORCE)
 
+        # Create a list of include directories and compiler flags
+        set(COMPILER_FLAGS
+            -std=c++17
+            -I${PROJECT_ROOT}/include
+            -I${PROJECT_ROOT}/include/mode/debug
+            -I${PROJECT_ROOT}/include/mode/release
+        )
+        if(WIN32)
+            list(APPEND COMPILER_FLAGS -I${PROJECT_ROOT}/include/platform/windows)
+        elseif(APPLE)
+            list(APPEND COMPILER_FLAGS -I${PROJECT_ROOT}/include/platform/macos)
+        endif()
+
         # Add lint target with compile_commands.json
         add_custom_target(lint
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/lint-reports
             COMMAND ${CLANG_TIDY_EXEC} 
+                ${ALL_SOURCES} 
                 -p=${CMAKE_BINARY_DIR} 
-                ${SOURCE_FILES} 
                 --quiet
                 --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
                 --format-style=file
                 --fix
+                --
+                ${COMPILER_FLAGS}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "Running clang-tidy to fix issues"
             VERBATIM
@@ -63,14 +72,27 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         add_custom_target(lint-check
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/lint-reports
             COMMAND ${CLANG_TIDY_EXEC} 
+                ${ALL_SOURCES} 
                 -p=${CMAKE_BINARY_DIR} 
-                ${SOURCE_FILES} 
                 --quiet
                 --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
                 --format-style=file
+                --
+                ${COMPILER_FLAGS}
                 > ${CMAKE_BINARY_DIR}/lint-reports/report.txt
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "Running clang-tidy check"
+            VERBATIM
+        )
+
+        # Add lint-analyze target to process the lint report
+        add_custom_target(lint-analyze
+            COMMAND ${CMAKE_COMMAND} 
+                -DREPORT_FILE=${CMAKE_BINARY_DIR}/lint-reports/report.txt
+                -DWARNING_THRESHOLD=5
+                -P ${CMAKE_SOURCE_DIR}/cmake/analyze-lint.cmake
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            COMMENT "Analyzing lint report"
             VERBATIM
         )
 

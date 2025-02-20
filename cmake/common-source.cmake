@@ -1,3 +1,8 @@
+file(GLOB_RECURSE PROJECT_HEADERS
+    "${PROJECT_ROOT}/include/*.hpp"
+    "${PROJECT_ROOT}/include/*.h"
+)
+
 # Project structure variables
 set(CORE_SOURCES
     ${PROJECT_ROOT}/src/main.cpp
@@ -40,4 +45,15 @@ endif()
 set(COMMON_INCLUDE_DIRS
     ${PROJECT_ROOT}/include
     ${COMMON_INCLUDES}
+)
+
+# Set ALL_SOURCES variable for clang tools
+set(ALL_SOURCES
+    ${CORE_SOURCES}
+    ${COMMAND_SOURCES}
+    ${SIGNAL_SOURCES}
+    ${WINDOW_SOURCES}
+    ${INPUT_SOURCES}
+    ${PLATFORM_COMMON_SOURCES}
+    ${PROJECT_HEADERS}
 ) 
