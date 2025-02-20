@@ -42,6 +42,10 @@ auto CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> 
 
     return DefWindowProcW(hwnd, uMsg, wParam, lParam);
 }
+
+constexpr int WINDOW_WIDTH = 800;
+constexpr int WINDOW_HEIGHT = 600;
+constexpr BYTE WINDOW_ALPHA = 240;
 }  // namespace
 
 class OverlayWindow::Impl {
@@ -57,40 +61,35 @@ public:
 
         RegisterClassExW(&windowClass);
 
-        // todo: move these to a separate file
-        constexpr int windowWidth = 800;
-        constexpr int windowHeight = 600;
-
-        hwnd = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST, L"InterviewCheaterClass", L"Interview Cheater",
-                               WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, windowWidth, windowHeight, nullptr,
+        hwnd_ = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST, L"InterviewCheaterClass", L"Interview Cheater",
+                               WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT, nullptr,
                                nullptr, GetModuleHandleW(nullptr), nullptr);
 
-        if (hwnd != nullptr) {
+        if (hwnd_ != nullptr) {
             // Store the this pointer
-            SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+            SetWindowLongPtr(hwnd_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
             // Make the window semi-transparent
-            constexpr BYTE kAlphaValue = 240;
-            SetLayeredWindowAttributes(hwnd, 0, kAlphaValue, LWA_ALPHA);
-            SetWindowDisplayAffinity(hwnd, WDA_EXCLUDEFROMCAPTURE);
+            SetLayeredWindowAttributes(hwnd_, 0, WINDOW_ALPHA, LWA_ALPHA);
+            SetWindowDisplayAffinity(hwnd_, WDA_EXCLUDEFROMCAPTURE);
 
             // Hide initially
-            ShowWindow(hwnd, SW_HIDE);
-            running = true;
+            ShowWindow(hwnd_, SW_HIDE);
+            running_ = true;
         }
     }
 
     void show() {
-        if (hwnd == nullptr) {
+        if (hwnd_ == nullptr) {
             return;
         }
 
-        if (IsWindowVisible(hwnd) == TRUE) {
-            ShowWindow(hwnd, SW_HIDE);
+        if (IsWindowVisible(hwnd_) == TRUE) {
+            ShowWindow(hwnd_, SW_HIDE);
         } else {
-            ShowWindow(hwnd, SW_SHOW);
-            SetForegroundWindow(hwnd);
-            UpdateWindow(hwnd);  // Ensure the window is updated
+            ShowWindow(hwnd_, SW_SHOW);
+            SetForegroundWindow(hwnd_);
+            UpdateWindow(hwnd_);  // Ensure the window is updated
         }
     }
 
@@ -103,33 +102,34 @@ public:
     }
 
     void close() {
-        if (hwnd != nullptr) {
-            DestroyWindow(hwnd);
-            hwnd = nullptr;
+        if (hwnd_ != nullptr) {
+            DestroyWindow(hwnd_);
+            hwnd_ = nullptr;
         }
-        running = false;
+        running_ = false;
     }
 
-    [[nodiscard]] auto getNativeHandle() const -> void* { return hwnd; }
+    [[nodiscard]] auto getNativeHandle() const -> void* { return hwnd_; }
 
-    [[nodiscard]] auto isRunning() const -> bool { return running; }
+    [[nodiscard]] auto isRunning() const -> bool { return running_; }
 
-    void setRunning(bool state) { running = state; }
+    void setRunning(bool state) { running_ = state; }
 
 private:
-    HWND hwnd = nullptr;
-    bool running = false;
+    HWND hwnd_{nullptr};
+    bool running_{false};
 };
 
-OverlayWindow::OverlayWindow() : pImpl(std::make_unique<Impl>()), running(false) {}
+OverlayWindow::OverlayWindow() : pImpl_(std::make_unique<Impl>()) {}
+
 OverlayWindow::~OverlayWindow() = default;
 
-void OverlayWindow::create() { pImpl->create(); }
-void OverlayWindow::show() { pImpl->show(); }
-void OverlayWindow::update() { pImpl->update(); }
-void OverlayWindow::close() { pImpl->close(); }
-auto OverlayWindow::getNativeHandle() const -> void* { return pImpl->getNativeHandle(); }
-auto OverlayWindow::isRunning() const -> bool { return pImpl->isRunning(); }
-void OverlayWindow::setRunning(bool runningState) { pImpl->setRunning(runningState); }
+void OverlayWindow::create() { pImpl_->create(); }
+void OverlayWindow::show() { pImpl_->show(); }
+void OverlayWindow::update() { pImpl_->update(); }
+void OverlayWindow::close() { pImpl_->close(); }
+auto OverlayWindow::getNativeHandle() const -> void* { return pImpl_->getNativeHandle(); }
+auto OverlayWindow::isRunning() const -> bool { return pImpl_->isRunning(); }
+void OverlayWindow::setRunning(bool runningState) { pImpl_->setRunning(runningState); }
 
 }  // namespace interview_cheater::window

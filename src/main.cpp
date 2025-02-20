@@ -29,10 +29,10 @@ auto run_app() -> int {
     window->create();
     manager.addWindow(std::move(window));
 
-    auto showCmd = std::make_unique<ShowCommand>(*(manager.getFirstWindow()));
+    auto showCmd = std::make_unique<ShowCommand>(manager);
     manager.executeCommand(std::move(showCmd));
 
-    auto input = InputFactory::create();
+    auto input = InputFactory::createInput();
     signalManager.addSignal(std::make_unique<ToggleSignal>(manager, *input));
     signalManager.startSignals();
 

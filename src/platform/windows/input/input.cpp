@@ -20,11 +20,11 @@ public:
     void update() {}  // No-op for Windows
 };
 
-Input::Input() : pImpl(std::make_unique<Impl>()) {}
+Input::Input() : pImpl_(std::make_unique<Impl>()) {}
 Input::~Input() = default;
 
 auto Input::isKeyPressed() const -> bool { return Impl::isKeyPressed(); }
 auto Input::isModifierActive() const -> bool { return Impl::isModifierActive(); }
-void Input::update() { pImpl->update(); }
+void Input::update() { pImpl_->update(); }
 
 }  // namespace interview_cheater::input

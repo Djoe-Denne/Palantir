@@ -7,10 +7,18 @@
 namespace interview_cheater::input {
 class InputFactory {
 public:
-    static std::unique_ptr<IInput> create();
+    InputFactory() = default;
+    ~InputFactory() = default;
 
-private:
-    InputFactory() = delete;
+    // Delete copy operations
+    InputFactory(const InputFactory&) = delete;
+    auto operator=(const InputFactory&) -> InputFactory& = delete;
+
+    // Define move operations
+    InputFactory(InputFactory&&) noexcept = default;
+    auto operator=(InputFactory&&) noexcept -> InputFactory& = default;
+
+    [[nodiscard]] static auto createInput() -> std::unique_ptr<IInput>;
 };
 }  // namespace interview_cheater::input
 #endif  // INPUT_FACTORY_HPP

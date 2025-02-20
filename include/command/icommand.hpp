@@ -7,12 +7,16 @@ namespace interview_cheater::command {
 class ICommand {
 public:
     virtual ~ICommand() = default;
+
+    // Delete copy operations
     ICommand(const ICommand&) = delete;
     auto operator=(const ICommand&) -> ICommand& = delete;
-    ICommand(ICommand&&) = delete;
-    auto operator=(ICommand&&) -> ICommand& = delete;
 
-    virtual void execute() = 0;
+    // Define move operations
+    ICommand(ICommand&&) noexcept = default;
+    auto operator=(ICommand&&) noexcept -> ICommand& = default;
+
+    virtual auto execute() -> void = 0;
 
 protected:
     ICommand() = default;

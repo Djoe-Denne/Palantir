@@ -9,19 +9,30 @@ class IWindow {
 public:
     virtual ~IWindow() = default;
 
+    // Delete copy operations
+    IWindow(const IWindow&) = delete;
+    auto operator=(const IWindow&) -> IWindow& = delete;
+
+    // Define move operations
+    IWindow(IWindow&&) noexcept = default;
+    auto operator=(IWindow&&) noexcept -> IWindow& = default;
+
     // Platform-agnostic window lifecycle methods
-    virtual void create() = 0;
-    virtual void show() = 0;
-    virtual void update() = 0;
-    virtual void close() = 0;
+    virtual auto create() -> void = 0;
+    virtual auto show() -> void = 0;
+    virtual auto update() -> void = 0;
+    virtual auto close() -> void = 0;
 
     // Window state methods
-    virtual bool isRunning() const = 0;
-    virtual void setRunning(bool runningState) = 0;
+    [[nodiscard]] virtual auto isRunning() const -> bool = 0;
+    virtual auto setRunning(bool runningState) -> void = 0;
 
     // Native handle accessor - returns void* to avoid platform-specific types
     // The actual implementation will cast this to the appropriate type
-    virtual void* getNativeHandle() const = 0;
+    [[nodiscard]] virtual auto getNativeHandle() const -> void* = 0;
+
+protected:
+    IWindow() = default;
 };
 
 }  // namespace interview_cheater::window

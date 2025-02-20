@@ -27,7 +27,7 @@ void signal::ToggleSignal::check() {
     if (input_.isKeyPressed() && input_.isModifierActive()) {
         if (currentTime - lastTriggerTime_ > DEBOUNCE_TIME) {
             if (auto* window = manager_.getFirstWindow()) {
-                manager_.executeCommand(std::make_unique<command::ShowCommand>(*window));
+                manager_.executeCommand(std::make_unique<command::ShowCommand>(manager_));
                 lastTriggerTime_ = currentTime;
             }
         }

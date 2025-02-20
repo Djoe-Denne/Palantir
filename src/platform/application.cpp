@@ -2,12 +2,15 @@
 
 #include "platform_application.hpp"
 
-using namespace interview_cheater;
-std::shared_ptr<Application> Application::instance;
+std::shared_ptr<interview_cheater::Application> interview_cheater::Application::instance_;
 
-std::shared_ptr<Application> Application::getInstance(signal::SignalManager& signalManager) {
-    if (!instance) {
-        instance = std::make_shared<PlatformApplication>(signalManager);
+auto interview_cheater::Application::getInstance(signal::SignalManager& signalManager) -> std::shared_ptr<Application> {
+    if (!instance_) {
+#ifdef _WIN32
+        instance_ = std::make_shared<PlatformApplication>(signalManager);
+#elif defined(__APPLE__)
+        instance_ = std::make_shared<PlatformApplication>(signalManager);
+#endif
     }
-    return instance;
+    return instance_;
 }

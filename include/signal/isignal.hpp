@@ -7,13 +7,24 @@ class ISignal {
 public:
     virtual ~ISignal() = default;
 
+    // Delete copy operations
+    ISignal(const ISignal&) = delete;
+    auto operator=(const ISignal&) -> ISignal& = delete;
+
+    // Define move operations
+    ISignal(ISignal&&) noexcept = default;
+    auto operator=(ISignal&&) noexcept -> ISignal& = default;
+
     // Signal lifecycle methods
-    virtual void start() = 0;
-    virtual void stop() = 0;
+    virtual auto start() -> void = 0;
+    virtual auto stop() -> void = 0;
 
     // Signal state
-    virtual bool isActive() const = 0;
-    virtual void check() = 0;
+    [[nodiscard]] virtual auto isActive() const -> bool = 0;
+    virtual auto check() -> void = 0;
+
+protected:
+    ISignal() = default;
 };
 
 }  // namespace interview_cheater::signal
