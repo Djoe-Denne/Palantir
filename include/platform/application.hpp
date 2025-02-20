@@ -3,28 +3,31 @@
 
 #include <memory>
 
-namespace interview_cheater {
-    namespace signal {
-        // Forward declaration for SignalManager
-        class SignalManager;
-    }
+namespace interview_cheater
+{
+namespace signal
+{
+// Forward declaration for SignalManager
+class SignalManager;
+}  // namespace signal
 
-    class Application {
-    public:
-        virtual ~Application() = default;
+class Application
+{
+public:
+    virtual ~Application() = default;
 
-        // Get the singleton instance
-        static std::shared_ptr<Application> getInstance(signal::SignalManager& signalManager);
+    // Get the singleton instance
+    static std::shared_ptr<Application> getInstance(signal::SignalManager& signalManager);
 
-        // Platform-agnostic application lifecycle methods
-        virtual int run() = 0;
-        virtual void quit() = 0;
+    // Platform-agnostic application lifecycle methods
+    virtual int  run()  = 0;
+    virtual void quit() = 0;
 
-    protected:
-        Application() = default;
+protected:
+    Application() = default;
 
-    private:
-        static std::shared_ptr<Application> instance;
-    };
-}
-#endif // APPLICATION_HPP
+private:
+    static std::shared_ptr<Application> instance;
+};
+}  // namespace interview_cheater
+#endif  // APPLICATION_HPP

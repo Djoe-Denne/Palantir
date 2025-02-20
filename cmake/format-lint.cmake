@@ -18,35 +18,87 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         "${CMAKE_SOURCE_DIR}/src/*.cpp"
         "${CMAKE_SOURCE_DIR}/src/*.hpp"
         "${CMAKE_SOURCE_DIR}/src/*.mm"
+        "${CMAKE_SOURCE_DIR}/include/*.hpp"
+        "${CMAKE_SOURCE_DIR}/include/*.h"
     )
 
     if (SOURCE_FILES)
         # Add format target
         add_custom_target(format
-            COMMAND ${CLANG_FORMAT_EXEC} -i ${SOURCE_FILES}
+            COMMAND ${CMAKE_COMMAND} -E echo "Running clang-format..."
+            COMMAND ${CLANG_FORMAT_EXEC} -style=file -i ${SOURCE_FILES}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            COMMENT "Running clang-format"
+            COMMENT "Formatting source files"
+            VERBATIM
         )
+
+        # Add format-check target (verify formatting without changing files)
+        add_custom_target(format-check
+            COMMAND ${CMAKE_COMMAND} -E echo "Checking formatting..."
+            COMMAND ${CLANG_FORMAT_EXEC} -style=file -output-replacements-xml ${SOURCE_FILES} | tee ${CMAKE_BINARY_DIR}/clang-format.xml | grep -c "<replacement " > /dev/null && exit 1 || exit 0
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            COMMENT "Checking if sources are properly formatted"
+            VERBATIM
+        )
+
+        # Export compile commands for clang-tidy
+        set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "Enable/Disable output of compile commands during generation." FORCE)
 
         # Add lint target with compile_commands.json
         add_custom_target(lint
-            COMMAND ${CLANG_TIDY_EXEC} -p=${CMAKE_BINARY_DIR} ${SOURCE_FILES} ${CLANG_TIDY_IGNORED} --fix
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/lint-reports
+            COMMAND ${CLANG_TIDY_EXEC} 
+                -p=${CMAKE_BINARY_DIR} 
+                ${SOURCE_FILES} 
+                --quiet
+                --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
+                --format-style=file
+                --fix
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            COMMENT "Running clang-tidy"
+            COMMENT "Running clang-tidy to fix issues"
+            VERBATIM
         )
+
+        # Add lint-check target (verify without fixing)
+        add_custom_target(lint-check
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/lint-reports
+            COMMAND ${CLANG_TIDY_EXEC} 
+                -p=${CMAKE_BINARY_DIR} 
+                ${SOURCE_FILES} 
+                --quiet
+                --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
+                --format-style=file
+                > ${CMAKE_BINARY_DIR}/lint-reports/report.txt
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            COMMENT "Running clang-tidy check"
+            VERBATIM
+        )
+
+        # Add a combined target that runs both format and lint
+        add_custom_target(fix-all
+            COMMENT "Running all formatters and linters with fixes"
+            VERBATIM
+        )
+        add_dependencies(fix-all format lint)
+
+        # Add a combined check target
+        add_custom_target(check-all
+            COMMENT "Running all format and lint checks"
+            VERBATIM
+        )
+        add_dependencies(check-all format-check lint-check)
+
     else()
         message(WARNING "⚠️ No source files found to format/lint.")
     endif()
 
 else()
-    message(WARNING "❌ Clang tools not found. Please install Clang from: https://github.com/llvm/llvm-project/releases")
-    message(WARNING "   Once installed, rerun CMake configuration (delete CMakeCache.txt or run cmake -B build again).")
+    message(WARNING "❌ Clang tools not found. Please wait for the automatic setup to complete or check the setup-clang-tools.cmake output.")
 
     # Create a placeholder target that prints an error message
     add_custom_target(clang-missing
         COMMAND ${CMAKE_COMMAND} -E echo "❌ Error: clang-format and/or clang-tidy not found."
-        COMMAND ${CMAKE_COMMAND} -E echo "➡️  Please install Clang from https://github.com/llvm/llvm-project/releases"
-        COMMAND ${CMAKE_COMMAND} -E echo "🔄 After installing, rerun CMake configuration (delete CMakeCache.txt or run cmake -B build)."
+        COMMAND ${CMAKE_COMMAND} -E echo "➡️  Please check the CMake configuration output for any setup errors."
         COMMAND ${CMAKE_COMMAND} -E false
     )
 endif()

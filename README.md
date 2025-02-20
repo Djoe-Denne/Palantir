@@ -1,61 +1,96 @@
 # Interview Cheater Project
 
 ## Overview
-The Interview Cheater project is a Windows application designed to create an overlay window that can be controlled via keyboard shortcuts. It utilizes a modular architecture with interfaces and command patterns to manage window operations and input signals.
+The Interview Cheater project is a macOS application designed to create an overlay window that can be controlled via keyboard shortcuts. It utilizes a modular architecture with interfaces and command patterns to manage window operations and input signals.
 
 ## Features
-- **Overlay Window**: Displays a red square overlay on the screen.
-- **Keyboard Input Handling**: Listens for specific key combinations to control the overlay window.
-- **Command Pattern**: Implements commands for showing and stopping the overlay window.
-- **Signal Management**: Monitors keyboard signals and executes corresponding commands.
+- **Overlay Window**: Displays a floating window with interview notes
+- **Keyboard Input Handling**: Listens for specific key combinations to control the overlay window
+- **Command Pattern**: Implements commands for showing and stopping the overlay window
+- **Signal Management**: Monitors keyboard signals and executes corresponding commands
+- **Screen Sharing Protection**: Window is hidden from screen recording/sharing
+- **Cross-Space Support**: Window can be visible across all spaces
 
 ## File Structure
 ```
 interview-cheater
-├── src
-│   ├── main.cpp                # Entry point of the application
-│   ├── WindowManager.hpp       # Header for WindowManager class
-│   ├── WindowManager.cpp       # Implementation of WindowManager class
-│   ├── IInput.hpp              # Interface for input handling
-│   ├── Input.hpp        # Header for Input class
-│   ├── Input.cpp        # Implementation of Input class
-│   ├── IWindow.hpp             # Interface for window operations
-│   ├── OverlayWindow.hpp # Header for OverlayWindow class
-│   ├── OverlayWindow.cpp # Implementation of OverlayWindow class
-│   ├── ICommand.hpp             # Interface for command execution
-│   ├── ShowCommand.hpp          # Header for ShowCommand class
-│   ├── ShowCommand.cpp          # Implementation of ShowCommand class
-│   ├── StopCommand.hpp          # Header for StopCommand class
-│   ├── StopCommand.cpp          # Implementation of StopCommand class
-│   ├── ISignal.hpp              # Interface for signal checking
-│   ├── CtrlF1Signal.hpp         # Header for CtrlF1Signal class
-│   ├── CtrlF1Signal.cpp         # Implementation of CtrlF1Signal class
-│   ├── SignalManager.hpp        # Header for SignalManager class
-│   ├── SignalManager.cpp        # Implementation of SignalManager class
-├── CMakeLists.txt              # CMake configuration file
-└── README.md                   # Project documentation
+├── src/                     # Source files
+├── include/                 # Header files
+├── cmake/                   # CMake configuration files
+├── resources/               # Resource files
+├── .clang-format           # Clang format configuration
+├── .clang-tidy             # Clang tidy configuration
+├── .clangchecklist         # Clang checklist configuration
+├── CMakeLists.txt          # Main CMake configuration
+└── README.md               # Project documentation
 ```
 
+## Prerequisites
+- CMake 3.10 or higher
+- Clang tools (automatically installed via Homebrew on macOS)
+- Xcode Command Line Tools (for macOS)
+
 ## Build Instructions
-1. Ensure you have CMake installed on your system.
-2. Open a terminal and navigate to the project directory.
-3. Create a build directory:
-   ```
-   mkdir build
-   cd build
-   ```
-4. Run CMake to configure the project:
-   ```
-   cmake ..
-   ```
-5. Build the project:
-   ```
-   cmake --build .
-   ```
+
+### Debug Build
+```bash
+# Configure the project in Debug mode
+cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug
+
+# Build the project
+cmake --build build/
+```
+
+### Release Build
+```bash
+# Configure the project in Release mode
+cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+
+# Build the project
+cmake --build build/
+```
+
+## Code Quality Tools
+
+The project includes several code quality targets that can be run using CMake:
+
+### Format Code
+```bash
+# Format all source files
+cmake --build build --target format
+
+# Check formatting without making changes
+cmake --build build --target format-check
+```
+
+### Static Analysis
+```bash
+# Run clang-tidy and fix issues
+cmake --build build --target lint
+
+# Run clang-tidy check without fixing
+cmake --build build --target lint-check
+```
+
+### Combined Targets
+```bash
+# Run both format and lint with fixes
+cmake --build build --target fix-all
+
+# Run both format and lint checks without fixing
+cmake --build build --target check-all
+```
 
 ## Usage
-- Run the application to display the overlay window.
-- Press `Ctrl + F1` to stop the overlay window.
+1. Build and run the application
+2. Press `Command + /` to toggle the overlay window
+3. The window will stay on top and be visible across all spaces
+4. The window is automatically hidden from screen sharing/recording
+5. Window can be moved by dragging anywhere on its surface
+
+## Platform Support
+- macOS: Fully supported with native Cocoa implementation
+- Windows: Support planned for future releases
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for more details.
