@@ -43,9 +43,12 @@ jobs:
     # Step 4: Check code formatting
     # Runs clang-format in check mode (no modifications)
     - name: Check Format
-      id: format  # ID used for referencing in the results comment
-      continue-on-error: true  # Don't fail the workflow immediately
-      run: cmake --build ${{github.workspace}}/build --target format-check
+      id: format
+      continue-on-error: true
+      shell: cmd
+      run: |
+        set PATH=C:\Program Files\LLVM\bin;%PATH%
+        cmake --build ${{github.workspace}}/build --target format-check --config Release
     
     # Step 5: Run static analysis with clang-tidy
     # Checks for common issues and enforces coding standards
