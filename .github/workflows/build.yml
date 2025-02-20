@@ -54,53 +54,11 @@ jobs:
       continue-on-error: true
       run: |
         cmake --build ${{github.workspace}}/build --target lint-check
-    
-    - name: Analyze Lint Check (windows)
-      if: runner.os == 'Windows'
-      id: lint-windows
-      run: |
-        if (Test-Path "${{github.workspace}}/build/lint-reports") {
-          Get-ChildItem "${{github.workspace}}/build/lint-reports"
-          if (Test-Path "${{github.workspace}}/build/lint-reports/report.txt") {
-            Get-Content "${{github.workspace}}/build/lint-reports/report.txt"
-            $lint_warnings = (Select-String -Path "${{github.workspace}}/build/lint-reports/report.txt" -Pattern "warning:" -AllMatches).Matches.Count
-            echo "LINT_WARNINGS=$lint_warnings" >> $env:GITHUB_ENV
-            if ($lint_warnings -gt 5) {
-              echo "Too many lint warnings: $lint_warnings (threshold: 5)"
-              exit 1
-            }
-          } else {
-            echo "Report file not found"
-            exit 1
-          }
-        } else {
-          echo "Lint reports directory not found"
-          exit 1
-        }
 
-    - name: Analyze Lint Check (Unix)
-      if: runner.os != 'Windows'
-      id: lint-unix
-      shell: bash
+    # Step 6: Analyze lint results using CMake target
+    - name: Analyze Lint Results
       run: |
-        if [ -d "${{github.workspace}}/build/lint-reports" ]; then
-          ls -la "${{github.workspace}}/build/lint-reports"
-          if [ -f "${{github.workspace}}/build/lint-reports/report.txt" ]; then
-            cat "${{github.workspace}}/build/lint-reports/report.txt"
-            lint_warnings=$(grep -c "warning:" "${{github.workspace}}/build/lint-reports/report.txt" || echo "0")
-            echo "LINT_WARNINGS=$lint_warnings" >> $GITHUB_ENV
-            if [ "$lint_warnings" -gt 5 ]; then
-              echo "Too many lint warnings: $lint_warnings (threshold: 5)"
-              exit 1
-            fi
-          else
-            echo "Report file not found"
-            exit 1
-          fi
-        else
-          echo "Lint reports directory not found"
-          exit 1
-        fi
+        cmake --build ${{github.workspace}}/build --target lint-analyze
     
   # Second parallel job: Build the project
   # Runs independently of code-quality to speed up overall workflow
