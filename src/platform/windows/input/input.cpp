@@ -1,6 +1,7 @@
 #include "input/input.hpp"
 
 #include <windows.h>
+
 #include <cstdint>
 
 #include "input/key_codes.hpp"

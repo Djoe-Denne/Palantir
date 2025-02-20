@@ -13,20 +13,11 @@ find_program_or_warn(CLANG_TIDY_EXEC clang-tidy)
 if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
     message(STATUS "✅ Clang tools found: ${CLANG_FORMAT_EXEC}, ${CLANG_TIDY_EXEC}")
 
-    # Collect all source files for formatting/linting
-    file(GLOB_RECURSE SOURCE_FILES
-        "${CMAKE_SOURCE_DIR}/src/*.cpp"
-        "${CMAKE_SOURCE_DIR}/src/*.hpp"
-        "${CMAKE_SOURCE_DIR}/src/*.mm"
-        "${CMAKE_SOURCE_DIR}/include/*.hpp"
-        "${CMAKE_SOURCE_DIR}/include/*.h"
-    )
-
-    if (SOURCE_FILES)
+    if (ALL_SOURCES)
         # Add format target
         add_custom_target(format
             COMMAND ${CMAKE_COMMAND} -E echo "Running clang-format..."
-            COMMAND ${CLANG_FORMAT_EXEC} -style=file -i ${SOURCE_FILES}
+            COMMAND ${CLANG_FORMAT_EXEC} -style=file -i ${ALL_SOURCES}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "Formatting source files"
             VERBATIM
@@ -35,7 +26,7 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         # Add format-check target (verify formatting without changing files)
         add_custom_target(format-check
             COMMAND ${CMAKE_COMMAND} -E echo "Checking formatting..."
-            COMMAND ${CLANG_FORMAT_EXEC} -style=file -output-replacements-xml ${SOURCE_FILES} | tee ${CMAKE_BINARY_DIR}/clang-format.xml | grep -c "<replacement " > /dev/null && exit 1 || exit 0
+            COMMAND ${CLANG_FORMAT_EXEC} -style=file -output-replacements-xml ${ALL_SOURCES} | tee ${CMAKE_BINARY_DIR}/clang-format.xml | grep -c "<replacement " > /dev/null && exit 1 || exit 0
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "Checking if sources are properly formatted"
             VERBATIM
@@ -44,12 +35,26 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         # Export compile commands for clang-tidy
         set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "Enable/Disable output of compile commands during generation." FORCE)
 
+        # Create a list of include directories
+        set(INCLUDE_DIRS
+            -I${PROJECT_ROOT}/include
+            -I${PROJECT_ROOT}/include/mode/debug
+            -I${PROJECT_ROOT}/include/mode/release
+        )
+        if(WIN32)
+            list(APPEND INCLUDE_DIRS -I${PROJECT_ROOT}/include/platform/windows)
+        elseif(APPLE)
+            list(APPEND INCLUDE_DIRS -I${PROJECT_ROOT}/include/platform/macos)
+        endif()
+
         # Add lint target with compile_commands.json
         add_custom_target(lint
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/lint-reports
             COMMAND ${CLANG_TIDY_EXEC} 
                 -p=${CMAKE_BINARY_DIR} 
-                ${SOURCE_FILES} 
+                ${ALL_SOURCES} 
+                --
+                ${INCLUDE_DIRS}
                 --quiet
                 --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
                 --format-style=file
@@ -64,7 +69,9 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/lint-reports
             COMMAND ${CLANG_TIDY_EXEC} 
                 -p=${CMAKE_BINARY_DIR} 
-                ${SOURCE_FILES} 
+                ${ALL_SOURCES} 
+                --
+                ${INCLUDE_DIRS}
                 --quiet
                 --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
                 --format-style=file

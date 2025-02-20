@@ -15,31 +15,26 @@ constexpr int SQUARE_MARGIN_RATIO = 4;  // Divides width/height by this to get m
 constexpr COLORREF SQUARE_COLOR = RGB(255, 0, 0);
 
 auto CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> LRESULT {
-
     switch (uMsg) {
-            return 0;
+        return 0;
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
-        case WM_PAINT:
-            {
-                PAINTSTRUCT paintStruct;
-                HDC hdc = BeginPaint(hwnd, &paintStruct);
-                RECT rect;
-                GetClientRect(hwnd, &rect);
-                const int width = rect.right;
-                const int height = rect.bottom;
-                HBRUSH brush = CreateSolidBrush(SQUARE_COLOR);
-                const RECT square = {
-                    width / SQUARE_MARGIN_RATIO,
-                    height / SQUARE_MARGIN_RATIO,
-                    (SQUARE_MARGIN_RATIO - 1) * width / SQUARE_MARGIN_RATIO,
-                    (SQUARE_MARGIN_RATIO - 1) * height / SQUARE_MARGIN_RATIO
-                };
-                FillRect(hdc, &square, brush);
-                DeleteObject(brush);
-                EndPaint(hwnd, &paintStruct);
-            }
+        case WM_PAINT: {
+            PAINTSTRUCT paintStruct;
+            HDC hdc = BeginPaint(hwnd, &paintStruct);
+            RECT rect;
+            GetClientRect(hwnd, &rect);
+            const int width = rect.right;
+            const int height = rect.bottom;
+            HBRUSH brush = CreateSolidBrush(SQUARE_COLOR);
+            const RECT square = {width / SQUARE_MARGIN_RATIO, height / SQUARE_MARGIN_RATIO,
+                                 (SQUARE_MARGIN_RATIO - 1) * width / SQUARE_MARGIN_RATIO,
+                                 (SQUARE_MARGIN_RATIO - 1) * height / SQUARE_MARGIN_RATIO};
+            FillRect(hdc, &square, brush);
+            DeleteObject(brush);
+            EndPaint(hwnd, &paintStruct);
+        }
             return 0;
         default:
             return DefWindowProcW(hwnd, uMsg, wParam, lParam);
@@ -61,8 +56,8 @@ public:
         RegisterClassExW(&windowClass);
 
         hwnd_ = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST, L"InterviewCheaterClass", L"Interview Cheater",
-                               WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT, nullptr,
-                               nullptr, GetModuleHandleW(nullptr), nullptr);
+                                WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT, nullptr,
+                                nullptr, GetModuleHandleW(nullptr), nullptr);
 
         if (hwnd_ != nullptr) {
             // Store the this pointer

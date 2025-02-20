@@ -67,14 +67,15 @@ class OverlayWindow::Impl {
 
     auto create() -> void {
         DEBUG_LOG("Beginning window creation");
-        NSRect frame = NSMakeRect(K_WINDOW_INITIAL_X, K_WINDOW_INITIAL_Y, K_WINDOW_INITIAL_WIDTH, K_WINDOW_INITIAL_HEIGHT);
+        NSRect frame =
+            NSMakeRect(K_WINDOW_INITIAL_X, K_WINDOW_INITIAL_Y, K_WINDOW_INITIAL_WIDTH, K_WINDOW_INITIAL_HEIGHT);
         NSUInteger styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable |
                                NSWindowStyleMaskNonactivatingPanel;
 
         window_ = [[NSPanel alloc] initWithContentRect:frame
-                                            styleMask:styleMask
-                                              backing:NSBackingStoreBuffered
-                                                defer:NO];
+                                             styleMask:styleMask
+                                               backing:NSBackingStoreBuffered
+                                                 defer:NO];
 
         DEBUG_LOG("Window created with frame: %@", NSStringFromRect(frame));
 
@@ -84,8 +85,8 @@ class OverlayWindow::Impl {
         // Configure window behavior
         [window_ setLevel:NSFloatingWindowLevel];
         [window_ setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces |
-                                      NSWindowCollectionBehaviorFullScreenAuxiliary |
-                                      NSWindowCollectionBehaviorStationary];
+                                       NSWindowCollectionBehaviorFullScreenAuxiliary |
+                                       NSWindowCollectionBehaviorStationary];
         [window_ setSharingType:NSWindowSharingNone];
 
         DEBUG_LOG("Window behavior configured");
@@ -166,7 +167,8 @@ class OverlayWindow::Impl {
         NSRect screenFrame = screen.visibleFrame;
         NSRect windowFrame = window_.frame;
         windowFrame.origin.x = screenFrame.origin.x + screenFrame.size.width - windowFrame.size.width - K_WINDOW_MARGIN;
-        windowFrame.origin.y = screenFrame.origin.y + screenFrame.size.height - windowFrame.size.height - K_WINDOW_MARGIN;
+        windowFrame.origin.y =
+            screenFrame.origin.y + screenFrame.size.height - windowFrame.size.height - K_WINDOW_MARGIN;
         [window_ setFrame:windowFrame display:NO];
         DEBUG_LOG("Window positioned at: %@", NSStringFromRect(windowFrame));
     }

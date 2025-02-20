@@ -2,6 +2,7 @@
 #define TOGGLE_SIGNAL_HPP
 
 #include <cstdint>
+
 #include "signal/isignal.hpp"
 
 namespace interview_cheater {

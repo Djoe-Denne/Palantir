@@ -43,10 +43,11 @@ auto run_app() -> int {
 // Entry point that works for both Windows and macOS
 #if defined(_WIN32) && !defined(_CONSOLE)
 // Entry point for Windows applications
-auto WINAPI WinMain(HINSTANCE hInstance /* handle to current instance */ // NOLINT(bugprone-easily-swappable-parameters)
-                    ,                   // NOLINT(bugprone-easily-swappable-parameters)
-                    HINSTANCE hPrevInstance /* handle to previous instance */, LPSTR lpCmdLine /* command line */,
-                    int nCmdShow /* show state */) -> int {
+auto WINAPI
+WinMain(HINSTANCE hInstance /* handle to current instance */  // NOLINT(bugprone-easily-swappable-parameters)
+        ,                                                     // NOLINT(bugprone-easily-swappable-parameters)
+        HINSTANCE hPrevInstance /* handle to previous instance */, LPSTR lpCmdLine /* command line */,
+        int nCmdShow /* show state */) -> int {
     return run_app();
 }
 #else

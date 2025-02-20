@@ -95,5 +95,7 @@ class Input::Impl {
 interview_cheater::input::Input::Input() = default;
 interview_cheater::input::Input::~Input() = default;
 [[nodiscard]] auto interview_cheater::input::Input::isKeyPressed() const -> bool { return pImpl_->isKeyPressed(); }
-[[nodiscard]] auto interview_cheater::input::Input::isModifierActive() const -> bool { return pImpl_->isModifierActive(); }
+[[nodiscard]] auto interview_cheater::input::Input::isModifierActive() const -> bool {
+    return pImpl_->isModifierActive();
+}
 auto interview_cheater::input::Input::update() -> void { pImpl_->update(); }

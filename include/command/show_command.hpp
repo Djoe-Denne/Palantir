@@ -7,7 +7,7 @@ namespace interview_cheater {
 namespace window {
 class IWindow;  // Forward declaration
 class WindowManager;
-}
+}  // namespace window
 
 namespace command {
 class ShowCommand : public ICommand {

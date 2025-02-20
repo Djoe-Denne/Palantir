@@ -83,7 +83,7 @@ class PlatformApplication::Impl {
    public:
     Impl(const Impl& other) = delete;
     auto operator=(const Impl& other) -> Impl& = delete;
-    Impl(Impl&& other) noexcept = delete;  // Can't move because of reference member
+    Impl(Impl&& other) noexcept = delete;                     // Can't move because of reference member
     auto operator=(Impl&& other) noexcept -> Impl& = delete;  // Can't move because of reference member
 
     explicit Impl(signal::SignalManager& signalManager) : signalManager_(signalManager) {
