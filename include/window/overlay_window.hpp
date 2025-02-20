@@ -32,7 +32,7 @@ public:
 private:
     class Impl;
     std::unique_ptr<Impl> pImpl_;
-    bool running_{false};
+    bool running_ = false;
 };
 
 }  // namespace interview_cheater::window

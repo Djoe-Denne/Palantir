@@ -4,7 +4,7 @@
 
 namespace interview_cheater::utils {
 
-auto PlatformLog(const char* function, int line, const std::string& message) -> void {
+[[nodiscard]] auto PlatformLog(std::string_view function, int line, const std::string& message) -> void { // NOLINT(bugprone-easily-swappable-parameters)
     std::ostringstream finalStream;
     finalStream << function << ":" << line << " - " << message;
     NSLog(@"%s", finalStream.str().c_str());

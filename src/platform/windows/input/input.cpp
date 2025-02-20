@@ -1,20 +1,26 @@
 #include "input/input.hpp"
 
 #include <windows.h>
+#include <cstdint>
 
 #include "input/key_codes.hpp"
 
 namespace interview_cheater::input {
+
+namespace {
+constexpr uint16_t KEY_PRESSED_MASK = 0x8000U;
+}
+
 class Input::Impl {
 public:
     [[nodiscard]] static auto isKeyPressed() -> bool {
-        constexpr uint16_t KEY_PRESSED_MASK = 0x8000;
-        return (static_cast<uint16_t>(GetAsyncKeyState(KeyCodes::KEY_F1)) & KEY_PRESSED_MASK) != 0;
+        const auto keyState = static_cast<uint16_t>(GetAsyncKeyState(KeyCodes::KEY_F1));
+        return (keyState & KEY_PRESSED_MASK) != 0U;
     }
 
     [[nodiscard]] static auto isModifierActive() -> bool {
-        constexpr uint16_t KEY_PRESSED_MASK = 0x8000;
-        return (static_cast<uint16_t>(GetAsyncKeyState(KeyCodes::CONTROL_MODIFIER)) & KEY_PRESSED_MASK) != 0;
+        const auto modState = static_cast<uint16_t>(GetAsyncKeyState(KeyCodes::CONTROL_MODIFIER));
+        return (modState & KEY_PRESSED_MASK) != 0U;
     }
 
     void update() {}  // No-op for Windows

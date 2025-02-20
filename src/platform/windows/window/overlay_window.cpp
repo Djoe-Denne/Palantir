@@ -7,6 +7,13 @@
 
 namespace interview_cheater::window {
 namespace {
+
+constexpr int WINDOW_WIDTH = 800;
+constexpr int WINDOW_HEIGHT = 600;
+constexpr BYTE WINDOW_ALPHA = 240;
+constexpr int SQUARE_MARGIN_RATIO = 4;  // Divides width/height by this to get margin
+constexpr COLORREF SQUARE_COLOR = RGB(255, 0, 0);
+
 auto CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> LRESULT {
     auto* window =
         reinterpret_cast<OverlayWindow*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));  // NOLINT(performance-no-int-to-ptr)
@@ -26,10 +33,15 @@ auto CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> 
                 HDC hdc = BeginPaint(hwnd, &paintStruct);
                 RECT rect;
                 GetClientRect(hwnd, &rect);
-                int width = rect.right;
-                int height = rect.bottom;
-                HBRUSH brush = CreateSolidBrush(RGB(255, 0, 0));
-                RECT square = {width / 4, height / 4, 3 * width / 4, 3 * height / 4};
+                const int width = rect.right;
+                const int height = rect.bottom;
+                HBRUSH brush = CreateSolidBrush(SQUARE_COLOR);
+                const RECT square = {
+                    width / SQUARE_MARGIN_RATIO,
+                    height / SQUARE_MARGIN_RATIO,
+                    (SQUARE_MARGIN_RATIO - 1) * width / SQUARE_MARGIN_RATIO,
+                    (SQUARE_MARGIN_RATIO - 1) * height / SQUARE_MARGIN_RATIO
+                };
                 FillRect(hdc, &square, brush);
                 DeleteObject(brush);
                 EndPaint(hwnd, &paintStruct);
@@ -39,13 +51,7 @@ auto CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> 
         default:
             return DefWindowProcW(hwnd, uMsg, wParam, lParam);
     }
-
-    return DefWindowProcW(hwnd, uMsg, wParam, lParam);
 }
-
-constexpr int WINDOW_WIDTH = 800;
-constexpr int WINDOW_HEIGHT = 600;
-constexpr BYTE WINDOW_ALPHA = 240;
 }  // namespace
 
 class OverlayWindow::Impl {

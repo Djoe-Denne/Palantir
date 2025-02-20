@@ -16,12 +16,12 @@
     if (self = [super init]) {
         DEBUG_LOG("Initializing SignalChecker");
         self.signalManager = signalManager;
-        [self setupMonitors];
+        [self setupEventMonitors];
     }
     return self;
 }
 
-- (void)setupMonitors {
+- (void)setupEventMonitors {
     DEBUG_LOG("Setting up event monitors");
     NSEventMask eventMask = NSEventMaskKeyDown | NSEventMaskFlagsChanged;
 
@@ -48,7 +48,7 @@
                                                   return event;
                                               }];
 
-    if (!self.globalMonitor || !self.localMonitor) {
+    if (self.globalMonitor == nil || self.localMonitor == nil) {
         DEBUG_LOG("Warning: Failed to create one or more event monitors");
     }
 }
@@ -67,20 +67,20 @@
 
 - (void)dealloc {
     DEBUG_LOG("Cleaning up SignalChecker");
-    if (self.globalMonitor) {
+    if (self.globalMonitor != nil) {
         [NSEvent removeMonitor:self.globalMonitor];
-        DEBUG_LOG("Global monitor removed");
+        [self.globalMonitor release];
     }
-    if (self.localMonitor) {
+    if (self.localMonitor != nil) {
         [NSEvent removeMonitor:self.localMonitor];
-        DEBUG_LOG("Local monitor removed");
+        [self.localMonitor release];
     }
     [super dealloc];
 }
 
 @end
 
-namespace interview_cheater {
+namespace interview_cheater::window {
 
 class PlatformApplication::Impl {
    public:
@@ -89,7 +89,7 @@ class PlatformApplication::Impl {
     Impl(Impl&& other) noexcept = default;
     auto operator=(Impl&& other) noexcept -> Impl& = default;
 
-    explicit Impl(signal::SignalManager& signalManager) : signalManager_(signalManager), signalChecker(nullptr) {
+    explicit Impl(signal::SignalManager& signalManager) : signalManager_(signalManager) {
         DEBUG_LOG("Initializing ");
         [NSApplication sharedApplication];
         [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
@@ -105,32 +105,36 @@ class PlatformApplication::Impl {
                   @"Security & Privacy > Privacy > Accessibility");
         }
 
-        signalChecker = [[SignalChecker alloc] initWithSignalManager:&signalManager];
+        signalChecker_ = [[SignalChecker alloc] initWithSignalManager:&signalManager];
         DEBUG_LOG("Application initialization complete");
     }
 
-    auto run() -> int {  // NOLINT
+    [[nodiscard]] auto run() -> int {
         DEBUG_LOG("Starting application run loop");
         [NSApp run];
         return 0;
     }
 
-    void quit() {  // NOLINT
+    auto quit() -> void {
         DEBUG_LOG("Application quitting");
-        [signalChecker release];
-        signalChecker = nil;
+        if (signalChecker_ != nil) {
+            [signalChecker_ release];
+            signalChecker_ = nil;
+        }
         [NSApp terminate:nil];
     }
 
     ~Impl() {
         DEBUG_LOG("Application being destroyed");
-        [signalChecker release];
-        signalChecker = nil;
+        if (signalChecker_ != nil) {
+            [signalChecker_ release];
+            signalChecker_ = nil;
+        }
     }
 
    private:
     signal::SignalManager& signalManager_;
-    SignalChecker* signalChecker;
+    SignalChecker* signalChecker_{nil};
 };
 
 PlatformApplication::PlatformApplication(interview_cheater::signal::SignalManager& signalManager)
@@ -138,8 +142,8 @@ PlatformApplication::PlatformApplication(interview_cheater::signal::SignalManage
 
 PlatformApplication::~PlatformApplication() = default;
 
-auto PlatformApplication::run() -> int { return pImpl->run(); }
+[[nodiscard]] auto PlatformApplication::run() -> int { return pImpl->run(); }
 
-void PlatformApplication::quit() { pImpl->quit(); }
+auto PlatformApplication::quit() -> void { pImpl->quit(); }
 
-}  // namespace interview_cheater
+}  // namespace interview_cheater::window

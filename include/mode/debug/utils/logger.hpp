@@ -3,9 +3,10 @@
 
 #include <sstream>
 #include <string>
+#include <string_view>
 
 namespace interview_cheater::utils {
-void PlatformLog(const char* function, int line, const std::string& message);
+void PlatformLog(std::string_view function, int line, const std::string& message);
 
 template<typename T>
 void LogStream(std::ostringstream& stream, const T& value) {

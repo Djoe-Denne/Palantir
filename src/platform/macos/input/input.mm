@@ -6,16 +6,16 @@
 @interface GlobalEventMonitor : NSObject
 @property(nonatomic, retain) id globalEventMonitor;
 @property(nonatomic, retain) id localEventMonitor;
-@property(nonatomic) BOOL keyPressed;
-@property(nonatomic) BOOL modifierActive;
+@property(nonatomic) BOOL isKeyPressed;
+@property(nonatomic) BOOL isModifierActive;
 @end
 
 @implementation GlobalEventMonitor
 
 - (instancetype)init {
     if (self = [super init]) {
-        _keyPressed = NO;
-        _modifierActive = NO;
+        _isKeyPressed = NO;
+        _isModifierActive = NO;
         [self setupEventMonitors];
     }
     return self;
@@ -24,10 +24,10 @@
 - (void)handleEvent:(NSEvent*)event {
     if (event.type == NSEventTypeKeyDown || event.type == NSEventTypeKeyUp) {
         if (event.keyCode == interview_cheater::input::KeyCodes::KEY_SLASH) {
-            self.keyPressed = (event.type == NSEventTypeKeyDown);
+            self.isKeyPressed = (event.type == NSEventTypeKeyDown);
         }
     } else if (event.type == NSEventTypeFlagsChanged) {
-        self.modifierActive = (event.modifierFlags & NSEventModifierFlagCommand) != 0;
+        self.isModifierActive = (event.modifierFlags & NSEventModifierFlagCommand) != 0;
     }
 }
 
@@ -49,11 +49,13 @@
 }
 
 - (void)dealloc {
-    if (self.globalEventMonitor) {
+    if (self.globalEventMonitor != nil) {
         [NSEvent removeMonitor:self.globalEventMonitor];
+        [self.globalEventMonitor release];
     }
-    if (self.localEventMonitor) {
+    if (self.localEventMonitor != nil) {
         [NSEvent removeMonitor:self.localEventMonitor];
+        [self.localEventMonitor release];
     }
     [super dealloc];
 }
@@ -64,25 +66,37 @@ namespace interview_cheater::input {
 
 class Input::Impl {
    public:
-    Impl() : monitor([[GlobalEventMonitor alloc] init]) {}
+    Impl() = default;
 
-    auto isKeyPressed() const -> bool { return static_cast<BOOL>([monitor keyPressed]); }
+    Impl(const Impl&) = delete;
+    Impl(Impl&&) = delete;
+    auto operator=(const Impl&) -> Impl& = delete;
+    auto operator=(Impl&&) -> Impl& = delete;
 
-    auto isModifierActive() const -> bool { return static_cast<BOOL>([monitor modifierActive]); }
+    [[nodiscard]] auto isKeyPressed() const -> bool { return [monitor_ isKeyPressed] != NO; }
 
-    void update() {
+    [[nodiscard]] auto isModifierActive() const -> bool { return [monitor_ isModifierActive] != NO; }
+
+    auto update() -> void {
         // No-op for macOS as we use event-based monitoring
     }
 
+    ~Impl() {
+        if (monitor_ != nil) {
+            [monitor_ release];
+            monitor_ = nil;
+        }
+    }
+
    private:
-    GlobalEventMonitor* monitor;
+    GlobalEventMonitor* monitor_{[[GlobalEventMonitor alloc] init]};
 };
 
 }  // namespace interview_cheater::input
 
 // Use the fully-qualified namespace for definitions
-interview_cheater::input::Input::Input() : pImpl(std::make_unique<interview_cheater::input::Input::Impl>()) {}
+interview_cheater::input::Input::Input() = default;
 interview_cheater::input::Input::~Input() = default;
-auto interview_cheater::input::Input::isKeyPressed() const -> bool { return pImpl->isKeyPressed(); }
-auto interview_cheater::input::Input::isModifierActive() const -> bool { return pImpl->isModifierActive(); }
-void interview_cheater::input::Input::update() { pImpl->update(); }
+[[nodiscard]] auto interview_cheater::input::Input::isKeyPressed() const -> bool { return pImpl->isKeyPressed(); }
+[[nodiscard]] auto interview_cheater::input::Input::isModifierActive() const -> bool { return pImpl->isModifierActive(); }
+auto interview_cheater::input::Input::update() -> void { pImpl->update(); }

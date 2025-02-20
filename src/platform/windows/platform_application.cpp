@@ -2,11 +2,13 @@
 #include "utils/logger.hpp"
 #include "signal/signal_manager.hpp"
 #include <Windows.h>
+#include <cstdint>
 
 namespace {
 
 constexpr int K_SLASH_KEY_CODE = 0xBF;  // VK_OEM_2 - '/' key
 constexpr int K_DEBOUNCE_TIME = 100;   // milliseconds
+constexpr uint16_t KEY_PRESSED_MASK = 0x8000U;
 
 } // namespace
 
@@ -15,8 +17,7 @@ namespace interview_cheater {
 class PlatformApplication::Impl {
 public:
     explicit Impl(signal::SignalManager& signalManager) 
-        : signalManager_(signalManager)
-        , lastTriggerTime_(0) {}
+        : signalManager_(signalManager) {}
 
     auto run() -> int {
         DEBUG_LOG("Starting Windows message loop");
@@ -26,14 +27,16 @@ public:
             DispatchMessage(&msg);
 
             // Check for Command (Windows key) + / combination
-            if ((GetAsyncKeyState(VK_LWIN) & 0x8000) || (GetAsyncKeyState(VK_RWIN) & 0x8000)) {
-                if (GetAsyncKeyState(K_SLASH_KEY_CODE) & 0x8000) {
-                    auto currentTime = GetTickCount();
-                    if (currentTime - lastTriggerTime_ > K_DEBOUNCE_TIME) {
-                        DEBUG_LOG("Hotkey combination detected (Win + /)");
-                        signalManager_.checkSignals();
-                        lastTriggerTime_ = currentTime;
-                    }
+            const auto leftWinPressed = (static_cast<uint16_t>(GetAsyncKeyState(VK_LWIN)) & KEY_PRESSED_MASK) != 0U;
+            const auto rightWinPressed = (static_cast<uint16_t>(GetAsyncKeyState(VK_RWIN)) & KEY_PRESSED_MASK) != 0U;
+            const auto slashPressed = (static_cast<uint16_t>(GetAsyncKeyState(K_SLASH_KEY_CODE)) & KEY_PRESSED_MASK) != 0U;
+
+            if ((leftWinPressed || rightWinPressed) && slashPressed) {
+                const auto currentTime = GetTickCount();
+                if (currentTime - lastTriggerTime_ > K_DEBOUNCE_TIME) {
+                    DEBUG_LOG("Hotkey combination detected (Win + /)");
+                    signalManager_.checkSignals();
+                    lastTriggerTime_ = currentTime;
                 }
             }
         }
@@ -42,7 +45,7 @@ public:
 
 private:
     signal::SignalManager& signalManager_;
-    DWORD lastTriggerTime_;
+    DWORD lastTriggerTime_ = 0;
 };
 
 PlatformApplication::PlatformApplication(signal::SignalManager& signalManager)
