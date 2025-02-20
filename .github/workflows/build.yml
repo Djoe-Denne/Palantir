@@ -42,13 +42,18 @@ jobs:
     
     # Step 4: Check code formatting
     # Runs clang-format in check mode (no modifications)
-    - name: Check Format
-      id: format
-      continue-on-error: true
-      shell: cmd
-      run: |
-        set PATH=C:\Program Files\LLVM\bin;%PATH%
-        cmake --build ${{github.workspace}}/build --target format-check --config Release
+    - name: Check Format (Windows)
+      id: format-windows  # ID used for referencing in the results comment
+      continue-on-error: true  # Don't fail the workflow immediately
+      shell: pwsh
+      run: cmake --build ${{github.workspace}}/build --target format-check
+
+    
+    - name: Check Format (Unix)
+      id: format-unix  # ID used for referencing in the results comment
+      continue-on-error: true  # Don't fail the workflow immediately
+      shell: bash
+      run: cmake --build ${{github.workspace}}/build --target format-check
     
     # Step 5: Run static analysis with clang-tidy
     # Checks for common issues and enforces coding standards
@@ -84,6 +89,8 @@ jobs:
       continue-on-error: true
       shell: bash
       run: |
+        echo "Running lint check on Unix"
+        ls -la "${{github.workspace}}/build"
         cmake --build ${{github.workspace}}/build --target lint-check
         if [ -d "${{github.workspace}}/build/lint-reports" ]; then
           ls -la "${{github.workspace}}/build/lint-reports"
