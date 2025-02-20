@@ -42,30 +42,24 @@ jobs:
     
     # Step 4: Check code formatting
     # Runs clang-format in check mode (no modifications)
-    - name: Check Format (Windows)
-      if: runner.os == 'Windows'
-      id: format-windows  # ID used for referencing in the results comment
+    - name: Check Format
+      id: format # ID used for referencing in the results comment
       continue-on-error: true  # Don't fail the workflow immediately
-      shell: pwsh
-      run: cmake --build ${{github.workspace}}/build --target format-check
-
-    
-    - name: Check Format (Unix)
-      if: runner.os != 'Windows'
-      id: format-unix  # ID used for referencing in the results comment
-      continue-on-error: true  # Don't fail the workflow immediately
-      shell: bash
       run: cmake --build ${{github.workspace}}/build --target format-check
     
     # Step 5: Run static analysis with clang-tidy
     # Checks for common issues and enforces coding standards
-    - name: Run Lint Check (Windows)
+    - name: Run Lint Check
+      id: lint
+      continue-on-error: true
+      run: |
+        cmake --build ${{github.workspace}}/build --target lint-check
+    
+    - name: Analyze Lint Check (windows)
       if: runner.os == 'Windows'
       id: lint-windows
       continue-on-error: true
-      shell: pwsh
       run: |
-        cmake --build ${{github.workspace}}/build --target lint-check
         if (Test-Path "${{github.workspace}}/build/lint-reports") {
           Get-ChildItem "${{github.workspace}}/build/lint-reports"
           if (Test-Path "${{github.workspace}}/build/lint-reports/report.txt") {
@@ -85,15 +79,12 @@ jobs:
           exit 1
         }
 
-    - name: Run Lint Check (Unix)
+    - name: Analyze Lint Check (Unix)
       if: runner.os != 'Windows'
       id: lint-unix
       continue-on-error: true
       shell: bash
       run: |
-        echo "Running lint check on Unix"
-        ls -la "${{github.workspace}}/build"
-        cmake --build ${{github.workspace}}/build --target lint-check || { echo "CMake build failed"; exit 1; }
         if [ -d "${{github.workspace}}/build/lint-reports" ]; then
           ls -la "${{github.workspace}}/build/lint-reports"
           if [ -f "${{github.workspace}}/build/lint-reports/report.txt" ]; then
