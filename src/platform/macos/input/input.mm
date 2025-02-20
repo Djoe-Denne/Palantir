@@ -51,13 +51,10 @@
 - (void)dealloc {
     if (self.globalEventMonitor != nil) {
         [NSEvent removeMonitor:self.globalEventMonitor];
-        [self.globalEventMonitor release];
     }
     if (self.localEventMonitor != nil) {
         [NSEvent removeMonitor:self.localEventMonitor];
-        [self.localEventMonitor release];
     }
-    [super dealloc];
 }
 
 @end
@@ -83,7 +80,7 @@ class Input::Impl {
 
     ~Impl() {
         if (monitor_ != nil) {
-            [monitor_ release];
+            [NSEvent removeMonitor:monitor_];
             monitor_ = nil;
         }
     }
@@ -97,6 +94,6 @@ class Input::Impl {
 // Use the fully-qualified namespace for definitions
 interview_cheater::input::Input::Input() = default;
 interview_cheater::input::Input::~Input() = default;
-[[nodiscard]] auto interview_cheater::input::Input::isKeyPressed() const -> bool { return pImpl->isKeyPressed(); }
-[[nodiscard]] auto interview_cheater::input::Input::isModifierActive() const -> bool { return pImpl->isModifierActive(); }
-auto interview_cheater::input::Input::update() -> void { pImpl->update(); }
+[[nodiscard]] auto interview_cheater::input::Input::isKeyPressed() const -> bool { return pImpl_->isKeyPressed(); }
+[[nodiscard]] auto interview_cheater::input::Input::isModifierActive() const -> bool { return pImpl_->isModifierActive(); }
+auto interview_cheater::input::Input::update() -> void { pImpl_->update(); }
