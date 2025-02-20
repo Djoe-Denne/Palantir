@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "command/show_command.hpp"
 #include "input/input_factory.hpp"
 #include "platform/application.hpp"
@@ -5,8 +7,6 @@
 #include "signal/toggle_signal.hpp"
 #include "window/overlay_window.hpp"
 #include "window/window_manager.hpp"
-
-#include <memory>
 
 #if defined(_WIN32) && !defined(_CONSOLE)
 #include <windows.h>
@@ -21,8 +21,7 @@ using interview_cheater::window::OverlayWindow;
 using interview_cheater::window::WindowManager;
 
 // Platform-agnostic application code
-auto run_app() -> int
-{
+auto run_app() -> int {
     WindowManager manager;
     SignalManager signalManager;
 
@@ -46,15 +45,10 @@ auto run_app() -> int
 // Entry point for Windows applications
 auto WINAPI WinMain(HINSTANCE hInstance /* handle to current instance */
                     ,                   // NOLINT(bugprone-easily-swappable-parameters)
-                    HINSTANCE hPrevInstance /* handle to previous instance */,
-                    LPSTR     lpCmdLine /* command line */,
-                    int       nCmdShow /* show state */) -> int
-{
+                    HINSTANCE hPrevInstance /* handle to previous instance */, LPSTR lpCmdLine /* command line */,
+                    int nCmdShow /* show state */) -> int {
     return run_app();
 }
 #else
-int main(int argc, char* argv[])
-{
-    return run_app();
-}
+int main(int argc, char* argv[]) { return run_app(); }
 #endif

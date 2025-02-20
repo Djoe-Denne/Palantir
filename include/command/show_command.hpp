@@ -3,17 +3,13 @@
 
 #include "command/icommand.hpp"
 
-namespace interview_cheater
-{
-namespace window
-{
+namespace interview_cheater {
+namespace window {
 class IWindow;  // Forward declaration
 }
 
-namespace command
-{
-class ShowCommand : public ICommand
-{
+namespace command {
+class ShowCommand : public ICommand {
 public:
     explicit ShowCommand(window::IWindow& window);
     void execute() override;

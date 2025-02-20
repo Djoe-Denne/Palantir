@@ -1,26 +1,21 @@
 #include "platform_application.hpp"
-#include "signal/signal_manager.hpp"
+
 #include <windows.h>
+
+#include "signal/signal_manager.hpp"
 #include "utils/logger.hpp"
 
+namespace interview_cheater {
 
-namespace interview_cheater
-{
-
-class PlatformApplication::Impl
-{
+class PlatformApplication::Impl {
 public:
     explicit Impl(signal::SignalManager& signalManager) : signalManager_(signalManager) {}
 
-    auto run() -> int
-    {
-        while (running_)
-        {
+    auto run() -> int {
+        while (running_) {
             MSG msg;
-            while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
-            {
-                if (msg.message == WM_QUIT)
-                {
+            while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+                if (msg.message == WM_QUIT) {
                     running_ = false;
                     break;
                 }
@@ -37,33 +32,24 @@ public:
         return 0;
     }
 
-    void quit()
-    {
+    void quit() {
         running_ = false;
         PostQuitMessage(0);
     }
 
 private:
     signal::SignalManager& signalManager_;
-    bool                   running_         = true;
-    static constexpr int   kSleepDurationMs = 10;
+    bool running_ = true;
+    static constexpr int kSleepDurationMs = 10;
 };
 
 PlatformApplication::PlatformApplication(signal::SignalManager& signalManager)
-    : pImpl(std::make_unique<Impl>(signalManager))
-{
-}
+    : pImpl(std::make_unique<Impl>(signalManager)) {}
 
 PlatformApplication::~PlatformApplication() = default;
 
-auto PlatformApplication::run() -> int
-{
-    return pImpl->run();
-}
+auto PlatformApplication::run() -> int { return pImpl->run(); }
 
-void PlatformApplication::quit()
-{
-    pImpl->quit();
-}
+void PlatformApplication::quit() { pImpl->quit(); }
 
 }  // namespace interview_cheater

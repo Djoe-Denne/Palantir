@@ -3,16 +3,13 @@
 
 #include <memory>
 
-namespace interview_cheater
-{
-namespace signal
-{
+namespace interview_cheater {
+namespace signal {
 // Forward declaration for SignalManager
 class SignalManager;
 }  // namespace signal
 
-class Application
-{
+class Application {
 public:
     virtual ~Application() = default;
 
@@ -20,7 +17,7 @@ public:
     static std::shared_ptr<Application> getInstance(signal::SignalManager& signalManager);
 
     // Platform-agnostic application lifecycle methods
-    virtual int  run()  = 0;
+    virtual int run() = 0;
     virtual void quit() = 0;
 
 protected:

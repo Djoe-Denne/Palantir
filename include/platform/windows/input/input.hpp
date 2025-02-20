@@ -1,14 +1,12 @@
 #ifndef WINDOWS_INPUT_HPP
 #define WINDOWS_INPUT_HPP
 
-#include "input/iinput.hpp"
-
 #include <memory>
 
-namespace interview_cheater::input
-{
-class Input : public IInput
-{
+#include "input/iinput.hpp"
+
+namespace interview_cheater::input {
+class Input : public IInput {
 public:
     Input();
     ~Input() override;

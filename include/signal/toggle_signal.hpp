@@ -3,25 +3,20 @@
 
 #include "signal/isignal.hpp"
 
-namespace interview_cheater
-{
-namespace window
-{
+namespace interview_cheater {
+namespace window {
 // Forward declaration for WindowManager
 class WindowManager;
 }  // namespace window
 
-namespace input
-{
+namespace input {
 // Forward declaration for IInput
 class IInput;
 }  // namespace input
 
-namespace signal
-{
+namespace signal {
 
-class ToggleSignal : public ISignal
-{
+class ToggleSignal : public ISignal {
 public:
     ToggleSignal(window::WindowManager& manager, input::IInput& input);
     ~ToggleSignal() override = default;
@@ -33,9 +28,9 @@ public:
 
 private:
     window::WindowManager& manager_;
-    input::IInput&         input_;
-    bool                   active_{false};
-    long long              lastTriggerTime_{0};
+    input::IInput& input_;
+    bool active_{false};
+    long long lastTriggerTime_{0};
 };
 }  // namespace signal
 }  // namespace interview_cheater

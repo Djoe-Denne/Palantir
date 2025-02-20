@@ -4,15 +4,13 @@
 #include "platform/application.hpp"
 #include "signal/signal_manager.hpp"
 
-namespace interview_cheater
-{
-class PlatformApplication : public Application
-{
+namespace interview_cheater {
+class PlatformApplication : public Application {
 public:
     explicit PlatformApplication(signal::SignalManager& signalManager);
     ~PlatformApplication() override;
 
-    int  run() override;
+    int run() override;
     void quit() override;
 
 private:

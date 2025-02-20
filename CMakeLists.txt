@@ -1,72 +1,38 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(InterviewCheater)
+# Set policies if needed
+if(POLICY CMP0091)
+    cmake_policy(SET CMP0091 NEW)
+endif()
 
-set(CMAKE_CXX_STANDARD 17)
+project(InterviewCheater 
+    VERSION 1.0.0
+    DESCRIPTION "Interview Cheater Application"
+    LANGUAGES CXX
+)
+
 # Set CMake to look in the cmake/ folder for additional scripts
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-# Include setup script first
+
+# All CMake variables defined in one place
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Project root directory for convenience
+set(PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+
+include(common-source)
+include(help)
+setup_help_target()
+
+# Setup clang tools before adding targets
 include(setup-clang-tools)
-# Call the setup function
 setup_clang_tools()
 
-# Include your custom Clang formatting/linting script
-include(format-lint)
-
-
-# Add debug definitions
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_definitions(-DDEBUG)
-endif()
-
-# Define source groups
-set(CORE_SOURCES
-    src/main.cpp
-)
-
-set(COMMAND_SOURCES
-    src/command/show_command.cpp
-)
-
-set(SIGNAL_SOURCES
-    src/signal/toggle_signal.cpp
-    src/signal/signal_manager.cpp
-)
-
-set(WINDOW_SOURCES
-    src/window/window_manager.cpp
-)
-
-set(INPUT_SOURCES
-    src/input/input_factory.cpp
-)
-
-set(PLATFORM_COMMON_SOURCES
-    src/platform/application.cpp
-)
-
-
-
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(COMMON_INCLUDES
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/mode/debug
-    )
-else ()
-    set(COMMON_INCLUDES
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/mode/release
-    )
-endif()
-
-# Platform-specific configuration and sources
+# Create the executable with basic sources
 if(WIN32)
-    set(PLATFORM_SOURCES
-        src/platform/windows/input/input.cpp
-        src/platform/windows/window/overlay_window.cpp
-        src/platform/windows/platform_application.cpp
-            src/platform/windows/utils/logger.cpp
-    )
-    
     add_executable(${PROJECT_NAME} WIN32 
         ${CORE_SOURCES}
         ${COMMAND_SOURCES}
@@ -74,28 +40,10 @@ if(WIN32)
         ${WINDOW_SOURCES}
         ${INPUT_SOURCES}
         ${PLATFORM_COMMON_SOURCES}
-        ${PLATFORM_SOURCES}
     )
-    
-    target_include_directories(${PROJECT_NAME} PRIVATE
-            ${COMMON_INCLUDES}
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/platform/windows
-    )
-    
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-        gdi32
-        dwmapi
-        user32
-    )
+    include(platform/windows)
+    setup_windows_platform()
 elseif(APPLE)
-    set(PLATFORM_SOURCES
-        src/platform/macos/input/input.mm
-        src/platform/macos/window/overlay_window.mm
-        src/platform/macos/platform_application.mm
-            src/platform/macos/utils/logger.mm
-    )
-    
     add_executable(${PROJECT_NAME} MACOSX_BUNDLE 
         ${CORE_SOURCES}
         ${COMMAND_SOURCES}
@@ -103,28 +51,12 @@ elseif(APPLE)
         ${WINDOW_SOURCES}
         ${INPUT_SOURCES}
         ${PLATFORM_COMMON_SOURCES}
-        ${PLATFORM_SOURCES}
     )
-    
-    target_include_directories(${PROJECT_NAME} PRIVATE
-            ${COMMON_INCLUDES}
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/platform/macos
-    )
-
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        MACOSX_BUNDLE TRUE
-        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist
-        XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ""
-        XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED NO
-    )
-    
-    find_library(COCOA_LIBRARY Cocoa REQUIRED)
-    find_library(CARBON_LIBRARY Carbon REQUIRED)
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-        ${COCOA_LIBRARY}
-        ${CARBON_LIBRARY}
-    )
+    include(platform/macos)
+    setup_macos_platform()
 else()
     message(FATAL_ERROR "Unsupported platform")
 endif()
+
+# Include format-lint after the target is created
+include(format-lint)

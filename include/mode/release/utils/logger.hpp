@@ -6,4 +6,4 @@ void platform_log(const char* function, int line, const char* format, ...);
 
 #define DEBUG_LOG(format, ...)
 
-#endif // LOGGER_HPP 
+#endif  // LOGGER_HPP

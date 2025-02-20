@@ -2,39 +2,32 @@
 #import <Cocoa/Cocoa.h>
 #import "utils/logger.hpp"
 
-
 @interface OverlayWindowDelegate : NSObject <NSWindowDelegate>
-@property (nonatomic, assign) interview_cheater::window::OverlayWindow* owner;
+@property(nonatomic, assign) interview_cheater::window::OverlayWindow* owner;
 @end
 
 @implementation OverlayWindowDelegate
-- (BOOL)windowShouldClose:(NSWindow*)sender
-{
+- (BOOL)windowShouldClose:(NSWindow*)sender {
     DEBUG_LOG("Window close requested");
-    if (self.owner)
-    {
+    if (self.owner) {
         self.owner->setRunning(false);
     }
     return YES;
 }
 
-- (void)windowDidResize:(NSNotification*)notification
-{
-    DEBUG_LOG("Window resized to: %s", [NSStringFromRect([((NSWindow *)notification.object) frame]) UTF8String]);
+- (void)windowDidResize:(NSNotification*)notification {
+    DEBUG_LOG("Window resized to: %s", [NSStringFromRect([((NSWindow*)notification.object) frame]) UTF8String]);
 }
 
-- (void)windowDidMove:(NSNotification*)notification
-{
-    DEBUG_LOG("Window moved to: %s", [NSStringFromRect([((NSWindow *)notification.object) frame]) UTF8String]);
+- (void)windowDidMove:(NSNotification*)notification {
+    DEBUG_LOG("Window moved to: %s", [NSStringFromRect([((NSWindow*)notification.object) frame]) UTF8String]);
 }
 
-- (void)windowDidBecomeKey:(NSNotification*)notification
-{
+- (void)windowDidBecomeKey:(NSNotification*)notification {
     DEBUG_LOG("Window became key");
 }
 
-- (void)windowDidResignKey:(NSNotification*)notification
-{
+- (void)windowDidResignKey:(NSNotification*)notification {
     DEBUG_LOG("Window resigned key");
 }
 @end
@@ -44,8 +37,7 @@
 
 @implementation ContentView
 
-- (void)drawRect:(NSRect)dirtyRect
-{
+- (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
     [[NSColor windowBackgroundColor] set];
     NSRectFill(dirtyRect);
@@ -53,19 +45,13 @@
 
 @end
 
-namespace interview_cheater::window
-{
+namespace interview_cheater::window {
 
-class OverlayWindow::Impl
-{
-  public:
-    Impl() : window(nil), delegate(nil)
-    {
-        DEBUG_LOG("Creating OverlayWindow implementation");
-    }
+class OverlayWindow::Impl {
+   public:
+    Impl() : window(nil), delegate(nil) { DEBUG_LOG("Creating OverlayWindow implementation"); }
 
-    void create()
-    {
+    void create() {
         DEBUG_LOG("Beginning window creation");
         NSRect frame = NSMakeRect(100, 100, 400, 600);
         NSUInteger styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable |
@@ -107,8 +93,7 @@ class OverlayWindow::Impl
         [window orderOut:nil];
     }
 
-    void setupContentView()
-    {
+    void setupContentView() {
         DEBUG_LOG("Setting up content view");
 
         // Create and configure scroll view
@@ -134,8 +119,7 @@ class OverlayWindow::Impl
         DEBUG_LOG("Content view setup complete");
     }
 
-    void configureTextView(NSTextView* textView)
-    {
+    void configureTextView(NSTextView* textView) {
         [textView setMinSize:NSMakeSize(0.0, 0.0)];
         [textView setMaxSize:NSMakeSize(FLT_MAX, FLT_MAX)];
         [textView setVerticallyResizable:YES];
@@ -163,8 +147,7 @@ class OverlayWindow::Impl
         [[textView textContainer] setWidthTracksTextView:YES];
     }
 
-    void positionWindow()
-    {
+    void positionWindow() {
         NSScreen* screen = [NSScreen mainScreen];
         NSRect screenFrame = [screen visibleFrame];
         NSRect windowFrame = [window frame];
@@ -174,92 +157,68 @@ class OverlayWindow::Impl
         DEBUG_LOG("Window positioned at: %@", NSStringFromRect(windowFrame));
     }
 
-    void show()
-    {
-        if ([window isVisible])
-        {
+    void show() {
+        if ([window isVisible]) {
             DEBUG_LOG("Hiding window");
             [window orderOut:nil];
-        }
-        else
-        {
+        } else {
             DEBUG_LOG("Showing window");
             [window orderFrontRegardless];
         }
     }
 
-    void close()
-    {
+    void close() {
         DEBUG_LOG("Closing window");
         [window close];
     }
 
-    void* getNativeHandle() const
-    {
-        return (__bridge void*)window;
-    }
+    void* getNativeHandle() const { return (__bridge void*)window; }
 
-    ~Impl()
-    {
+    ~Impl() {
         DEBUG_LOG("Destroying window implementation");
-        if (window)
-        {
+        if (window) {
             [window setDelegate:nil];
             [window close];
             [delegate release];
         }
     }
 
-  private:
+   private:
     NSWindow* window;
     OverlayWindowDelegate* delegate;
 };
 
-OverlayWindow::OverlayWindow() : pImpl(std::make_unique<Impl>()), running(false)
-{
+OverlayWindow::OverlayWindow() : pImpl(std::make_unique<Impl>()), running(false) {
     DEBUG_LOG("Creating OverlayWindow");
 }
 
 OverlayWindow::~OverlayWindow() = default;
 
-void OverlayWindow::create()
-{
+void OverlayWindow::create() {
     DEBUG_LOG("Creating window");
     pImpl->create();
     running = true;
 }
 
-void OverlayWindow::show()
-{
-    pImpl->show();
-}
+void OverlayWindow::show() { pImpl->show(); }
 
-void OverlayWindow::update()
-{
+void OverlayWindow::update() {
     // No update needed
 }
 
-void OverlayWindow::close()
-{
+void OverlayWindow::close() {
     DEBUG_LOG("Closing window and setting running to false");
     pImpl->close();
     running = false;
 }
 
-void* OverlayWindow::getNativeHandle() const
-{
-    return pImpl->getNativeHandle();
-}
+void* OverlayWindow::getNativeHandle() const { return pImpl->getNativeHandle(); }
 
-bool OverlayWindow::isRunning() const
-{
-    return running;
-}
+bool OverlayWindow::isRunning() const { return running; }
 
-void OverlayWindow::setRunning(bool runningState)
-{
+void OverlayWindow::setRunning(bool runningState) {
     DEBUG_LOG("Setting running state to: %d", runningState);
     running = runningState;
 }
 
-} // namespace interview_cheater::window
+}  // namespace interview_cheater::window

@@ -1,5 +1,7 @@
 #include "utils/logger.hpp"
+
 #include <windows.h>
+
 #include <cstdarg>
 #include <cstdio>
 

@@ -1,25 +1,22 @@
 #ifndef WINDOWS_APPLICATION_HPP
 #define WINDOWS_APPLICATION_HPP
 
-#include "platform/application.hpp"
-
 #include <memory>
 
-namespace interview_cheater
-{
-namespace signal
-{
+#include "platform/application.hpp"
+
+namespace interview_cheater {
+namespace signal {
 // Forward declaration for SignalManager
 class SignalManager;
 }  // namespace signal
 
-class PlatformApplication : public Application
-{
+class PlatformApplication : public Application {
 public:
     explicit PlatformApplication(signal::SignalManager& signalManager);
     ~PlatformApplication() override;
 
-    int  run() override;
+    int run() override;
     void quit() override;
 
 private:

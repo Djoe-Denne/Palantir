@@ -4,13 +4,11 @@
 #include <memory>
 #include <vector>
 
-namespace interview_cheater::signal
-{
+namespace interview_cheater::signal {
 // Forward declaration for ISignal
 class ISignal;
 
-class SignalManager
-{
+class SignalManager {
 public:
     void addSignal(std::unique_ptr<ISignal> signal);
     void startSignals();
