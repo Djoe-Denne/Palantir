@@ -26,9 +26,11 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         # Add format-check target (verify formatting without changing files)
         add_custom_target(format-check
             COMMAND ${CMAKE_COMMAND} -E echo "Checking formatting..."
-            COMMAND ${CMAKE_COMMAND} -E echo "Executing: ${CLANG_FORMAT_EXEC} -style=file -output-replacements-xml ${ALL_SOURCES} | tee ${CMAKE_BINARY_DIR}/clang-format.xml | grep -c '<replacement ' > /dev/null && exit 1 || exit 0"
-            COMMAND ${CLANG_FORMAT_EXEC} -style=file -output-replacements-xml -verbose ${ALL_SOURCES} | tee ${CMAKE_BINARY_DIR}/clang-format.xml | grep -c "<replacement " > /dev/null && exit 1 || exit 0
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/format-reports
+            COMMAND ${CLANG_FORMAT_EXEC} -style=file -output-replacements-xml -verbose ${ALL_SOURCES} > ${CMAKE_BINARY_DIR}/format-reports/clang-format.xml
+            COMMAND ${CMAKE_COMMAND} -E echo "Analyzing format check results..."
+            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/cmake/analyze-format.cmake
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} 
             COMMENT "Checking if sources are properly formatted"
             VERBATIM
         )
@@ -80,6 +82,17 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
                 > ${CMAKE_BINARY_DIR}/lint-reports/report.txt
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "Running clang-tidy check"
+            VERBATIM
+        )
+
+        # Add lint-analyze target to process the lint report
+        add_custom_target(lint-analyze
+            COMMAND ${CMAKE_COMMAND} 
+                -DREPORT_FILE=${CMAKE_BINARY_DIR}/lint-reports/report.txt
+                -DWARNING_THRESHOLD=5
+                -P ${CMAKE_SOURCE_DIR}/cmake/analyze-lint.cmake
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            COMMENT "Analyzing lint report"
             VERBATIM
         )
 
