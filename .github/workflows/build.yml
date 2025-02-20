@@ -45,7 +45,6 @@ jobs:
     - name: Check Format
       id: format # ID used for referencing in the results comment
       run: |
-        clang-format --version
         cmake --build ${{github.workspace}}/build --target format-check
     
     # Step 5: Run static analysis with clang-tidy
