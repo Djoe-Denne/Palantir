@@ -15,20 +15,14 @@ constexpr int SQUARE_MARGIN_RATIO = 4;  // Divides width/height by this to get m
 constexpr COLORREF SQUARE_COLOR = RGB(255, 0, 0);
 
 auto CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> LRESULT {
-    auto* window =
-        reinterpret_cast<OverlayWindow*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));  // NOLINT(performance-no-int-to-ptr)
 
     switch (uMsg) {
-        case WM_CLOSE:
-            if (window != nullptr) {
-                window->setRunning(false);
-            }
             return 0;
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
         case WM_PAINT:
-            if (window != nullptr) {
+            {
                 PAINTSTRUCT paintStruct;
                 HDC hdc = BeginPaint(hwnd, &paintStruct);
                 RECT rect;
@@ -45,7 +39,6 @@ auto CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> 
                 FillRect(hdc, &square, brush);
                 DeleteObject(brush);
                 EndPaint(hwnd, &paintStruct);
-                return 0;
             }
             return 0;
         default:
