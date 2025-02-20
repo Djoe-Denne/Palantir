@@ -1,4 +1,32 @@
-# Clang Tools Guide
+# Clang Tools Usage
+
+This document describes how we use clang-format and clang-tidy in our project for code formatting and static analysis.
+
+## Available Commands
+
+### Code Formatting
+- `cmake --build build --target format` - Format all source files in-place
+- `cmake --build build --target format-check` - Check if files are properly formatted without modifying them
+
+### Static Analysis
+- `cmake --build build --target lint` - Run clang-tidy and fix issues automatically
+- `cmake --build build --target lint-check` - Run clang-tidy in check-only mode
+- `cmake --build build --target lint-analyze` - Analyze the lint report (fails if more than 5 warnings)
+
+### Combined Commands
+- `cmake --build build --target fix-all` - Run both formatting and linting with automatic fixes
+- `cmake --build build --target check-all` - Run both formatting and linting checks without modifications
+
+## Configuration Files
+- `.clang-format` - Defines our code formatting style
+- `.clang-tidy` - Defines our static analysis rules and checks
+
+## Warning Threshold
+The project enforces a maximum of 5 lint warnings. This threshold can be adjusted by modifying:
+- `cmake/analyze-lint.cmake` - For local builds
+- `cmake/format-lint.cmake` - In the lint-analyze target definition
+
+## Clang Tools Guide
 
 ## Overview
 

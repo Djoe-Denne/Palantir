@@ -1,4 +1,53 @@
-# CMake Configuration Guide
+# CMake Configuration
+
+This document describes how we use CMake in our project for building and development workflows.
+
+## Build Types
+
+- `Release` - Optimized build for distribution
+- `Debug` - Build with debug symbols and minimal optimization
+
+## Common Commands
+
+### Basic Build
+```bash
+# Configure the build
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+# Build the project
+cmake --build build --config Release
+```
+
+### Development Workflow
+```bash
+# Configure with compile commands export (needed for clang-tidy)
+cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+# Build in debug mode
+cmake --build build --config Debug
+```
+
+## Custom Targets
+
+Our project defines several custom targets for code quality:
+
+### Code Quality
+- `format-check` - Check code formatting
+- `lint-check` - Run static analysis
+- `lint-analyze` - Process lint report
+- `check-all` - Run all checks
+
+### Code Fixes
+- `format` - Apply code formatting
+- `lint` - Apply static analysis fixes
+- `fix-all` - Apply all available fixes
+
+## Platform-Specific Settings
+
+The build system automatically configures:
+- Include paths for Windows/macOS specific code
+- Compiler flags based on the platform
+- Output paths for executables and app bundles
 
 ## Project Structure
 
