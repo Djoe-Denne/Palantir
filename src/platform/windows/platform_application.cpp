@@ -1,7 +1,7 @@
 #include "platform_application.hpp"
 #include "signal/signal_manager.hpp"
 #include <windows.h>
-#import "utils/logger.hpp"
+#include "utils/logger.hpp"
 
 
 namespace interview_cheater
