@@ -43,6 +43,7 @@ jobs:
     # Step 4: Check code formatting
     # Runs clang-format in check mode (no modifications)
     - name: Check Format (Windows)
+      if: runner.os == 'Windows'
       id: format-windows  # ID used for referencing in the results comment
       continue-on-error: true  # Don't fail the workflow immediately
       shell: pwsh
@@ -50,6 +51,7 @@ jobs:
 
     
     - name: Check Format (Unix)
+      if: runner.os != 'Windows'
       id: format-unix  # ID used for referencing in the results comment
       continue-on-error: true  # Don't fail the workflow immediately
       shell: bash
@@ -91,7 +93,7 @@ jobs:
       run: |
         echo "Running lint check on Unix"
         ls -la "${{github.workspace}}/build"
-        cmake --build ${{github.workspace}}/build --target lint-check
+        cmake --build ${{github.workspace}}/build --target lint-check || { echo "CMake build failed"; exit 1; }
         if [ -d "${{github.workspace}}/build/lint-reports" ]; then
           ls -la "${{github.workspace}}/build/lint-reports"
           if [ -f "${{github.workspace}}/build/lint-reports/report.txt" ]; then
