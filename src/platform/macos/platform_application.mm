@@ -99,7 +99,7 @@ class PlatformApplication::Impl {
 
         if (!accessibilityEnabled) {
             NSString* message = @"Please grant accessibility permissions in System Preferences > "
-                               @"Security & Privacy > Privacy > Accessibility";
+                                @"Security & Privacy > Privacy > Accessibility";
             DEBUG_LOG("%s", [message UTF8String]);
         }
 
