@@ -45,6 +45,9 @@ constexpr int KEY_7 = kVK_ANSI_7;  ///< Virtual key code for '7'
 constexpr int KEY_8 = kVK_ANSI_8;  ///< Virtual key code for '8'
 constexpr int KEY_9 = kVK_ANSI_9;  ///< Virtual key code for '9'
 
+// Non-alphanumeric characters
+constexpr int KEY_SLASH = kVK_ANSI_Slash;  ///< Virtual key code for '/'
+
 // Function keys
 constexpr int KEY_F1 = kVK_F1;    ///< Virtual key code for F1
 constexpr int KEY_F2 = kVK_F2;    ///< Virtual key code for F2
@@ -66,20 +69,28 @@ constexpr int KEY_F17 = kVK_F17;  ///< Virtual key code for F17
 constexpr int KEY_F18 = kVK_F18;  ///< Virtual key code for F18
 constexpr int KEY_F19 = kVK_F19;  ///< Virtual key code for F19
 constexpr int KEY_F20 = kVK_F20;  ///< Virtual key code for F20
+constexpr int KEY_F21 = kVK_F21;  ///< Virtual key code for F21
+constexpr int KEY_F22 = kVK_F22;  ///< Virtual key code for F22
+constexpr int KEY_F23 = kVK_F23;  ///< Virtual key code for F23
+constexpr int KEY_F24 = kVK_F24;  ///< Virtual key code for F24
 
 // Special keys
-constexpr int KEY_ESCAPE = kVK_Escape;         ///< Virtual key code for Escape
-constexpr int KEY_TAB = kVK_Tab;               ///< Virtual key code for Tab
-constexpr int KEY_CAPSLOCK = kVK_CapsLock;     ///< Virtual key code for Caps Lock
-constexpr int KEY_SPACE = kVK_Space;           ///< Virtual key code for Space
-constexpr int KEY_BACKSPACE = kVK_Delete;      ///< Virtual key code for Backspace
-constexpr int KEY_ENTER = kVK_Return;          ///< Virtual key code for Enter
-constexpr int KEY_DELETE = kVK_ForwardDelete;  ///< Virtual key code for Delete
-constexpr int KEY_INSERT = kVK_Help;           ///< Virtual key code for Insert (Help on macOS)
-constexpr int KEY_HOME = kVK_Home;             ///< Virtual key code for Home
-constexpr int KEY_END = kVK_End;               ///< Virtual key code for End
-constexpr int KEY_PAGEUP = kVK_PageUp;         ///< Virtual key code for Page Up
-constexpr int KEY_PAGEDOWN = kVK_PageDown;     ///< Virtual key code for Page Down
+constexpr int KEY_ESCAPE = kVK_Escape;            ///< Virtual key code for Escape
+constexpr int KEY_TAB = kVK_Tab;                  ///< Virtual key code for Tab
+constexpr int KEY_CAPSLOCK = kVK_CapsLock;        ///< Virtual key code for Caps Lock
+constexpr int KEY_SPACE = kVK_Space;              ///< Virtual key code for Space
+constexpr int KEY_BACKSPACE = kVK_Delete;         ///< Virtual key code for Backspace
+constexpr int KEY_ENTER = kVK_Return;             ///< Virtual key code for Enter
+constexpr int KEY_DELETE = kVK_ForwardDelete;     ///< Virtual key code for Delete
+constexpr int KEY_INSERT = kVK_Help;              ///< Virtual key code for Insert (Help on macOS)
+constexpr int KEY_HOME = kVK_Home;                ///< Virtual key code for Home
+constexpr int KEY_END = kVK_End;                  ///< Virtual key code for End
+constexpr int KEY_PAGEUP = kVK_PageUp;            ///< Virtual key code for Page Up
+constexpr int KEY_PAGEDOWN = kVK_PageDown;        ///< Virtual key code for Page Down
+constexpr int KEY_PRINTSCREEN = kVK_PrintScreen;  ///< Virtual key code for Print Screen
+constexpr int KEY_SCROLLLOCK = kVK_ScrollLock;    ///< Virtual key code for Scroll Lock
+constexpr int KEY_PAUSE = kVK_Pause;              ///< Virtual key code for Pause
+constexpr int KEY_NUMLOCK = kVK_NumLock;          ///< Virtual key code for Num Lock
 
 // Arrow keys
 constexpr int KEY_UP = kVK_UpArrow;        ///< Virtual key code for Up Arrow
