@@ -58,6 +58,7 @@ jobs:
     # Step 6: Analyze lint results using CMake target
     - name: Analyze Lint Results
       run: |
+        cat ${{github.workspace}}/build/lint-reports/report.txt
         cmake --build ${{github.workspace}}/build --target lint-analyze
     
   # Second parallel job: Build the project
