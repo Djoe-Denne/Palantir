@@ -80,11 +80,6 @@ const std::unordered_map<std::string, int> keyMap = {
     {"F17", KeyCodes::KEY_F17},
     {"F18", KeyCodes::KEY_F18},
     {"F19", KeyCodes::KEY_F19},
-    {"F20", KeyCodes::KEY_F20},
-    {"F21", KeyCodes::KEY_F21},
-    {"F22", KeyCodes::KEY_F22},
-    {"F23", KeyCodes::KEY_F23},
-    {"F24", KeyCodes::KEY_F24},
 
     // Special keys
     {"ESCAPE", KeyCodes::KEY_ESCAPE},
@@ -94,15 +89,10 @@ const std::unordered_map<std::string, int> keyMap = {
     {"BACKSPACE", KeyCodes::KEY_BACKSPACE},
     {"ENTER", KeyCodes::KEY_ENTER},
     {"DELETE", KeyCodes::KEY_DELETE},
-    {"INSERT", KeyCodes::KEY_INSERT},
     {"HOME", KeyCodes::KEY_HOME},
     {"END", KeyCodes::KEY_END},
     {"PAGEUP", KeyCodes::KEY_PAGEUP},
     {"PAGEDOWN", KeyCodes::KEY_PAGEDOWN},
-    {"PRINTSCREEN", KeyCodes::KEY_PRINTSCREEN},
-    {"SCROLLLOCK", KeyCodes::KEY_SCROLLLOCK},
-    {"PAUSE", KeyCodes::KEY_PAUSE},
-    {"NUMLOCK", KeyCodes::KEY_NUMLOCK},
 
     // Arrow keys
     {"UP", KeyCodes::KEY_UP},
@@ -113,16 +103,13 @@ const std::unordered_map<std::string, int> keyMap = {
 
 // Modifier name to modifier code mapping
 const std::unordered_map<std::string, int> modifierMap = {
+    {"CTRL", KeyCodes::CONTROL_MODIFIER},
+    {"ALT", KeyCodes::ALT_MODIFIER},  // Alt key
+    {"SHIFT", KeyCodes::SHIFT_MODIFIER},
 #ifdef _WIN32
-    {"CTRL", KeyCodes::CONTROL_MODIFIER},
-    {"WIN", KeyCodes::WINDOWS_MODIFIER},  // Left Windows key
-    {"ALT", KeyCodes::ALT_MODIFIER},      // Alt key
-    {"SHIFT", KeyCodes::SHIFT_MODIFIER}
+    {"WIN", KeyCodes::COMMAND_MODIFIER}  // Left Windows key
 #else
-    {"CTRL", KeyCodes::CONTROL_MODIFIER},
-    {"CMD", KeyCodes::COMMAND_MODIFIER},
-    {"ALT", KeyCodes::ALT_MODIFIER},
-    {"SHIFT", KeyCodes::SHIFT_MODIFIER}
+    {"CMD", KeyCodes::COMMAND_MODIFIER}
 #endif
 };
 

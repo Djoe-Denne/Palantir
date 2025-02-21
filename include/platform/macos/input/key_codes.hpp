@@ -3,9 +3,19 @@
 
 #include <Carbon/Carbon.h>
 
+/**
+ * @brief Virtual key codes for keyboard input.
+ *
+ * This namespace contains cross-platform virtual key codes for both
+ * regular keys and modifier keys. These codes are used to identify
+ * specific keys and modifiers in the input system.
+ *
+ * The key codes are mapped to macOS Carbon key codes and
+ * are guaranteed to be compatible with Windows equivalents.
+ */
 namespace interview_cheater::input::KeyCodes {
 
-// Letters
+// Letters (common between Windows and macOS)
 constexpr int KEY_A = kVK_ANSI_A;  ///< Virtual key code for 'A'
 constexpr int KEY_B = kVK_ANSI_B;  ///< Virtual key code for 'B'
 constexpr int KEY_C = kVK_ANSI_C;  ///< Virtual key code for 'C'
@@ -33,7 +43,7 @@ constexpr int KEY_X = kVK_ANSI_X;  ///< Virtual key code for 'X'
 constexpr int KEY_Y = kVK_ANSI_Y;  ///< Virtual key code for 'Y'
 constexpr int KEY_Z = kVK_ANSI_Z;  ///< Virtual key code for 'Z'
 
-// Numbers
+// Numbers (common between Windows and macOS)
 constexpr int KEY_0 = kVK_ANSI_0;  ///< Virtual key code for '0'
 constexpr int KEY_1 = kVK_ANSI_1;  ///< Virtual key code for '1'
 constexpr int KEY_2 = kVK_ANSI_2;  ///< Virtual key code for '2'
@@ -45,10 +55,7 @@ constexpr int KEY_7 = kVK_ANSI_7;  ///< Virtual key code for '7'
 constexpr int KEY_8 = kVK_ANSI_8;  ///< Virtual key code for '8'
 constexpr int KEY_9 = kVK_ANSI_9;  ///< Virtual key code for '9'
 
-// Non-alphanumeric characters
-constexpr int KEY_SLASH = kVK_ANSI_Slash;  ///< Virtual key code for '/'
-
-// Function keys
+// Function keys (common between Windows and macOS)
 constexpr int KEY_F1 = kVK_F1;    ///< Virtual key code for F1
 constexpr int KEY_F2 = kVK_F2;    ///< Virtual key code for F2
 constexpr int KEY_F3 = kVK_F3;    ///< Virtual key code for F3
@@ -68,45 +75,37 @@ constexpr int KEY_F16 = kVK_F16;  ///< Virtual key code for F16
 constexpr int KEY_F17 = kVK_F17;  ///< Virtual key code for F17
 constexpr int KEY_F18 = kVK_F18;  ///< Virtual key code for F18
 constexpr int KEY_F19 = kVK_F19;  ///< Virtual key code for F19
-constexpr int KEY_F20 = kVK_F20;  ///< Virtual key code for F20
-constexpr int KEY_F21 = kVK_F21;  ///< Virtual key code for F21
-constexpr int KEY_F22 = kVK_F22;  ///< Virtual key code for F22
-constexpr int KEY_F23 = kVK_F23;  ///< Virtual key code for F23
-constexpr int KEY_F24 = kVK_F24;  ///< Virtual key code for F24
 
-// Special keys
-constexpr int KEY_ESCAPE = kVK_Escape;            ///< Virtual key code for Escape
-constexpr int KEY_TAB = kVK_Tab;                  ///< Virtual key code for Tab
-constexpr int KEY_CAPSLOCK = kVK_CapsLock;        ///< Virtual key code for Caps Lock
-constexpr int KEY_SPACE = kVK_Space;              ///< Virtual key code for Space
-constexpr int KEY_BACKSPACE = kVK_Delete;         ///< Virtual key code for Backspace
-constexpr int KEY_ENTER = kVK_Return;             ///< Virtual key code for Enter
-constexpr int KEY_DELETE = kVK_ForwardDelete;     ///< Virtual key code for Delete
-constexpr int KEY_INSERT = kVK_Help;              ///< Virtual key code for Insert (Help on macOS)
-constexpr int KEY_HOME = kVK_Home;                ///< Virtual key code for Home
-constexpr int KEY_END = kVK_End;                  ///< Virtual key code for End
-constexpr int KEY_PAGEUP = kVK_PageUp;            ///< Virtual key code for Page Up
-constexpr int KEY_PAGEDOWN = kVK_PageDown;        ///< Virtual key code for Page Down
-constexpr int KEY_PRINTSCREEN = kVK_PrintScreen;  ///< Virtual key code for Print Screen
-constexpr int KEY_SCROLLLOCK = kVK_ScrollLock;    ///< Virtual key code for Scroll Lock
-constexpr int KEY_PAUSE = kVK_Pause;              ///< Virtual key code for Pause
-constexpr int KEY_NUMLOCK = kVK_NumLock;          ///< Virtual key code for Num Lock
+// Special keys (common between Windows and macOS)
+constexpr int KEY_ESCAPE = kVK_Escape;         ///< Virtual key code for Escape
+constexpr int KEY_TAB = kVK_Tab;               ///< Virtual key code for Tab
+constexpr int KEY_CAPSLOCK = kVK_CapsLock;     ///< Virtual key code for Caps Lock
+constexpr int KEY_SPACE = kVK_Space;           ///< Virtual key code for Space
+constexpr int KEY_BACKSPACE = kVK_Delete;      ///< Virtual key code for Backspace
+constexpr int KEY_ENTER = kVK_Return;          ///< Virtual key code for Enter
+constexpr int KEY_DELETE = kVK_ForwardDelete;  ///< Virtual key code for Delete
+constexpr int KEY_HOME = kVK_Home;             ///< Virtual key code for Home
+constexpr int KEY_END = kVK_End;               ///< Virtual key code for End
+constexpr int KEY_PAGEUP = kVK_PageUp;         ///< Virtual key code for Page Up
+constexpr int KEY_PAGEDOWN = kVK_PageDown;     ///< Virtual key code for Page Down
 
-// Arrow keys
+// Arrow keys (common between Windows and macOS)
 constexpr int KEY_UP = kVK_UpArrow;        ///< Virtual key code for Up Arrow
 constexpr int KEY_DOWN = kVK_DownArrow;    ///< Virtual key code for Down Arrow
 constexpr int KEY_LEFT = kVK_LeftArrow;    ///< Virtual key code for Left Arrow
 constexpr int KEY_RIGHT = kVK_RightArrow;  ///< Virtual key code for Right Arrow
 
-// Modifier keys
+// Modifier keys (common between Windows and macOS)
 constexpr int CONTROL_MODIFIER = kVK_Control;  ///< Virtual key code for Control
-constexpr int ALT_MODIFIER = kVK_Option;       ///< Virtual key code for Option/Alt
+constexpr int ALT_MODIFIER = kVK_Option;       ///< Virtual key code for Alt/Option
 constexpr int SHIFT_MODIFIER = kVK_Shift;      ///< Virtual key code for Shift
-constexpr int WINDOWS_MODIFIER = kVK_Command;  ///< Virtual key code for Windows key (Command on macOS)
-constexpr int COMMAND_MODIFIER = kVK_Command;  ///< Virtual key code for Command key
+constexpr int COMMAND_MODIFIER = kVK_Command;  ///< Virtual key code for Command/Windows key
 
-// Mask for key state
+// Special masks (common between Windows and macOS)
 constexpr uint16_t KEY_PRESSED_MASK = 0x0100U;  ///< Mask for checking key pressed state
+
+// Additional keys (common between Windows and macOS)
+constexpr int KEY_SLASH = kVK_ANSI_Slash;  ///< Virtual key code for forward slash
 
 }  // namespace interview_cheater::input::KeyCodes
 
