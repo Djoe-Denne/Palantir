@@ -7,7 +7,8 @@ namespace interview_cheater::utils {
 [[nodiscard]] auto PlatformLog(std::string_view function, int line, const std::string& message) -> void {
     std::ostringstream finalStream;
     finalStream << function << ":" << line << " - " << message;
-    NSLog(@"%s", finalStream.str().c_str());
+    NSString* logMessage = [NSString stringWithUTF8String:finalStream.str().c_str()];
+    NSLog(@"%@", logMessage);
 }
 
 }  // namespace interview_cheater::utils

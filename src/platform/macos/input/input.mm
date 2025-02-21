@@ -13,7 +13,7 @@
 @implementation GlobalEventMonitor
 
 - (instancetype)init {
-    if (self = [super init]) {
+    if ((self = [super init]) != nil) {
         _isKeyPressed = NO;
         _isModifierActive = NO;
         [self setupEventMonitors];

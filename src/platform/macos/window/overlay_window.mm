@@ -9,6 +9,9 @@ constexpr int K_WINDOW_INITIAL_WIDTH = 400;
 constexpr int K_WINDOW_INITIAL_HEIGHT = 600;
 constexpr int K_WINDOW_MARGIN = 20;
 constexpr int K_TEXT_CONTAINER_INSET = 10;
+constexpr double K_WINDOW_ALPHA = 0.95;
+constexpr double K_WINDOW_WHITE = 1.0;
+constexpr double K_FONT_SIZE = 13.0;
 }  // namespace
 
 @interface OverlayWindowDelegate : NSObject <NSWindowDelegate>
@@ -97,7 +100,8 @@ class OverlayWindow::Impl {
         [window_ setHidesOnDeactivate:NO];
         [window_ setMovableByWindowBackground:YES];
         [window_ setAcceptsMouseMovedEvents:YES];
-        [window_ setBackgroundColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.95]];
+        [window_ setBackgroundColor:[NSColor colorWithCalibratedWhite:K_WINDOW_WHITE alpha:K_WINDOW_ALPHA]];
+        [window_ setBackgroundColor:[NSColor colorWithCalibratedWhite:K_WINDOW_WHITE alpha:K_WINDOW_ALPHA]];
 
         DEBUG_LOG("Window panel properties set");
 
@@ -113,14 +117,19 @@ class OverlayWindow::Impl {
 
         // Create and configure scroll view
         NSScrollView* scrollView = [[NSScrollView alloc] initWithFrame:[window_ contentView].bounds];
-        [scrollView setBorderType:NSNoBorder];
         [scrollView setHasVerticalScroller:YES];
-        [scrollView setHasHorizontalScroller:NO];
+        [scrollView setAutohidesScrollers:YES];
         [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
         // Create and configure text view
         NSTextView* textView = [[NSTextView alloc] initWithFrame:scrollView.bounds];
-        configureTextView(textView);
+        [textView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+        [textView setBackgroundColor:[NSColor clearColor]];
+        [textView setDrawsBackground:YES];
+        [textView setTextContainerInset:NSMakeSize(K_TEXT_CONTAINER_INSET, K_TEXT_CONTAINER_INSET)];
+        [textView setEditable:NO];
+        [textView setFont:[NSFont systemFontOfSize:K_FONT_SIZE]];
+        [textView setTextColor:[NSColor textColor]];
 
         // Set up view hierarchy
         [scrollView setDocumentView:textView];
@@ -142,7 +151,8 @@ class OverlayWindow::Impl {
         [textView setAutoresizingMask:NSViewWidthSizable];
         [textView setTextContainerInset:NSMakeSize(K_TEXT_CONTAINER_INSET, K_TEXT_CONTAINER_INSET)];
         [textView setEditable:NO];
-        [textView setFont:[NSFont systemFontOfSize:13.0]];
+        [textView setFont:[NSFont systemFontOfSize:K_FONT_SIZE]];
+        [textView setFont:[NSFont systemFontOfSize:K_FONT_SIZE]];
         [textView setTextColor:[NSColor textColor]];
 
         NSString* content = @"# Interview Notes\n\n"
