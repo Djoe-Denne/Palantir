@@ -101,6 +101,7 @@ class OverlayWindow::Impl {
         [window_ setMovableByWindowBackground:YES];
         [window_ setAcceptsMouseMovedEvents:YES];
         [window_ setBackgroundColor:[NSColor colorWithCalibratedWhite:K_WINDOW_WHITE alpha:K_WINDOW_ALPHA]];
+        [window_ setBackgroundColor:[NSColor colorWithCalibratedWhite:K_WINDOW_WHITE alpha:K_WINDOW_ALPHA]];
 
         DEBUG_LOG("Window panel properties set");
 
@@ -150,6 +151,7 @@ class OverlayWindow::Impl {
         [textView setAutoresizingMask:NSViewWidthSizable];
         [textView setTextContainerInset:NSMakeSize(K_TEXT_CONTAINER_INSET, K_TEXT_CONTAINER_INSET)];
         [textView setEditable:NO];
+        [textView setFont:[NSFont systemFontOfSize:K_FONT_SIZE]];
         [textView setFont:[NSFont systemFontOfSize:K_FONT_SIZE]];
         [textView setTextColor:[NSColor textColor]];
 
