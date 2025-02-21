@@ -5,7 +5,7 @@
 
 /**
  * @brief Signal checking class for macOS event monitoring.
- * 
+ *
  * This Objective-C class handles the event monitoring for keyboard inputs
  * on macOS. It sets up both global and local monitors to capture keyboard
  * events and trigger signal checks.
@@ -23,7 +23,7 @@
  * @brief Initialize the signal checker.
  * @param signalManager Pointer to the C++ signal manager.
  * @return Initialized instance or nil on failure.
- * 
+ *
  * Creates a new signal checker instance and sets up the event monitors
  * for keyboard input detection.
  */
@@ -38,7 +38,7 @@
 
 /**
  * @brief Set up the keyboard event monitors.
- * 
+ *
  * Creates both global and local event monitors to capture keyboard events:
  * - Global monitor: captures events when app is not active
  * - Local monitor: captures events when app is active
@@ -79,7 +79,7 @@
 /**
  * @brief Handle a keyboard event.
  * @param event The NSEvent containing keyboard event information.
- * 
+ *
  * Processes keyboard events by dispatching a signal check on the main queue.
  * This ensures thread safety when triggering signal checks.
  */
@@ -93,7 +93,7 @@
 
 /**
  * @brief Clean up event monitors.
- * 
+ *
  * Removes both global and local event monitors when the instance
  * is being deallocated.
  */
@@ -113,7 +113,7 @@ namespace interview_cheater {
 
 /**
  * @brief Implementation details for the macOS platform application.
- * 
+ *
  * This class handles the macOS-specific implementation details using the PIMPL idiom.
  * It manages the Cocoa application lifecycle and event monitoring infrastructure.
  */
@@ -130,7 +130,7 @@ class PlatformApplication::Impl {
      * @brief Construct the implementation object.
      * @param signalManager Reference to the signal manager for input processing.
      * @param windowManager Reference to the window manager for window handling.
-     * 
+     *
      * Initializes the implementation with references to the managers and sets up
      * the Cocoa application infrastructure. Also requests accessibility permissions
      * which are required for global event monitoring.
@@ -160,7 +160,7 @@ class PlatformApplication::Impl {
     /**
      * @brief Run the macOS application.
      * @return Exit code from the application.
-     * 
+     *
      * Starts the Cocoa run loop, which will continue until the application
      * is terminated. This is the main event processing loop for macOS.
      */
@@ -172,7 +172,7 @@ class PlatformApplication::Impl {
 
     /**
      * @brief Quit the macOS application.
-     * 
+     *
      * Terminates the Cocoa application and cleans up the signal checker.
      * This ensures proper cleanup of event monitors and other resources.
      */
@@ -186,7 +186,7 @@ class PlatformApplication::Impl {
 
     /**
      * @brief Clean up implementation resources.
-     * 
+     *
      * Ensures proper cleanup of the signal checker and its associated
      * event monitors.
      */
@@ -199,20 +199,19 @@ class PlatformApplication::Impl {
 
    private:
     signal::SignalManager& signalManager_;  ///< Reference to the signal manager
-    window::WindowManager& windowManager_;   ///< Reference to the window manager
+    window::WindowManager& windowManager_;  ///< Reference to the window manager
     SignalChecker* signalChecker_{nil};     ///< Pointer to the event monitor handler
 };
 
 /**
  * @brief Construct the macOS platform application.
  * @param configPath Path to the configuration file.
- * 
+ *
  * Creates a new macOS platform application instance, initializing the base
  * Application class and creating the platform-specific implementation.
  */
 PlatformApplication::PlatformApplication(const std::string& configPath)
-    : Application(configPath)
-    , pImpl_(std::make_unique<Impl>(getSignalManager(), getWindowManager())) {
+    : Application(configPath), pImpl_(std::make_unique<Impl>(getSignalManager(), getWindowManager())) {
     DEBUG_LOG("Creating MacOS platform application");
 }
 
@@ -222,7 +221,7 @@ PlatformApplication::~PlatformApplication() = default;
 /**
  * @brief Run the macOS application.
  * @return Exit code from the application.
- * 
+ *
  * Delegates to the implementation's run method to handle the
  * Cocoa run loop and event processing.
  */
@@ -230,7 +229,7 @@ PlatformApplication::~PlatformApplication() = default;
 
 /**
  * @brief Quit the macOS application.
- * 
+ *
  * Delegates to the implementation's quit method to handle proper
  * Cocoa application termination and cleanup.
  */

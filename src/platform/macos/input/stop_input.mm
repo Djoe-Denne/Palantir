@@ -97,4 +97,4 @@ interview_cheater::input::StopInput::~StopInput() = default;
 [[nodiscard]] auto interview_cheater::input::StopInput::isModifierActive() const -> bool {
     return pImpl_->isModifierActive();
 }
-auto interview_cheater::input::StopInput::update() -> void { pImpl_->update(); } 
+auto interview_cheater::input::StopInput::update() -> void { pImpl_->update(); }

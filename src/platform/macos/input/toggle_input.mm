@@ -93,8 +93,10 @@ class ToggleInput::Impl {
 // Use the fully-qualified namespace for definitions
 interview_cheater::input::ToggleInput::ToggleInput() : pImpl_(std::make_unique<Impl>()) {}
 interview_cheater::input::ToggleInput::~ToggleInput() = default;
-[[nodiscard]] auto interview_cheater::input::ToggleInput::isKeyPressed() const -> bool { return pImpl_->isKeyPressed(); }
+[[nodiscard]] auto interview_cheater::input::ToggleInput::isKeyPressed() const -> bool {
+    return pImpl_->isKeyPressed();
+}
 [[nodiscard]] auto interview_cheater::input::ToggleInput::isModifierActive() const -> bool {
     return pImpl_->isModifierActive();
 }
-auto interview_cheater::input::ToggleInput::update() -> void { pImpl_->update(); } 
+auto interview_cheater::input::ToggleInput::update() -> void { pImpl_->update(); }
