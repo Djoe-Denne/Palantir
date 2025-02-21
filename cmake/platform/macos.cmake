@@ -3,7 +3,7 @@ function(setup_macos_platform)
         ${PROJECT_ROOT}/src/platform/macos/input/toggle_input.mm
         ${PROJECT_ROOT}/src/platform/macos/input/stop_input.mm
         ${PROJECT_ROOT}/src/platform/macos/input/configurable_input.mm
-        ${PROJECT_ROOT}/src/platform/macos/signal/signal_manager.cpp
+        ${PROJECT_ROOT}/src/platform/macos/signal/signal_manager.mm
         ${PROJECT_ROOT}/src/platform/macos/window/overlay_window.mm
         ${PROJECT_ROOT}/src/platform/macos/platform_application.mm
         ${PROJECT_ROOT}/src/platform/macos/utils/logger.mm
