@@ -50,52 +50,49 @@ public:
     /** @brief Deleted copy assignment to prevent resource duplication. */
     auto operator=(const SignalManager&) -> SignalManager& = delete;
 
-    // Define move operations
-    /** @brief Default move constructor for transfer of manager ownership. */
+    // Default move operations
+    /** @brief Default move constructor for ownership transfer. */
     SignalManager(SignalManager&&) noexcept = default;
-    /** @brief Default move assignment for transfer of manager ownership. */
+    /** @brief Default move assignment for ownership transfer. */
     auto operator=(SignalManager&&) noexcept -> SignalManager& = default;
 
     /**
-     * @brief Add a new signal to the manager.
-     * @param signal Unique pointer to the signal to add.
+     * @brief Add a new signal to be managed.
+     * @param signal Unique pointer to the signal to be added.
      *
      * Takes ownership of the provided signal and adds it to the collection
-     * of managed signals. The signal will be included in future start, stop,
-     * and check operations.
+     * of managed signals.
      */
     auto addSignal(std::unique_ptr<ISignal> signal) -> void;
 
     /**
-     * @brief Start all managed signals.
+     * @brief Start processing all managed signals.
      *
-     * Activates all signals in the manager, allowing them to begin monitoring
-     * for their trigger conditions. This is typically called when the
-     * application starts or resumes processing.
+     * Activates all managed signals, allowing them to begin processing
+     * their respective conditions.
      */
     auto startSignals() -> void;
 
     /**
-     * @brief Stop all managed signals.
+     * @brief Stop processing all managed signals.
      *
-     * Deactivates all signals in the manager, causing them to cease monitoring
-     * for their trigger conditions. This is typically called when the
-     * application is shutting down or pausing processing.
+     * Deactivates all managed signals, stopping them from processing
+     * their respective conditions.
      */
     auto stopSignals() -> void;
 
     /**
      * @brief Check all managed signals.
      *
-     * Triggers a check of all active signals to see if their conditions are
-     * met. This is typically called in response to input events or during
-     * the application's update cycle.
+     * Triggers a check of conditions for all managed signals.
      */
     auto checkSignals() -> void;
 
 private:
-    /** @brief Collection of managed signals. */
-    std::vector<std::unique_ptr<ISignal>> signals_;
+    // Forward declaration of platform-specific implementation
+    class Impl;
+    std::unique_ptr<Impl> pImpl_;                    ///< Platform-specific implementation details
+    std::vector<std::unique_ptr<ISignal>> signals_;  ///< Collection of managed signals
 };
 
 }  // namespace interview_cheater::signal
