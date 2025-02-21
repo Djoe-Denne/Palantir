@@ -1,7 +1,7 @@
 /**
  * @file signal_factory.hpp
  * @brief Defines the factory for creating signal handlers.
- * 
+ *
  * This file contains the SignalFactory class which is responsible for creating
  * signal handlers that connect inputs to commands. It manages the creation of
  * different types of signals based on the application's needs.
@@ -12,6 +12,7 @@
 
 #include <memory>
 #include <vector>
+
 #include "signal/isignal.hpp"
 
 namespace interview_cheater {
@@ -26,7 +27,7 @@ namespace interview_cheater::signal {
 /**
  * @class SignalFactory
  * @brief Factory class for creating signal handlers.
- * 
+ *
  * This static factory class is responsible for creating and managing signal
  * handlers that connect inputs to commands. It provides methods to create
  * specific types of signals as well as collections of signals based on
@@ -55,7 +56,7 @@ public:
      * @brief Create all configured signals for the application.
      * @param app Reference to the application instance.
      * @return Vector of unique pointers to created signals.
-     * 
+     *
      * Creates and returns all signals configured for the application.
      * This includes both toggle and stop signals, configured according
      * to the application's settings.
@@ -65,4 +66,4 @@ public:
 
 }  // namespace interview_cheater::signal
 
-#endif  // SIGNAL_FACTORY_HPP 
+#endif  // SIGNAL_FACTORY_HPP

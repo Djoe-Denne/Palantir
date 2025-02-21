@@ -1,7 +1,7 @@
 /**
  * @file signal.hpp
  * @brief Defines the concrete signal implementation.
- * 
+ *
  * This file contains the Signal class which provides a concrete implementation
  * of the ISignal interface. It connects input handlers with commands and manages
  * the lifecycle of signal processing.
@@ -12,6 +12,7 @@
 
 #include <chrono>
 #include <memory>
+
 #include "signal/isignal.hpp"
 
 namespace interview_cheater {
@@ -28,7 +29,7 @@ namespace signal {
 /**
  * @class Signal
  * @brief Concrete implementation of the signal interface.
- * 
+ *
  * This class implements the ISignal interface to provide a complete signal
  * processing system. It connects an input handler with a command and manages
  * the signal's lifecycle, including optional debouncing of rapid inputs.
@@ -40,7 +41,7 @@ public:
      * @param input Unique pointer to the input handler.
      * @param command Unique pointer to the command to execute.
      * @param useDebounce Whether to enable input debouncing.
-     * 
+     *
      * Creates a signal that connects the specified input handler with the
      * specified command. Optionally enables debouncing to prevent rapid
      * repeated triggering of the command.
@@ -64,7 +65,7 @@ public:
 
     /**
      * @brief Start monitoring for the signal's conditions.
-     * 
+     *
      * Implements the ISignal interface method to begin monitoring for input
      * conditions that should trigger the command. Sets the signal's active
      * state to true.
@@ -73,7 +74,7 @@ public:
 
     /**
      * @brief Stop monitoring for the signal's conditions.
-     * 
+     *
      * Implements the ISignal interface method to cease monitoring for input
      * conditions. Sets the signal's active state to false.
      */
@@ -82,7 +83,7 @@ public:
     /**
      * @brief Check if the signal is currently active.
      * @return true if the signal is active and monitoring, false otherwise.
-     * 
+     *
      * Implements the ISignal interface method to return the current active
      * state of the signal.
      */
@@ -90,7 +91,7 @@ public:
 
     /**
      * @brief Check if the signal's conditions are met.
-     * 
+     *
      * Implements the ISignal interface method to check the current state of
      * inputs. If the conditions are met and debouncing requirements are
      * satisfied, executes the associated command.
@@ -115,4 +116,4 @@ private:
 }  // namespace signal
 }  // namespace interview_cheater
 
-#endif  // SIGNAL_HPP 
+#endif  // SIGNAL_HPP

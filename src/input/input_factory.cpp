@@ -1,9 +1,11 @@
 #include "input/input_factory.hpp"
-#include "input/configurable_input.hpp"
+
 #include <filesystem>
 #include <fstream>
-#include <stdexcept>
 #include <memory>
+#include <stdexcept>
+
+#include "input/configurable_input.hpp"
 #include "input/key_mapper.hpp"
 #include "utils/logger.hpp"
 
@@ -57,7 +59,7 @@ auto InputFactory::createDefaultConfig(const std::string& configPath) -> void {
  * @param config Reference to the key configuration data.
  * @return Unique pointer to the created input object.
  * @throws std::invalid_argument if the configuration is invalid.
- * 
+ *
  * Delegates to the implementation's createInput method to handle
  * input object creation and configuration.
  */
@@ -88,4 +90,4 @@ auto InputFactory::getConfiguredCommands() -> std::vector<std::string> {
     return keyConfig_->getConfiguredCommands();
 }
 
-}  // namespace interview_cheater::input 
+}  // namespace interview_cheater::input

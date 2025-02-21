@@ -1,6 +1,7 @@
 #include "application.hpp"
-#include "platform_application.hpp"
+
 #include "input/input_factory.hpp"
+#include "platform_application.hpp"
 #include "signal/signal_factory.hpp"
 #include "utils/logger.hpp"
 
@@ -19,10 +20,9 @@ auto Application::getInstance(const std::string& configPath) -> Application* {
     return instance_;
 }
 
-Application::Application(const std::string& configPath)
-    : configPath_(configPath) {
+Application::Application(const std::string& configPath) : configPath_(configPath) {
     DEBUG_LOG("Creating application with config: {}", configPath);
-    
+
     // Initialize input configuration
     input::InputFactory::initialize(configPath_);
     DEBUG_LOG("Input configuration initialized");
@@ -30,12 +30,12 @@ Application::Application(const std::string& configPath)
 
 auto Application::attachSignals() -> void {
     DEBUG_LOG("Attaching signals from configuration");
-    
+
     auto signals = signal::SignalFactory::createSignals(*this);
     for (auto& signal : signals) {
         signalManager_.addSignal(std::move(signal));
     }
-    
+
     signalManager_.startSignals();
     DEBUG_LOG("Signals attached and started");
 }

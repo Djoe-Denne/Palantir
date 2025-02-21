@@ -2,8 +2,8 @@
 #include <stdexcept>
 
 #include "platform/application.hpp"
-#include "window/overlay_window.hpp"
 #include "utils/logger.hpp"
+#include "window/overlay_window.hpp"
 
 #if defined(_WIN32) && !defined(_CONSOLE)
 #include <windows.h>

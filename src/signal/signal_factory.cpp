@@ -1,15 +1,16 @@
 #include "signal/signal_factory.hpp"
 
+#include <stdexcept>
+
+#include "application.hpp"
 #include "command/show_command.hpp"
 #include "command/stop_command.hpp"
-#include "input/input_factory.hpp"
 #include "input/configurable_input.hpp"
-#include "signal/signal.hpp"
-#include "window/window_manager.hpp"
-#include "application.hpp"
+#include "input/input_factory.hpp"
 #include "platform/application.hpp"
+#include "signal/signal.hpp"
 #include "utils/logger.hpp"
-#include <stdexcept>
+#include "window/window_manager.hpp"
 
 namespace interview_cheater::signal {
 
@@ -21,13 +22,11 @@ auto SignalFactory::createSignals(Application& app) -> std::vector<std::unique_p
             auto command = std::make_unique<command::ShowCommand>(app.getWindowManager());
             auto input = input::InputFactory::createInput(commandName);
             signals.push_back(std::make_unique<Signal>(std::move(input), std::move(command), true));
-        }
-        else if (commandName == "stop") {
+        } else if (commandName == "stop") {
             auto command = std::make_unique<command::StopCommand>(app);
             auto input = input::InputFactory::createInput(commandName);
             signals.push_back(std::make_unique<Signal>(std::move(input), std::move(command), false));
-        }
-        else {
+        } else {
             DEBUG_LOG("Unknown command in configuration: {}", commandName);
             throw std::runtime_error("Unknown command in configuration: " + commandName);
         }
@@ -36,4 +35,4 @@ auto SignalFactory::createSignals(Application& app) -> std::vector<std::unique_p
     return signals;
 }
 
-}  // namespace interview_cheater::signal 
+}  // namespace interview_cheater::signal

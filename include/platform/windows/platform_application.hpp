@@ -1,7 +1,7 @@
 /**
  * @file platform_application.hpp
  * @brief Defines the Windows-specific application implementation.
- * 
+ *
  * This file contains the PlatformApplication class which implements the
  * Application interface for the Windows platform. It provides Windows-specific
  * functionality for application lifecycle and event handling.
@@ -23,7 +23,7 @@ class SignalManager;
 /**
  * @class PlatformApplication
  * @brief Windows-specific implementation of the Application class.
- * 
+ *
  * This class provides the Windows platform implementation of the application.
  * It handles Windows-specific event processing, window management, and
  * application lifecycle. The implementation uses the Windows API for
@@ -34,7 +34,7 @@ public:
     /**
      * @brief Construct a new PlatformApplication object.
      * @param configPath Path to the configuration file.
-     * 
+     *
      * Creates a Windows-specific application instance, initializing Windows
      * API resources and setting up the message loop infrastructure.
      */
@@ -42,7 +42,7 @@ public:
 
     /**
      * @brief Destroy the PlatformApplication object.
-     * 
+     *
      * Cleans up Windows-specific resources and ensures proper shutdown
      * of the Windows API components.
      */
@@ -63,7 +63,7 @@ public:
     /**
      * @brief Run the Windows application.
      * @return Exit code from the application.
-     * 
+     *
      * Implements the main Windows message loop, processing Windows events
      * and dispatching them to appropriate handlers. Returns when the
      * application receives a quit message.
@@ -72,7 +72,7 @@ public:
 
     /**
      * @brief Quit the Windows application.
-     * 
+     *
      * Posts a quit message to the Windows message queue, triggering a
      * clean shutdown of the application.
      */

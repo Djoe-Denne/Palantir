@@ -1,7 +1,7 @@
 /**
  * @file icommand.hpp
  * @brief Defines the command interface for the command pattern implementation.
- * 
+ *
  * This file contains the ICommand interface which serves as the base for all commands
  * in the application. It follows the Command pattern to encapsulate actions that can
  * be triggered by various inputs and signals.
@@ -19,7 +19,7 @@ namespace interview_cheater::command {
 /**
  * @class ICommand
  * @brief Interface for the Command pattern implementation.
- * 
+ *
  * Provides a common interface for all commands in the application.
  * Commands encapsulate actions that can be executed in response to
  * user inputs or system events. The interface supports move semantics
@@ -44,7 +44,7 @@ public:
 
     /**
      * @brief Execute the command's action.
-     * 
+     *
      * This method should be implemented by concrete commands to define
      * their specific behavior when executed.
      */
@@ -53,7 +53,7 @@ public:
     /**
      * @brief Get the command's name.
      * @return A reference to the command's name string.
-     * 
+     *
      * Returns a unique identifier for the command, which can be used
      * for logging, debugging, and configuration purposes.
      */

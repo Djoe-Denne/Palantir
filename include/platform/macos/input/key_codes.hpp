@@ -68,31 +68,31 @@ constexpr int KEY_F19 = kVK_F19;  ///< Virtual key code for F19
 constexpr int KEY_F20 = kVK_F20;  ///< Virtual key code for F20
 
 // Special keys
-constexpr int KEY_ESCAPE = kVK_Escape;          ///< Virtual key code for Escape
-constexpr int KEY_TAB = kVK_Tab;                ///< Virtual key code for Tab
-constexpr int KEY_CAPSLOCK = kVK_CapsLock;      ///< Virtual key code for Caps Lock
-constexpr int KEY_SPACE = kVK_Space;            ///< Virtual key code for Space
-constexpr int KEY_BACKSPACE = kVK_Delete;       ///< Virtual key code for Backspace
-constexpr int KEY_ENTER = kVK_Return;           ///< Virtual key code for Enter
-constexpr int KEY_DELETE = kVK_ForwardDelete;   ///< Virtual key code for Delete
-constexpr int KEY_INSERT = kVK_Help;            ///< Virtual key code for Insert (Help on macOS)
-constexpr int KEY_HOME = kVK_Home;              ///< Virtual key code for Home
-constexpr int KEY_END = kVK_End;                ///< Virtual key code for End
-constexpr int KEY_PAGEUP = kVK_PageUp;          ///< Virtual key code for Page Up
-constexpr int KEY_PAGEDOWN = kVK_PageDown;      ///< Virtual key code for Page Down
+constexpr int KEY_ESCAPE = kVK_Escape;         ///< Virtual key code for Escape
+constexpr int KEY_TAB = kVK_Tab;               ///< Virtual key code for Tab
+constexpr int KEY_CAPSLOCK = kVK_CapsLock;     ///< Virtual key code for Caps Lock
+constexpr int KEY_SPACE = kVK_Space;           ///< Virtual key code for Space
+constexpr int KEY_BACKSPACE = kVK_Delete;      ///< Virtual key code for Backspace
+constexpr int KEY_ENTER = kVK_Return;          ///< Virtual key code for Enter
+constexpr int KEY_DELETE = kVK_ForwardDelete;  ///< Virtual key code for Delete
+constexpr int KEY_INSERT = kVK_Help;           ///< Virtual key code for Insert (Help on macOS)
+constexpr int KEY_HOME = kVK_Home;             ///< Virtual key code for Home
+constexpr int KEY_END = kVK_End;               ///< Virtual key code for End
+constexpr int KEY_PAGEUP = kVK_PageUp;         ///< Virtual key code for Page Up
+constexpr int KEY_PAGEDOWN = kVK_PageDown;     ///< Virtual key code for Page Down
 
 // Arrow keys
-constexpr int KEY_UP = kVK_UpArrow;      ///< Virtual key code for Up Arrow
-constexpr int KEY_DOWN = kVK_DownArrow;   ///< Virtual key code for Down Arrow
-constexpr int KEY_LEFT = kVK_LeftArrow;   ///< Virtual key code for Left Arrow
-constexpr int KEY_RIGHT = kVK_RightArrow; ///< Virtual key code for Right Arrow
+constexpr int KEY_UP = kVK_UpArrow;        ///< Virtual key code for Up Arrow
+constexpr int KEY_DOWN = kVK_DownArrow;    ///< Virtual key code for Down Arrow
+constexpr int KEY_LEFT = kVK_LeftArrow;    ///< Virtual key code for Left Arrow
+constexpr int KEY_RIGHT = kVK_RightArrow;  ///< Virtual key code for Right Arrow
 
 // Modifier keys
-constexpr int CONTROL_MODIFIER = kVK_Control;     ///< Virtual key code for Control
+constexpr int CONTROL_MODIFIER = kVK_Control;  ///< Virtual key code for Control
 constexpr int ALT_MODIFIER = kVK_Option;       ///< Virtual key code for Option/Alt
 constexpr int SHIFT_MODIFIER = kVK_Shift;      ///< Virtual key code for Shift
-constexpr int WINDOWS_MODIFIER = kVK_Command;      ///< Virtual key code for Windows key (Command on macOS)
-constexpr int COMMAND_MODIFIER = kVK_Command;      ///< Virtual key code for Command key
+constexpr int WINDOWS_MODIFIER = kVK_Command;  ///< Virtual key code for Windows key (Command on macOS)
+constexpr int COMMAND_MODIFIER = kVK_Command;  ///< Virtual key code for Command key
 
 // Mask for key state
 constexpr uint16_t KEY_PRESSED_MASK = 0x0100U;  ///< Mask for checking key pressed state

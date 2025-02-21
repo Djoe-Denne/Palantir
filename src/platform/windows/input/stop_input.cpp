@@ -16,8 +16,10 @@ public:
     }
 
     [[nodiscard]] static auto isModifierActive() -> bool {
-        const auto leftWinPressed = (static_cast<uint16_t>(GetAsyncKeyState(VK_LWIN)) & KeyCodes::KEY_PRESSED_MASK) != 0U;
-        const auto rightWinPressed = (static_cast<uint16_t>(GetAsyncKeyState(VK_RWIN)) & KeyCodes::KEY_PRESSED_MASK) != 0U;
+        const auto leftWinPressed =
+            (static_cast<uint16_t>(GetAsyncKeyState(VK_LWIN)) & KeyCodes::KEY_PRESSED_MASK) != 0U;
+        const auto rightWinPressed =
+            (static_cast<uint16_t>(GetAsyncKeyState(VK_RWIN)) & KeyCodes::KEY_PRESSED_MASK) != 0U;
         return leftWinPressed || rightWinPressed;
     }
 

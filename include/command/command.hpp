@@ -1,18 +1,18 @@
 #ifndef COMMAND_HPP
 #define COMMAND_HPP
 
-#include "icommand.hpp"
 #include <functional>
 #include <string>
 #include <utility>
+
+#include "icommand.hpp"
 
 namespace interview_cheater::command {
 
 class Command final : public ICommand {
 public:
     explicit Command(std::string name, std::function<void()> action)
-        : m_name(std::move(name))
-        , m_action(std::move(action)) {}
+        : m_name(std::move(name)), m_action(std::move(action)) {}
 
     ~Command() override = default;
 
@@ -24,13 +24,9 @@ public:
     Command(Command&&) noexcept = default;
     auto operator=(Command&&) noexcept -> Command& = default;
 
-    auto execute() -> void override {
-        m_action();
-    }
+    auto execute() -> void override { m_action(); }
 
-    [[nodiscard]] auto getName() const -> const std::string& override {
-        return m_name;
-    }
+    [[nodiscard]] auto getName() const -> const std::string& override { return m_name; }
 
 private:
     std::string m_name;
@@ -39,4 +35,4 @@ private:
 
 }  // namespace interview_cheater::command
 
-#endif  // COMMAND_HPP 
+#endif  // COMMAND_HPP

@@ -1,7 +1,7 @@
 /**
  * @file platform_application.hpp
  * @brief Defines the macOS-specific application implementation.
- * 
+ *
  * This file contains the PlatformApplication class which implements the
  * Application interface for the macOS platform. It provides macOS-specific
  * functionality for application lifecycle and event handling.
@@ -18,7 +18,7 @@ namespace interview_cheater {
 /**
  * @class PlatformApplication
  * @brief macOS-specific implementation of the Application class.
- * 
+ *
  * This class provides the macOS platform implementation of the application.
  * It handles macOS-specific event processing, window management, and
  * application lifecycle. The implementation uses Cocoa and Core Foundation
@@ -29,7 +29,7 @@ public:
     /**
      * @brief Construct a new PlatformApplication object.
      * @param configPath Path to the configuration file.
-     * 
+     *
      * Creates a macOS-specific application instance, initializing Cocoa
      * resources and setting up the event monitoring infrastructure.
      * Also requests necessary permissions for accessibility features.
@@ -38,7 +38,7 @@ public:
 
     /**
      * @brief Destroy the PlatformApplication object.
-     * 
+     *
      * Cleans up macOS-specific resources and ensures proper shutdown
      * of the Cocoa components and event monitors.
      */
@@ -59,7 +59,7 @@ public:
     /**
      * @brief Run the macOS application.
      * @return Exit code from the application.
-     * 
+     *
      * Implements the main Cocoa run loop, processing macOS events
      * and dispatching them to appropriate handlers. Returns when the
      * application terminates.
@@ -68,7 +68,7 @@ public:
 
     /**
      * @brief Quit the macOS application.
-     * 
+     *
      * Terminates the Cocoa application, triggering a clean shutdown
      * of the application and cleanup of resources.
      */

@@ -1,14 +1,14 @@
 #include "input/key_config.hpp"
+
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+
 #include "utils/logger.hpp"
 
 namespace interview_cheater::input {
 
-KeyConfig::KeyConfig(const std::string& configPath) {
-    loadConfig(configPath);
-}
+KeyConfig::KeyConfig(const std::string& configPath) { loadConfig(configPath); }
 
 auto KeyConfig::loadConfig(const std::string& configPath) -> void {
     std::ifstream configFile(configPath);
@@ -93,4 +93,4 @@ auto KeyConfig::getConfiguredCommands() const -> std::vector<std::string> {
     return commands;
 }
 
-}  // namespace interview_cheater::input 
+}  // namespace interview_cheater::input

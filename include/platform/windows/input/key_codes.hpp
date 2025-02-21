@@ -7,11 +7,11 @@ namespace interview_cheater::input {
 
 /**
  * @brief Virtual key codes for keyboard input.
- * 
+ *
  * This namespace contains platform-specific virtual key codes for both
  * regular keys and modifier keys. These codes are used to identify
  * specific keys and modifiers in the input system.
- * 
+ *
  * The key codes are mapped to Windows Virtual Key Codes (VK_*) for
  * Windows platform and to corresponding key codes for other platforms.
  */
@@ -84,22 +84,22 @@ constexpr int KEY_F23 = VK_F23;  ///< Virtual key code for F23
 constexpr int KEY_F24 = VK_F24;  ///< Virtual key code for F24
 
 // Special keys
-constexpr int KEY_ESCAPE = VK_ESCAPE;          ///< Virtual key code for Escape
-constexpr int KEY_TAB = VK_TAB;                ///< Virtual key code for Tab
-constexpr int KEY_CAPSLOCK = VK_CAPITAL;       ///< Virtual key code for Caps Lock
-constexpr int KEY_SPACE = VK_SPACE;            ///< Virtual key code for Space
-constexpr int KEY_BACKSPACE = VK_BACK;         ///< Virtual key code for Backspace
-constexpr int KEY_ENTER = VK_RETURN;           ///< Virtual key code for Enter
-constexpr int KEY_DELETE = VK_DELETE;          ///< Virtual key code for Delete
-constexpr int KEY_INSERT = VK_INSERT;          ///< Virtual key code for Insert
-constexpr int KEY_HOME = VK_HOME;              ///< Virtual key code for Home
-constexpr int KEY_END = VK_END;                ///< Virtual key code for End
-constexpr int KEY_PAGEUP = VK_PRIOR;           ///< Virtual key code for Page Up
-constexpr int KEY_PAGEDOWN = VK_NEXT;          ///< Virtual key code for Page Down
-constexpr int KEY_PRINTSCREEN = VK_SNAPSHOT;   ///< Virtual key code for Print Screen
-constexpr int KEY_SCROLLLOCK = VK_SCROLL;      ///< Virtual key code for Scroll Lock
-constexpr int KEY_PAUSE = VK_PAUSE;            ///< Virtual key code for Pause
-constexpr int KEY_NUMLOCK = VK_NUMLOCK;        ///< Virtual key code for Num Lock
+constexpr int KEY_ESCAPE = VK_ESCAPE;         ///< Virtual key code for Escape
+constexpr int KEY_TAB = VK_TAB;               ///< Virtual key code for Tab
+constexpr int KEY_CAPSLOCK = VK_CAPITAL;      ///< Virtual key code for Caps Lock
+constexpr int KEY_SPACE = VK_SPACE;           ///< Virtual key code for Space
+constexpr int KEY_BACKSPACE = VK_BACK;        ///< Virtual key code for Backspace
+constexpr int KEY_ENTER = VK_RETURN;          ///< Virtual key code for Enter
+constexpr int KEY_DELETE = VK_DELETE;         ///< Virtual key code for Delete
+constexpr int KEY_INSERT = VK_INSERT;         ///< Virtual key code for Insert
+constexpr int KEY_HOME = VK_HOME;             ///< Virtual key code for Home
+constexpr int KEY_END = VK_END;               ///< Virtual key code for End
+constexpr int KEY_PAGEUP = VK_PRIOR;          ///< Virtual key code for Page Up
+constexpr int KEY_PAGEDOWN = VK_NEXT;         ///< Virtual key code for Page Down
+constexpr int KEY_PRINTSCREEN = VK_SNAPSHOT;  ///< Virtual key code for Print Screen
+constexpr int KEY_SCROLLLOCK = VK_SCROLL;     ///< Virtual key code for Scroll Lock
+constexpr int KEY_PAUSE = VK_PAUSE;           ///< Virtual key code for Pause
+constexpr int KEY_NUMLOCK = VK_NUMLOCK;       ///< Virtual key code for Num Lock
 
 // Arrow keys
 constexpr int KEY_UP = VK_UP;        ///< Virtual key code for Up Arrow
@@ -108,11 +108,11 @@ constexpr int KEY_LEFT = VK_LEFT;    ///< Virtual key code for Left Arrow
 constexpr int KEY_RIGHT = VK_RIGHT;  ///< Virtual key code for Right Arrow
 
 // Modifier keys
-constexpr int CONTROL_MODIFIER = VK_CONTROL;   ///< Virtual key code for Control
-constexpr int ALT_MODIFIER = VK_MENU;       ///< Virtual key code for Alt
-constexpr int SHIFT_MODIFIER = VK_SHIFT;    ///< Virtual key code for Shift
-constexpr int WINDOWS_MODIFIER = VK_LWIN;       ///< Virtual key code for Windows key
-constexpr int COMMAND_MODIFIER = VK_LWIN;       ///< Virtual key code for Command key (macOS)
+constexpr int CONTROL_MODIFIER = VK_CONTROL;  ///< Virtual key code for Control
+constexpr int ALT_MODIFIER = VK_MENU;         ///< Virtual key code for Alt
+constexpr int SHIFT_MODIFIER = VK_SHIFT;      ///< Virtual key code for Shift
+constexpr int WINDOWS_MODIFIER = VK_LWIN;     ///< Virtual key code for Windows key
+constexpr int COMMAND_MODIFIER = VK_LWIN;     ///< Virtual key code for Command key (macOS)
 
 // Special masks
 constexpr uint16_t KEY_PRESSED_MASK = 0x8000U;  ///< Mask for checking key pressed state
@@ -120,8 +120,8 @@ constexpr uint16_t KEY_PRESSED_MASK = 0x8000U;  ///< Mask for checking key press
 // Additional keys
 constexpr int KEY_SLASH = VK_OEM_2;  ///< Virtual key code for forward slash
 
-}  // namespace key_codes
+}  // namespace KeyCodes
 
 }  // namespace interview_cheater::input
 
-#endif  // INTERVIEW_CHEATER_KEY_CODES_HPP 
+#endif  // INTERVIEW_CHEATER_KEY_CODES_HPP

@@ -1,4 +1,5 @@
 #include "signal/signal.hpp"
+
 #include "command/icommand.hpp"
 #include "input/iinput.hpp"
 #include "utils/logger.hpp"
@@ -6,9 +7,7 @@
 namespace interview_cheater::signal {
 
 Signal::Signal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command, bool useDebounce)
-    : input_(std::move(input))
-    , command_(std::move(command))
-    , useDebounce_(useDebounce) {
+    : input_(std::move(input)), command_(std::move(command)), useDebounce_(useDebounce) {
     DEBUG_LOG("Creating signal");
 }
 
@@ -22,9 +21,7 @@ auto Signal::stop() -> void {
     active_ = false;
 }
 
-auto Signal::isActive() const -> bool {
-    return active_;
-}
+auto Signal::isActive() const -> bool { return active_; }
 
 auto Signal::check() -> void {
     if (!active_) {
@@ -42,4 +39,4 @@ auto Signal::check() -> void {
     }
 }
 
-}  // namespace interview_cheater::signal 
+}  // namespace interview_cheater::signal

@@ -1,7 +1,7 @@
 /**
  * @file signal_manager.hpp
  * @brief Defines the signal management system.
- * 
+ *
  * This file contains the SignalManager class which is responsible for managing
  * the lifecycle and processing of all signals in the application. It handles
  * signal registration, activation, and checking.
@@ -20,7 +20,7 @@ class ISignal;
 /**
  * @class SignalManager
  * @brief Manager class for handling multiple signals.
- * 
+ *
  * This class manages a collection of signals, controlling their lifecycle
  * and processing. It provides methods to add new signals, start and stop
  * signal processing, and check signal conditions. The class supports move
@@ -28,9 +28,9 @@ class ISignal;
  */
 class SignalManager {
 public:
-    /** 
+    /**
      * @brief Construct a new SignalManager object.
-     * 
+     *
      * Initializes the signal manager and sets up any necessary platform-specific
      * resources for signal processing.
      */
@@ -38,7 +38,7 @@ public:
 
     /**
      * @brief Destroy the SignalManager object.
-     * 
+     *
      * Cleans up all managed signals and releases any platform-specific
      * resources used for signal processing.
      */
@@ -59,7 +59,7 @@ public:
     /**
      * @brief Add a new signal to the manager.
      * @param signal Unique pointer to the signal to add.
-     * 
+     *
      * Takes ownership of the provided signal and adds it to the collection
      * of managed signals. The signal will be included in future start, stop,
      * and check operations.
@@ -68,7 +68,7 @@ public:
 
     /**
      * @brief Start all managed signals.
-     * 
+     *
      * Activates all signals in the manager, allowing them to begin monitoring
      * for their trigger conditions. This is typically called when the
      * application starts or resumes processing.
@@ -77,7 +77,7 @@ public:
 
     /**
      * @brief Stop all managed signals.
-     * 
+     *
      * Deactivates all signals in the manager, causing them to cease monitoring
      * for their trigger conditions. This is typically called when the
      * application is shutting down or pausing processing.
@@ -86,7 +86,7 @@ public:
 
     /**
      * @brief Check all managed signals.
-     * 
+     *
      * Triggers a check of all active signals to see if their conditions are
      * met. This is typically called in response to input events or during
      * the application's update cycle.

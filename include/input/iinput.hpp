@@ -1,7 +1,7 @@
 /**
  * @file iinput.hpp
  * @brief Defines the input interface for handling keyboard inputs.
- * 
+ *
  * This file contains the IInput interface which serves as the base for all input
  * handlers in the application. It provides a platform-agnostic way to detect
  * keyboard inputs and modifier key states.
@@ -15,7 +15,7 @@ namespace interview_cheater::input {
 /**
  * @class IInput
  * @brief Interface for handling keyboard inputs.
- * 
+ *
  * Provides a common interface for detecting keyboard inputs across different
  * platforms. The interface is designed to handle both regular keys and modifier
  * keys (like Ctrl, Alt, etc.) in a platform-independent way. It supports move
@@ -41,7 +41,7 @@ public:
     /**
      * @brief Check if the configured key is currently pressed.
      * @return true if the key is pressed, false otherwise.
-     * 
+     *
      * This method should be implemented to check the current state of the
      * configured key in a platform-specific way.
      */
@@ -50,7 +50,7 @@ public:
     /**
      * @brief Check if the configured modifier key is currently active.
      * @return true if the modifier is active, false otherwise.
-     * 
+     *
      * This method should be implemented to check the current state of the
      * configured modifier key (Ctrl, Alt, etc.) in a platform-specific way.
      */
@@ -58,7 +58,7 @@ public:
 
     /**
      * @brief Update the input handler's state.
-     * 
+     *
      * This method should be implemented to perform any necessary updates
      * to the input handler's state. The implementation may be empty if
      * no state updates are required.
