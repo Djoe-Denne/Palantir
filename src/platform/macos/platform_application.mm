@@ -13,7 +13,7 @@
 @implementation SignalChecker
 
 - (instancetype)initWithSignalManager:(interview_cheater::signal::SignalManager*)signalManager {
-    if (self = [super init]) {
+    if ((self = [super init]) != nil) {
         DEBUG_LOG("Initializing SignalChecker");
         self.signalManager = signalManager;
         [self setupEventMonitors];
@@ -56,7 +56,7 @@
 - (void)handleKeyEvent:(NSEvent*)event {
     // Check for Command + / combination
     if (event.type == NSEventTypeKeyDown && event.keyCode == interview_cheater::input::KeyCodes::KEY_SLASH &&
-        (event.modifierFlags & NSEventModifierFlagCommand)) {
+        ((event.modifierFlags & NSEventModifierFlagCommand) != 0)) {
         DEBUG_LOG("Hotkey combination detected (Command + /)");
         dispatch_async(dispatch_get_main_queue(), ^{
             DEBUG_LOG("Triggering signal check");
@@ -93,13 +93,14 @@ class PlatformApplication::Impl {
 
         // Request accessibility permissions if needed
         NSDictionary* options = @{(__bridge id)kAXTrustedCheckOptionPrompt : @YES};
-        bool accessibilityEnabled = AXIsProcessTrustedWithOptions((CFDictionaryRef)options);
+        bool accessibilityEnabled = AXIsProcessTrustedWithOptions((CFDictionaryRef)options) != 0;
 
         DEBUG_LOG("Accessibility status: %s", accessibilityEnabled ? "Enabled" : "Disabled");
 
         if (!accessibilityEnabled) {
-            NSLog(@"Please grant accessibility permissions in System Preferences > "
-                  @"Security & Privacy > Privacy > Accessibility");
+            NSString* message = @"Please grant accessibility permissions in System Preferences > "
+                               @"Security & Privacy > Privacy > Accessibility";
+            DEBUG_LOG("%s", [message UTF8String]);
         }
 
         signalChecker_ = [[SignalChecker alloc] initWithSignalManager:&signalManager];
