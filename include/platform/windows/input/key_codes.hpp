@@ -2,9 +2,6 @@
 #define INTERVIEW_CHEATER_KEY_CODES_HPP
 
 #include <windows.h>
-
-namespace interview_cheater::input {
-
 /**
  * @brief Virtual key codes for keyboard input.
  *
@@ -15,7 +12,7 @@ namespace interview_cheater::input {
  * The key codes are mapped to Windows Virtual Key Codes (VK_*) for
  * Windows platform and to corresponding key codes for other platforms.
  */
-namespace KeyCodes {
+namespace interview_cheater::input::KeyCodes {
 
 // Letters
 constexpr int KEY_A = 'A';  ///< Virtual key code for 'A'
@@ -120,8 +117,6 @@ constexpr uint16_t KEY_PRESSED_MASK = 0x8000U;  ///< Mask for checking key press
 // Additional keys
 constexpr int KEY_SLASH = VK_OEM_2;  ///< Virtual key code for forward slash
 
-}  // namespace KeyCodes
-
-}  // namespace interview_cheater::input
+}  // namespace interview_cheater::input::KeyCodes
 
 #endif  // INTERVIEW_CHEATER_KEY_CODES_HPP

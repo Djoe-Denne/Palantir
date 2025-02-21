@@ -43,7 +43,7 @@ public:
      * key is currently in a pressed state.
      */
     [[nodiscard]] auto isKeyPressed() const -> bool {
-        bool pressed = (GetAsyncKeyState(keyCode_) & 0x8000) != 0;
+        bool pressed = (static_cast<uint16_t>(GetAsyncKeyState(keyCode_)) & KeyCodes::KEY_PRESSED_MASK) != 0;
         if (pressed) {
             DEBUG_LOG("Key 0x{:x} is pressed", keyCode_);
         }
@@ -58,7 +58,7 @@ public:
      * modifier key is currently in a pressed state.
      */
     [[nodiscard]] auto isModifierActive() const -> bool {
-        bool active = (GetAsyncKeyState(modifierCode_) & 0x8000) != 0;
+        bool active = (static_cast<uint16_t>(GetAsyncKeyState(modifierCode_)) & KeyCodes::KEY_PRESSED_MASK) != 0;
         if (active) {
             DEBUG_LOG("Modifier 0x{:x} is active", modifierCode_);
         }

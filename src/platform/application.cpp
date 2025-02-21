@@ -10,7 +10,7 @@ namespace interview_cheater {
 Application* Application::instance_ = nullptr;
 
 auto Application::getInstance(const std::string& configPath) -> Application* {
-    if (!instance_) {
+    if (instance_ == nullptr) {
 #ifdef _WIN32
         instance_ = new PlatformApplication(configPath);
 #elif defined(__APPLE__)

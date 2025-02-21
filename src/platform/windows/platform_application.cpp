@@ -40,9 +40,9 @@ HHOOK g_keyboardHook = nullptr;
  * The hook is installed system-wide to capture keyboard events regardless
  * of which window has focus.
  */
-LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
+auto CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) -> LRESULT {
     if (nCode == HC_ACTION && g_signalManager != nullptr) {
-        KBDLLHOOKSTRUCT* pKeyboard = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
+        auto* pKeyboard = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);  // NOLINT
 
         // Only check signals on key down or key up events
         if (wParam == WM_KEYDOWN || wParam == WM_KEYUP || wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP) {

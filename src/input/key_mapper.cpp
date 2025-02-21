@@ -139,14 +139,14 @@ auto KeyMapper::getKeyCode(const std::string& keyName) -> int {
     DEBUG_LOG("Looking up key code for: {}", keyName);
 
     const auto upperKey = toUpper(keyName);
-    auto it = keyMap.find(upperKey);
-    if (it == keyMap.end()) {
+    auto iterator = keyMap.find(upperKey);
+    if (iterator == keyMap.end()) {
         DEBUG_LOG("Invalid key name: {}", upperKey);
         throw std::invalid_argument("Invalid key name: " + keyName);
     }
 
-    DEBUG_LOG("Found key code: 0x{:x}", it->second);
-    return it->second;
+    DEBUG_LOG("Found key code: 0x{:x}", iterator->second);
+    return iterator->second;
 }
 
 /**
@@ -162,14 +162,14 @@ auto KeyMapper::getModifierCode(const std::string& modifierName) -> int {
     DEBUG_LOG("Looking up modifier code for: {}", modifierName);
 
     const auto upperModifier = toUpper(modifierName);
-    auto it = modifierMap.find(upperModifier);
-    if (it == modifierMap.end()) {
+    auto iterator = modifierMap.find(upperModifier);
+    if (iterator == modifierMap.end()) {
         DEBUG_LOG("Invalid modifier name: {}", upperModifier);
         throw std::invalid_argument("Invalid modifier name: " + modifierName);
     }
 
-    DEBUG_LOG("Found modifier code: 0x{:x}", it->second);
-    return it->second;
+    DEBUG_LOG("Found modifier code: 0x{:x}", iterator->second);
+    return iterator->second;
 }
 
 /**

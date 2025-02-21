@@ -12,7 +12,7 @@ namespace interview_cheater::command {
 class Command final : public ICommand {
 public:
     explicit Command(std::string name, std::function<void()> action)
-        : m_name(std::move(name)), m_action(std::move(action)) {}
+        : name_(std::move(name)), action_(std::move(action)) {}
 
     ~Command() override = default;
 
@@ -24,13 +24,13 @@ public:
     Command(Command&&) noexcept = default;
     auto operator=(Command&&) noexcept -> Command& = default;
 
-    auto execute() -> void override { m_action(); }
+    auto execute() -> void override { action_(); }
 
-    [[nodiscard]] auto getName() const -> const std::string& override { return m_name; }
+    [[nodiscard]] auto getName() const -> const std::string& override { return name_; }
 
 private:
-    std::string m_name;
-    std::function<void()> m_action;
+    std::string name_;
+    std::function<void()> action_;
 };
 
 }  // namespace interview_cheater::command
