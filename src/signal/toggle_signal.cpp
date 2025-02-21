@@ -1,22 +1,32 @@
 #include "signal/toggle_signal.hpp"
 
 #include <chrono>
+#include <memory>
 
 #include "command/show_command.hpp"
 #include "input/iinput.hpp"
 #include "window/window_manager.hpp"
+#include "utils/logger.hpp"
 
-namespace interview_cheater {
-signal::ToggleSignal::ToggleSignal(window::WindowManager& manager, input::IInput& input)
-    : manager_(manager), input_(input) {}
+namespace interview_cheater::signal {
 
-void signal::ToggleSignal::start() { active_ = true; }
+ToggleSignal::ToggleSignal(window::WindowManager& manager, input::IInput& input)
+    : command_(std::make_unique<command::ShowCommand>(manager))
+    , input_(input) {}
 
-void signal::ToggleSignal::stop() { active_ = false; }
+auto ToggleSignal::start() -> void {
+    DEBUG_LOG("Starting ToggleSignal");
+    active_ = true;
+}
 
-auto signal::ToggleSignal::isActive() const -> bool { return active_; }
+auto ToggleSignal::stop() -> void {
+    DEBUG_LOG("Stopping ToggleSignal");
+    active_ = false;
+}
 
-void signal::ToggleSignal::check() {
+auto ToggleSignal::isActive() const -> bool { return active_; }
+
+auto ToggleSignal::check() -> void {
     if (!active_) {
         return;
     }
@@ -26,11 +36,11 @@ void signal::ToggleSignal::check() {
 
     if (input_.isKeyPressed() && input_.isModifierActive()) {
         if (currentTime - lastTriggerTime_ > DEBOUNCE_TIME) {
-            if (auto* window = manager_.getFirstWindow()) {
-                manager_.executeCommand(std::make_unique<command::ShowCommand>(manager_));
-                lastTriggerTime_ = currentTime;
-            }
+            DEBUG_LOG("Toggle signal triggered");
+            command_->execute();
+            lastTriggerTime_ = currentTime;
         }
     }
 }
-}  // namespace interview_cheater
+
+}  // namespace interview_cheater::signal

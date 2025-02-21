@@ -1,60 +1,54 @@
-# Project Documentation
+# Interview Cheater Documentation
 
-## Build System and Tools
+## Overview
 
-This documentation covers the build system configuration and development tools used in the project.
+This documentation provides comprehensive information about the Interview Cheater application, its architecture, build system, and usage. The documentation is organized into several sections covering both development and user aspects.
 
-### Contents
+## Documentation Structure
 
-1. [CMake Configuration](cmake-configuration.md)
-   - Project structure
-   - Source organization
-   - Platform-specific configuration
-   - Adding new source files
-   - Build configuration
+### Build System and Tools
+- [CMake Configuration](technical/cmake-configuration.md): Project structure, build system setup, and configuration
+- [Clang Tools](technical/clang-tools.md): Code formatting, static analysis, and development tools
+- [GitHub Actions](technical/github-actions.md): CI/CD pipeline configuration and workflows
 
-2. [Clang Tools](clang-tools.md)
-   - Setup and configuration
-   - Code formatting (clang-format)
-   - Static analysis (clang-tidy)
-   - Troubleshooting
+### Technical Documentation
+Located in `/docs/technical/`, this section contains detailed information about the application's architecture:
+
+- [Input System](technical/input_system.md): Detailed architecture of the input handling system, including:
+  - Component architecture and design principles
+  - Input detection and processing
+  - Signal system and command execution
+  - Platform-specific implementations
+  - Configuration management
+
+### User Documentation
+Located in `/docs/user/`, this section provides guides for end users:
+
+- [Shortcuts Configuration](user/shortcuts.md): How to configure and customize keyboard shortcuts
 
 ## Quick Start
 
-### Building the Project
+### For Users
+1. Install the application
+2. Configure shortcuts using the [Shortcuts Configuration Guide](user/shortcuts.md)
 
-```bash
-mkdir build && cd build
-cmake ..
-cmake --build .
-```
-
-### Development Workflow
-
-1. Write your code
-2. Format code: `cmake --build . --target format`
-3. Check for issues: `cmake --build . --target lint-check`
-4. Fix issues: `cmake --build . --target lint`
-5. Build and test
-
-### Available Targets
-
-Run `cmake --build . --target helper` for a complete list of available targets.
+### For Developers
+1. Review the [CMake Configuration](cmake-configuration.md) for build setup
+2. Set up development tools using the [Clang Tools Guide](clang-tools.md)
+3. Review technical documentation to understand the architecture
 
 ## Contributing
 
 When contributing to the project:
 
 1. Follow the [CMake Configuration Guide](cmake-configuration.md) for adding new source files
-2. Ensure your code passes both format and lint checks
-3. Use the provided targets for code quality:
-   ```bash
-   cmake --build . --target check-all  # Before committing
-   cmake --build . --target fix-all    # To fix issues
-   ```
+2. Ensure your code passes both format and lint checks as described in [Clang Tools](clang-tools.md)
+3. Follow the existing architectural patterns documented in technical documentation
+4. Add appropriate documentation for new features
 
-## Need Help?
+## Support
 
-- Check the [Clang Tools Guide](clang-tools.md) for troubleshooting
-- Run the helper target for available commands
-- Consult the specific documentation files for detailed information 
+If you encounter issues:
+1. Check the relevant documentation sections
+2. Review build and tool configuration
+3. Submit an issue with detailed information about your problem 

@@ -2,6 +2,7 @@
 #define TOGGLE_SIGNAL_HPP
 
 #include <cstdint>
+#include <memory>
 
 #include "signal/isignal.hpp"
 
@@ -15,6 +16,11 @@ namespace input {
 // Forward declaration for IInput
 class IInput;
 }  // namespace input
+
+namespace command {
+// Forward declaration for ShowCommand
+class ShowCommand;
+}  // namespace command
 
 namespace signal {
 
@@ -37,7 +43,7 @@ public:
     auto check() -> void override;
 
 private:
-    window::WindowManager& manager_;
+    std::unique_ptr<command::ShowCommand> command_;
     input::IInput& input_;
     bool active_{false};
     int64_t lastTriggerTime_{0};

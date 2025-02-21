@@ -10,11 +10,12 @@ set(CORE_SOURCES
 
 set(COMMAND_SOURCES
     ${PROJECT_ROOT}/src/command/show_command.cpp
+    ${PROJECT_ROOT}/src/command/stop_command.cpp
 )
 
 set(SIGNAL_SOURCES
-    ${PROJECT_ROOT}/src/signal/toggle_signal.cpp
-    ${PROJECT_ROOT}/src/signal/signal_manager.cpp
+    ${PROJECT_ROOT}/src/signal/signal.cpp
+    ${PROJECT_ROOT}/src/signal/signal_factory.cpp
 )
 
 set(WINDOW_SOURCES
@@ -22,7 +23,10 @@ set(WINDOW_SOURCES
 )
 
 set(INPUT_SOURCES
+    ${PROJECT_ROOT}/src/input/configurable_input.cpp
     ${PROJECT_ROOT}/src/input/input_factory.cpp
+    ${PROJECT_ROOT}/src/input/key_config.cpp
+    ${PROJECT_ROOT}/src/input/key_mapper.cpp
 )
 
 set(PLATFORM_COMMON_SOURCES
@@ -44,6 +48,7 @@ endif()
 # Common include directories for all platforms
 set(COMMON_INCLUDE_DIRS
     ${PROJECT_ROOT}/include
+    ${PROJECT_ROOT}/include/platform
     ${COMMON_INCLUDES}
 )
 

@@ -10,7 +10,7 @@ class WindowManager;
 }  // namespace window
 
 namespace command {
-class ShowCommand : public ICommand {
+class ShowCommand final : public ICommand {
 public:
     explicit ShowCommand(window::WindowManager& manager);
     ~ShowCommand() override = default;
@@ -24,9 +24,11 @@ public:
     auto operator=(ShowCommand&&) noexcept -> ShowCommand& = delete;
 
     auto execute() -> void override;
+    [[nodiscard]] auto getName() const -> const std::string& override;
 
 private:
-    window::WindowManager& windowManager_;
+    window::WindowManager& manager_;
+    const std::string name_{"toggle"};
 };
 }  // namespace command
 }  // namespace interview_cheater

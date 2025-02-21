@@ -1,23 +1,23 @@
-#ifndef MACOS_INPUT_HPP
-#define MACOS_INPUT_HPP
+#ifndef MACOS_TOGGLE_INPUT_HPP
+#define MACOS_TOGGLE_INPUT_HPP
 
 #include <memory>
 
 #include "input/iinput.hpp"
 
 namespace interview_cheater::input {
-class Input : public IInput {
+class ToggleInput : public IInput {
 public:
-    Input();
-    ~Input() override;
+    ToggleInput();
+    ~ToggleInput() override;
 
     // Delete copy operations
-    Input(const Input&) = delete;
-    auto operator=(const Input&) -> Input& = delete;
+    ToggleInput(const ToggleInput&) = delete;
+    auto operator=(const ToggleInput&) -> ToggleInput& = delete;
 
     // Define move operations
-    Input(Input&&) noexcept = default;
-    auto operator=(Input&&) noexcept -> Input& = default;
+    ToggleInput(ToggleInput&&) noexcept = default;
+    auto operator=(ToggleInput&&) noexcept -> ToggleInput& = default;
 
     [[nodiscard]] auto isKeyPressed() const -> bool override;
     [[nodiscard]] auto isModifierActive() const -> bool override;
@@ -28,4 +28,4 @@ private:
     std::unique_ptr<Impl> pImpl_;
 };
 }  // namespace interview_cheater::input
-#endif  // MACOS_INPUT_HPP
+#endif  // MACOS_TOGGLE_INPUT_HPP

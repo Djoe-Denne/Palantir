@@ -4,11 +4,13 @@
 #include "window/window_manager.hpp"
 
 namespace interview_cheater::command {
-ShowCommand::ShowCommand(window::WindowManager& manager) : windowManager_(manager) {}
+ShowCommand::ShowCommand(window::WindowManager& manager) : manager_(manager) {}
 
-void ShowCommand::execute() {
-    if (auto* window = windowManager_.getFirstWindow()) {
+auto ShowCommand::execute() -> void {
+    if (auto* window = manager_.getFirstWindow()) {
         window->show();
     }
 }
+
+auto ShowCommand::getName() const -> const std::string& { return name_; }
 }  // namespace interview_cheater::command

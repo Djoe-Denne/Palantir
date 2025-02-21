@@ -1,10 +1,10 @@
+
+#include "window/iwindow.hpp"
 #include "window/window_manager.hpp"
 
 #include <algorithm>
 
 #include "command/icommand.hpp"
-#include "window/iwindow.hpp"
-
 namespace interview_cheater::window {
 void WindowManager::addWindow(std::unique_ptr<IWindow> window) { windows_.push_back(std::move(window)); }
 

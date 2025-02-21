@@ -1,16 +1,16 @@
-#include "input/input.hpp"
+#include "input/toggle_input.hpp"
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 #include "input/key_codes.hpp"
 
-@interface GlobalEventMonitor : NSObject
+@interface ToggleEventMonitor : NSObject
 @property(nonatomic, retain) id globalEventMonitor;
 @property(nonatomic, retain) id localEventMonitor;
 @property(nonatomic) BOOL isKeyPressed;
 @property(nonatomic) BOOL isModifierActive;
 @end
 
-@implementation GlobalEventMonitor
+@implementation ToggleEventMonitor
 
 - (instancetype)init {
     if ((self = [super init]) != nil) {
@@ -23,11 +23,11 @@
 
 - (void)handleEvent:(NSEvent*)event {
     if (event.type == NSEventTypeKeyDown || event.type == NSEventTypeKeyUp) {
-        if (event.keyCode == interview_cheater::input::KeyCodes::KEY_SLASH) {
+        if (event.keyCode == interview_cheater::input::KeyCodes::KEY_F1) {
             self.isKeyPressed = (event.type == NSEventTypeKeyDown);
         }
     } else if (event.type == NSEventTypeFlagsChanged) {
-        self.isModifierActive = (event.modifierFlags & NSEventModifierFlagCommand) != 0;
+        self.isModifierActive = (event.modifierFlags & interview_cheater::input::KeyCodes::CONTROL_MODIFIER) != 0;
     }
 }
 
@@ -61,7 +61,7 @@
 
 namespace interview_cheater::input {
 
-class Input::Impl {
+class ToggleInput::Impl {
    public:
     Impl() = default;
 
@@ -80,22 +80,21 @@ class Input::Impl {
 
     ~Impl() {
         if (monitor_ != nil) {
-            [NSEvent removeMonitor:monitor_];
             monitor_ = nil;
         }
     }
 
    private:
-    GlobalEventMonitor* monitor_{[[GlobalEventMonitor alloc] init]};
+    ToggleEventMonitor* monitor_{[[ToggleEventMonitor alloc] init]};
 };
 
 }  // namespace interview_cheater::input
 
 // Use the fully-qualified namespace for definitions
-interview_cheater::input::Input::Input() = default;
-interview_cheater::input::Input::~Input() = default;
-[[nodiscard]] auto interview_cheater::input::Input::isKeyPressed() const -> bool { return pImpl_->isKeyPressed(); }
-[[nodiscard]] auto interview_cheater::input::Input::isModifierActive() const -> bool {
+interview_cheater::input::ToggleInput::ToggleInput() : pImpl_(std::make_unique<Impl>()) {}
+interview_cheater::input::ToggleInput::~ToggleInput() = default;
+[[nodiscard]] auto interview_cheater::input::ToggleInput::isKeyPressed() const -> bool { return pImpl_->isKeyPressed(); }
+[[nodiscard]] auto interview_cheater::input::ToggleInput::isModifierActive() const -> bool {
     return pImpl_->isModifierActive();
 }
-auto interview_cheater::input::Input::update() -> void { pImpl_->update(); }
+auto interview_cheater::input::ToggleInput::update() -> void { pImpl_->update(); } 

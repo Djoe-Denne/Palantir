@@ -1,23 +1,23 @@
-#ifndef WINDOWS_INPUT_HPP
-#define WINDOWS_INPUT_HPP
+#ifndef STOP_INPUT_HPP
+#define STOP_INPUT_HPP
 
 #include <memory>
 
 #include "input/iinput.hpp"
 
 namespace interview_cheater::input {
-class Input : public IInput {
+class StopInput : public IInput {
 public:
-    Input();
-    ~Input() override;
+    StopInput();
+    ~StopInput() override;
 
     // Delete copy operations
-    Input(const Input&) = delete;
-    auto operator=(const Input&) -> Input& = delete;
+    StopInput(const StopInput&) = delete;
+    auto operator=(const StopInput&) -> StopInput& = delete;
 
     // Define move operations
-    Input(Input&&) noexcept = default;
-    auto operator=(Input&&) noexcept -> Input& = default;
+    StopInput(StopInput&&) noexcept = default;
+    auto operator=(StopInput&&) noexcept -> StopInput& = default;
 
     [[nodiscard]] auto isKeyPressed() const -> bool override;
     [[nodiscard]] auto isModifierActive() const -> bool override;
@@ -28,4 +28,4 @@ private:
     std::unique_ptr<Impl> pImpl_;
 };
 }  // namespace interview_cheater::input
-#endif  // WINDOWS_INPUT_HPP
+#endif  // STOP_INPUT_HPP
