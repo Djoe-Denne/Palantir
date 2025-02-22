@@ -11,7 +11,7 @@ constexpr int K_WINDOW_MARGIN = 20;
 constexpr int K_TEXT_CONTAINER_INSET = 10;
 constexpr double K_WINDOW_ALPHA = 0.95;
 constexpr double K_WINDOW_WHITE = 1.0;
-constexpr double K_FONT_SIZE = 13.0;
+constexpr double K_FONT_SIZE = 14.0;
 }  // namespace
 
 @interface OverlayWindowDelegate : NSObject <NSWindowDelegate>
@@ -117,14 +117,14 @@ class OverlayWindow::Impl {
 
         @autoreleasepool {
             // Create and configure scroll view
-            NSScrollView* const scrollView = [[NSScrollView alloc] initWithFrame:[window_ contentView].bounds];
+            NSScrollView* scrollView = [[NSScrollView alloc] initWithFrame:[window_ contentView].bounds];
             [scrollView setHasVerticalScroller:YES];
             [scrollView setHasHorizontalScroller:NO];
             [scrollView setBorderType:NSNoBorder];
             [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
             // Create and configure text view
-            NSTextView* const textView = [[NSTextView alloc] initWithFrame:scrollView.bounds];
+            NSTextView* textView = [[NSTextView alloc] initWithFrame:scrollView.bounds];
             configureTextView(textView);
 
             // Set up view hierarchy
@@ -148,7 +148,7 @@ class OverlayWindow::Impl {
         [textView setAutoresizingMask:NSViewWidthSizable];
         [textView setBackgroundColor:[NSColor clearColor]];
         [textView setTextColor:[NSColor whiteColor]];
-        [textView setFont:[NSFont systemFontOfSize:14.0]];
+        [textView setFont:[NSFont systemFontOfSize:K_FONT_SIZE]];
         [textView setTextContainerInset:NSMakeSize(K_TEXT_CONTAINER_INSET, K_TEXT_CONTAINER_INSET)];
         [textView setEditable:NO];
         [[textView textContainer] setContainerSize:NSMakeSize(FLT_MAX, FLT_MAX)];

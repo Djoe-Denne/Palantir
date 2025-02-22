@@ -7,8 +7,8 @@
  * for application lifecycle, signal management, and window management.
  */
 
-#ifndef APPLICATION_HPP
-#define APPLICATION_HPP
+#ifndef INTERVIEW_CHEATER_PLATFORM_APPLICATION_HPP
+#define INTERVIEW_CHEATER_PLATFORM_APPLICATION_HPP
 
 #include <memory>
 #include <string>
@@ -53,11 +53,11 @@ public:
     /** @brief Deleted copy assignment to prevent instance duplication. */
     auto operator=(const Application&) -> Application& = delete;
 
-    // Define move operations
-    /** @brief Default move constructor for transfer of application ownership. */
-    Application(Application&&) noexcept = default;
-    /** @brief Default move assignment for transfer of application ownership. */
-    auto operator=(Application&&) noexcept -> Application& = default;
+    // Delete move operations
+    /** @brief Deleted move constructor since we have non-movable members. */
+    Application(Application&&) noexcept = delete;
+    /** @brief Deleted move assignment since we have non-movable members. */
+    auto operator=(Application&&) noexcept -> Application& = delete;
 
     /**
      * @brief Run the application.
@@ -127,4 +127,4 @@ private:
 
 }  // namespace interview_cheater
 
-#endif  // APPLICATION_HPP
+#endif  // INTERVIEW_CHEATER_PLATFORM_APPLICATION_HPP

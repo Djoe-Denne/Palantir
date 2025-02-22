@@ -22,7 +22,7 @@ class ConfigurableInput::Impl {
     [[nodiscard]] auto isKeyPressed(const std::any& event) const -> bool {
         try {
             const auto* const nsEvent = std::any_cast<NSEvent*>(event);
-            if (!nsEvent) {
+            if (nsEvent == nullptr) {
                 DEBUG_LOG("Null event received");
                 return false;
             }
@@ -44,7 +44,7 @@ class ConfigurableInput::Impl {
     [[nodiscard]] auto isModifierActive(const std::any& event) const -> bool {
         try {
             const auto* const nsEvent = std::any_cast<NSEvent*>(event);
-            if (!nsEvent) {
+            if (nsEvent == nullptr) {
                 DEBUG_LOG("Null event received");
                 return false;
             }

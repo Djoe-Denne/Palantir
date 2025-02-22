@@ -7,14 +7,12 @@
  * the lifecycle of signal processing.
  */
 
-#ifndef SIGNAL_HPP
-#define SIGNAL_HPP
+#ifndef INTERVIEW_CHEATER_SIGNAL_SIGNAL_HPP
+#define INTERVIEW_CHEATER_SIGNAL_SIGNAL_HPP
 
 #include <any>
 #include <chrono>
 #include <memory>
-
-using namespace std::chrono_literals;
 
 #include "signal/isignal.hpp"
 
@@ -114,10 +112,10 @@ private:
     /** @brief Timestamp of the last trigger for debouncing. */
     int64_t lastTriggerTime_{0};
     /** @brief Debounce time in nanoseconds (300ms). */
-    static constexpr auto DEBOUNCE_TIME = std::chrono::duration_cast<std::chrono::nanoseconds>(300ms).count();
+    static constexpr auto DEBOUNCE_TIME = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::milliseconds(300)).count();
 };
 
 }  // namespace signal
 }  // namespace interview_cheater
 
-#endif  // SIGNAL_HPP
+#endif  // INTERVIEW_CHEATER_SIGNAL_SIGNAL_HPP
