@@ -54,13 +54,7 @@ jobs:
     - name: Check Format
       id: format
       continue-on-error: true
-      run: |
-        mkdir -p ${{github.workspace}}/build/format-reports
-        cmake --build ${{github.workspace}}/build --target format-check
-
-    - name: Check Format results
-      run: |
-        cat ${{github.workspace}}/build/format-reports/report.txt
+      run: cmake --build ${{github.workspace}}/build --target format-check
     
     # Step 5: Run static analysis with clang-tidy
     - name: Run Lint Check
