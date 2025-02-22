@@ -3,6 +3,8 @@
 
 #include <Carbon/Carbon.h>
 
+#include "input/key_register.hpp"
+#include "utils/string_utils.hpp"
 /**
  * @brief Virtual key codes for keyboard input.
  *
@@ -15,98 +17,151 @@
  */
 namespace interview_cheater::input::KeyCodes {
 
-// Letters (common between Windows and macOS)
-constexpr int KEY_A = kVK_ANSI_A;  ///< Virtual key code for 'A'
-constexpr int KEY_B = kVK_ANSI_B;  ///< Virtual key code for 'B'
-constexpr int KEY_C = kVK_ANSI_C;  ///< Virtual key code for 'C'
-constexpr int KEY_D = kVK_ANSI_D;  ///< Virtual key code for 'D'
-constexpr int KEY_E = kVK_ANSI_E;  ///< Virtual key code for 'E'
-constexpr int KEY_F = kVK_ANSI_F;  ///< Virtual key code for 'F'
-constexpr int KEY_G = kVK_ANSI_G;  ///< Virtual key code for 'G'
-constexpr int KEY_H = kVK_ANSI_H;  ///< Virtual key code for 'H'
-constexpr int KEY_I = kVK_ANSI_I;  ///< Virtual key code for 'I'
-constexpr int KEY_J = kVK_ANSI_J;  ///< Virtual key code for 'J'
-constexpr int KEY_K = kVK_ANSI_K;  ///< Virtual key code for 'K'
-constexpr int KEY_L = kVK_ANSI_L;  ///< Virtual key code for 'L'
-constexpr int KEY_M = kVK_ANSI_M;  ///< Virtual key code for 'M'
-constexpr int KEY_N = kVK_ANSI_N;  ///< Virtual key code for 'N'
-constexpr int KEY_O = kVK_ANSI_O;  ///< Virtual key code for 'O'
-constexpr int KEY_P = kVK_ANSI_P;  ///< Virtual key code for 'P'
-constexpr int KEY_Q = kVK_ANSI_Q;  ///< Virtual key code for 'Q'
-constexpr int KEY_R = kVK_ANSI_R;  ///< Virtual key code for 'R'
-constexpr int KEY_S = kVK_ANSI_S;  ///< Virtual key code for 'S'
-constexpr int KEY_T = kVK_ANSI_T;  ///< Virtual key code for 'T'
-constexpr int KEY_U = kVK_ANSI_U;  ///< Virtual key code for 'U'
-constexpr int KEY_V = kVK_ANSI_V;  ///< Virtual key code for 'V'
-constexpr int KEY_W = kVK_ANSI_W;  ///< Virtual key code for 'W'
-constexpr int KEY_X = kVK_ANSI_X;  ///< Virtual key code for 'X'
-constexpr int KEY_Y = kVK_ANSI_Y;  ///< Virtual key code for 'Y'
-constexpr int KEY_Z = kVK_ANSI_Z;  ///< Virtual key code for 'Z'
+// Initialize all key codes using KeyRegister
+static const struct KeyCodeInitializer {
+    KeyCodeInitializer() {  // NOLINT
+        // Letters
+        KeyRegister::registerKey(utils::StringUtils::toUpper("A"), kVK_ANSI_A);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("B"), kVK_ANSI_B);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("C"), kVK_ANSI_C);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("D"), kVK_ANSI_D);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("E"), kVK_ANSI_E);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F"), kVK_ANSI_F);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("G"), kVK_ANSI_G);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("H"), kVK_ANSI_H);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("I"), kVK_ANSI_I);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("J"), kVK_ANSI_J);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("K"), kVK_ANSI_K);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("L"), kVK_ANSI_L);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("M"), kVK_ANSI_M);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("N"), kVK_ANSI_N);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("O"), kVK_ANSI_O);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("P"), kVK_ANSI_P);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Q"), kVK_ANSI_Q);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("R"), kVK_ANSI_R);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("S"), kVK_ANSI_S);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("T"), kVK_ANSI_T);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("U"), kVK_ANSI_U);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("V"), kVK_ANSI_V);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("W"), kVK_ANSI_W);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("X"), kVK_ANSI_X);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Y"), kVK_ANSI_Y);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Z"), kVK_ANSI_Z);
 
-// Numbers (common between Windows and macOS)
-constexpr int KEY_0 = kVK_ANSI_0;  ///< Virtual key code for '0'
-constexpr int KEY_1 = kVK_ANSI_1;  ///< Virtual key code for '1'
-constexpr int KEY_2 = kVK_ANSI_2;  ///< Virtual key code for '2'
-constexpr int KEY_3 = kVK_ANSI_3;  ///< Virtual key code for '3'
-constexpr int KEY_4 = kVK_ANSI_4;  ///< Virtual key code for '4'
-constexpr int KEY_5 = kVK_ANSI_5;  ///< Virtual key code for '5'
-constexpr int KEY_6 = kVK_ANSI_6;  ///< Virtual key code for '6'
-constexpr int KEY_7 = kVK_ANSI_7;  ///< Virtual key code for '7'
-constexpr int KEY_8 = kVK_ANSI_8;  ///< Virtual key code for '8'
-constexpr int KEY_9 = kVK_ANSI_9;  ///< Virtual key code for '9'
+        // Numbers
+        KeyRegister::registerKey(utils::StringUtils::toUpper("0"), kVK_ANSI_0);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("1"), kVK_ANSI_1);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("2"), kVK_ANSI_2);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("3"), kVK_ANSI_3);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("4"), kVK_ANSI_4);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("5"), kVK_ANSI_5);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("6"), kVK_ANSI_6);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("7"), kVK_ANSI_7);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("8"), kVK_ANSI_8);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("9"), kVK_ANSI_9);
 
-// Function keys (common between Windows and macOS)
-constexpr int KEY_F1 = kVK_F1;    ///< Virtual key code for F1
-constexpr int KEY_F2 = kVK_F2;    ///< Virtual key code for F2
-constexpr int KEY_F3 = kVK_F3;    ///< Virtual key code for F3
-constexpr int KEY_F4 = kVK_F4;    ///< Virtual key code for F4
-constexpr int KEY_F5 = kVK_F5;    ///< Virtual key code for F5
-constexpr int KEY_F6 = kVK_F6;    ///< Virtual key code for F6
-constexpr int KEY_F7 = kVK_F7;    ///< Virtual key code for F7
-constexpr int KEY_F8 = kVK_F8;    ///< Virtual key code for F8
-constexpr int KEY_F9 = kVK_F9;    ///< Virtual key code for F9
-constexpr int KEY_F10 = kVK_F10;  ///< Virtual key code for F10
-constexpr int KEY_F11 = kVK_F11;  ///< Virtual key code for F11
-constexpr int KEY_F12 = kVK_F12;  ///< Virtual key code for F12
-constexpr int KEY_F13 = kVK_F13;  ///< Virtual key code for F13
-constexpr int KEY_F14 = kVK_F14;  ///< Virtual key code for F14
-constexpr int KEY_F15 = kVK_F15;  ///< Virtual key code for F15
-constexpr int KEY_F16 = kVK_F16;  ///< Virtual key code for F16
-constexpr int KEY_F17 = kVK_F17;  ///< Virtual key code for F17
-constexpr int KEY_F18 = kVK_F18;  ///< Virtual key code for F18
-constexpr int KEY_F19 = kVK_F19;  ///< Virtual key code for F19
+        // Function keys
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F1"), kVK_F1);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F2"), kVK_F2);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F3"), kVK_F3);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F4"), kVK_F4);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F5"), kVK_F5);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F6"), kVK_F6);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F7"), kVK_F7);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F8"), kVK_F8);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F9"), kVK_F9);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F10"), kVK_F10);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F11"), kVK_F11);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F12"), kVK_F12);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F13"), kVK_F13);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F14"), kVK_F14);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F15"), kVK_F15);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F16"), kVK_F16);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F17"), kVK_F17);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F18"), kVK_F18);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F19"), kVK_F19);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("F20"), kVK_F20);
 
-// Special keys (common between Windows and macOS)
-constexpr int KEY_ESCAPE = kVK_Escape;         ///< Virtual key code for Escape
-constexpr int KEY_TAB = kVK_Tab;               ///< Virtual key code for Tab
-constexpr int KEY_CAPSLOCK = kVK_CapsLock;     ///< Virtual key code for Caps Lock
-constexpr int KEY_SPACE = kVK_Space;           ///< Virtual key code for Space
-constexpr int KEY_BACKSPACE = kVK_Delete;      ///< Virtual key code for Backspace
-constexpr int KEY_ENTER = kVK_Return;          ///< Virtual key code for Enter
-constexpr int KEY_DELETE = kVK_ForwardDelete;  ///< Virtual key code for Delete
-constexpr int KEY_HOME = kVK_Home;             ///< Virtual key code for Home
-constexpr int KEY_END = kVK_End;               ///< Virtual key code for End
-constexpr int KEY_PAGEUP = kVK_PageUp;         ///< Virtual key code for Page Up
-constexpr int KEY_PAGEDOWN = kVK_PageDown;     ///< Virtual key code for Page Down
+        // Special keys
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Esc"), kVK_Escape);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Tab"), kVK_Tab);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("CapsLock"), kVK_CapsLock);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Space"), kVK_Space);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Backspace"), kVK_Delete);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Enter"), kVK_Return);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Del"), kVK_ForwardDelete);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Home"), kVK_Home);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("End"), kVK_End);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("PgUp"), kVK_PageUp);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("PgDn"), kVK_PageDown);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Help"), kVK_Help);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Clear"), kVK_ANSI_KeypadClear);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("PrtSc"), kVK_ANSI_KeypadClear);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Ins"), kVK_ANSI_KeypadClear);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("ScrLk"), kVK_ANSI_KeypadClear);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Pause"), kVK_ANSI_KeypadClear);
 
-// Arrow keys (common between Windows and macOS)
-constexpr int KEY_UP = kVK_UpArrow;        ///< Virtual key code for Up Arrow
-constexpr int KEY_DOWN = kVK_DownArrow;    ///< Virtual key code for Down Arrow
-constexpr int KEY_LEFT = kVK_LeftArrow;    ///< Virtual key code for Left Arrow
-constexpr int KEY_RIGHT = kVK_RightArrow;  ///< Virtual key code for Right Arrow
+        // Arrow keys
+        KeyRegister::registerKey(utils::StringUtils::toUpper("↑"), kVK_UpArrow);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("↓"), kVK_DownArrow);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("←"), kVK_LeftArrow);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("→"), kVK_RightArrow);
 
-// Modifier keys (common between Windows and macOS)
-constexpr int CONTROL_MODIFIER = kVK_Control;  ///< Virtual key code for Control
-constexpr int ALT_MODIFIER = kVK_Option;       ///< Virtual key code for Alt/Option
-constexpr int SHIFT_MODIFIER = kVK_Shift;      ///< Virtual key code for Shift
-                                               // TODO(dev): Check why left CMD triggers both left and right CMD keys
-constexpr int COMMAND_MODIFIER = kVK_Control;  ///< Virtual key code for Command/Windows key
+        // Modifier keys
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Ctrl"), kVK_Control);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Alt"), kVK_Option);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Shift"), kVK_Shift);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Left Ctrl"), kVK_Control);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Right Ctrl"), kVK_RightControl);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Left Shift"), kVK_Shift);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Right Shift"), kVK_RightShift);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Left Alt"), kVK_Option);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Right Alt"), kVK_RightOption);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Left Win"), kVK_Command);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Right Win"), kVK_RightCommand);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Win"), kVK_Command);
 
-// Special masks (common between Windows and macOS)
-constexpr uint16_t KEY_PRESSED_MASK = 0x0100U;  ///< Mask for checking key pressed state
+        // Additional keys
+        KeyRegister::registerKey(utils::StringUtils::toUpper("/"), kVK_ANSI_Slash);
+        KeyRegister::registerKey(utils::StringUtils::toUpper(";"), kVK_ANSI_Semicolon);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("="), kVK_ANSI_Equal);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("-"), kVK_ANSI_Minus);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("["), kVK_ANSI_LeftBracket);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("]"), kVK_ANSI_RightBracket);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("'"), kVK_ANSI_Quote);
+        KeyRegister::registerKey(utils::StringUtils::toUpper(","), kVK_ANSI_Comma);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("."), kVK_ANSI_Period);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("\\"), kVK_ANSI_Backslash);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("`"), kVK_ANSI_Grave);
 
-// Additional keys (common between Windows and macOS)
-constexpr int KEY_SLASH = kVK_ANSI_Slash;  ///< Virtual key code for forward slash
+        // Keypad keys
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num 0"), kVK_ANSI_Keypad0);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num 1"), kVK_ANSI_Keypad1);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num 2"), kVK_ANSI_Keypad2);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num 3"), kVK_ANSI_Keypad3);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num 4"), kVK_ANSI_Keypad4);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num 5"), kVK_ANSI_Keypad5);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num 6"), kVK_ANSI_Keypad6);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num 7"), kVK_ANSI_Keypad7);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num 8"), kVK_ANSI_Keypad8);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num 9"), kVK_ANSI_Keypad9);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num ."), kVK_ANSI_KeypadDecimal);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num *"), kVK_ANSI_KeypadMultiply);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num +"), kVK_ANSI_KeypadPlus);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num -"), kVK_ANSI_KeypadMinus);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num /"), kVK_ANSI_KeypadDivide);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Num Enter"), kVK_ANSI_KeypadEnter);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("NumLock"), kVK_ANSI_KeypadEquals);
+
+        // Volume control keys
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Vol +"), kVK_VolumeUp);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Vol -"), kVK_VolumeDown);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Mute"), kVK_Mute);
+
+        // Special masks
+        KeyRegister::registerKey("KEY_PRESSED_MASK", 0x0100U);  // NOLINT
+    }
+} keyCodeInitializer;
 
 }  // namespace interview_cheater::input::KeyCodes
 

@@ -27,6 +27,7 @@ set(INPUT_SOURCES
     ${PROJECT_ROOT}/src/input/input_factory.cpp
     ${PROJECT_ROOT}/src/input/key_config.cpp
     ${PROJECT_ROOT}/src/input/key_mapper.cpp
+    ${PROJECT_ROOT}/src/input/key_register.cpp
 )
 
 set(PLATFORM_COMMON_SOURCES
