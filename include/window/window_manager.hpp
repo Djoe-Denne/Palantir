@@ -55,9 +55,9 @@ public:
 
     // Define move operations
     /** @brief Default move constructor for transfer of manager ownership. */
-    WindowManager(WindowManager&&) noexcept = default;
+    WindowManager(WindowManager&&) = delete;
     /** @brief Default move assignment for transfer of manager ownership. */
-    auto operator=(WindowManager&&) noexcept -> WindowManager& = default;
+    auto operator=(WindowManager&&) -> WindowManager& = delete;
 
     /**
      * @brief Add a new window to the manager.
