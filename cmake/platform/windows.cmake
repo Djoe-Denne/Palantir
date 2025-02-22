@@ -1,28 +1,27 @@
-function(setup_windows_platform)
-    set(PLATFORM_SOURCES
-        ${PROJECT_ROOT}/src/platform/windows/input/configurable_input.cpp
-        ${PROJECT_ROOT}/src/platform/windows/signal/signal_manager.cpp
-        ${PROJECT_ROOT}/src/platform/windows/window/overlay_window.cpp
-        ${PROJECT_ROOT}/src/platform/windows/platform_application.cpp
-        ${PROJECT_ROOT}/src/platform/windows/utils/logger.cpp
-    )
-    
-    file(GLOB_RECURSE PLATFORM_HEADERS
-        "${PROJECT_ROOT}/include/platform/windows/*.hpp"
-        "${PROJECT_ROOT}/include/platform/windows/*.h"
-    )
 
-    # Update ALL_SOURCES in parent scope
-    set(ALL_SOURCES
-        ${ALL_SOURCES}
-        ${PLATFORM_SOURCES}
-        ${PLATFORM_HEADERS}
-        PARENT_SCOPE
-    )
-    
+set(WINDOWS_SOURCES
+    ${PROJECT_ROOT}/src/platform/windows/input/configurable_input.cpp
+    ${PROJECT_ROOT}/src/platform/windows/signal/signal_manager.cpp
+    ${PROJECT_ROOT}/src/platform/windows/window/overlay_window.cpp
+    ${PROJECT_ROOT}/src/platform/windows/platform_application.cpp
+    ${PROJECT_ROOT}/src/platform/windows/utils/logger.cpp
+)
+
+file(GLOB_RECURSE WINDOWS_HEADERS
+    "${PROJECT_ROOT}/include/platform/windows/*.hpp"
+    "${PROJECT_ROOT}/include/platform/windows/*.h"
+)
+
+set(ALL_SOURCES
+    ${ALL_SOURCES}
+    ${WINDOWS_SOURCES}
+    ${WINDOWS_HEADERS}
+)
+
+function(setup_windows_platform)    
     target_sources(${PROJECT_NAME} PRIVATE 
-        ${PLATFORM_SOURCES}
-        ${PLATFORM_HEADERS}
+        ${WINDOWS_SOURCES}
+        ${WINDOWS_HEADERS}
     )
     
     target_include_directories(${PROJECT_NAME} PRIVATE

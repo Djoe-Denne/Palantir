@@ -19,53 +19,59 @@ env:
   TERM: xterm-256color  # Terminal type for better formatting
 
 jobs:
-  # First parallel job: Code quality checks (formatting and linting)
-  # This job focuses on code quality without blocking the build
+  # Code quality checks (formatting and linting) - macOS only
   code-quality:
-    name: Code Quality-${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      # Don't fail fast - we want to see results from all platforms
-      fail-fast: false
-      matrix:
-        # Run on both Windows and macOS to catch platform-specific issues
-        os: [windows-latest, macos-latest]
+    name: Code Quality
+    runs-on: macos-latest
     
     steps:
-    # Step 1: Check out the repository code
+    # Step 1: Check out the repository code with full history for PR comparison
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Required to get changed files in PRs
+    
+    # Step 2: Get list of changed files (only in PR)
+    - name: Get changed files
+      id: changed-files
+      if: github.event_name == 'pull_request'
+      shell: bash
+      run: |
+        # Get list of changed C++ files
+        CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(cpp|hpp|h|cc)$' | tr '\n' ';' || echo "")
+        echo "files=${CHANGED_FILES}" >> $GITHUB_OUTPUT
+        echo "Changed files: ${CHANGED_FILES}"
     
     # Step 3: Configure CMake in Release mode
-    # This generates the build system and enables our custom targets
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
+      run: |
+        if [[ "${{ github.event_name }}" == "pull_request" && "${{ steps.changed-files.outputs.files }}" != "" ]]; then
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DLINT_FILES="${{ steps.changed-files.outputs.files }}"
+        else
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
+        fi
     
     # Step 4: Check code formatting
-    # Runs clang-format in check mode (no modifications)
     - name: Check Format
-      id: format # ID used for referencing in the results comment
-      run: |
-        cmake --build ${{github.workspace}}/build --target format-check
+      id: format
+      run: cmake --build ${{github.workspace}}/build --target format-check
     
     # Step 5: Run static analysis with clang-tidy
-    # Checks for common issues and enforces coding standards
     - name: Run Lint Check
       id: lint
       continue-on-error: true
-      run: |
-        cmake --build ${{github.workspace}}/build --target lint-check
+      run: cmake --build ${{github.workspace}}/build --target lint-check
 
     # Step 6: Analyze lint results using CMake target
     - name: Analyze Lint Results
       run: |
         cat ${{github.workspace}}/build/lint-reports/report.txt
         cmake --build ${{github.workspace}}/build --target lint-analyze
-    
-  # Second parallel job: Build the project
-  # Runs independently of code-quality to speed up overall workflow
+
+  # Build the project on both platforms
   build:
     name: Build-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    needs: code-quality  # Wait for code quality checks to pass
     strategy:
       fail-fast: false  # Don't cancel other platforms if one fails
       matrix:

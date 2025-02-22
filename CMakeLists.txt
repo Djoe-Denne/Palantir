@@ -31,6 +31,8 @@ setup_help_target()
 include(setup-clang-tools)
 setup_clang_tools()
 
+include(platform/windows)
+include(platform/macos)
 # Create the executable with basic sources
 if(WIN32)
     add_executable(${PROJECT_NAME} WIN32 
@@ -41,7 +43,6 @@ if(WIN32)
         ${INPUT_SOURCES}
         ${PLATFORM_COMMON_SOURCES}
     )
-    include(platform/windows)
     setup_windows_platform()
 elseif(APPLE)
     add_executable(${PROJECT_NAME} MACOSX_BUNDLE 
@@ -52,7 +53,6 @@ elseif(APPLE)
         ${INPUT_SOURCES}
         ${PLATFORM_COMMON_SOURCES}
     )
-    include(platform/macos)
     setup_macos_platform()
 else()
     message(FATAL_ERROR "Unsupported platform")

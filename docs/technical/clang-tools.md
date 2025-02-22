@@ -21,6 +21,23 @@ This document describes how we use clang-format and clang-tidy in our project fo
 - `.clang-format` - Defines our code formatting style
 - `.clang-tidy` - Defines our static analysis rules and checks
 
+## Selective Linting
+
+The build system supports selective linting through the `LINT_FILES` CMake option:
+
+```bash
+# Lint specific files
+cmake -B build -DLINT_FILES="path/to/file1.cpp;path/to/file2.hpp"
+
+# Run lint on selected files
+cmake --build build --target lint
+```
+
+This feature is particularly useful for:
+- CI/CD pipelines checking only changed files
+- Development workflows focusing on specific files
+- Performance optimization in large codebases
+
 ## Warning Threshold
 The project enforces a maximum of 5 lint warnings. This threshold can be adjusted by modifying:
 - `cmake/analyze-lint.cmake` - For local builds
@@ -28,13 +45,13 @@ The project enforces a maximum of 5 lint warnings. This threshold can be adjuste
 
 ## Clang Tools Guide
 
-## Overview
+### Overview
 
 The project uses two main clang tools for code quality:
 - clang-format: Code formatting
 - clang-tidy: Static analysis and linting
 
-## Setup
+### Setup
 
 The tools are automatically set up through `cmake/setup-clang-tools.cmake`. The setup:
 1. Checks for existing installations
@@ -67,6 +84,12 @@ Format all source files:
 cmake --build . --target format
 ```
 
+Format specific files:
+```bash
+cmake -DLINT_FILES="file1.cpp;file2.hpp" -B build
+cmake --build build --target format
+```
+
 Check formatting without changes:
 ```bash
 cmake --build . --target format-check
@@ -76,8 +99,14 @@ cmake --build . --target format-check
 
 The format targets are defined in `cmake/format-lint.cmake`:
 ```cmake
+# Determine which files to format/lint
+set(FILES_TO_LINT ${ALL_SOURCES})
+if (LINT_FILES)
+    set(FILES_TO_LINT ${LINT_FILES})
+endif()
+
 add_custom_target(format
-    COMMAND ${CLANG_FORMAT_EXEC} -style=file -i ${ALL_SOURCES}
+    COMMAND ${CLANG_FORMAT_EXEC} -style=file -i ${FILES_TO_LINT}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Formatting source files"
 )
@@ -107,7 +136,12 @@ CheckOptions:
 
 Fix linting issues:
 ```bash
+# All files
 cmake --build . --target lint
+
+# Specific files
+cmake -DLINT_FILES="file1.cpp;file2.hpp" -B build
+cmake --build build --target lint
 ```
 
 Check without fixing:
@@ -124,7 +158,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_custom_target(lint
     COMMAND ${CLANG_TIDY_EXEC} 
         -p=${CMAKE_BINARY_DIR} 
-        ${ALL_SOURCES} 
+        ${FILES_TO_LINT} 
         --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
         --fix
 )
@@ -145,6 +179,13 @@ Runs both format and lint checks:
 ```bash
 cmake --build . --target check-all
 ```
+
+## CI/CD Integration
+
+The tools are integrated into our GitHub Actions workflow:
+- Runs exclusively on macOS for consistent results
+- Supports selective linting for PR changes
+- Enforces code quality standards before builds
 
 ## Troubleshooting
 

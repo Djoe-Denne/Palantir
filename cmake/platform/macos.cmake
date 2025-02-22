@@ -1,28 +1,27 @@
-function(setup_macos_platform)
-    set(PLATFORM_SOURCES
-        ${PROJECT_ROOT}/src/platform/macos/input/configurable_input.mm
-        ${PROJECT_ROOT}/src/platform/macos/signal/signal_manager.mm
-        ${PROJECT_ROOT}/src/platform/macos/window/overlay_window.mm
-        ${PROJECT_ROOT}/src/platform/macos/platform_application.mm
-        ${PROJECT_ROOT}/src/platform/macos/utils/logger.mm
-    )
-    
-    file(GLOB_RECURSE PLATFORM_HEADERS
-        "${PROJECT_ROOT}/include/platform/macos/*.hpp"
-        "${PROJECT_ROOT}/include/platform/macos/*.h"
-    )
+set(MACOS_SOURCES
+    ${PROJECT_ROOT}/src/platform/macos/input/configurable_input.mm
+    ${PROJECT_ROOT}/src/platform/macos/signal/signal_manager.mm
+    ${PROJECT_ROOT}/src/platform/macos/window/overlay_window.mm
+    ${PROJECT_ROOT}/src/platform/macos/platform_application.mm
+    ${PROJECT_ROOT}/src/platform/macos/utils/logger.mm
+)
 
-    # Update ALL_SOURCES in parent scope
-    set(ALL_SOURCES
-        ${ALL_SOURCES}
-        ${PLATFORM_SOURCES}
-        ${PLATFORM_HEADERS}
-        PARENT_SCOPE
-    )
-    
+file(GLOB_RECURSE MACOS_HEADERS
+    "${PROJECT_ROOT}/include/platform/macos/*.hpp"
+    "${PROJECT_ROOT}/include/platform/macos/*.h"
+)
+
+set(ALL_SOURCES
+    ${ALL_SOURCES}
+    ${MACOS_SOURCES}
+    ${MACOS_HEADERS}
+)
+
+function(setup_macos_platform)
+
     target_sources(${PROJECT_NAME} PRIVATE 
-        ${PLATFORM_SOURCES}
-        ${PLATFORM_HEADERS}
+        ${MACOS_SOURCES}
+        ${MACOS_HEADERS}
     )
     
     target_include_directories(${PROJECT_NAME} PRIVATE

@@ -25,6 +25,9 @@ cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 # Build in debug mode
 cmake --build build --config Debug
+
+# Selective linting of specific files
+cmake -B build -DLINT_FILES="path/to/file1.cpp;path/to/file2.hpp"
 ```
 
 ## Custom Targets
@@ -42,12 +45,54 @@ Our project defines several custom targets for code quality:
 - `lint` - Apply static analysis fixes
 - `fix-all` - Apply all available fixes
 
+### Selective Quality Checks
+All quality targets support the `LINT_FILES` option:
+```bash
+# Format specific files
+cmake -DLINT_FILES="file1.cpp;file2.cpp" -B build
+cmake --build build --target format
+
+# Lint specific files
+cmake --build build --target lint
+```
+
 ## Platform-Specific Settings
 
 The build system automatically configures:
 - Include paths for Windows/macOS specific code
 - Compiler flags based on the platform
 - Output paths for executables and app bundles
+
+### Platform Sources
+Platform-specific sources are defined in their respective CMake files:
+
+#### Windows (`windows.cmake`)
+```cmake
+set(WINDOWS_SOURCES
+    ${PROJECT_ROOT}/src/platform/windows/input/configurable_input.cpp
+    # ... other Windows sources
+)
+
+set(ALL_SOURCES
+    ${ALL_SOURCES}
+    ${WINDOWS_SOURCES}
+    ${WINDOWS_HEADERS}
+)
+```
+
+#### macOS (`macos.cmake`)
+```cmake
+set(MACOS_SOURCES
+    ${PROJECT_ROOT}/src/platform/macos/input/configurable_input.mm
+    # ... other macOS sources
+)
+
+set(ALL_SOURCES
+    ${ALL_SOURCES}
+    ${MACOS_SOURCES}
+    ${MACOS_HEADERS}
+)
+```
 
 ## Project Structure
 
@@ -88,11 +133,10 @@ set(PLATFORM_COMMON_SOURCES ...)
 
 ### 2. Variable Scope Handling
 
-The project uses a specific pattern for handling source file variables across different scopes:
+The project uses a specific pattern for handling source file variables:
 
 1. Base Sources (in `common-source.cmake`):
 ```cmake
-# Initialize ALL_SOURCES at top level (no PARENT_SCOPE needed)
 set(ALL_SOURCES
     ${CORE_SOURCES}
     ${COMMAND_SOURCES}
@@ -100,44 +144,35 @@ set(ALL_SOURCES
     ${WINDOW_SOURCES}
     ${INPUT_SOURCES}
     ${PLATFORM_COMMON_SOURCES}
-    ${PROJECT_HEADERS}
 )
 ```
 
-2. Platform-Specific Sources (in platform/*.cmake):
+2. Platform-Specific Sources:
 ```cmake
-function(setup_platform)
-    # Define platform sources
-    set(PLATFORM_SOURCES ...)
-    file(GLOB_RECURSE PLATFORM_HEADERS ...)
-
-    # Append to ALL_SOURCES in parent scope
-    set(ALL_SOURCES
-        ${ALL_SOURCES}        # Include existing sources
-        ${PLATFORM_SOURCES}   # Add platform sources
-        ${PLATFORM_HEADERS}   # Add platform headers
-        PARENT_SCOPE         # Required inside functions
-    )
-endfunction()
+# Platform sources are added directly to ALL_SOURCES
+set(ALL_SOURCES
+    ${ALL_SOURCES}
+    ${PLATFORM_SOURCES}
+    ${PLATFORM_HEADERS}
+)
 ```
-
-This approach ensures:
-- Common sources are initialized at the top level
-- Platform-specific sources are properly appended
-- Variable scoping is handled correctly in functions
-- All sources are available for both building and tools
 
 ### 3. Platform-Specific Configuration
 
-- Windows configuration (`windows.cmake`):
-  - Platform-specific sources and headers
-  - Windows-specific compile definitions
-  - Required Windows libraries (gdi32, dwmapi, user32)
+Platform configurations are included early to ensure proper source file collection:
 
-- macOS configuration (`macos.cmake`):
-  - Platform-specific sources and headers (.mm files)
-  - macOS-specific compile options
-  - Required macOS frameworks (Cocoa, Carbon)
+```cmake
+include(platform/windows)
+include(platform/macos)
+
+if(WIN32)
+    add_executable(${PROJECT_NAME} WIN32 ${ALL_SOURCES})
+    setup_windows_platform()
+elseif(APPLE)
+    add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${ALL_SOURCES})
+    setup_macos_platform()
+endif()
+```
 
 ## Adding New Source Files
 
@@ -159,24 +194,24 @@ For new feature groups, add a new source group:
 set(YOUR_FEATURE_SOURCES
     ${PROJECT_ROOT}/src/your_feature/feature_impl.cpp
 )
-```
 
-Then add it to `ALL_SOURCES`:
-
-```cmake
 set(ALL_SOURCES
-    ${CORE_SOURCES}
+    ${ALL_SOURCES}
     ${YOUR_FEATURE_SOURCES}
-    # ... other sources ...
-    ${PROJECT_HEADERS}
 )
 ```
 
-### Headers
+### Platform-Specific Files
 
-Headers are automatically found using GLOB:
-- Project headers: `include/*.hpp` and `include/*.h`
-- Platform headers: `include/platform/<platform>/*.hpp` and `*.h`
+Add platform-specific files to the appropriate platform CMake file:
+
+```cmake
+# In windows.cmake or macos.cmake
+set(PLATFORM_SOURCES
+    ${PLATFORM_SOURCES}
+    ${PROJECT_ROOT}/src/platform/<platform>/your_feature.cpp
+)
+```
 
 ## Code Quality Tools
 
@@ -184,8 +219,12 @@ Headers are automatically found using GLOB:
 
 Format your code using:
 ```bash
-cmake --build . --target format      # Apply formatting
-cmake --build . --target format-check # Check formatting only
+# Format all files
+cmake --build . --target format
+
+# Format specific files
+cmake -DLINT_FILES="file1.cpp;file2.cpp" -B build
+cmake --build build --target format
 ```
 
 Configuration: `.clang-format` file in project root
@@ -194,8 +233,12 @@ Configuration: `.clang-format` file in project root
 
 Lint your code using:
 ```bash
-cmake --build . --target lint       # Fix issues
-cmake --build . --target lint-check # Check only
+# Lint all files
+cmake --build . --target lint
+
+# Lint specific files
+cmake -DLINT_FILES="file1.cpp;file2.cpp" -B build
+cmake --build build --target lint
 ```
 
 Configuration: `.clang-tidy` file in project root
