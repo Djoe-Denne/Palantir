@@ -1,141 +1,94 @@
 #include "platform_application.hpp"
+#import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
+#include <memory>
+#include <string>
 #include "input/key_codes.hpp"
 #import "utils/logger.hpp"
 
-@interface SignalChecker : NSObject
-@property(nonatomic, assign) interview_cheater::signal::SignalManager* signalManager;
-@property(nonatomic, strong) id globalMonitor;
-@property(nonatomic, strong) id localMonitor;
-- (instancetype)initWithSignalManager:(interview_cheater::signal::SignalManager*)signalManager;
-@end
-
-@implementation SignalChecker
-
-- (instancetype)initWithSignalManager:(interview_cheater::signal::SignalManager*)signalManager {
-    if ((self = [super init]) != nil) {
-        DEBUG_LOG("Initializing SignalChecker");
-        self.signalManager = signalManager;
-        [self setupEventMonitors];
-    }
-    return self;
-}
-
-- (void)setupEventMonitors {
-    DEBUG_LOG("Setting up event monitors");
-    NSEventMask eventMask = NSEventMaskKeyDown | NSEventMaskFlagsChanged;
-
-    // Global monitor for when app is not active
-    self.globalMonitor =
-        [NSEvent addGlobalMonitorForEventsMatchingMask:eventMask
-                                               handler:^(NSEvent* event) {
-                                                   DEBUG_LOG("Global event received: type=%lu, "
-                                                             "keyCode=%d, modifiers=0x%lx",
-                                                             (unsigned long)event.type, (int)event.keyCode,
-                                                             (unsigned long)event.modifierFlags);
-                                                   [self handleKeyEvent:event];
-                                               }];
-
-    // Local monitor for when app is active
-    self.localMonitor =
-        [NSEvent addLocalMonitorForEventsMatchingMask:eventMask
-                                              handler:^NSEvent*(NSEvent* event) {
-                                                  DEBUG_LOG("Local event received: type=%lu, "
-                                                            "@keyCode=%d, modifiers=0x%lx",
-                                                            (unsigned long)event.type, (int)event.keyCode,
-                                                            (unsigned long)event.modifierFlags);
-                                                  [self handleKeyEvent:event];
-                                                  return event;
-                                              }];
-
-    if (self.globalMonitor == nil || self.localMonitor == nil) {
-        DEBUG_LOG("Warning: Failed to create one or more event monitors");
-    }
-}
-
-- (void)handleKeyEvent:(NSEvent*)event {
-    // Check for Command + / combination
-    if (event.type == NSEventTypeKeyDown && event.keyCode == interview_cheater::input::KeyCodes::KEY_SLASH &&
-        ((event.modifierFlags & NSEventModifierFlagCommand) != 0)) {
-        DEBUG_LOG("Hotkey combination detected (Command + /)");
-        dispatch_async(dispatch_get_main_queue(), ^{
-            DEBUG_LOG("Triggering signal check");
-            self.signalManager->checkSignals();
-        });
-    }
-}
-
-- (void)dealloc {
-    DEBUG_LOG("Cleaning up SignalChecker");
-    if (self.globalMonitor != nil) {
-        [NSEvent removeMonitor:self.globalMonitor];
-    }
-    if (self.localMonitor != nil) {
-        [NSEvent removeMonitor:self.localMonitor];
-    }
-}
-
-@end
-
 namespace interview_cheater {
 
+/**
+ * @brief Implementation details for the macOS platform application.
+ *
+ * This class handles the macOS-specific implementation details using the PIMPL idiom.
+ * It manages the Cocoa application lifecycle and event monitoring infrastructure.
+ */
 class PlatformApplication::Impl {
    public:
-    Impl(const Impl& other) = delete;
-    auto operator=(const Impl& other) -> Impl& = delete;
-    Impl(Impl&& other) noexcept = delete;                     // Can't move because of reference member
-    auto operator=(Impl&& other) noexcept -> Impl& = delete;  // Can't move because of reference member
+    // Delete copy operations
+    Impl(const Impl&) = delete;
+    auto operator=(const Impl&) -> Impl& = delete;
+    // Delete move operations
+    Impl(Impl&&) noexcept = delete;
+    auto operator=(Impl&&) noexcept -> Impl& = delete;
 
-    explicit Impl(signal::SignalManager& signalManager) : signalManager_(signalManager) {
-        DEBUG_LOG("Initializing ");
+    /**
+     * @brief Construct the implementation object.
+     * @param signalManager Reference to the signal manager for input processing.
+     * @param windowManager Reference to the window manager for window handling.
+     *
+     * Initializes the implementation with references to the managers and sets up
+     * the Cocoa application infrastructure. Also requests accessibility permissions
+     * which are required for global event monitoring.
+     */
+    explicit Impl(signal::SignalManager& signalManager, window::WindowManager& windowManager)
+        : signalManager_(signalManager), windowManager_(windowManager) {
+        DEBUG_LOG("Initializing PlatformApplication");
         [NSApplication sharedApplication];
         [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
 
         // Request accessibility permissions if needed
-        NSDictionary* options = @{(__bridge id)kAXTrustedCheckOptionPrompt : @YES};
-        bool accessibilityEnabled = AXIsProcessTrustedWithOptions((CFDictionaryRef)options) != 0;
+        NSDictionary* const options = @{(__bridge id)kAXTrustedCheckOptionPrompt : @YES};
+        const bool accessibilityEnabled = AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)options) != 0;
 
         DEBUG_LOG("Accessibility status: %s", accessibilityEnabled ? "Enabled" : "Disabled");
 
         if (!accessibilityEnabled) {
-            NSString* message = @"Please grant accessibility permissions in System Preferences > "
-                                @"Security & Privacy > Privacy > Accessibility";
+            NSString* const message = @"Please grant accessibility permissions in System Preferences > "
+                                      @"Security & Privacy > Privacy > Accessibility";
             DEBUG_LOG("%s", [message UTF8String]);
         }
 
-        signalChecker_ = [[SignalChecker alloc] initWithSignalManager:&signalManager];
         DEBUG_LOG("Application initialization complete");
     }
 
+    /**
+     * @brief Run the macOS application.
+     * @return Exit code from the application.
+     *
+     * Starts the Cocoa run loop, which will continue until the application
+     * is terminated. This is the main event processing loop for macOS.
+     */
     [[nodiscard]] auto run() -> int {
         DEBUG_LOG("Starting application run loop");
         [NSApp run];
         return 0;
     }
 
+    /**
+     * @brief Quit the macOS application.
+     *
+     * Terminates the Cocoa application and cleans up resources.
+     */
     auto quit() -> void {
         DEBUG_LOG("Application quitting");
-        if (signalChecker_ != nil) {
-            signalChecker_ = nil;
-        }
         [NSApp terminate:nil];
     }
 
-    ~Impl() {
-        DEBUG_LOG("Application being destroyed");
-        if (signalChecker_ != nil) {
-            signalChecker_ = nil;
-        }
-    }
+    ~Impl() = default;
 
    private:
-    signal::SignalManager& signalManager_;
-    SignalChecker* signalChecker_{nil};
+    signal::SignalManager& signalManager_;  ///< Reference to the signal manager
+    window::WindowManager& windowManager_;  ///< Reference to the window manager
 };
 
-PlatformApplication::PlatformApplication(signal::SignalManager& signalManager)
-    : pImpl_(std::make_unique<Impl>(signalManager)) {}
+PlatformApplication::PlatformApplication(const std::string& configPath)
+    : Application(configPath), pImpl_(std::make_unique<Impl>(getSignalManager(), getWindowManager())) {
+    DEBUG_LOG("Creating MacOS platform application");
+}
 
+// Required for unique_ptr with incomplete type
 PlatformApplication::~PlatformApplication() = default;
 
 [[nodiscard]] auto PlatformApplication::run() -> int { return pImpl_->run(); }

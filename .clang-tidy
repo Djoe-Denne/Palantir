@@ -12,7 +12,8 @@ Checks: >
   -readability-convert-member-functions-to-static,
   -clang-analyzer-optin.osx.cocoa.*,
   -clang-diagnostic-*,
-  -clang-diagnostic-error
+  -clang-diagnostic-error,
+  -objc-property-declaration
 
 WarningsAsErrors: ''
 HeaderFilterRegex: '.*'
@@ -27,4 +28,4 @@ CheckOptions:
   - key: readability-function-cognitive-complexity.Threshold
     value: '25'
   - key: modernize-use-nullptr.NullMacros
-    value: 'NULL' 
+    value: 'NULL'

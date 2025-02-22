@@ -1,6 +1,7 @@
 function(setup_windows_platform)
     set(PLATFORM_SOURCES
-        ${PROJECT_ROOT}/src/platform/windows/input/input.cpp
+        ${PROJECT_ROOT}/src/platform/windows/input/configurable_input.cpp
+        ${PROJECT_ROOT}/src/platform/windows/signal/signal_manager.cpp
         ${PROJECT_ROOT}/src/platform/windows/window/overlay_window.cpp
         ${PROJECT_ROOT}/src/platform/windows/platform_application.cpp
         ${PROJECT_ROOT}/src/platform/windows/utils/logger.cpp
