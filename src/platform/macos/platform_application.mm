@@ -43,7 +43,7 @@ class PlatformApplication::Impl {
 
         if (!accessibilityEnabled) {
             NSString* message = @"Please grant accessibility permissions in System Preferences > "
-                               @"Security & Privacy > Privacy > Accessibility";
+                                @"Security & Privacy > Privacy > Accessibility";
             DEBUG_LOG("%s", [message UTF8String]);
         }
 
@@ -75,7 +75,7 @@ class PlatformApplication::Impl {
 
    private:
     signal::SignalManager& signalManager_;  ///< Reference to the signal manager
-    window::WindowManager& windowManager_;   ///< Reference to the window manager
+    window::WindowManager& windowManager_;  ///< Reference to the window manager
 };
 
 PlatformApplication::PlatformApplication(const std::string& configPath)
