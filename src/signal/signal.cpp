@@ -1,14 +1,19 @@
 #include "signal/signal.hpp"
 
+#include <chrono>
+
 #include "command/icommand.hpp"
 #include "input/iinput.hpp"
 #include "utils/logger.hpp"
-#include <chrono>
 
 namespace interview_cheater::signal {
 
 Signal::Signal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command, const bool useDebounce)
-    : input_(std::move(input)), command_(std::move(command)), useDebounce_(useDebounce), active_(false), lastTriggerTime_(0) {
+    : input_(std::move(input)),
+      command_(std::move(command)),
+      useDebounce_(useDebounce),
+      active_(false),
+      lastTriggerTime_(0) {
     DEBUG_LOG("Creating signal");
 }
 

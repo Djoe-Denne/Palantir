@@ -47,7 +47,8 @@ public:
      * specified command. Optionally enables debouncing to prevent rapid
      * repeated triggering of the command.
      */
-    explicit Signal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command, bool useDebounce = false);
+    explicit Signal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command,
+                    bool useDebounce = false);
 
     /** @brief Default destructor. */
     ~Signal() override = default;

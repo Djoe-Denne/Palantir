@@ -1,10 +1,10 @@
 #include "platform_application.hpp"
-#import <Cocoa/Cocoa.h>
 #import <Carbon/Carbon.h>
-#include "input/key_codes.hpp"
-#import "utils/logger.hpp"
+#import <Cocoa/Cocoa.h>
 #include <memory>
 #include <string>
+#include "input/key_codes.hpp"
+#import "utils/logger.hpp"
 
 namespace interview_cheater {
 
@@ -46,7 +46,7 @@ class PlatformApplication::Impl {
 
         if (!accessibilityEnabled) {
             NSString* const message = @"Please grant accessibility permissions in System Preferences > "
-                                @"Security & Privacy > Privacy > Accessibility";
+                                      @"Security & Privacy > Privacy > Accessibility";
             DEBUG_LOG("%s", [message UTF8String]);
         }
 

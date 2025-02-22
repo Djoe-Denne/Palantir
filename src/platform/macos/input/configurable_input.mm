@@ -1,17 +1,16 @@
 #include "input/configurable_input.hpp"
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
-#include "input/key_codes.hpp"
-#include "utils/logger.hpp"
 #include <any>
 #include <memory>
+#include "input/key_codes.hpp"
+#include "utils/logger.hpp"
 
 namespace interview_cheater::input {
 
 class ConfigurableInput::Impl {
    public:
-    explicit Impl(const int keyCode, const int modifierCode) 
-        : keyCode_(keyCode), modifierCode_(modifierCode) {
+    explicit Impl(const int keyCode, const int modifierCode) : keyCode_(keyCode), modifierCode_(modifierCode) {
         DEBUG_LOG("Initializing configurable input: key=0x{:x}, modifier=0x{:x}", keyCode, modifierCode);
     }
 
@@ -27,7 +26,7 @@ class ConfigurableInput::Impl {
                 DEBUG_LOG("Null event received");
                 return false;
             }
-            
+
             if (nsEvent.type == NSEventTypeKeyDown || nsEvent.type == NSEventTypeKeyUp) {
                 const bool pressed = (nsEvent.keyCode == keyCode_);
                 if (pressed) {
@@ -49,7 +48,7 @@ class ConfigurableInput::Impl {
                 DEBUG_LOG("Null event received");
                 return false;
             }
-            
+
             const bool active = (nsEvent.modifierFlags & static_cast<NSUInteger>(modifierCode_)) != 0;
             if (active) {
                 DEBUG_LOG("Modifier 0x{:x} is active", modifierCode_);
