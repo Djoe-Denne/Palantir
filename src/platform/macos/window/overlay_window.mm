@@ -62,7 +62,7 @@ namespace interview_cheater::window {
 class OverlayWindow::Impl {
    public:
     Impl() = delete;
-    explicit Impl(OverlayWindow* parent) : parent_(parent) {}
+    explicit Impl(OverlayWindow* parent) : parent_(parent), window_(nil), delegate_(nil) {}
     Impl(const Impl&) = delete;
     Impl(Impl&&) = delete;
     auto operator=(const Impl&) -> Impl& = delete;

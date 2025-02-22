@@ -45,9 +45,11 @@ jobs:
     - name: Configure CMake
       run: |
         if [[ "${{ github.event_name }}" == "pull_request" && "${{ steps.changed-files.outputs.files }}" != "" ]]; then
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DLINT_FILES="${{ steps.changed-files.outputs.files }}"
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DLINT_FILES="${{ steps.changed-files.outputs.files }}" -DWARNING_THRESHOLD=5
+        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DWARNING_THRESHOLD=5
         else
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DWARNING_THRESHOLD=15
         fi
     
     # Step 4: Check code formatting
