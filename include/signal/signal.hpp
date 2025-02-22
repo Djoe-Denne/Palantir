@@ -14,6 +14,8 @@
 #include <chrono>
 #include <memory>
 
+using namespace std::chrono_literals;
+
 #include "signal/isignal.hpp"
 
 namespace interview_cheater {
@@ -112,7 +114,7 @@ private:
     /** @brief Timestamp of the last trigger for debouncing. */
     int64_t lastTriggerTime_{0};
     /** @brief Debounce time in nanoseconds (300ms). */
-    static constexpr auto DEBOUNCE_TIME = std::chrono::nanoseconds{300'000'000}.count();  // 300ms in nanoseconds
+    static constexpr auto DEBOUNCE_TIME = std::chrono::duration_cast<std::chrono::nanoseconds>(300ms).count();
 };
 
 }  // namespace signal

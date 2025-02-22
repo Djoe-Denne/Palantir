@@ -2,7 +2,6 @@
 
 #include <stdexcept>
 
-#include "application.hpp"
 #include "command/show_command.hpp"
 #include "command/stop_command.hpp"
 #include "input/configurable_input.hpp"

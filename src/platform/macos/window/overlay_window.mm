@@ -115,15 +115,32 @@ class OverlayWindow::Impl {
     auto setupContentView() -> void {
         DEBUG_LOG("Setting up content view");
 
-        // Create and configure scroll view
-        NSScrollView* scrollView = [[NSScrollView alloc] initWithFrame:[window_ contentView].bounds];
-        [scrollView setHasVerticalScroller:YES];
-        [scrollView setHasHorizontalScroller:NO];
-        [scrollView setBorderType:NSNoBorder];
-        [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+        @autoreleasepool {
+            // Create and configure scroll view
+            NSScrollView* const scrollView = [[NSScrollView alloc] initWithFrame:[window_ contentView].bounds];
+            [scrollView setHasVerticalScroller:YES];
+            [scrollView setHasHorizontalScroller:NO];
+            [scrollView setBorderType:NSNoBorder];
+            [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
-        // Create and configure text view
-        NSTextView* textView = [[NSTextView alloc] initWithFrame:scrollView.bounds];
+            // Create and configure text view
+            NSTextView* const textView = [[NSTextView alloc] initWithFrame:scrollView.bounds];
+            configureTextView(textView);
+
+            // Set up view hierarchy
+            [scrollView setDocumentView:textView];
+            [window_ setContentView:scrollView];
+
+            // Set up delegate
+            delegate_ = [[OverlayWindowDelegate alloc] init];
+            delegate_.overlayWindow = parent_;
+            [window_ setDelegate:delegate_];
+        }
+
+        DEBUG_LOG("Content view setup complete");
+    }
+
+    auto configureTextView(NSTextView* const textView) -> void {
         [textView setMinSize:NSMakeSize(0.0, 0.0)];
         [textView setMaxSize:NSMakeSize(FLT_MAX, FLT_MAX)];
         [textView setVerticallyResizable:YES];
@@ -132,48 +149,25 @@ class OverlayWindow::Impl {
         [textView setBackgroundColor:[NSColor clearColor]];
         [textView setTextColor:[NSColor whiteColor]];
         [textView setFont:[NSFont systemFontOfSize:14.0]];
+        [textView setTextContainerInset:NSMakeSize(K_TEXT_CONTAINER_INSET, K_TEXT_CONTAINER_INSET)];
+        [textView setEditable:NO];
         [[textView textContainer] setContainerSize:NSMakeSize(FLT_MAX, FLT_MAX)];
         [[textView textContainer] setWidthTracksTextView:YES];
 
-        // Set up view hierarchy
-        [scrollView setDocumentView:textView];
-        [window_ setContentView:scrollView];
-
-        // Set up delegate
-        delegate_ = [[OverlayWindowDelegate alloc] init];
-        delegate_.overlayWindow = parent_;
-        [window_ setDelegate:delegate_];
-
-        DEBUG_LOG("Content view setup complete");
-    }
-
-    auto configureTextView(NSTextView* textView) -> void {
-        [textView setMinSize:NSMakeSize(0.0, 0.0)];
-        [textView setMaxSize:NSMakeSize(FLT_MAX, FLT_MAX)];
-        [textView setVerticallyResizable:YES];
-        [textView setHorizontallyResizable:NO];
-        [textView setAutoresizingMask:NSViewWidthSizable];
-        [textView setTextContainerInset:NSMakeSize(K_TEXT_CONTAINER_INSET, K_TEXT_CONTAINER_INSET)];
-        [textView setEditable:NO];
-        [textView setFont:[NSFont systemFontOfSize:K_FONT_SIZE]];
-        [textView setFont:[NSFont systemFontOfSize:K_FONT_SIZE]];
-        [textView setTextColor:[NSColor textColor]];
-
-        NSString* content = @"# Interview Notes\n\n"
-                            @"## Key Points\n\n"
-                            @"- Project Experience\n"
-                            @"- Technical Skills\n"
-                            @"- Problem Solving\n"
-                            @"- Team Collaboration\n\n"
-                            @"## Questions to Ask\n\n"
-                            @"1. Team structure and workflow\n"
-                            @"2. Technical challenges\n"
-                            @"3. Growth opportunities\n\n"
-                            @"Use Command + / to toggle this window\n"
-                            @"(Hidden from screen sharing)";
+        NSString* const content = @"# Interview Notes\n\n"
+                                  @"## Key Points\n\n"
+                                  @"- Project Experience\n"
+                                  @"- Technical Skills\n"
+                                  @"- Problem Solving\n"
+                                  @"- Team Collaboration\n\n"
+                                  @"## Questions to Ask\n\n"
+                                  @"1. Team structure and workflow\n"
+                                  @"2. Technical challenges\n"
+                                  @"3. Growth opportunities\n\n"
+                                  @"Use Command + / to toggle this window\n"
+                                  @"(Hidden from screen sharing)";
 
         [textView setString:content];
-        [[textView textContainer] setWidthTracksTextView:YES];
     }
 
     auto positionWindow() -> void {

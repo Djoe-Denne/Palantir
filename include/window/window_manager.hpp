@@ -53,11 +53,11 @@ public:
     /** @brief Deleted copy assignment to prevent window duplication. */
     auto operator=(const WindowManager&) -> WindowManager& = delete;
 
-    // Define move operations
-    /** @brief Default move constructor for transfer of manager ownership. */
-    WindowManager(WindowManager&&) = delete;
-    /** @brief Default move assignment for transfer of manager ownership. */
-    auto operator=(WindowManager&&) -> WindowManager& = delete;
+    // Delete move operations since we have unique_ptr members
+    /** @brief Deleted move constructor since we have unique_ptr members. */
+    WindowManager(WindowManager&&) noexcept = delete;
+    /** @brief Deleted move assignment since we have unique_ptr members. */
+    auto operator=(WindowManager&&) noexcept -> WindowManager& = delete;
 
     /**
      * @brief Add a new window to the manager.

@@ -16,8 +16,8 @@ public:
     StopCommand(const StopCommand&) = delete;
     auto operator=(const StopCommand&) -> StopCommand& = delete;
 
-    // Define move operations
-    StopCommand(StopCommand&&) noexcept = default;
+    // Delete move operations
+    StopCommand(StopCommand&&) noexcept = delete;
     auto operator=(StopCommand&&) noexcept -> StopCommand& = delete;
 
     auto execute() -> void override;

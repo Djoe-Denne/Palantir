@@ -9,11 +9,7 @@
 namespace interview_cheater::signal {
 
 Signal::Signal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command, const bool useDebounce)
-    : input_(std::move(input)),
-      command_(std::move(command)),
-      useDebounce_(useDebounce),
-      active_(false),
-      lastTriggerTime_(0) {
+    : input_(std::move(input)), command_(std::move(command)), useDebounce_(useDebounce) {
     DEBUG_LOG("Creating signal");
 }
 
@@ -30,7 +26,7 @@ auto Signal::stop() -> void {
 [[nodiscard]] auto Signal::isActive() const -> bool { return active_; }
 
 auto Signal::check(const std::any& event) -> void {
-    if (!active_) {
+    if (!active_ || !input_ || !command_) {
         return;
     }
 
