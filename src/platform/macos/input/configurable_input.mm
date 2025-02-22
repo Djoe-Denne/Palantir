@@ -12,6 +12,11 @@ class ConfigurableInput::Impl {
         DEBUG_LOG("Initializing configurable input: key=0x{:x}, modifier=0x{:x}", keyCode, modifierCode);
     }
 
+    Impl(const Impl&) = delete;
+    auto operator=(const Impl&) -> Impl& = delete;
+    Impl(Impl&&) = delete;
+    auto operator=(Impl&&) -> Impl& = delete;
+
     [[nodiscard]] auto isKeyPressed() const -> bool {
         CGEventFlags modifiers = CGEventSourceFlagsState(kCGEventSourceStateHIDSystemState);
         bool pressed = (CGEventSourceKeyState(kCGEventSourceStateHIDSystemState, keyCode_) != 0);

@@ -38,7 +38,7 @@ public:
      *
      * Initializes an empty window manager ready to handle windows.
      */
-    WindowManager() = default;
+    WindowManager() : windows_{} {}
 
     /**
      * @brief Destroy the WindowManager object.
