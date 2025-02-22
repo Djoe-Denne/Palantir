@@ -105,9 +105,9 @@ auto SignalManager::stopSignals() -> void {
     }
 }
 
-auto SignalManager::checkSignals() -> void {
+auto SignalManager::checkSignals(const std::any& event) -> void {
     for (const auto& signal : signals_) {
-        signal->check();
+        signal->check(event);
     }
 }
 

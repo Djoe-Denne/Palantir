@@ -10,6 +10,7 @@
 #ifndef SIGNAL_MANAGER_HPP
 #define SIGNAL_MANAGER_HPP
 
+#include <any>
 #include <memory>
 #include <vector>
 
@@ -86,7 +87,7 @@ public:
      *
      * Triggers a check of conditions for all managed signals.
      */
-    auto checkSignals() -> void;
+    auto checkSignals(const std::any& event) -> void;
 
 private:
     // Forward declaration of platform-specific implementation

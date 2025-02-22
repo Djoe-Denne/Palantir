@@ -123,7 +123,7 @@
     // Dispatch signal check to main queue for thread safety
     dispatch_async(dispatch_get_main_queue(), ^{
         DEBUG_LOG("Triggering signal check");
-        self.signalManager->checkSignals();
+        self.signalManager->checkSignals(event);
     });
 }
 
@@ -239,9 +239,9 @@ auto SignalManager::stopSignals() -> void {
  * are received. It triggers the check() method on all registered signals.
  * The method is called on the main thread for thread safety.
  */
-auto SignalManager::checkSignals() -> void {
+auto SignalManager::checkSignals(const std::any& event) -> void {
     for (const auto& signal : signals_) {
-        signal->check();
+        signal->check(event);
     }
 }
 

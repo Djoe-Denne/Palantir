@@ -63,7 +63,7 @@ public:
      * Implements the IInput interface method to check the state of the
      * configured key using platform-specific mechanisms.
      */
-    [[nodiscard]] auto isKeyPressed() const -> bool override;
+    [[nodiscard]] auto isKeyPressed(const std::any& event) const -> bool override;
 
     /**
      * @brief Check if the configured modifier key is currently active.
@@ -72,7 +72,7 @@ public:
      * Implements the IInput interface method to check the state of the
      * configured modifier key using platform-specific mechanisms.
      */
-    [[nodiscard]] auto isModifierActive() const -> bool override;
+    [[nodiscard]] auto isModifierActive(const std::any& event) const -> bool override;
 
     /**
      * @brief Update the input handler's state.

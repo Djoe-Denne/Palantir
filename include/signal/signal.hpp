@@ -96,7 +96,7 @@ public:
      * inputs. If the conditions are met and debouncing requirements are
      * satisfied, executes the associated command.
      */
-    auto check() -> void override;
+    auto check(const std::any& event) -> void override;
 
 private:
     /** @brief Unique pointer to the input handler. */

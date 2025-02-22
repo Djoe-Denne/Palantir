@@ -17,22 +17,35 @@ class ConfigurableInput::Impl {
     Impl(Impl&&) = delete;
     auto operator=(Impl&&) -> Impl& = delete;
 
-    [[nodiscard]] auto isKeyPressed() const -> bool {
-        CGEventFlags modifiers = CGEventSourceFlagsState(kCGEventSourceStateHIDSystemState);
-        bool pressed = (CGEventSourceKeyState(kCGEventSourceStateHIDSystemState, keyCode_) != 0);
-        if (pressed) {
-            DEBUG_LOG("Key 0x{:x} is pressed", keyCode_);
+    [[nodiscard]] auto isKeyPressed(const std::any& event) const -> bool {
+        try {
+            NSEvent* nsEvent = std::any_cast<NSEvent*>(event);
+            if (nsEvent.type == NSEventTypeKeyDown || nsEvent.type == NSEventTypeKeyUp) {
+                bool pressed = (nsEvent.keyCode == keyCode_);
+                if (pressed) {
+                    DEBUG_LOG("Key 0x{:x} is {}", keyCode_,
+                              (nsEvent.type == NSEventTypeKeyDown) ? "pressed" : "released");
+                }
+                return pressed && (nsEvent.type == NSEventTypeKeyDown);
+            }
+        } catch (const std::bad_any_cast&) {
+            DEBUG_LOG("Invalid event type in isKeyPressed");
         }
-        return pressed;
+        return false;
     }
 
-    [[nodiscard]] auto isModifierActive() const -> bool {
-        CGEventFlags modifiers = CGEventSourceFlagsState(kCGEventSourceStateHIDSystemState);
-        bool active = (modifiers & modifierCode_) != 0;
-        if (active) {
-            DEBUG_LOG("Modifier 0x{:x} is active", modifierCode_);
+    [[nodiscard]] auto isModifierActive(const std::any& event) const -> bool {
+        try {
+            NSEvent* nsEvent = std::any_cast<NSEvent*>(event);
+            bool active = (nsEvent.modifierFlags & modifierCode_) != 0;
+            if (active) {
+                DEBUG_LOG("Modifier 0x{:x} is active", modifierCode_);
+            }
+            return active;
+        } catch (const std::bad_any_cast&) {
+            DEBUG_LOG("Invalid event type in isModifierActive");
         }
-        return active;
+        return false;
     }
 
     auto update() -> void {
@@ -54,8 +67,10 @@ ConfigurableInput::ConfigurableInput(int keyCode, int modifierCode)
 
 ConfigurableInput::~ConfigurableInput() = default;
 
-auto ConfigurableInput::isKeyPressed() const -> bool { return pImpl_->isKeyPressed(); }
-auto ConfigurableInput::isModifierActive() const -> bool { return pImpl_->isModifierActive(); }
+auto ConfigurableInput::isKeyPressed(const std::any& event) const -> bool { return pImpl_->isKeyPressed(event); }
+auto ConfigurableInput::isModifierActive(const std::any& event) const -> bool {
+    return pImpl_->isModifierActive(event);
+}
 auto ConfigurableInput::update() -> void { pImpl_->update(); }
 
 }  // namespace interview_cheater::input

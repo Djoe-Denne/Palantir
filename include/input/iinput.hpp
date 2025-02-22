@@ -10,6 +10,8 @@
 #ifndef IINPUT_HPP
 #define IINPUT_HPP
 
+#include <any>
+
 namespace interview_cheater::input {
 
 /**
@@ -45,7 +47,7 @@ public:
      * This method should be implemented to check the current state of the
      * configured key in a platform-specific way.
      */
-    [[nodiscard]] virtual auto isKeyPressed() const -> bool = 0;
+    [[nodiscard]] virtual auto isKeyPressed(const std::any& event) const -> bool = 0;
 
     /**
      * @brief Check if the configured modifier key is currently active.
@@ -54,7 +56,7 @@ public:
      * This method should be implemented to check the current state of the
      * configured modifier key (Ctrl, Alt, etc.) in a platform-specific way.
      */
-    [[nodiscard]] virtual auto isModifierActive() const -> bool = 0;
+    [[nodiscard]] virtual auto isModifierActive(const std::any& event) const -> bool = 0;
 
     /**
      * @brief Update the input handler's state.

@@ -9,6 +9,7 @@
 
 #ifndef ISIGNAL_HPP
 #define ISIGNAL_HPP
+#include <any>
 
 namespace interview_cheater::signal {
 
@@ -72,7 +73,7 @@ public:
      * and determine if the signal's conditions are met. If the conditions
      * are met, it should trigger the appropriate command.
      */
-    virtual auto check() -> void = 0;
+    virtual auto check(const std::any& event) -> void = 0;
 
 protected:
     /** @brief Protected default constructor to prevent direct instantiation. */
