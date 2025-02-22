@@ -1,117 +1,13 @@
 #include "input/key_mapper.hpp"
 
-#include <algorithm>
 #include <stdexcept>
 #include <string>
-#include <unordered_map>
 
-#include "input/key_codes.hpp"
+#include "input/key_register.hpp"
 #include "utils/logger.hpp"
+#include "utils/string_utils.hpp"
 
 namespace interview_cheater::input {
-// Helper function to convert string to uppercase
-auto toUpper(std::string str) -> std::string {
-    std::transform(str.begin(), str.end(), str.begin(), ::toupper);
-    return str;
-}
-
-// Key name to key code mapping
-const std::unordered_map<std::string, int> keyMap = {
-    // Letters
-    {"A", KeyCodes::KEY_A},
-    {"B", KeyCodes::KEY_B},
-    {"C", KeyCodes::KEY_C},
-    {"D", KeyCodes::KEY_D},
-    {"E", KeyCodes::KEY_E},
-    {"F", KeyCodes::KEY_F},
-    {"G", KeyCodes::KEY_G},
-    {"H", KeyCodes::KEY_H},
-    {"I", KeyCodes::KEY_I},
-    {"J", KeyCodes::KEY_J},
-    {"K", KeyCodes::KEY_K},
-    {"L", KeyCodes::KEY_L},
-    {"M", KeyCodes::KEY_M},
-    {"N", KeyCodes::KEY_N},
-    {"O", KeyCodes::KEY_O},
-    {"P", KeyCodes::KEY_P},
-    {"Q", KeyCodes::KEY_Q},
-    {"R", KeyCodes::KEY_R},
-    {"S", KeyCodes::KEY_S},
-    {"T", KeyCodes::KEY_T},
-    {"U", KeyCodes::KEY_U},
-    {"V", KeyCodes::KEY_V},
-    {"W", KeyCodes::KEY_W},
-    {"X", KeyCodes::KEY_X},
-    {"Y", KeyCodes::KEY_Y},
-    {"Z", KeyCodes::KEY_Z},
-
-    // Numbers
-    {"0", KeyCodes::KEY_0},
-    {"1", KeyCodes::KEY_1},
-    {"2", KeyCodes::KEY_2},
-    {"3", KeyCodes::KEY_3},
-    {"4", KeyCodes::KEY_4},
-    {"5", KeyCodes::KEY_5},
-    {"6", KeyCodes::KEY_6},
-    {"7", KeyCodes::KEY_7},
-    {"8", KeyCodes::KEY_8},
-    {"9", KeyCodes::KEY_9},
-
-    // Non-alphanumeric characters
-    {"/", KeyCodes::KEY_SLASH},
-
-    // Function keys
-    {"F1", KeyCodes::KEY_F1},
-    {"F2", KeyCodes::KEY_F2},
-    {"F3", KeyCodes::KEY_F3},
-    {"F4", KeyCodes::KEY_F4},
-    {"F5", KeyCodes::KEY_F5},
-    {"F6", KeyCodes::KEY_F6},
-    {"F7", KeyCodes::KEY_F7},
-    {"F8", KeyCodes::KEY_F8},
-    {"F9", KeyCodes::KEY_F9},
-    {"F10", KeyCodes::KEY_F10},
-    {"F11", KeyCodes::KEY_F11},
-    {"F12", KeyCodes::KEY_F12},
-    {"F13", KeyCodes::KEY_F13},
-    {"F14", KeyCodes::KEY_F14},
-    {"F15", KeyCodes::KEY_F15},
-    {"F16", KeyCodes::KEY_F16},
-    {"F17", KeyCodes::KEY_F17},
-    {"F18", KeyCodes::KEY_F18},
-    {"F19", KeyCodes::KEY_F19},
-
-    // Special keys
-    {"ESCAPE", KeyCodes::KEY_ESCAPE},
-    {"TAB", KeyCodes::KEY_TAB},
-    {"CAPSLOCK", KeyCodes::KEY_CAPSLOCK},
-    {"SPACE", KeyCodes::KEY_SPACE},
-    {"BACKSPACE", KeyCodes::KEY_BACKSPACE},
-    {"ENTER", KeyCodes::KEY_ENTER},
-    {"DELETE", KeyCodes::KEY_DELETE},
-    {"HOME", KeyCodes::KEY_HOME},
-    {"END", KeyCodes::KEY_END},
-    {"PAGEUP", KeyCodes::KEY_PAGEUP},
-    {"PAGEDOWN", KeyCodes::KEY_PAGEDOWN},
-
-    // Arrow keys
-    {"UP", KeyCodes::KEY_UP},
-    {"DOWN", KeyCodes::KEY_DOWN},
-    {"LEFT", KeyCodes::KEY_LEFT},
-    {"RIGHT", KeyCodes::KEY_RIGHT},
-};
-
-// Modifier name to modifier code mapping
-const std::unordered_map<std::string, int> modifierMap = {
-    {"CTRL", KeyCodes::CONTROL_MODIFIER},
-    {"ALT", KeyCodes::ALT_MODIFIER},  // Alt key
-    {"SHIFT", KeyCodes::SHIFT_MODIFIER},
-#ifdef _WIN32
-    {"WIN", KeyCodes::COMMAND_MODIFIER}  // Left Windows key
-#else
-    {"CMD", KeyCodes::COMMAND_MODIFIER}
-#endif
-};
 
 /**
  * @brief Get the virtual key code for a given key name.
@@ -119,21 +15,21 @@ const std::unordered_map<std::string, int> modifierMap = {
  * @return The virtual key code corresponding to the key name.
  * @throws std::invalid_argument if the key name is not recognized.
  *
- * Looks up the virtual key code for a given key name in the key map.
- * The key name must be one of the predefined values in the key map.
+ * Looks up the virtual key code for a given key name in the key register.
+ * The key name must be one of the predefined values in the key register.
  */
 auto KeyMapper::getKeyCode(const std::string& keyName) -> int {
     DEBUG_LOG("Looking up key code for: {}", keyName);
 
-    const auto upperKey = toUpper(keyName);
-    auto iterator = keyMap.find(upperKey);
-    if (iterator == keyMap.end()) {
+    const auto upperKey = utils::StringUtils::toUpper(keyName);
+    if (!KeyRegister::hasKey(upperKey)) {
         DEBUG_LOG("Invalid key name: {}", upperKey);
         throw std::invalid_argument("Invalid key name: " + keyName);
     }
 
-    DEBUG_LOG("Found key code: 0x{:x}", iterator->second);
-    return iterator->second;
+    int keyCode = KeyRegister::get(upperKey);
+    DEBUG_LOG("Found key code: 0x{:x}", keyCode);
+    return keyCode;
 }
 
 /**
@@ -142,21 +38,21 @@ auto KeyMapper::getKeyCode(const std::string& keyName) -> int {
  * @return The virtual key code corresponding to the modifier name.
  * @throws std::invalid_argument if the modifier name is not recognized.
  *
- * Looks up the virtual key code for a given modifier name in the modifier map.
- * The modifier name must be one of the predefined values in the modifier map.
+ * Looks up the virtual key code for a given modifier name in the key register.
+ * The modifier name must be one of the predefined values in the key register.
  */
 auto KeyMapper::getModifierCode(const std::string& modifierName) -> int {
     DEBUG_LOG("Looking up modifier code for: {}", modifierName);
 
-    const auto upperModifier = toUpper(modifierName);
-    auto iterator = modifierMap.find(upperModifier);
-    if (iterator == modifierMap.end()) {
+    const auto upperModifier = utils::StringUtils::toUpper(modifierName);
+    if (!KeyRegister::hasKey(upperModifier)) {
         DEBUG_LOG("Invalid modifier name: {}", upperModifier);
         throw std::invalid_argument("Invalid modifier name: " + modifierName);
     }
 
-    DEBUG_LOG("Found modifier code: 0x{:x}", iterator->second);
-    return iterator->second;
+    int modifierCode = KeyRegister::get(upperModifier);
+    DEBUG_LOG("Found modifier code: 0x{:x}", modifierCode);
+    return modifierCode;
 }
 
 /**
@@ -164,12 +60,12 @@ auto KeyMapper::getModifierCode(const std::string& modifierName) -> int {
  * @param keyName The name of the key to validate.
  * @return true if the key name is valid, false otherwise.
  *
- * Checks if a given key name exists in the key map. This can be used
+ * Checks if a given key name exists in the key register. This can be used
  * to validate key names before attempting to get their key codes.
  */
 auto KeyMapper::isValidKey(const std::string& keyName) -> bool {
-    const auto upperKey = toUpper(keyName);
-    bool valid = keyMap.find(upperKey) != keyMap.end();
+    const auto upperKey = utils::StringUtils::toUpper(keyName);
+    bool valid = KeyRegister::hasKey(upperKey);
     DEBUG_LOG("Key name '{}' is {}", upperKey, valid ? "valid" : "invalid");
     return valid;
 }
@@ -179,12 +75,12 @@ auto KeyMapper::isValidKey(const std::string& keyName) -> bool {
  * @param modifierName The name of the modifier to validate.
  * @return true if the modifier name is valid, false otherwise.
  *
- * Checks if a given modifier name exists in the modifier map. This can be used
+ * Checks if a given modifier name exists in the key register. This can be used
  * to validate modifier names before attempting to get their modifier codes.
  */
 auto KeyMapper::isValidModifier(const std::string& modifierName) -> bool {
-    const auto upperModifier = toUpper(modifierName);
-    bool valid = modifierMap.find(upperModifier) != modifierMap.end();
+    const auto upperModifier = utils::StringUtils::toUpper(modifierName);
+    bool valid = KeyRegister::hasKey(upperModifier);
     DEBUG_LOG("Modifier name '{}' is {}", upperModifier, valid ? "valid" : "invalid");
     return valid;
 }
