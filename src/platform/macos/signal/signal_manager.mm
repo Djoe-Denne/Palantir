@@ -40,6 +40,13 @@
  */
 - (instancetype)initWithSignalManager:(interview_cheater::signal::SignalManager*)signalManager;
 
+/**
+ * @brief Stop checking events
+ *
+ * This method stops the event monitoring and cleans up the event monitors.
+ */
+- (void)stopChecking;
+
 @end
 
 @implementation SignalChecker
@@ -128,6 +135,23 @@
 }
 
 /**
+ * @brief Stop checking events
+ *
+ * This method stops the event monitoring and cleans up the event monitors.
+ */
+- (void)stopChecking {
+    DEBUG_LOG("Stopping event monitors");
+    if (self.globalMonitor != nil) {
+        [NSEvent removeMonitor:self.globalMonitor];
+        self.globalMonitor = nil;
+    }
+    if (self.localMonitor != nil) {
+        [NSEvent removeMonitor:self.localMonitor];
+        self.localMonitor = nil;
+    }
+}
+
+/**
  * @brief Clean up event monitors when the instance is deallocated
  *
  * This method ensures proper cleanup of the event monitors to prevent
@@ -135,12 +159,7 @@
  */
 - (void)dealloc {
     DEBUG_LOG("Cleaning up SignalChecker");
-    if (self.globalMonitor != nil) {
-        [NSEvent removeMonitor:self.globalMonitor];
-    }
-    if (self.localMonitor != nil) {
-        [NSEvent removeMonitor:self.localMonitor];
-    }
+    [self stopChecking];
 }
 
 @end
@@ -174,10 +193,18 @@ class SignalManager::Impl {
      * The nil assignment triggers Objective-C ARC to release the object.
      */
     ~Impl() {
-        if (signalChecker_ != nil) {
-            signalChecker_ = nil;
+        if (signalChecker_ != nullptr) {
+            // Remove monitors before releasing
+            [signalChecker_ stopChecking];
+            signalChecker_ = nil;  // ARC will handle the release
         }
     }
+
+    Impl() : parent_(nullptr) {}
+    Impl(const Impl&) = delete;
+    auto operator=(const Impl&) -> Impl& = delete;
+    Impl(Impl&&) = delete;
+    auto operator=(Impl&&) -> Impl& = delete;
 
    private:
     SignalChecker* signalChecker_{nil};  ///< The Objective-C event monitor instance

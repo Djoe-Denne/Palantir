@@ -1,7 +1,10 @@
 #include "platform_application.hpp"
 #import <Cocoa/Cocoa.h>
+#import <Carbon/Carbon.h>
 #include "input/key_codes.hpp"
 #import "utils/logger.hpp"
+#include <memory>
+#include <string>
 
 namespace interview_cheater {
 
@@ -14,11 +17,11 @@ namespace interview_cheater {
 class PlatformApplication::Impl {
    public:
     // Delete copy operations
-    Impl(const Impl& other) = delete;
-    auto operator=(const Impl& other) -> Impl& = delete;
-    // Delete move operations (can't move references)
-    Impl(Impl&& other) noexcept = delete;
-    auto operator=(Impl&& other) noexcept -> Impl& = delete;
+    Impl(const Impl&) = delete;
+    auto operator=(const Impl&) -> Impl& = delete;
+    // Delete move operations
+    Impl(Impl&&) noexcept = delete;
+    auto operator=(Impl&&) noexcept -> Impl& = delete;
 
     /**
      * @brief Construct the implementation object.
@@ -36,13 +39,13 @@ class PlatformApplication::Impl {
         [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
 
         // Request accessibility permissions if needed
-        NSDictionary* options = @{(__bridge id)kAXTrustedCheckOptionPrompt : @YES};
-        bool accessibilityEnabled = AXIsProcessTrustedWithOptions((CFDictionaryRef)options) != 0;
+        NSDictionary* const options = @{(__bridge id)kAXTrustedCheckOptionPrompt : @YES};
+        const bool accessibilityEnabled = AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)options) != 0;
 
         DEBUG_LOG("Accessibility status: %s", accessibilityEnabled ? "Enabled" : "Disabled");
 
         if (!accessibilityEnabled) {
-            NSString* message = @"Please grant accessibility permissions in System Preferences > "
+            NSString* const message = @"Please grant accessibility permissions in System Preferences > "
                                 @"Security & Privacy > Privacy > Accessibility";
             DEBUG_LOG("%s", [message UTF8String]);
         }
@@ -72,6 +75,8 @@ class PlatformApplication::Impl {
         DEBUG_LOG("Application quitting");
         [NSApp terminate:nil];
     }
+
+    ~Impl() = default;
 
    private:
     signal::SignalManager& signalManager_;  ///< Reference to the signal manager

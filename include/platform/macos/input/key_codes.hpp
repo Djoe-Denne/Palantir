@@ -99,7 +99,7 @@ constexpr int KEY_RIGHT = kVK_RightArrow;  ///< Virtual key code for Right Arrow
 constexpr int CONTROL_MODIFIER = kVK_Control;  ///< Virtual key code for Control
 constexpr int ALT_MODIFIER = kVK_Option;       ///< Virtual key code for Alt/Option
 constexpr int SHIFT_MODIFIER = kVK_Shift;      ///< Virtual key code for Shift
-                                               // TODO: Check why left CMD triggers both left and right CMD keys
+                                                // TODO(dev): Check why left CMD triggers both left and right CMD keys
 constexpr int COMMAND_MODIFIER = kVK_Control;  ///< Virtual key code for Command/Windows key
 
 // Special masks (common between Windows and macOS)

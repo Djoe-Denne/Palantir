@@ -3,12 +3,15 @@
 #import <Cocoa/Cocoa.h>
 #include "input/key_codes.hpp"
 #include "utils/logger.hpp"
+#include <any>
+#include <memory>
 
 namespace interview_cheater::input {
 
 class ConfigurableInput::Impl {
    public:
-    Impl(int keyCode, int modifierCode) : keyCode_(keyCode), modifierCode_(modifierCode) {
+    explicit Impl(const int keyCode, const int modifierCode) 
+        : keyCode_(keyCode), modifierCode_(modifierCode) {
         DEBUG_LOG("Initializing configurable input: key=0x{:x}, modifier=0x{:x}", keyCode, modifierCode);
     }
 
@@ -19,31 +22,41 @@ class ConfigurableInput::Impl {
 
     [[nodiscard]] auto isKeyPressed(const std::any& event) const -> bool {
         try {
-            NSEvent* nsEvent = std::any_cast<NSEvent*>(event);
+            const auto* const nsEvent = std::any_cast<NSEvent*>(event);
+            if (!nsEvent) {
+                DEBUG_LOG("Null event received");
+                return false;
+            }
+            
             if (nsEvent.type == NSEventTypeKeyDown || nsEvent.type == NSEventTypeKeyUp) {
-                bool pressed = (nsEvent.keyCode == keyCode_);
+                const bool pressed = (nsEvent.keyCode == keyCode_);
                 if (pressed) {
                     DEBUG_LOG("Key 0x{:x} is {}", keyCode_,
                               (nsEvent.type == NSEventTypeKeyDown) ? "pressed" : "released");
                 }
                 return pressed && (nsEvent.type == NSEventTypeKeyDown);
             }
-        } catch (const std::bad_any_cast&) {
-            DEBUG_LOG("Invalid event type in isKeyPressed");
+        } catch (const std::bad_any_cast& e) {
+            DEBUG_LOG("Invalid event type in isKeyPressed: {}", e.what());
         }
         return false;
     }
 
     [[nodiscard]] auto isModifierActive(const std::any& event) const -> bool {
         try {
-            NSEvent* nsEvent = std::any_cast<NSEvent*>(event);
-            bool active = (nsEvent.modifierFlags & modifierCode_) != 0;
+            const auto* const nsEvent = std::any_cast<NSEvent*>(event);
+            if (!nsEvent) {
+                DEBUG_LOG("Null event received");
+                return false;
+            }
+            
+            const bool active = (nsEvent.modifierFlags & static_cast<NSUInteger>(modifierCode_)) != 0;
             if (active) {
                 DEBUG_LOG("Modifier 0x{:x} is active", modifierCode_);
             }
             return active;
-        } catch (const std::bad_any_cast&) {
-            DEBUG_LOG("Invalid event type in isModifierActive");
+        } catch (const std::bad_any_cast& e) {
+            DEBUG_LOG("Invalid event type in isModifierActive: {}", e.what());
         }
         return false;
     }

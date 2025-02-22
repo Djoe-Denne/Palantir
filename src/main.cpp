@@ -1,7 +1,8 @@
 #include <memory>
 #include <stdexcept>
+#include <string>
 
-#include "application.hpp"
+#include "platform/application.hpp"
 #include "utils/logger.hpp"
 #include "window/overlay_window.hpp"
 

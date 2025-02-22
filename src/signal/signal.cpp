@@ -3,11 +3,12 @@
 #include "command/icommand.hpp"
 #include "input/iinput.hpp"
 #include "utils/logger.hpp"
+#include <chrono>
 
 namespace interview_cheater::signal {
 
-Signal::Signal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command, bool useDebounce)
-    : input_(std::move(input)), command_(std::move(command)), useDebounce_(useDebounce) {
+Signal::Signal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command, const bool useDebounce)
+    : input_(std::move(input)), command_(std::move(command)), useDebounce_(useDebounce), active_(false), lastTriggerTime_(0) {
     DEBUG_LOG("Creating signal");
 }
 
@@ -21,7 +22,7 @@ auto Signal::stop() -> void {
     active_ = false;
 }
 
-auto Signal::isActive() const -> bool { return active_; }
+[[nodiscard]] auto Signal::isActive() const -> bool { return active_; }
 
 auto Signal::check(const std::any& event) -> void {
     if (!active_) {
@@ -29,7 +30,7 @@ auto Signal::check(const std::any& event) -> void {
     }
 
     if (input_->isModifierActive(event) && input_->isKeyPressed(event)) {
-        auto currentTime = std::chrono::steady_clock::now().time_since_epoch().count();
+        const auto currentTime = std::chrono::steady_clock::now().time_since_epoch().count();
 
         if (!useDebounce_ || (currentTime - lastTriggerTime_ > DEBOUNCE_TIME)) {
             DEBUG_LOG("Signal triggered");

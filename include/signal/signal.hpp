@@ -10,6 +10,7 @@
 #ifndef SIGNAL_HPP
 #define SIGNAL_HPP
 
+#include <any>
 #include <chrono>
 #include <memory>
 
@@ -34,7 +35,7 @@ namespace signal {
  * processing system. It connects an input handler with a command and manages
  * the signal's lifecycle, including optional debouncing of rapid inputs.
  */
-class Signal : public ISignal {
+class Signal final : public ISignal {
 public:
     /**
      * @brief Construct a new Signal object.
@@ -46,7 +47,7 @@ public:
      * specified command. Optionally enables debouncing to prevent rapid
      * repeated triggering of the command.
      */
-    Signal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command, bool useDebounce = false);
+    explicit Signal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command, bool useDebounce = false);
 
     /** @brief Default destructor. */
     ~Signal() override = default;
@@ -110,7 +111,7 @@ private:
     /** @brief Timestamp of the last trigger for debouncing. */
     int64_t lastTriggerTime_{0};
     /** @brief Debounce time in nanoseconds (300ms). */
-    static constexpr auto DEBOUNCE_TIME = 300000000LL;  // 300ms in nanoseconds
+    static constexpr auto DEBOUNCE_TIME = std::chrono::nanoseconds{300'000'000}.count();  // 300ms in nanoseconds
 };
 
 }  // namespace signal

@@ -1,6 +1,8 @@
 #include "utils/logger.hpp"
 #import <Foundation/Foundation.h>
+#include <os/log.h>
 #include <sstream>
+#include <string_view>
 
 namespace interview_cheater::utils {
 

@@ -7,70 +7,61 @@
  * functionality for application lifecycle and event handling.
  */
 
-#ifndef MACOS_APPLICATION_HPP
-#define MACOS_APPLICATION_HPP
+#ifndef INTERVIEW_CHEATER_PLATFORM_MACOS_PLATFORM_APPLICATION_HPP
+#define INTERVIEW_CHEATER_PLATFORM_MACOS_PLATFORM_APPLICATION_HPP
+
+#include <memory>
+#include <string>
 
 #include "platform/application.hpp"
 #include "signal/signal_manager.hpp"
+#include "window/window_manager.hpp"
 
 namespace interview_cheater {
 
 /**
  * @class PlatformApplication
- * @brief macOS-specific implementation of the Application class.
+ * @brief macOS-specific implementation of the application.
  *
- * This class provides the macOS platform implementation of the application.
- * It handles macOS-specific event processing, window management, and
- * application lifecycle. The implementation uses Cocoa and Core Foundation
- * for native functionality.
+ * This class provides the macOS-specific implementation of the Application
+ * interface. It handles platform-specific initialization, event processing,
+ * and resource management.
  */
 class PlatformApplication : public Application {
 public:
     /**
-     * @brief Construct a new PlatformApplication object.
+     * @brief Construct a new Platform Application object.
      * @param configPath Path to the configuration file.
      *
-     * Creates a macOS-specific application instance, initializing Cocoa
-     * resources and setting up the event monitoring infrastructure.
-     * Also requests necessary permissions for accessibility features.
+     * Initializes the macOS application with the specified configuration.
+     * Sets up the Cocoa application infrastructure and event monitoring.
      */
     explicit PlatformApplication(const std::string& configPath);
 
-    /**
-     * @brief Destroy the PlatformApplication object.
-     *
-     * Cleans up macOS-specific resources and ensures proper shutdown
-     * of the Cocoa components and event monitors.
-     */
+    /** @brief Destroy the Platform Application object. */
     ~PlatformApplication() override;
 
     // Delete copy operations
-    /** @brief Deleted copy constructor to prevent instance duplication. */
     PlatformApplication(const PlatformApplication&) = delete;
-    /** @brief Deleted copy assignment to prevent instance duplication. */
     auto operator=(const PlatformApplication&) -> PlatformApplication& = delete;
 
-    // Define move operations
-    /** @brief Default move constructor for transfer of application ownership. */
-    PlatformApplication(PlatformApplication&&) noexcept = default;
-    /** @brief Default move assignment for transfer of application ownership. */
-    auto operator=(PlatformApplication&&) noexcept -> PlatformApplication& = default;
+    // Delete move operations
+    PlatformApplication(PlatformApplication&&) noexcept = delete;
+    auto operator=(PlatformApplication&&) noexcept -> PlatformApplication& = delete;
 
     /**
      * @brief Run the macOS application.
      * @return Exit code from the application.
      *
-     * Implements the main Cocoa run loop, processing macOS events
-     * and dispatching them to appropriate handlers. Returns when the
-     * application terminates.
+     * Starts the Cocoa run loop and begins processing events.
+     * This method will block until the application is terminated.
      */
-    auto run() -> int override;
+    [[nodiscard]] auto run() -> int override;
 
     /**
      * @brief Quit the macOS application.
      *
-     * Terminates the Cocoa application, triggering a clean shutdown
-     * of the application and cleanup of resources.
+     * Terminates the Cocoa application and performs cleanup.
      */
     auto quit() -> void override;
 
@@ -83,4 +74,4 @@ private:
 
 }  // namespace interview_cheater
 
-#endif  // MACOS_APPLICATION_HPP
+#endif  // INTERVIEW_CHEATER_PLATFORM_MACOS_PLATFORM_APPLICATION_HPP

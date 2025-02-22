@@ -118,18 +118,22 @@ class OverlayWindow::Impl {
         // Create and configure scroll view
         NSScrollView* scrollView = [[NSScrollView alloc] initWithFrame:[window_ contentView].bounds];
         [scrollView setHasVerticalScroller:YES];
-        [scrollView setAutohidesScrollers:YES];
+        [scrollView setHasHorizontalScroller:NO];
+        [scrollView setBorderType:NSNoBorder];
         [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
         // Create and configure text view
         NSTextView* textView = [[NSTextView alloc] initWithFrame:scrollView.bounds];
-        [textView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+        [textView setMinSize:NSMakeSize(0.0, 0.0)];
+        [textView setMaxSize:NSMakeSize(FLT_MAX, FLT_MAX)];
+        [textView setVerticallyResizable:YES];
+        [textView setHorizontallyResizable:NO];
+        [textView setAutoresizingMask:NSViewWidthSizable];
         [textView setBackgroundColor:[NSColor clearColor]];
-        [textView setDrawsBackground:YES];
-        [textView setTextContainerInset:NSMakeSize(K_TEXT_CONTAINER_INSET, K_TEXT_CONTAINER_INSET)];
-        [textView setEditable:NO];
-        [textView setFont:[NSFont systemFontOfSize:K_FONT_SIZE]];
-        [textView setTextColor:[NSColor textColor]];
+        [textView setTextColor:[NSColor whiteColor]];
+        [textView setFont:[NSFont systemFontOfSize:14.0]];
+        [[textView textContainer] setContainerSize:NSMakeSize(FLT_MAX, FLT_MAX)];
+        [[textView textContainer] setWidthTracksTextView:YES];
 
         // Set up view hierarchy
         [scrollView setDocumentView:textView];
