@@ -36,7 +36,7 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         # Add format-check target (verify formatting without changing files)
         add_custom_target(format-check
             COMMAND ${CMAKE_COMMAND} -E echo "Checking formatting..."
-            COMMAND ${CLANG_FORMAT_EXEC} -style=file -verbose ${FILES_TO_LINT}
+            COMMAND ${CLANG_FORMAT_EXEC} -style=file -output-replacements-xml ${SOURCE_FILES} | tee ${CMAKE_BINARY_DIR}/clang-format.xml | grep -c "<replacement " > /dev/null && exit 1 || exit 0
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} 
             COMMENT "Checking if sources are properly formatted"
             VERBATIM
