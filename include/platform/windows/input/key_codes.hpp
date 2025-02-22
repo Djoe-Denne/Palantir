@@ -106,6 +106,8 @@ constexpr uint16_t KEY_PRESSED_MASK = 0x8000U;  ///< Mask for checking key press
 // Additional keys (common between Windows and macOS)
 constexpr int KEY_SLASH = VK_OEM_2;  ///< Virtual key code for forward slash
 
+constexpr int KEY_QT = VK_OEM_102;  ///< Virtual key code for the key next to left shift
+
 }  // namespace interview_cheater::input::KeyCodes
 
 #endif  // INTERVIEW_CHEATER_KEY_CODES_HPP
