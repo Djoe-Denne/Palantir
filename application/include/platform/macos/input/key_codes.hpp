@@ -117,9 +117,9 @@ static const struct KeyCodeInitializer {
         KeyRegister::registerKey(utils::StringUtils::toUpper("Right Shift"), kVK_RightShift);
         KeyRegister::registerKey(utils::StringUtils::toUpper("Left Alt"), kVK_Option);
         KeyRegister::registerKey(utils::StringUtils::toUpper("Right Alt"), kVK_RightOption);
-        KeyRegister::registerKey(utils::StringUtils::toUpper("Left Win"), kVK_Command);
-        KeyRegister::registerKey(utils::StringUtils::toUpper("Right Win"), kVK_RightCommand);
-        KeyRegister::registerKey(utils::StringUtils::toUpper("Win"), kVK_Command);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Left Cmd"), kVK_Command);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Right Cmd"), kVK_RightCommand);
+        KeyRegister::registerKey(utils::StringUtils::toUpper("Cmd"), kVK_Command);
 
         // Additional keys
         KeyRegister::registerKey(utils::StringUtils::toUpper("/"), kVK_ANSI_Slash);

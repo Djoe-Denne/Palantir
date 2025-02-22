@@ -1,15 +1,15 @@
 
 set(WINDOWS_SOURCES
-    ${PROJECT_ROOT}/src/platform/windows/input/configurable_input.cpp
-    ${PROJECT_ROOT}/src/platform/windows/signal/signal_manager.cpp
-    ${PROJECT_ROOT}/src/platform/windows/window/overlay_window.cpp
-    ${PROJECT_ROOT}/src/platform/windows/platform_application.cpp
-    ${PROJECT_ROOT}/src/platform/windows/utils/logger.cpp
+    ${PROJECT_ROOT}/application/src/platform/windows/input/configurable_input.cpp
+    ${PROJECT_ROOT}/application/src/platform/windows/signal/signal_manager.cpp
+    ${PROJECT_ROOT}/application/src/platform/windows/window/overlay_window.cpp
+    ${PROJECT_ROOT}/application/src/platform/windows/platform_application.cpp
+    ${PROJECT_ROOT}/application/src/platform/windows/utils/logger.cpp
 )
 
 file(GLOB_RECURSE WINDOWS_HEADERS
-    "${PROJECT_ROOT}/include/platform/windows/*.hpp"
-    "${PROJECT_ROOT}/include/platform/windows/*.h"
+    "${PROJECT_ROOT}/application/include/platform/windows/*.hpp"
+    "${PROJECT_ROOT}/application/include/platform/windows/*.h"
 )
 
 set(ALL_SOURCES
@@ -26,7 +26,7 @@ function(setup_windows_platform)
     
     target_include_directories(${PROJECT_NAME} PRIVATE
         ${COMMON_INCLUDE_DIRS}
-        ${PROJECT_ROOT}/include/platform/windows
+        ${PROJECT_ROOT}/application/include/platform/windows
     )
     
     # Windows-specific compile definitions
