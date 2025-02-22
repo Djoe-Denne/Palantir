@@ -5,6 +5,7 @@ Checks: >
   concurrency-*,
   google-*,
   hicpp-*,
+  -hicpp-member-init,
   modernize-*,
   objc-*,
   performance-*,

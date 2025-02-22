@@ -20,6 +20,8 @@ auto Application::getInstance(const std::string& configPath) -> Application* {
     return instance_;
 }
 
+auto Application::getInstance() -> Application* { return instance_; }
+
 Application::Application(const std::string& configPath) : configPath_(configPath) {
     DEBUG_LOG("Creating application with config: {}", configPath);
 

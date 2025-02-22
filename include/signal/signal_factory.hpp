@@ -62,6 +62,7 @@ public:
      * to the application's settings.
      */
     static auto createSignals(Application& app) -> std::vector<std::unique_ptr<ISignal>>;
+
 };
 
 }  // namespace interview_cheater::signal

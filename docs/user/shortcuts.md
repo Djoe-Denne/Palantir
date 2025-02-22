@@ -21,9 +21,15 @@ stop = Win+/        ; Stop application
 
 ## Available Commands
 
-Currently supported commands:
+The application supports a plugin-based command system, allowing for easy extension with new commands. Currently supported built-in commands:
 - `toggle`: Shows/hides the application window
 - `stop`: Exits the application
+
+### Adding Custom Commands
+
+New commands can be added to the system by:
+1. Creating a new command implementation (see [Command System](../technical/command_system.md))
+2. Adding a shortcut configuration in `shortcuts.ini`
 
 ## Available Modifiers
 
@@ -88,6 +94,7 @@ stop = Cmd+/        ; Exit application
    - Check if the modifier and key names are spelled correctly
    - Verify the command name matches exactly
    - Ensure there's no typo in the `+` symbol
+   - Verify the command is properly registered in the system
 
 2. **Configuration not loading**
    - Verify the file is in `config/shortcuts.ini`
@@ -116,10 +123,11 @@ stop = Win+/        ; Stop application
 ## Adding New Commands
 
 To add new commands:
-1. Open `config/shortcuts.ini`
-2. Add a new line under the `[commands]` section
-3. Follow the format: `command_name = modifier+key`
-4. Save the file
-5. Restart the application
+1. Create a new command implementation following the [Command System](../technical/command_system.md) guide
+2. Open `config/shortcuts.ini`
+3. Add a new line under the `[commands]` section
+4. Follow the format: `command_name = modifier+key`
+5. Save the file
+6. Restart the application
 
-The application will validate new commands against its internal command registry. 
+The application will validate new commands against its internal command registry and automatically create appropriate input handlers for registered commands. 

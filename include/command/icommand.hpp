@@ -50,14 +50,8 @@ public:
      */
     virtual auto execute() -> void = 0;
 
-    /**
-     * @brief Get the command's name.
-     * @return A reference to the command's name string.
-     *
-     * Returns a unique identifier for the command, which can be used
-     * for logging, debugging, and configuration purposes.
-     */
-    [[nodiscard]] virtual auto getName() const -> const std::string& = 0;
+    /** @brief Whether the command should use debounce. */
+    virtual auto useDebounce() -> bool = 0;
 
 protected:
     /** @brief Protected default constructor to prevent direct instantiation. */
