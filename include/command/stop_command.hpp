@@ -3,13 +3,12 @@
 
 #include "command/icommand.hpp"
 
-namespace interview_cheater {
-class Application;  // Forward declaration
+#include "application.hpp"
 
-namespace command {
+namespace interview_cheater::command {
 class StopCommand final : public ICommand {
 public:
-    explicit StopCommand(Application& app);
+    explicit StopCommand();
     ~StopCommand() override = default;
 
     // Delete copy operations
@@ -21,12 +20,10 @@ public:
     auto operator=(StopCommand&&) noexcept -> StopCommand& = delete;
 
     auto execute() -> void override;
-    [[nodiscard]] auto getName() const -> const std::string& override;
-
+    auto useDebounce() -> bool override;
 private:
     Application& app_;
-    const std::string name_{"stop"};
 };
-}  // namespace command
-}  // namespace interview_cheater
+}  // namespace interview_cheater::command
+
 #endif  // STOP_COMMAND_HPP

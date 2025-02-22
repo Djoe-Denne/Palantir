@@ -36,10 +36,7 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         # Add format-check target (verify formatting without changing files)
         add_custom_target(format-check
             COMMAND ${CMAKE_COMMAND} -E echo "Checking formatting..."
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/format-reports
-            COMMAND ${CLANG_FORMAT_EXEC} -style=file -output-replacements-xml -verbose ${FILES_TO_LINT} > ${CMAKE_BINARY_DIR}/format-reports/clang-format.xml
-            COMMAND ${CMAKE_COMMAND} -E echo "Analyzing format check results..."
-            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/cmake/analyze-format.cmake
+            COMMAND ${CLANG_FORMAT_EXEC} -style=file -output-replacements-xml ${SOURCE_FILES} | tee ${CMAKE_BINARY_DIR}/clang-format.xml | grep -c "<replacement " > /dev/null && exit 1 || exit 0
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} 
             COMMENT "Checking if sources are properly formatted"
             VERBATIM

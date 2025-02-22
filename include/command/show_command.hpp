@@ -3,16 +3,12 @@
 
 #include "command/icommand.hpp"
 
-namespace interview_cheater {
-namespace window {
-class IWindow;  // Forward declaration
-class WindowManager;
-}  // namespace window
+#include "application.hpp"
 
-namespace command {
+namespace interview_cheater::command {
 class ShowCommand final : public ICommand {
 public:
-    explicit ShowCommand(window::WindowManager& manager);
+    explicit ShowCommand();
     ~ShowCommand() override = default;
 
     // Delete copy operations
@@ -24,12 +20,12 @@ public:
     auto operator=(ShowCommand&&) noexcept -> ShowCommand& = delete;
 
     auto execute() -> void override;
-    [[nodiscard]] auto getName() const -> const std::string& override;
+    
+    auto useDebounce() -> bool override;
 
 private:
-    window::WindowManager& manager_;
-    const std::string name_{"toggle"};
+    Application& app_;
 };
-}  // namespace command
-}  // namespace interview_cheater
+}  // namespace interview_cheater::command
+
 #endif  // SHOW_COMMAND_HPP

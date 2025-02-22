@@ -40,6 +40,8 @@ public:
      */
     static auto getInstance(const std::string& configPath) -> Application*;
 
+    static auto getInstance() -> Application*;
+
     /**
      * @brief Virtual destructor for proper cleanup.
      *

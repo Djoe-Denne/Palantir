@@ -9,6 +9,7 @@ set(CORE_SOURCES
 )
 
 set(COMMAND_SOURCES
+    ${PROJECT_ROOT}/src/command/command_factory.cpp
     ${PROJECT_ROOT}/src/command/show_command.cpp
     ${PROJECT_ROOT}/src/command/stop_command.cpp
 )
