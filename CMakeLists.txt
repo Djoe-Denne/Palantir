@@ -33,30 +33,9 @@ setup_clang_tools()
 
 include(platform/windows)
 include(platform/macos)
-# Create the executable with basic sources
-if(WIN32)
-    add_executable(${PROJECT_NAME} WIN32 
-        ${CORE_SOURCES}
-        ${COMMAND_SOURCES}
-        ${SIGNAL_SOURCES}
-        ${WINDOW_SOURCES}
-        ${INPUT_SOURCES}
-        ${PLATFORM_COMMON_SOURCES}
-    )
-    setup_windows_platform()
-elseif(APPLE)
-    add_executable(${PROJECT_NAME} MACOSX_BUNDLE 
-        ${CORE_SOURCES}
-        ${COMMAND_SOURCES}
-        ${SIGNAL_SOURCES}
-        ${WINDOW_SOURCES}
-        ${INPUT_SOURCES}
-        ${PLATFORM_COMMON_SOURCES}
-    )
-    setup_macos_platform()
-else()
-    message(FATAL_ERROR "Unsupported platform")
-endif()
+
+# Add the application subdirectory
+add_subdirectory(application)
 
 # Include format-lint after the target is created
 include(format-lint)

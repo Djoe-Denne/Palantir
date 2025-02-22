@@ -1,14 +1,14 @@
 set(MACOS_SOURCES
-    ${PROJECT_ROOT}/src/platform/macos/input/configurable_input.mm
-    ${PROJECT_ROOT}/src/platform/macos/signal/signal_manager.mm
-    ${PROJECT_ROOT}/src/platform/macos/window/overlay_window.mm
-    ${PROJECT_ROOT}/src/platform/macos/platform_application.mm
-    ${PROJECT_ROOT}/src/platform/macos/utils/logger.mm
+    ${PROJECT_ROOT}/application/src/platform/macos/input/configurable_input.mm
+    ${PROJECT_ROOT}/application/src/platform/macos/signal/signal_manager.mm
+    ${PROJECT_ROOT}/application/src/platform/macos/window/overlay_window.mm
+    ${PROJECT_ROOT}/application/src/platform/macos/platform_application.mm
+    ${PROJECT_ROOT}/application/src/platform/macos/utils/logger.mm
 )
 
 file(GLOB_RECURSE MACOS_HEADERS
-    "${PROJECT_ROOT}/include/platform/macos/*.hpp"
-    "${PROJECT_ROOT}/include/platform/macos/*.h"
+    "${PROJECT_ROOT}/application/include/platform/macos/*.hpp"
+    "${PROJECT_ROOT}/application/include/platform/macos/*.h"
 )
 
 set(ALL_SOURCES
@@ -26,7 +26,7 @@ function(setup_macos_platform)
     
     target_include_directories(${PROJECT_NAME} PRIVATE
         ${COMMON_INCLUDE_DIRS}
-        ${PROJECT_ROOT}/include/platform/macos
+        ${PROJECT_ROOT}/application/include/platform/macos
     )
 
     # macOS-specific compile options
