@@ -108,6 +108,8 @@ constexpr uint16_t KEY_PRESSED_MASK = 0x0100U;  ///< Mask for checking key press
 // Additional keys (common between Windows and macOS)
 constexpr int KEY_SLASH = kVK_ANSI_Slash;  ///< Virtual key code for forward slash
 
+constexpr int KEY_102K = kVK_ANSI_102nd;  //  "<>" or "\|" on RT 102-key kbd.
+
 }  // namespace interview_cheater::input::KeyCodes
 
 #endif  // INTERVIEW_CHEATER_PLATFORM_MACOS_KEY_CODES_HPP

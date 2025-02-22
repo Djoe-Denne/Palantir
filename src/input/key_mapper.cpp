@@ -99,7 +99,12 @@ const std::unordered_map<std::string, int> keyMap = {
     {"DOWN", KeyCodes::KEY_DOWN},
     {"LEFT", KeyCodes::KEY_LEFT},
     {"RIGHT", KeyCodes::KEY_RIGHT},
-    {"QT", KeyCodes::KEY_QT},
+    
+    {"<", KeyCodes::KEY_102K},
+    {">", KeyCodes::KEY_102K},
+    {"\\", KeyCodes::KEY_102K},
+    {"|", KeyCodes::KEY_102K},
+    
 };
 
 // Modifier name to modifier code mapping
