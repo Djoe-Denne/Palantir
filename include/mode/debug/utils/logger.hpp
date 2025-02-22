@@ -10,7 +10,7 @@ void PlatformLog(std::string_view function, int line, const std::string& message
 
 template <typename T>
 void LogStream(std::ostringstream& stream, const T& value) {
-    stream << value;  // NOLINT
+    stream << value;  // NOLINT (hicpp-no-array-decay)
 }
 
 template <typename T, typename... Args>

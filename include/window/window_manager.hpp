@@ -108,7 +108,7 @@ public:
 
 private:
     /** @brief Collection of managed windows. */
-    std::vector<std::unique_ptr<IWindow>> windows_ = {};
+    std::vector<std::unique_ptr<IWindow>> windows_;
 };
 }  // namespace window
 }  // namespace interview_cheater
