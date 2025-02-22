@@ -28,6 +28,11 @@ public:
         }
     }
 
+    Impl(const Impl&) = delete;
+    auto operator=(const Impl&) -> Impl& = delete;
+    Impl(Impl&&) = delete;
+    auto operator=(Impl&&) -> Impl& = delete;
+
     /**
      * @brief Destroy the implementation
      *
