@@ -53,6 +53,7 @@ jobs:
     # Step 4: Check code formatting
     - name: Check Format
       id: format
+      continue-on-error: true
       run: cmake --build ${{github.workspace}}/build --target format-check
 
     - name: Check Format results
