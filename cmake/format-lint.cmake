@@ -37,6 +37,7 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         add_custom_target(format-check
             COMMAND ${CMAKE_COMMAND} -E echo "Checking formatting..."
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/format-reports
+            COMMAND ${CMAKE_COMMAND} -E echo "Executing command: ${CLANG_FORMAT_EXEC} -style=file -output-replacements-xml -verbose ${FILES_TO_LINT} > ${CMAKE_BINARY_DIR}/format-reports/clang-format.xml"
             COMMAND ${CLANG_FORMAT_EXEC} -style=file -output-replacements-xml -verbose ${FILES_TO_LINT} > ${CMAKE_BINARY_DIR}/format-reports/clang-format.xml
             COMMAND ${CMAKE_COMMAND} -E echo "Analyzing format check results..."
             COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/cmake/analyze-format.cmake
