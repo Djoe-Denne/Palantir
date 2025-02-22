@@ -107,6 +107,18 @@ cmake/
 └── platform/
     ├── windows.cmake       # Windows-specific configuration
     └── macos.cmake        # macOS-specific configuration
+
+application/               # Main application directory
+├── include/              # Header files
+│   ├── command/         # Command system headers
+│   ├── input/          # Input system headers
+│   ├── platform/       # Platform-specific headers
+│   └── ...
+└── src/                # Source files
+    ├── command/        # Command system implementation
+    ├── input/         # Input system implementation
+    ├── platform/      # Platform-specific implementation
+    └── ...
 ```
 
 ## Main Components
@@ -118,20 +130,50 @@ Sources are organized into logical groups in `common-source.cmake`:
 ```cmake
 # Headers (automatically found via GLOB)
 file(GLOB_RECURSE PROJECT_HEADERS
-    "${PROJECT_ROOT}/include/*.hpp"
-    "${PROJECT_ROOT}/include/*.h"
+    "${PROJECT_ROOT}/application/include/*.hpp"
+    "${PROJECT_ROOT}/application/include/*.h"
 )
 
 # Source groups
-set(CORE_SOURCES ...)
-set(COMMAND_SOURCES ...)
-set(SIGNAL_SOURCES ...)
-set(WINDOW_SOURCES ...)
-set(INPUT_SOURCES ...)
-set(PLATFORM_COMMON_SOURCES ...)
+set(CORE_SOURCES
+    ${PROJECT_ROOT}/application/src/main.cpp
+)
+
+set(COMMAND_SOURCES
+    ${PROJECT_ROOT}/application/src/command/command_factory.cpp
+    # ... other command sources
+)
+
+# ... other source groups
 ```
 
-### 2. Variable Scope Handling
+### 2. Build Configuration
+
+The main CMakeLists.txt includes platform configurations and then adds the application subdirectory:
+
+```cmake
+include(platform/windows)
+include(platform/macos)
+
+# Add the application subdirectory
+add_subdirectory(application)
+```
+
+The application's CMakeLists.txt then creates the executable with platform-specific settings:
+
+```cmake
+if(WIN32)
+    add_executable(${PROJECT_NAME} WIN32 ${ALL_SOURCES})
+    setup_windows_platform()
+elseif(APPLE)
+    add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${ALL_SOURCES})
+    setup_macos_platform()
+endif()
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${COMMON_INCLUDE_DIRS})
+```
+
+### 3. Variable Scope Handling
 
 The project uses a specific pattern for handling source file variables:
 
@@ -157,7 +199,7 @@ set(ALL_SOURCES
 )
 ```
 
-### 3. Platform-Specific Configuration
+### 4. Platform-Specific Configuration
 
 Platform configurations are included early to ensure proper source file collection:
 
@@ -182,7 +224,7 @@ Add your source files to the appropriate group in `common-source.cmake`:
 
 ```cmake
 set(COMMAND_SOURCES
-    ${PROJECT_ROOT}/src/command/your_new_command.cpp
+    ${PROJECT_ROOT}/application/src/command/your_new_command.cpp
 )
 ```
 
@@ -192,7 +234,7 @@ For new feature groups, add a new source group:
 
 ```cmake
 set(YOUR_FEATURE_SOURCES
-    ${PROJECT_ROOT}/src/your_feature/feature_impl.cpp
+    ${PROJECT_ROOT}/application/src/your_feature/feature_impl.cpp
 )
 
 set(ALL_SOURCES
@@ -209,7 +251,7 @@ Add platform-specific files to the appropriate platform CMake file:
 # In windows.cmake or macos.cmake
 set(PLATFORM_SOURCES
     ${PLATFORM_SOURCES}
-    ${PROJECT_ROOT}/src/platform/<platform>/your_feature.cpp
+    ${PROJECT_ROOT}/application/src/platform/<platform>/your_feature.cpp
 )
 ```
 
