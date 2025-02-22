@@ -1,7 +1,5 @@
 function(setup_macos_platform)
     set(PLATFORM_SOURCES
-        ${PROJECT_ROOT}/src/platform/macos/input/toggle_input.mm
-        ${PROJECT_ROOT}/src/platform/macos/input/stop_input.mm
         ${PROJECT_ROOT}/src/platform/macos/input/configurable_input.mm
         ${PROJECT_ROOT}/src/platform/macos/signal/signal_manager.mm
         ${PROJECT_ROOT}/src/platform/macos/window/overlay_window.mm

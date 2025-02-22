@@ -1,7 +1,5 @@
 function(setup_windows_platform)
     set(PLATFORM_SOURCES
-        ${PROJECT_ROOT}/src/platform/windows/input/toggle_input.cpp
-        ${PROJECT_ROOT}/src/platform/windows/input/stop_input.cpp
         ${PROJECT_ROOT}/src/platform/windows/input/configurable_input.cpp
         ${PROJECT_ROOT}/src/platform/windows/signal/signal_manager.cpp
         ${PROJECT_ROOT}/src/platform/windows/window/overlay_window.cpp
