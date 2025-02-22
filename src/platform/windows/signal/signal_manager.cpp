@@ -64,7 +64,7 @@ private:
                 // Get the Impl instance from the hook handle
                 auto* impl = reinterpret_cast<Impl*>(GetProp(GetActiveWindow(), L"SignalManagerImpl"));
                 if (impl != nullptr && impl->getParent() != nullptr) {
-                    impl->getParent()->checkSignals();
+                    impl->getParent()->checkSignals(nullptr);
                 }
             }
         }

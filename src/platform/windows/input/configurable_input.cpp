@@ -42,7 +42,7 @@ public:
      * Uses the Windows GetAsyncKeyState API to check if the configured
      * key is currently in a pressed state.
      */
-    [[nodiscard]] auto isKeyPressed() const -> bool {
+    [[nodiscard]] auto isKeyPressed(const std::any& event) const -> bool {
         bool pressed = (static_cast<uint16_t>(GetAsyncKeyState(keyCode_)) & KeyCodes::KEY_PRESSED_MASK) != 0;
         if (pressed) {
             DEBUG_LOG("Key 0x{:x} is pressed", keyCode_);
@@ -57,7 +57,7 @@ public:
      * Uses the Windows GetAsyncKeyState API to check if the configured
      * modifier key is currently in a pressed state.
      */
-    [[nodiscard]] auto isModifierActive() const -> bool {
+    [[nodiscard]] auto isModifierActive(const std::any& event) const -> bool {
         bool active = (static_cast<uint16_t>(GetAsyncKeyState(modifierCode_)) & KeyCodes::KEY_PRESSED_MASK) != 0;
         if (active) {
             DEBUG_LOG("Modifier 0x{:x} is active", modifierCode_);
@@ -111,7 +111,9 @@ ConfigurableInput::~ConfigurableInput() = default;
  * Delegates to the implementation's isKeyPressed method to check
  * the key state.
  */
-[[nodiscard]] auto ConfigurableInput::isKeyPressed() const -> bool { return pImpl_->isKeyPressed(); }
+[[nodiscard]] auto ConfigurableInput::isKeyPressed(const std::any& event) const -> bool {
+    return pImpl_->isKeyPressed(event);
+}
 
 /**
  * @brief Check if the configured modifier is currently active.
@@ -120,7 +122,9 @@ ConfigurableInput::~ConfigurableInput() = default;
  * Delegates to the implementation's isModifierActive method to check
  * the modifier state.
  */
-[[nodiscard]] auto ConfigurableInput::isModifierActive() const -> bool { return pImpl_->isModifierActive(); }
+[[nodiscard]] auto ConfigurableInput::isModifierActive(const std::any& event) const -> bool {
+    return pImpl_->isModifierActive(event);
+}
 
 /**
  * @brief Update the input state.

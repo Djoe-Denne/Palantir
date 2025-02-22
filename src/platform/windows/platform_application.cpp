@@ -48,7 +48,7 @@ auto CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) -> L
         if (wParam == WM_KEYDOWN || wParam == WM_KEYUP || wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP) {
             DEBUG_LOG("Keyboard event: vkCode=0x%x, scanCode=0x%x, flags=0x%x", pKeyboard->vkCode, pKeyboard->scanCode,
                       pKeyboard->flags);
-            g_signalManager->checkSignals();
+            g_signalManager->checkSignals(nullptr);
         }
     }
 
