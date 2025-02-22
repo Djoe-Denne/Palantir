@@ -112,7 +112,8 @@ private:
     /** @brief Timestamp of the last trigger for debouncing. */
     int64_t lastTriggerTime_{0};
     /** @brief Debounce time in nanoseconds (300ms). */
-    static constexpr auto DEBOUNCE_TIME = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::milliseconds(300)).count();
+    static constexpr auto DEBOUNCE_TIME =
+        std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::milliseconds(300)).count();
 };
 
 }  // namespace signal
