@@ -2,6 +2,7 @@
 #define INTERVIEW_CHEATER_WINDOW_COMPONENT_WEBVIEW_IWEBVIEW_HPP
 #include <functional>
 #include <string>
+#include "core_export.hpp"
 
 namespace interview_cheater::window::component {
 /**
@@ -12,7 +13,7 @@ namespace interview_cheater::window::component {
  * It ensures that both WebView2 (Windows) and WKWebView (macOS) implementations provide similar functionality.
  *
  */
-class WebView {
+class PALANTIR_CORE_API WebView {
     /**
      * @brief Initializes the web view with a native window handle.
      *

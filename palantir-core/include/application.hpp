@@ -12,9 +12,11 @@
 
 #include <memory>
 #include <string>
+#include <stdexcept>
 
 #include "signal/signal_manager.hpp"
 #include "window/window_manager.hpp"
+#include "core_export.hpp"
 
 namespace interview_cheater {
 
@@ -27,7 +29,7 @@ namespace interview_cheater {
  * and windows, and provides configuration management. The class follows
  * the singleton pattern to ensure a single application instance.
  */
-class Application {
+class PALANTIR_CORE_API Application {
 public:
     /**
      * @brief Get the singleton instance of the application.
@@ -38,6 +40,7 @@ public:
      * necessary. The instance will be platform-specific (Windows or macOS)
      * based on the compilation target.
      */
+    template <typename T>
     static auto getInstance(const std::string& configPath) -> Application*;
 
     static auto getInstance() -> Application*;
@@ -126,6 +129,21 @@ private:
     /** @brief Signal manager instance. */
     signal::SignalManager signalManager_;
 };
+
+template <typename T>
+auto interview_cheater::Application::getInstance(const std::string& configPath) -> Application* {
+    if (instance_ == nullptr) {
+        instance_ = new T(configPath);
+    }
+    return instance_;
+}
+
+inline auto Application::getInstance() -> Application* {
+    if (instance_ == nullptr) {
+        throw std::runtime_error("Application instance not created. Call getInstance<T>(configPath) first.");
+    }
+    return instance_;
+}
 
 }  // namespace interview_cheater
 

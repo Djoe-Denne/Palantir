@@ -6,7 +6,7 @@
 #include "command/icommand.hpp"
 #include "input/configurable_input.hpp"
 #include "input/input_factory.hpp"
-#include "platform/application.hpp"
+#include "application.hpp"
 #include "signal/signal.hpp"
 #include "utils/logger.hpp"
 #include "window/window_manager.hpp"

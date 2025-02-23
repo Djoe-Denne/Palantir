@@ -1,6 +1,6 @@
 #include "command/stop_command.hpp"
 
-#include "platform/application.hpp"
+#include "application.hpp"
 #include "utils/auto_command_register.hpp"
 
 namespace interview_cheater::command {

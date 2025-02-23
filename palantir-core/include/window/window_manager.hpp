@@ -14,6 +14,8 @@
 #include <vector>
 
 #include "window/iwindow.hpp"
+#include "core_export.hpp"
+
 namespace interview_cheater {
 namespace command {
 // Forward declaration for ICommand
@@ -31,7 +33,7 @@ namespace window {
  * and execute window-related commands. The class supports move semantics
  * but prohibits copying to ensure unique ownership of windows.
  */
-class WindowManager {
+class PALANTIR_CORE_API WindowManager {
 public:
     /**
      * @brief Construct a new WindowManager object.

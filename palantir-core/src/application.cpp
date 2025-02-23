@@ -1,26 +1,13 @@
 #include "application.hpp"
 
 #include "input/input_factory.hpp"
-#include "platform_application.hpp"
 #include "signal/signal_factory.hpp"
 #include "utils/logger.hpp"
+#include <stdexcept>
 
 namespace interview_cheater {
 
 Application* Application::instance_ = nullptr;
-
-auto Application::getInstance(const std::string& configPath) -> Application* {
-    if (instance_ == nullptr) {
-#ifdef _WIN32
-        instance_ = new PlatformApplication(configPath);
-#elif defined(__APPLE__)
-        instance_ = new PlatformApplication(configPath);
-#endif
-    }
-    return instance_;
-}
-
-auto Application::getInstance() -> Application* { return instance_; }
 
 Application::Application(const std::string& configPath) : configPath_(configPath) {
     DEBUG_LOG("Creating application with config: {}", configPath);

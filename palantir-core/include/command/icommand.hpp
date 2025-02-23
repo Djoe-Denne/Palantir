@@ -13,6 +13,7 @@
 #define ICOMMAND_HPP
 
 #include <string>
+#include "core_export.hpp"
 
 namespace interview_cheater::command {
 
@@ -25,7 +26,7 @@ namespace interview_cheater::command {
  * user inputs or system events. The interface supports move semantics
  * but prohibits copying to ensure unique ownership of resources.
  */
-class ICommand {
+class PALANTIR_CORE_API ICommand {
 public:
     /** @brief Virtual destructor to ensure proper cleanup of derived classes. */
     virtual ~ICommand() = default;

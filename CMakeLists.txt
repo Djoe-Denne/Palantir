@@ -34,6 +34,9 @@ setup_clang_tools()
 include(platform/windows)
 include(platform/macos)
 
+# Add the palantir-core subdirectory
+add_subdirectory(palantir-core)
+
 # Add the application subdirectory
 add_subdirectory(application)
 

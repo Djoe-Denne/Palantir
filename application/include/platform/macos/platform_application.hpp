@@ -13,7 +13,7 @@
 #include <memory>
 #include <string>
 
-#include "platform/application.hpp"
+#include "application.hpp"
 #include "signal/signal_manager.hpp"
 #include "window/window_manager.hpp"
 

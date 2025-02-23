@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include "core_export.hpp"
 
 namespace interview_cheater::command {
 
@@ -17,7 +18,7 @@ class ICommand;  // Forward declaration
  * It maintains a map of command names to command instances. The class is 
  * non-instantiable and provides only static methods.
  */
-class CommandFactory {
+class PALANTIR_CORE_API CommandFactory {
 public:
     using CommandCreator = std::unique_ptr<ICommand>(*)(); // Function pointer to create a command
 

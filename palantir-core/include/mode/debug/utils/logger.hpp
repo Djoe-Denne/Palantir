@@ -4,17 +4,19 @@
 #include <sstream>
 #include <string>
 #include <string_view>
+#include "core_export.hpp"
 
 namespace interview_cheater::utils {
-void PlatformLog(std::string_view function, int line, const std::string& message);
+
+void PALANTIR_CORE_API PlatformLog(std::string_view function, int line, const std::string& message);
 
 template <typename T>
-void LogStream(std::ostringstream& stream, const T& value) {
+void PALANTIR_CORE_API LogStream(std::ostringstream& stream, const T& value) {
     stream << value;  // NOLINT (hicpp-no-array-decay)
 }
 
 template <typename T, typename... Args>
-void LogStream(std::ostringstream& stream, const T& value, const Args&... args) {
+void PALANTIR_CORE_API LogStream(std::ostringstream& stream, const T& value, const Args&... args) {
     stream << value;  // NOLINT
     LogStream(stream, args...);
 }
