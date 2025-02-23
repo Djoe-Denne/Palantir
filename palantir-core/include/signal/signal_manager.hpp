@@ -28,6 +28,8 @@ class ISignal;
  */
 class SignalManager {
 public:
+    // Forward declaration of platform-specific implementation
+    class Impl;
     /**
      * @brief Get the singleton instance of SignalManager
      * @return Reference to the singleton instance
@@ -73,8 +75,6 @@ private:
     // Private constructor for singleton
     SignalManager();
 
-    // Forward declaration of platform-specific implementation
-    class Impl;
     // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
 #pragma warning(push)
 #pragma warning(disable: 4251)

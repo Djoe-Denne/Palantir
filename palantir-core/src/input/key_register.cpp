@@ -14,7 +14,7 @@ public:
 
     void registerKey(const std::string& key, int value) { keyMap[utils::StringUtils::toUpper(key)] = value; }
 
-    auto get(const std::string& key) const -> int {
+    [[nodiscard]] auto get(const std::string& key) const -> int {
         try {
             return keyMap.at(utils::StringUtils::toUpper(key));
         } catch (const std::out_of_range&) {
@@ -22,7 +22,7 @@ public:
         }
     }
 
-    auto hasKey(const std::string& key) const -> bool {
+    [[nodiscard]] auto hasKey(const std::string& key) const -> bool {
         return keyMap.find(utils::StringUtils::toUpper(key)) != keyMap.end();
     }
 };
