@@ -13,10 +13,13 @@ The command system provides a flexible and extensible way to add new commands to
    - Defines the `execute()` method that all commands must implement
    - `useDebounce()` method to determine if the command should use debounce
    - Supports move semantics but prohibits copying
+
 2. `CommandFactory`
-   - Static factory class for managing and creating commands
-   - Maintains a registry of command creators
-   - Provides methods for registering and retrieving commands
+   - Singleton factory class for managing and creating commands
+   - Uses PIMPL pattern for implementation details
+   - Maintains a registry of command creators through its implementation
+   - Provides instance methods for registering and retrieving commands
+   - Thread-safe singleton access
 
 3. `AutoCommandRegister` Utility
    - Macro-based automatic command registration
@@ -111,9 +114,10 @@ This expands to create:
 
 Commands can be retrieved and executed through:
 
-1. Direct Factory Access:
+1. Factory Instance Access:
 ```cpp
-auto command = CommandFactory::getCommand("command_name");
+auto& factory = CommandFactory::getInstance();
+auto command = factory.getCommand("command_name");
 if (command) {
     command->execute();
 }
@@ -122,7 +126,8 @@ if (command) {
 2. Signal System:
 ```cpp
 auto input = InputFactory::createInput("command_name");
-auto command = CommandFactory::getCommand("command_name");
+auto& factory = CommandFactory::getInstance();
+auto command = factory.getCommand("command_name");
 auto signal = std::make_unique<Signal>(std::move(input), std::move(command));
 ```
 
