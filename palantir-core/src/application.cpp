@@ -1,10 +1,12 @@
 #include "application.hpp"
+
+#include <stdexcept>
+
 #include "input/input_factory.hpp"
 #include "signal/signal_factory.hpp"
 #include "signal/signal_manager.hpp"
-#include "window/window_manager.hpp"
 #include "utils/logger.hpp"
-#include <stdexcept>
+#include "window/window_manager.hpp"
 
 namespace interview_cheater {
 
@@ -15,8 +17,7 @@ Application* instance_ = nullptr;
 // Implementation class definition
 class Application::ApplicationImpl {
 public:
-    explicit ApplicationImpl(const std::string& configPath) 
-        : configPath_(configPath) {
+    explicit ApplicationImpl(const std::string& configPath) : configPath_(configPath) {
         DEBUG_LOG("Creating application with config: {}", configPath);
         input::InputFactory::initialize(configPath_);
         DEBUG_LOG("Input configuration initialized");
@@ -37,32 +38,20 @@ private:
 };
 
 // Static member functions
-auto Application::getInstancePtr() -> Application*& {
-    return instance_;
-}
+auto Application::getInstancePtr() -> Application*& { return instance_; }
 
-auto Application::setInstancePtr(Application* instance) -> void {
-    instance_ = instance;
-}
+auto Application::setInstancePtr(Application* instance) -> void { instance_ = instance; }
 
 // Constructor and destructor
-Application::Application(const std::string& configPath)
-    : pImpl_(std::make_unique<ApplicationImpl>(configPath)) {
-}
+Application::Application(const std::string& configPath) : pImpl_(std::make_unique<ApplicationImpl>(configPath)) {}
 
 Application::~Application() = default;
 
 // Public interface implementations
-auto Application::getSignalManager() -> signal::SignalManager& {
-    return signal::SignalManager::getInstance();
-}
+auto Application::getSignalManager() -> signal::SignalManager& { return signal::SignalManager::getInstance(); }
 
-auto Application::getWindowManager() -> window::WindowManager& {
-    return window::WindowManager::getInstance();
-}
+auto Application::getWindowManager() -> window::WindowManager& { return window::WindowManager::getInstance(); }
 
-auto Application::attachSignals() -> void {
-    pImpl_->attachSignals();
-}
+auto Application::attachSignals() -> void { pImpl_->attachSignals(); }
 
 }  // namespace interview_cheater
