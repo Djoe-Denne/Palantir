@@ -2,7 +2,7 @@
 
 ## Architecture Overview
 
-The input system follows a modular, layered architecture that separates concerns between input detection, signal processing, and command execution. The system employs the Factory pattern for component creation and configuration management.
+The input system follows a modular, layered architecture that separates concerns between input detection, signal processing, and command execution. The system employs the Factory and Singleton patterns for component creation, management, and configuration.
 
 ### Design Principles
 
@@ -10,6 +10,7 @@ The input system follows a modular, layered architecture that separates concerns
    - Input detection is isolated from command execution
    - Platform-specific code is encapsulated in dedicated implementations
    - Configuration is separated from business logic
+   - Implementation details hidden through PIMPL pattern
 
 2. **Extensibility**
    - New commands can be added without modifying existing code
@@ -20,6 +21,11 @@ The input system follows a modular, layered architecture that separates concerns
    - All shortcuts are defined in external configuration
    - Runtime behavior is determined by configuration
    - Default configurations are provided automatically
+
+4. **Thread Safety**
+   - Singleton instances are thread-safe
+   - Key registration is synchronized
+   - Signal processing is protected
 
 ### Core Components
 
@@ -34,10 +40,16 @@ The input system follows a modular, layered architecture that separates concerns
   - Platform-agnostic interface
   - PIMPL pattern for platform-specific details
 
+- **KeyRegister**: Singleton key registration service
+  - Thread-safe key code registration
+  - Platform-specific key code mapping
+  - PIMPL pattern for implementation details
+  - Instance-based access through getInstance()
+
 - **KeyMapper**: Mapping service for key configurations
   - Converts string representations to platform codes
   - Validates key and modifier combinations
-  - Provides platform-independent naming
+  - Uses KeyRegister singleton for code lookup
 
 - **KeyConfig**: Configuration management
   - Parses INI format configuration files
@@ -141,20 +153,29 @@ The system uses two main factories:
 
 ### Key Mapping System
 
-The `KeyMapper` provides platform-independent key mapping:
+The `KeyRegister` singleton provides platform-independent key mapping:
 ```cpp
-const std::unordered_map<std::string, int> keyMap = {
-    {"F1", KeyCodes::KEY_F1},
-    {"/", KeyCodes::KEY_SLASH},
-};
+// Get the KeyRegister instance
+auto& keyRegister = KeyRegister::getInstance();
 
-const std::unordered_map<std::string, int> modifierMap = {
+// Register platform-specific keys
+keyRegister.registerKey("F1", KeyCodes::KEY_F1);
+keyRegister.registerKey("/", KeyCodes::KEY_SLASH);
+
+// Register platform-specific modifiers
 #ifdef _WIN32
-    {"CTRL", KeyCodes::CONTROL_MODIFIER},
-    {"WIN", VK_LWIN},
+keyRegister.registerKey("CTRL", KeyCodes::CONTROL_MODIFIER);
+keyRegister.registerKey("WIN", VK_LWIN);
 #else
-    {"CTRL", KeyCodes::CONTROL_MODIFIER},
-    {"CMD", KeyCodes::COMMAND_MODIFIER},
+keyRegister.registerKey("CTRL", KeyCodes::CONTROL_MODIFIER);
+keyRegister.registerKey("CMD", KeyCodes::COMMAND_MODIFIER);
 #endif
-};
+```
+
+The `KeyMapper` uses the `KeyRegister` singleton for lookups:
+```cpp
+auto& keyRegister = KeyRegister::getInstance();
+if (keyRegister.hasKey(upperKey)) {
+    return keyRegister.get(upperKey);
+}
 ``` 
