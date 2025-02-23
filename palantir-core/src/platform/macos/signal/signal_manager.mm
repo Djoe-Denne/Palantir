@@ -1,6 +1,7 @@
 #include "signal/signal_manager.hpp"
 
 #import <Cocoa/Cocoa.h>
+#include <vector>
 #include "signal/isignal.hpp"
 #include "utils/logger.hpp"
 
@@ -24,8 +25,8 @@
  */
 @interface SignalChecker : NSObject
 
-/** Pointer to the C++ signal manager that owns this checker */
-@property(nonatomic, assign) interview_cheater::signal::SignalManager* signalManager;
+/** Pointer to the implementation that owns this checker */
+@property(nonatomic, assign) interview_cheater::signal::SignalManager::Impl* signalManagerImpl;
 
 /** Monitor for global keyboard events (when app is not active) */
 @property(nonatomic, strong) id globalMonitor;
@@ -34,11 +35,9 @@
 @property(nonatomic, strong) id localMonitor;
 
 /**
- * @brief Initialize the signal checker with a signal manager
- * @param signalManager Pointer to the owning signal manager instance
- * @return Initialized instance or nil on failure
+ * @brief Initialize the signal checker with a signal manager implementation
  */
-- (instancetype)initWithSignalManager:(interview_cheater::signal::SignalManager*)signalManager;
+- (instancetype)initWithSignalManagerImpl:(interview_cheater::signal::SignalManager::Impl*)impl;
 
 /**
  * @brief Stop checking events
@@ -53,16 +52,16 @@
 
 /**
  * @brief Initialize the signal checker and set up event monitors
- * @param signalManager Pointer to the C++ signal manager
+ * @param impl Pointer to the C++ signal manager implementation
  * @return Initialized instance or nil on failure
  *
  * This method initializes the signal checker and immediately sets up
  * the event monitors to start capturing keyboard events.
  */
-- (instancetype)initWithSignalManager:(interview_cheater::signal::SignalManager*)signalManager {
+- (instancetype)initWithSignalManagerImpl:(interview_cheater::signal::SignalManager::Impl*)impl {
     if ((self = [super init]) != nil) {
         DEBUG_LOG("Initializing SignalChecker");
-        self.signalManager = signalManager;
+        self.signalManagerImpl = impl;
         [self setupEventMonitors];
     }
     return self;
@@ -93,10 +92,7 @@
     self.globalMonitor =
         [NSEvent addGlobalMonitorForEventsMatchingMask:eventMask
                                                handler:^(NSEvent* event) {
-                                                   DEBUG_LOG("Global event received: type=%lu, "
-                                                             "keyCode=%d, modifiers=0x%lx",
-                                                             (unsigned long)event.type, (int)event.keyCode,
-                                                             (unsigned long)event.modifierFlags);
+                                                   DEBUG_LOG("Global event received");
                                                    [self handleKeyEvent:event];
                                                }];
 
@@ -105,10 +101,7 @@
     self.localMonitor =
         [NSEvent addLocalMonitorForEventsMatchingMask:eventMask
                                               handler:^NSEvent*(NSEvent* event) {
-                                                  DEBUG_LOG("Local event received: type=%lu, "
-                                                            "keyCode=%d, modifiers=0x%lx",
-                                                            (unsigned long)event.type, (int)event.keyCode,
-                                                            (unsigned long)event.modifierFlags);
+                                                  DEBUG_LOG("Local event received");
                                                   [self handleKeyEvent:event];
                                                   return event;  // Return event to allow it to propagate
                                               }];
@@ -130,7 +123,7 @@
     // Dispatch signal check to main queue for thread safety
     dispatch_async(dispatch_get_main_queue(), ^{
         DEBUG_LOG("Triggering signal check");
-        self.signalManager->checkSignals(event);
+        self.signalManagerImpl->checkSignals(event);
     });
 }
 
@@ -183,7 +176,7 @@ class SignalManager::Impl {
      * handle the actual event monitoring.
      */
     explicit Impl(SignalManager* parent) : parent_(parent) {
-        signalChecker_ = [[SignalChecker alloc] initWithSignalManager:parent];
+        signalChecker_ = [[SignalChecker alloc] initWithSignalManagerImpl:this];
     }
 
     /**
@@ -206,9 +199,32 @@ class SignalManager::Impl {
     Impl(Impl&&) = delete;
     auto operator=(Impl&&) -> Impl& = delete;
 
+    auto addSignal(std::unique_ptr<ISignal> signal) -> void {
+        signals_.push_back(std::move(signal));
+    }
+
+    auto startSignals() -> void {
+        for (const auto& signal : signals_) {
+            signal->start();
+        }
+    }
+
+    auto stopSignals() -> void {
+        for (const auto& signal : signals_) {
+            signal->stop();
+        }
+    }
+
+    auto checkSignals(const std::any& event) -> void {
+        for (const auto& signal : signals_) {
+            signal->check(event);
+        }
+    }
+
    private:
     SignalChecker* signalChecker_{nil};  ///< The Objective-C event monitor instance
     SignalManager* parent_;              ///< Pointer to the owning SignalManager
+    std::vector<std::unique_ptr<ISignal>> signals_;      ///< Collection of managed signals
 };
 
 /**
@@ -230,7 +246,7 @@ SignalManager::~SignalManager() = default;
  */
 auto SignalManager::addSignal(std::unique_ptr<ISignal> signal) -> void {
     DEBUG_LOG("Adding signal to manager");
-    signals_.push_back(std::move(signal));
+    pImpl_->addSignal(std::move(signal));
 }
 
 /**
@@ -241,9 +257,7 @@ auto SignalManager::addSignal(std::unique_ptr<ISignal> signal) -> void {
  */
 auto SignalManager::startSignals() -> void {
     DEBUG_LOG("Starting signals");
-    for (const auto& signal : signals_) {
-        signal->start();
-    }
+    pImpl_->startSignals();
 }
 
 /**
@@ -254,9 +268,7 @@ auto SignalManager::startSignals() -> void {
  */
 auto SignalManager::stopSignals() -> void {
     DEBUG_LOG("Stopping signals");
-    for (const auto& signal : signals_) {
-        signal->stop();
-    }
+    pImpl_->stopSignals();
 }
 
 /**
@@ -267,9 +279,12 @@ auto SignalManager::stopSignals() -> void {
  * The method is called on the main thread for thread safety.
  */
 auto SignalManager::checkSignals(const std::any& event) -> void {
-    for (const auto& signal : signals_) {
-        signal->check(event);
-    }
+    pImpl_->checkSignals(event);
+}
+
+auto SignalManager::getInstance() -> SignalManager& {
+    static SignalManager instance;
+    return instance;
 }
 
 }  // namespace interview_cheater::signal

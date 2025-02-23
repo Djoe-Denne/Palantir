@@ -1,9 +1,12 @@
 set(MACOS_SOURCES
-    ${PROJECT_ROOT}/application/src/platform/macos/input/configurable_input.mm
-    ${PROJECT_ROOT}/application/src/platform/macos/signal/signal_manager.mm
-    ${PROJECT_ROOT}/application/src/platform/macos/window/overlay_window.mm
     ${PROJECT_ROOT}/application/src/platform/macos/platform_application.mm
-    ${PROJECT_ROOT}/application/src/platform/macos/utils/logger.mm
+    ${PROJECT_ROOT}/application/src/platform/macos/window/overlay_window.mm
+)
+
+set(COMMON_MACOS_SOURCES
+    ${PROJECT_ROOT}/palantir-core/src/platform/macos/input/configurable_input.mm
+    ${PROJECT_ROOT}/palantir-core/src/platform/macos/signal/signal_manager.mm
+    ${PROJECT_ROOT}/palantir-core/src/platform/macos/utils/logger.mm
 )
 
 file(GLOB_RECURSE MACOS_HEADERS
@@ -34,6 +37,7 @@ endfunction()
 function(setup_macos_platform)
     target_sources(${PROJECT_NAME} PRIVATE 
         ${MACOS_SOURCES}
+        ${COMMON_MACOS_SOURCES}
         ${MACOS_HEADERS}
     )
     
@@ -54,5 +58,13 @@ function(setup_macos_platform)
 endfunction()
 
 function(setup_macos_platform_core)
+    target_sources(palantir-core PRIVATE
+        ${COMMON_MACOS_SOURCES}
+    )
+
+    target_include_directories(palantir-core PRIVATE
+        ${COMMON_INCLUDE_DIRS}
+        ${PROJECT_ROOT}/application/include/platform/macos
+    )
     setup_macos_platform_common(palantir-core)
 endfunction() 

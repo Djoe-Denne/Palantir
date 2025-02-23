@@ -17,7 +17,7 @@ auto SignalFactory::createSignals(Application& app) -> std::vector<std::unique_p
     std::vector<std::unique_ptr<ISignal>> signals;
 
     for (const auto& commandName : input::InputFactory::getConfiguredCommands()) {
-        auto command = command::CommandFactory::getCommand(commandName);
+        auto command = command::CommandFactory::getInstance().getCommand(commandName);
         if (command) {
             auto input = input::InputFactory::createInput(commandName);
             signals.push_back(std::make_unique<Signal>(std::move(input), std::move(command), command->useDebounce()));

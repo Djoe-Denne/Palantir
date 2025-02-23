@@ -12,8 +12,6 @@
 #ifdef _WIN32
     #ifdef PALANTIR_CORE_EXPORTS
         #define PALANTIR_CORE_API __declspec(dllexport)
-        // Disable warning about STL classes requiring DLL interface
-        #pragma warning(disable: 4251)
     #else
         #define PALANTIR_CORE_API __declspec(dllimport)
     #endif

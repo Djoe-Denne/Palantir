@@ -12,7 +12,6 @@
 
 #include <any>
 #include <memory>
-#include <vector>
 
 namespace interview_cheater::signal {
 // Forward declaration for ISignal
@@ -24,18 +23,16 @@ class ISignal;
  *
  * This class manages a collection of signals, controlling their lifecycle
  * and processing. It provides methods to add new signals, start and stop
- * signal processing, and check signal conditions. The class supports move
- * semantics but prohibits copying to ensure unique ownership of signals.
+ * signal processing, and check signal conditions. The class is implemented
+ * as a singleton with PIMPL idiom to prevent C4251 warnings.
  */
 class SignalManager {
 public:
     /**
-     * @brief Construct a new SignalManager object.
-     *
-     * Initializes the signal manager and sets up any necessary platform-specific
-     * resources for signal processing.
+     * @brief Get the singleton instance of SignalManager
+     * @return Reference to the singleton instance
      */
-    SignalManager();
+    static auto getInstance() -> SignalManager&;
 
     /**
      * @brief Destroy the SignalManager object.
@@ -45,55 +42,44 @@ public:
      */
     ~SignalManager();
 
-    // Delete copy operations
-    /** @brief Deleted copy constructor to prevent resource duplication. */
+    // Delete copy and move operations
     SignalManager(const SignalManager&) = delete;
-    /** @brief Deleted copy assignment to prevent resource duplication. */
     auto operator=(const SignalManager&) -> SignalManager& = delete;
-
-    // Default move operations
-    /** @brief Default move constructor for ownership transfer. */
-    SignalManager(SignalManager&&) noexcept = default;
-    /** @brief Default move assignment for ownership transfer. */
-    auto operator=(SignalManager&&) noexcept -> SignalManager& = default;
+    SignalManager(SignalManager&&) = delete;
+    auto operator=(SignalManager&&) = delete;
 
     /**
      * @brief Add a new signal to be managed.
      * @param signal Unique pointer to the signal to be added.
-     *
-     * Takes ownership of the provided signal and adds it to the collection
-     * of managed signals.
      */
     auto addSignal(std::unique_ptr<ISignal> signal) -> void;
 
     /**
      * @brief Start processing all managed signals.
-     *
-     * Activates all managed signals, allowing them to begin processing
-     * their respective conditions.
      */
     auto startSignals() -> void;
 
     /**
      * @brief Stop processing all managed signals.
-     *
-     * Deactivates all managed signals, stopping them from processing
-     * their respective conditions.
      */
     auto stopSignals() -> void;
 
     /**
      * @brief Check all managed signals.
-     *
-     * Triggers a check of conditions for all managed signals.
      */
     auto checkSignals(const std::any& event) -> void;
 
 private:
+    // Private constructor for singleton
+    SignalManager();
+
     // Forward declaration of platform-specific implementation
     class Impl;
-    std::unique_ptr<Impl> pImpl_;                    ///< Platform-specific implementation details
-    std::vector<std::unique_ptr<ISignal>> signals_;  ///< Collection of managed signals
+    // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
+#pragma warning(push)
+#pragma warning(disable: 4251)
+    std::unique_ptr<Impl> pImpl_;  ///< Platform-specific implementation details
+#pragma warning(pop)
 };
 
 }  // namespace interview_cheater::signal

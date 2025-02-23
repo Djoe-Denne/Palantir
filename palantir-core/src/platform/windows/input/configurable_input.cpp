@@ -44,7 +44,7 @@ public:
      */
     [[nodiscard]] auto isKeyPressed(const std::any& event) const -> bool {
         bool pressed = (static_cast<uint16_t>(GetAsyncKeyState(keyCode_)) &
-                        static_cast<uint16_t>(KeyRegister::get("KEY_PRESSED_MASK"))) != 0;
+                        static_cast<uint16_t>(KeyRegister::getInstance().get("KEY_PRESSED_MASK"))) != 0;
         if (pressed) {
             DEBUG_LOG("Key 0x{:x} is pressed", keyCode_);
         }
@@ -60,7 +60,7 @@ public:
      */
     [[nodiscard]] auto isModifierActive(const std::any& event) const -> bool {
         bool active = (static_cast<uint16_t>(GetAsyncKeyState(modifierCode_)) &
-                       static_cast<uint16_t>(KeyRegister::get("KEY_PRESSED_MASK"))) != 0;
+                       static_cast<uint16_t>(KeyRegister::getInstance().get("KEY_PRESSED_MASK"))) != 0;
         if (active) {
             DEBUG_LOG("Modifier 0x{:x} is active", modifierCode_);
         }
@@ -90,50 +90,24 @@ private:
     int modifierCode_;  ///< Virtual key code for the modifier key
 };
 
-/**
- * @brief Construct the configurable input.
- * @param keyCode Virtual key code for the input key.
- * @param modifierCode Virtual key code for the modifier key.
- *
- * Creates a new configurable input instance with its implementation,
- * using the specified key and modifier codes.
- */
+// Public interface implementation
 ConfigurableInput::ConfigurableInput(int keyCode, int modifierCode)
     : pImpl_(std::make_unique<Impl>(keyCode, modifierCode)) {
     DEBUG_LOG("Creating configurable input");
 }
 
-// Required for unique_ptr with incomplete type
 ConfigurableInput::~ConfigurableInput() = default;
 
-/**
- * @brief Check if the configured key is currently pressed.
- * @return true if the key is pressed, false otherwise.
- *
- * Delegates to the implementation's isKeyPressed method to check
- * the key state.
- */
-[[nodiscard]] auto ConfigurableInput::isKeyPressed(const std::any& event) const -> bool {
+auto ConfigurableInput::isKeyPressed(const std::any& event) const -> bool {
     return pImpl_->isKeyPressed(event);
 }
 
-/**
- * @brief Check if the configured modifier is currently active.
- * @return true if the modifier is active, false otherwise.
- *
- * Delegates to the implementation's isModifierActive method to check
- * the modifier state.
- */
-[[nodiscard]] auto ConfigurableInput::isModifierActive(const std::any& event) const -> bool {
+auto ConfigurableInput::isModifierActive(const std::any& event) const -> bool {
     return pImpl_->isModifierActive(event);
 }
 
-/**
- * @brief Update the input state.
- *
- * Delegates to the implementation's update method to refresh
- * the input state if necessary.
- */
-auto ConfigurableInput::update() -> void { pImpl_->update(); }
+auto ConfigurableInput::update() -> void {
+    pImpl_->update();
+}
 
 }  // namespace interview_cheater::input

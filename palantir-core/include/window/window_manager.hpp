@@ -11,10 +11,8 @@
 #define WINDOW_MANAGER_HPP
 
 #include <memory>
-#include <vector>
-
-#include "window/iwindow.hpp"
 #include "core_export.hpp"
+#include "window/iwindow.hpp"
 
 namespace interview_cheater {
 namespace command {
@@ -36,18 +34,15 @@ namespace window {
 class PALANTIR_CORE_API WindowManager {
 public:
     /**
-     * @brief Construct a new WindowManager object.
-     *
-     * Initializes an empty window manager ready to handle windows.
+     * @brief Get the singleton instance of the WindowManager.
+     * @return Reference to the WindowManager instance.
      */
-    WindowManager() = default;
+    static auto getInstance() -> WindowManager&;
 
     /**
      * @brief Destroy the WindowManager object.
-     *
-     * Cleans up all managed windows, ensuring proper resource cleanup.
      */
-    ~WindowManager() = default;
+    ~WindowManager();
 
     // Delete copy operations
     /** @brief Deleted copy constructor to prevent window duplication. */
@@ -109,8 +104,16 @@ public:
     auto executeCommand(std::unique_ptr<interview_cheater::command::ICommand> command) -> void;
 
 private:
-    /** @brief Collection of managed windows. */
-    std::vector<std::unique_ptr<IWindow>> windows_{};
+    // Private constructor for singleton
+    WindowManager();
+
+    // Forward declaration of implementation class
+    class WindowManagerImpl;
+    // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
+#pragma warning(push)
+#pragma warning(disable: 4251)
+    std::unique_ptr<WindowManagerImpl> pimpl_;
+#pragma warning(pop)
 };
 }  // namespace window
 }  // namespace interview_cheater

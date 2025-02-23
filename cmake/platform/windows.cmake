@@ -1,12 +1,12 @@
 set(WINDOWS_SOURCES
     ${PROJECT_ROOT}/application/src/platform/windows/platform_application.cpp
+    ${PROJECT_ROOT}/application/src/platform/windows/window/overlay_window.cpp
 )
 
 set(COMMON_WINDOWS_SOURCES
-    ${PROJECT_ROOT}/application/src/platform/windows/input/configurable_input.cpp
-    ${PROJECT_ROOT}/application/src/platform/windows/signal/signal_manager.cpp
-    ${PROJECT_ROOT}/application/src/platform/windows/window/overlay_window.cpp
-    ${PROJECT_ROOT}/application/src/platform/windows/utils/logger.cpp
+    ${PROJECT_ROOT}/palantir-core/src/platform/windows/input/configurable_input.cpp
+    ${PROJECT_ROOT}/palantir-core/src/platform/windows/signal/signal_manager.cpp
+    ${PROJECT_ROOT}/palantir-core/src/platform/windows/utils/logger.cpp
 )
 
 set(ALL_SOURCES

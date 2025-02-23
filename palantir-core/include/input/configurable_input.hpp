@@ -86,8 +86,11 @@ public:
 private:
     /** @brief Forward declaration of the implementation class. */
     class Impl;
-    /** @brief Pointer to the implementation details. */
+    // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
+#pragma warning(push)
+#pragma warning(disable: 4251)
     std::unique_ptr<Impl> pImpl_;
+#pragma warning(pop)
 };
 
 }  // namespace interview_cheater::input

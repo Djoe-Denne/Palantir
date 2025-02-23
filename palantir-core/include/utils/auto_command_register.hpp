@@ -8,7 +8,7 @@
             return std::make_unique<name_space::className>(); \
         } \
         const bool registered##className = []() { \
-            interview_cheater::command::CommandFactory::registerCommand(commandName, &create##className); \
+            interview_cheater::command::CommandFactory::getInstance().registerCommand(commandName, &create##className); \
             return true; \
         }(); \
     }

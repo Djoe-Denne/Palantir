@@ -22,7 +22,7 @@ namespace interview_cheater {
 
 /**
  * @class Application
- * @brief Base class for the application implementation.
+ * @brief Base class for the application implementation using PIMPL pattern.
  *
  * This class provides the foundation for platform-specific application
  * implementations. It manages the application's lifecycle, handles signals
@@ -60,7 +60,7 @@ public:
      *
      * Ensures proper cleanup of platform-specific resources.
      */
-    virtual ~Application() = default;
+    virtual ~Application();
 
     // Delete copy operations
     /** @brief Deleted copy constructor to prevent instance duplication. */
@@ -99,7 +99,7 @@ public:
      * Returns a reference to the application's signal manager, which handles
      * all input signals and their processing.
      */
-    [[nodiscard]] auto getSignalManager() -> signal::SignalManager& { return signalManager_; }
+    [[nodiscard]] auto getSignalManager() -> class signal::SignalManager&;
 
     /**
      * @brief Get the window manager.
@@ -108,7 +108,7 @@ public:
      * Returns a reference to the application's window manager, which handles
      * all application windows and their lifecycle.
      */
-    [[nodiscard]] auto getWindowManager() -> window::WindowManager& { return windowManager_; }
+    [[nodiscard]] auto getWindowManager() -> class window::WindowManager&;
 
     /**
      * @brief Initialize signals from configuration.
@@ -133,12 +133,13 @@ private:
     static auto getInstancePtr() -> Application*&;
     static auto setInstancePtr(Application* instance) -> void;
 
-    /** @brief Path to the configuration file. */
-    const std::string configPath_;
-    /** @brief Window manager instance. */
-    window::WindowManager windowManager_;
-    /** @brief Signal manager instance. */
-    signal::SignalManager signalManager_;
+    // PIMPL implementation
+    class ApplicationImpl;
+    // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
+#pragma warning(push)
+#pragma warning(disable: 4251)
+    std::unique_ptr<ApplicationImpl> pImpl_;
+#pragma warning(pop)
 };
 
 }  // namespace interview_cheater
