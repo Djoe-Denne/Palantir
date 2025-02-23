@@ -41,9 +41,19 @@ public:
      * based on the compilation target.
      */
     template <typename T>
-    static auto getInstance(const std::string& configPath) -> Application*;
+    static auto getInstance(const std::string& configPath) -> Application* {
+        if (getInstancePtr() == nullptr) {
+            setInstancePtr(new T(configPath));
+        }
+        return getInstancePtr();
+    }
 
-    static auto getInstance() -> Application*;
+    static auto getInstance() -> Application* {
+        if (getInstancePtr() == nullptr) {
+            throw std::runtime_error("Application instance not created. Call getInstance<T>(configPath) first.");
+        }
+        return getInstancePtr();
+    }
 
     /**
      * @brief Virtual destructor for proper cleanup.
@@ -120,8 +130,9 @@ protected:
     explicit Application(const std::string& configPath);
 
 private:
-    /** @brief Singleton instance pointer. */
-    static Application* instance_;
+    static auto getInstancePtr() -> Application*&;
+    static auto setInstancePtr(Application* instance) -> void;
+
     /** @brief Path to the configuration file. */
     const std::string configPath_;
     /** @brief Window manager instance. */
@@ -129,21 +140,6 @@ private:
     /** @brief Signal manager instance. */
     signal::SignalManager signalManager_;
 };
-
-template <typename T>
-auto interview_cheater::Application::getInstance(const std::string& configPath) -> Application* {
-    if (instance_ == nullptr) {
-        instance_ = new T(configPath);
-    }
-    return instance_;
-}
-
-inline auto Application::getInstance() -> Application* {
-    if (instance_ == nullptr) {
-        throw std::runtime_error("Application instance not created. Call getInstance<T>(configPath) first.");
-    }
-    return instance_;
-}
 
 }  // namespace interview_cheater
 

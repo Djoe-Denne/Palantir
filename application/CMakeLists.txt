@@ -24,17 +24,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 # Let CMake know where to search for the library
 link_directories(${CMAKE_BINARY_DIR}/lib)
 
-
 target_include_directories(${PROJECT_NAME} PRIVATE ${COMMON_INCLUDE_DIRS})
 
 # Link against palantir-core directly
 target_link_libraries(${PROJECT_NAME} PRIVATE palantir-core)
-
-# Add post-build command to copy DLL next to the executable
-if(WIN32)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/palantir-core.dll"
-        "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/"
-    )
-endif()

@@ -7,7 +7,17 @@
 
 namespace interview_cheater {
 
-Application* Application::instance_ = nullptr;
+namespace {
+Application* instance_ = nullptr;
+}
+
+auto Application::getInstancePtr() -> Application*& {
+    return instance_;
+}
+
+auto Application::setInstancePtr(Application* instance) -> void {
+    instance_ = instance;
+}
 
 Application::Application(const std::string& configPath) : configPath_(configPath) {
     DEBUG_LOG("Creating application with config: {}", configPath);
