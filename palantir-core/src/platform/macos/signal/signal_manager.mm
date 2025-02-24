@@ -26,7 +26,7 @@
 @interface SignalChecker : NSObject
 
 /** Pointer to the implementation that owns this checker */
-@property(nonatomic, assign) interview_cheater::signal::SignalManager::Impl* signalManagerImpl;
+@property(nonatomic, assign) interview_cheater::signal::SignalManager::Impl* pImpl_;
 
 /** Monitor for global keyboard events (when app is not active) */
 @property(nonatomic, strong) id globalMonitor;
@@ -61,7 +61,7 @@
 - (instancetype)initWithSignalManagerImpl:(interview_cheater::signal::SignalManager::Impl*)impl {
     if ((self = [super init]) != nil) {
         DEBUG_LOG("Initializing SignalChecker");
-        self.signalManagerImpl = impl;
+        self.pImpl_ = impl;
         [self setupEventMonitors];
     }
     return self;
@@ -123,7 +123,7 @@
     // Dispatch signal check to main queue for thread safety
     dispatch_async(dispatch_get_main_queue(), ^{
         DEBUG_LOG("Triggering signal check");
-        self.signalManagerImpl->checkSignals(event);
+        self.pImpl_->checkSignals(event);
     });
 }
 
