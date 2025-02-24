@@ -15,6 +15,76 @@
  * bridge pattern between C++ and Objective-C.
  */
 
+namespace interview_cheater::signal {
+
+/**
+ * @brief Private implementation of SignalManager
+ *
+ * This class implements the PIMPL idiom to hide the Objective-C++
+ * implementation details from the pure C++ interface. It manages
+ * the lifecycle of the SignalChecker instance.
+ */
+class SignalManager::Impl {
+   public:
+    /**
+     * @brief Construct the implementation
+     * @param parent Pointer to the owning SignalManager instance
+     *
+     * Creates and initializes the SignalChecker instance that will
+     * handle the actual event monitoring.
+     */
+    explicit Impl(SignalManager* parent) : parent_(parent) {
+        signalChecker_ = [[SignalChecker alloc] initWithSignalManagerImpl:this];
+    }
+
+    /**
+     * @brief Destroy the implementation
+     *
+     * Ensures proper cleanup of the SignalChecker instance.
+     * The nil assignment triggers Objective-C ARC to release the object.
+     */
+    ~Impl() {
+        if (signalChecker_ != nullptr) {
+            // Remove monitors before releasing
+            [signalChecker_ stopChecking];
+            signalChecker_ = nil;  // ARC will handle the release
+        }
+    }
+
+    Impl() : parent_(nullptr) {}
+    Impl(const Impl&) = delete;
+    auto operator=(const Impl&) -> Impl& = delete;
+    Impl(Impl&&) = delete;
+    auto operator=(Impl&&) -> Impl& = delete;
+
+    auto addSignal(std::unique_ptr<ISignal> signal) -> void {
+        signals_.push_back(std::move(signal));
+    }
+
+    auto startSignals() -> void {
+        for (const auto& signal : signals_) {
+            signal->start();
+        }
+    }
+
+    auto stopSignals() -> void {
+        for (const auto& signal : signals_) {
+            signal->stop();
+        }
+    }
+
+    auto checkSignals(const std::any& event) -> void {
+        for (const auto& signal : signals_) {
+            signal->check(event);
+        }
+    }
+
+   private:
+    SignalChecker* signalChecker_{nil};  ///< The Objective-C event monitor instance
+    SignalManager* parent_;              ///< Pointer to the owning SignalManager
+    std::vector<std::unique_ptr<ISignal>> signals_;      ///< Collection of managed signals
+};
+}
 /**
  * @brief Signal checking class for macOS event monitoring.
  *
@@ -158,74 +228,6 @@
 @end
 
 namespace interview_cheater::signal {
-
-/**
- * @brief Private implementation of SignalManager
- *
- * This class implements the PIMPL idiom to hide the Objective-C++
- * implementation details from the pure C++ interface. It manages
- * the lifecycle of the SignalChecker instance.
- */
-class SignalManager::Impl {
-   public:
-    /**
-     * @brief Construct the implementation
-     * @param parent Pointer to the owning SignalManager instance
-     *
-     * Creates and initializes the SignalChecker instance that will
-     * handle the actual event monitoring.
-     */
-    explicit Impl(SignalManager* parent) : parent_(parent) {
-        signalChecker_ = [[SignalChecker alloc] initWithSignalManagerImpl:this];
-    }
-
-    /**
-     * @brief Destroy the implementation
-     *
-     * Ensures proper cleanup of the SignalChecker instance.
-     * The nil assignment triggers Objective-C ARC to release the object.
-     */
-    ~Impl() {
-        if (signalChecker_ != nullptr) {
-            // Remove monitors before releasing
-            [signalChecker_ stopChecking];
-            signalChecker_ = nil;  // ARC will handle the release
-        }
-    }
-
-    Impl() : parent_(nullptr) {}
-    Impl(const Impl&) = delete;
-    auto operator=(const Impl&) -> Impl& = delete;
-    Impl(Impl&&) = delete;
-    auto operator=(Impl&&) -> Impl& = delete;
-
-    auto addSignal(std::unique_ptr<ISignal> signal) -> void {
-        signals_.push_back(std::move(signal));
-    }
-
-    auto startSignals() -> void {
-        for (const auto& signal : signals_) {
-            signal->start();
-        }
-    }
-
-    auto stopSignals() -> void {
-        for (const auto& signal : signals_) {
-            signal->stop();
-        }
-    }
-
-    auto checkSignals(const std::any& event) -> void {
-        for (const auto& signal : signals_) {
-            signal->check(event);
-        }
-    }
-
-   private:
-    SignalChecker* signalChecker_{nil};  ///< The Objective-C event monitor instance
-    SignalManager* parent_;              ///< Pointer to the owning SignalManager
-    std::vector<std::unique_ptr<ISignal>> signals_;      ///< Collection of managed signals
-};
 
 /**
  * @brief Construct the SignalManager
