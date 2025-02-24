@@ -16,9 +16,7 @@
  */
 
 namespace interview_cheater::signal {
-    class SignalManager {
-        class Impl;
-    };
+    class SignalManager::Impl;
 };
 
 /**
