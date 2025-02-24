@@ -15,7 +15,7 @@
  * bridge pattern between C++ and Objective-C.
  */
 
-class interview_cheater::signal {
+namespace interview_cheater::signal {
     class SignalManager {
         class Impl;
     };
