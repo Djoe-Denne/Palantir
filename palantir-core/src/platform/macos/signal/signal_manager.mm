@@ -15,7 +15,7 @@
  * bridge pattern between C++ and Objective-C.
  */
 
- class interview_cheater::signal::SignalManager::Impl
+ class interview_cheater::signal::SignalManager::Impl;
 
 /**
  * @brief Signal checking class for macOS event monitoring.
