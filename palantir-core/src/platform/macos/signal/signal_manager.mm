@@ -15,6 +15,9 @@
  * bridge pattern between C++ and Objective-C.
  */
 
+// Forward declare the Objective-C SignalChecker class
+@class SignalChecker;
+
 namespace interview_cheater::signal {
 
 /**
