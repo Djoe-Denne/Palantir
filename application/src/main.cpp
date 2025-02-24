@@ -2,22 +2,25 @@
 #include <stdexcept>
 #include <string>
 
-#include "platform/application.hpp"
+#include "application.hpp"
 #include "utils/logger.hpp"
 #include "window/overlay_window.hpp"
+
+#include "platform_application.hpp"
 
 #if defined(_WIN32) && !defined(_CONSOLE)
 #include <windows.h>
 #endif
 
 using interview_cheater::Application;
+using interview_cheater::PlatformApplication;
 using interview_cheater::window::OverlayWindow;
 
 // Platform-agnostic application code
 auto run_app() -> int {
     try {
         // Create and initialize application
-        auto* app = Application::getInstance("config/shortcuts.ini");
+        auto* app = Application::getInstance<PlatformApplication>("config/shortcuts.ini");
 
         // Create window
         auto& windowManager = app->getWindowManager();

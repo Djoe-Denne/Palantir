@@ -1,26 +1,30 @@
 # Create the executable with basic sources
 if(WIN32)
     add_executable(${PROJECT_NAME} WIN32 
-        ${CORE_SOURCES}
-        ${COMMAND_SOURCES}
-        ${SIGNAL_SOURCES}
-        ${WINDOW_SOURCES}
-        ${INPUT_SOURCES}
-        ${PLATFORM_COMMON_SOURCES}
+        ${WINDOWS_SOURCES}
+        ${PROJECT_ROOT}/application/src/main.cpp
     )
     setup_windows_platform()
 elseif(APPLE)
     add_executable(${PROJECT_NAME} MACOSX_BUNDLE 
-        ${CORE_SOURCES}
-        ${COMMAND_SOURCES}
-        ${SIGNAL_SOURCES}
-        ${WINDOW_SOURCES}
-        ${INPUT_SOURCES}
-        ${PLATFORM_COMMON_SOURCES}
+        ${MACOS_SOURCES}
+        ${MACOS_HEADERS}
+        ${PROJECT_ROOT}/application/src/main.cpp
     )
     setup_macos_platform()
 else()
     message(FATAL_ERROR "Unsupported platform")
 endif()
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${COMMON_INCLUDE_DIRS}) 
+# Set output directory for the executable
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
+# Let CMake know where to search for the library
+link_directories(${CMAKE_BINARY_DIR}/lib)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${COMMON_INCLUDE_DIRS})
+
+# Link against palantir-core directly
+target_link_libraries(${PROJECT_NAME} PRIVATE palantir-core)

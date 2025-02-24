@@ -12,7 +12,7 @@
 
 #include <memory>
 
-#include "platform/application.hpp"
+#include "application.hpp"
 
 namespace interview_cheater {
 namespace signal {

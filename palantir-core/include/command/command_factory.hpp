@@ -1,0 +1,67 @@
+#pragma once
+
+#include <memory>
+#include <string>
+#include "core_export.hpp"
+
+namespace interview_cheater::command {
+
+class ICommand;  // Forward declaration
+
+/**
+ * @class CommandFactory 
+ * @brief Factory class for managing and creating commands.
+ *
+ * This singleton factory class is responsible for registering and managing commands.
+ * It maintains a map of command names to command instances and uses the PIMPL pattern
+ * to hide implementation details.
+ */
+class PALANTIR_CORE_API CommandFactory {
+public:
+    using CommandCreator = std::unique_ptr<ICommand>(*)(); // Function pointer to create a command
+
+    /** @brief Get the singleton instance of the factory. */
+    static auto getInstance() -> CommandFactory&;
+
+    /** @brief Destructor. */
+    ~CommandFactory();
+
+    // Delete copy operations
+    CommandFactory(const CommandFactory&) = delete;
+    auto operator=(const CommandFactory&) -> CommandFactory& = delete;
+
+    // Delete move operations
+    CommandFactory(CommandFactory&&) = delete;
+    auto operator=(CommandFactory&&) -> CommandFactory& = delete;
+
+    /**
+     * @brief Register a command with the factory.
+     * @param command Unique pointer to the command to register.
+     * 
+     * Registers a command in the factory's command map using the command's name
+     * as the key. Takes ownership of the provided command.
+     */
+    auto registerCommand(const std::string& commandName, CommandCreator creator) -> void;
+
+    /**
+     * @brief Get a command from the factory.
+     * @param name The name of the command to get.
+     * @return Const pointer to the command if found, nullptr otherwise.
+     */
+    auto getCommand(const std::string& name) -> std::unique_ptr<ICommand>;
+
+private:
+    // Private implementation class forward declaration
+    class CommandFactoryImpl;
+        // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
+#pragma warning(push)
+#pragma warning(disable: 4251)
+    std::unique_ptr<CommandFactoryImpl> pimpl_;
+#pragma warning(pop)
+
+    /** @brief Private constructor for singleton pattern. */
+    CommandFactory();
+};
+
+}  // namespace interview_cheater::command
+

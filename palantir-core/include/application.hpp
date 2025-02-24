@@ -1,0 +1,147 @@
+/**
+ * @file application.hpp
+ * @brief Defines the base application class.
+ *
+ * This file contains the Application class which serves as the base for
+ * platform-specific application implementations. It provides common functionality
+ * for application lifecycle, signal management, and window management.
+ */
+
+#ifndef INTERVIEW_CHEATER_PLATFORM_APPLICATION_HPP
+#define INTERVIEW_CHEATER_PLATFORM_APPLICATION_HPP
+
+#include <memory>
+#include <string>
+#include <stdexcept>
+
+#include "signal/signal_manager.hpp"
+#include "window/window_manager.hpp"
+#include "core_export.hpp"
+
+namespace interview_cheater {
+
+/**
+ * @class Application
+ * @brief Base class for the application implementation using PIMPL pattern.
+ *
+ * This class provides the foundation for platform-specific application
+ * implementations. It manages the application's lifecycle, handles signals
+ * and windows, and provides configuration management. The class follows
+ * the singleton pattern to ensure a single application instance.
+ */
+class PALANTIR_CORE_API Application {
+public:
+    /**
+     * @brief Get the singleton instance of the application.
+     * @param configPath Path to the configuration file.
+     * @return Pointer to the application instance.
+     *
+     * Returns the singleton instance of the application, creating it if
+     * necessary. The instance will be platform-specific (Windows or macOS)
+     * based on the compilation target.
+     */
+    template <typename T>
+    static auto getInstance(const std::string& configPath) -> Application* {
+        if (getInstancePtr() == nullptr) {
+            setInstancePtr(new T(configPath));
+        }
+        return getInstancePtr();
+    }
+
+    static auto getInstance() -> Application* {
+        if (getInstancePtr() == nullptr) {
+            throw std::runtime_error("Application instance not created. Call getInstance<T>(configPath) first.");
+        }
+        return getInstancePtr();
+    }
+
+    /**
+     * @brief Virtual destructor for proper cleanup.
+     *
+     * Ensures proper cleanup of platform-specific resources.
+     */
+    virtual ~Application();
+
+    // Delete copy operations
+    /** @brief Deleted copy constructor to prevent instance duplication. */
+    Application(const Application&) = delete;
+    /** @brief Deleted copy assignment to prevent instance duplication. */
+    auto operator=(const Application&) -> Application& = delete;
+
+    // Delete move operations
+    /** @brief Deleted move constructor since we have non-movable members. */
+    Application(Application&&) noexcept = delete;
+    /** @brief Deleted move assignment since we have non-movable members. */
+    auto operator=(Application&&) noexcept -> Application& = delete;
+
+    /**
+     * @brief Run the application.
+     * @return Exit code from the application.
+     *
+     * Platform-specific implementation of the application's main run loop.
+     * This method should handle the event loop and return when the
+     * application is ready to exit.
+     */
+    [[nodiscard]] virtual auto run() -> int = 0;
+
+    /**
+     * @brief Quit the application.
+     *
+     * Platform-specific implementation of application shutdown. This method
+     * should trigger a clean exit of the application.
+     */
+    virtual auto quit() -> void = 0;
+
+    /**
+     * @brief Get the signal manager.
+     * @return Reference to the signal manager.
+     *
+     * Returns a reference to the application's signal manager, which handles
+     * all input signals and their processing.
+     */
+    [[nodiscard]] auto getSignalManager() -> class signal::SignalManager&;
+
+    /**
+     * @brief Get the window manager.
+     * @return Reference to the window manager.
+     *
+     * Returns a reference to the application's window manager, which handles
+     * all application windows and their lifecycle.
+     */
+    [[nodiscard]] auto getWindowManager() -> class window::WindowManager&;
+
+    /**
+     * @brief Initialize signals from configuration.
+     *
+     * Loads and attaches signals based on the application's configuration.
+     * This includes creating appropriate signal handlers and connecting
+     * them to commands.
+     */
+    auto attachSignals() -> void;
+
+protected:
+    /**
+     * @brief Construct a new Application object.
+     * @param configPath Path to the configuration file.
+     *
+     * Protected constructor to enforce singleton pattern. Initializes
+     * the application with the specified configuration path.
+     */
+    explicit Application(const std::string& configPath);
+
+private:
+    static auto getInstancePtr() -> Application*&;
+    static auto setInstancePtr(Application* instance) -> void;
+
+    // PIMPL implementation
+    class ApplicationImpl;
+    // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
+#pragma warning(push)
+#pragma warning(disable: 4251)
+    std::unique_ptr<ApplicationImpl> pImpl_;
+#pragma warning(pop)
+};
+
+}  // namespace interview_cheater
+
+#endif  // INTERVIEW_CHEATER_PLATFORM_APPLICATION_HPP
