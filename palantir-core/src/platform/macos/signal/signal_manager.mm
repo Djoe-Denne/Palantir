@@ -15,8 +15,15 @@
  * bridge pattern between C++ and Objective-C.
  */
 
-// Forward declare the Objective-C SignalChecker class
-@class SignalChecker;
+/**
+ * @brief Signal checking class for macOS event monitoring.
+ *
+ * This Objective-C class handles the event monitoring for keyboard inputs
+ * on macOS. It sets up both global and local monitors to capture keyboard
+ * events and trigger signal checks. The class serves as a bridge between
+ * the Cocoa event system and our C++ signal manager.
+ */
+@interface SignalChecker : NSObject
 
 namespace interview_cheater::signal {
 
@@ -88,15 +95,6 @@ class SignalManager::Impl {
     std::vector<std::unique_ptr<ISignal>> signals_;      ///< Collection of managed signals
 };
 }
-/**
- * @brief Signal checking class for macOS event monitoring.
- *
- * This Objective-C class handles the event monitoring for keyboard inputs
- * on macOS. It sets up both global and local monitors to capture keyboard
- * events and trigger signal checks. The class serves as a bridge between
- * the Cocoa event system and our C++ signal manager.
- */
-@interface SignalChecker : NSObject
 
 /** Pointer to the implementation that owns this checker */
 @property(nonatomic, assign) interview_cheater::signal::SignalManager::Impl* pImpl_;
