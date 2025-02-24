@@ -189,34 +189,34 @@ private:
 
 namespace interview_cheater::signal {
     
-Impl::Impl(SignalManager* parent) : parent_(parent) {
+SignalManager::Impl::Impl(SignalManager* parent) : parent_(parent) {
     signalChecker_ = [[SignalChecker alloc] initWithSignalManagerImpl:this];
 }
 
-Impl::~Impl() {
+SignalManager::Impl::~Impl() {
     if (signalChecker_ != nullptr) {
         [signalChecker_ stopChecking];
         signalChecker_ = nil;  // ARC will handle the release
     }
 }
 
-auto Impl::addSignal(std::unique_ptr<ISignal> signal) -> void {
+auto SignalManager::Impl::addSignal(std::unique_ptr<ISignal> signal) -> void {
     signals_.push_back(std::move(signal));
 }
 
-auto Impl::startSignals() -> void {
+auto SignalManager::Impl::startSignals() -> void {
     for (const auto& signal : signals_) {
         signal->start();
     }
 }
 
-auto Impl::stopSignals() -> void {
+auto SignalManager::Impl::stopSignals() -> void {
     for (const auto& signal : signals_) {
         signal->stop();
     }
 }
 
-auto Impl::checkSignals(const std::any& event) -> void {
+auto SignalManager::Impl::checkSignals(const std::any& event) -> void {
     for (const auto& signal : signals_) {
         signal->check(event);
     }
