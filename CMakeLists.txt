@@ -37,6 +37,12 @@ include(platform/macos)
 # Add the palantir-core subdirectory
 add_subdirectory(palantir-core)
 
+# Add the plugin-loader subdirectory
+add_subdirectory(plugin-loader)
+
+# Add the plugins subdirectory
+add_subdirectory(plugins/commands)
+
 # Add the application subdirectory
 add_subdirectory(application)
 

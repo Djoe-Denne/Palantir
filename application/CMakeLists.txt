@@ -26,5 +26,8 @@ link_directories(${CMAKE_BINARY_DIR}/lib)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${COMMON_INCLUDE_DIRS})
 
-# Link against palantir-core directly
-target_link_libraries(${PROJECT_NAME} PRIVATE palantir-core)
+# Link against palantir-core and plugin-loader
+target_link_libraries(${PROJECT_NAME} PRIVATE 
+    palantir-core
+    plugin-loader
+)
