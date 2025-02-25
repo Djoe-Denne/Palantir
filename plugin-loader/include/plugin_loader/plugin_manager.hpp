@@ -18,9 +18,9 @@ public:
     ~PluginManager();
 
     PluginManager(const PluginManager&) = delete;
-    PluginManager& operator=(const PluginManager&) = delete;
+    auto operator=(const PluginManager&) -> PluginManager& = delete;
     PluginManager(PluginManager&&) = delete;
-    PluginManager& operator=(PluginManager&&) = delete;
+    auto operator=(PluginManager&&) -> PluginManager& = delete;
 
     /**
      * @brief Load a plugin from the specified path
