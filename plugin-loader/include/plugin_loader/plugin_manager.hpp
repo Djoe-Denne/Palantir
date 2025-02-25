@@ -14,8 +14,13 @@ class PluginManager {
 public:
     const static std::vector<std::string> PLUGIN_EXTENSIONS;
 
-    PluginManager();
+    PluginManager() = default;
     ~PluginManager();
+
+    PluginManager(const PluginManager&) = delete;
+    PluginManager& operator=(const PluginManager&) = delete;
+    PluginManager(PluginManager&&) = delete;
+    PluginManager& operator=(PluginManager&&) = delete;
 
     /**
      * @brief Load a plugin from the specified path

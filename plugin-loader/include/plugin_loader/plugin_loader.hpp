@@ -15,8 +15,13 @@ namespace interview_cheater::plugin {
 
 class PluginLoader {
 public:
-    PluginLoader();
+    PluginLoader() = default;
     ~PluginLoader();
+
+    PluginLoader(const PluginLoader&) = delete;
+    PluginLoader& operator=(const PluginLoader&) = delete;
+    PluginLoader(PluginLoader&&) = delete;
+    PluginLoader& operator=(PluginLoader&&) = delete;
 
     /**
      * @brief Load a plugin from the specified path

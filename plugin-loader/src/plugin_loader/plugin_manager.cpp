@@ -5,8 +5,6 @@
 
 namespace interview_cheater::plugin {
 
-PluginManager::PluginManager() = default;
-
 PluginManager::~PluginManager() {
     shutdownAll();
 }

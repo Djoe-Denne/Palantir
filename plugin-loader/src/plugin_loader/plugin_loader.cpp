@@ -2,12 +2,6 @@
 
 namespace interview_cheater::plugin {
 
-PluginLoader::PluginLoader() 
-    : currentHandle_(nullptr)
-    , createFunc_(nullptr)
-    , destroyFunc_(nullptr) {
-}
-
 PluginLoader::~PluginLoader() {
     if (currentHandle_) {
         unloadLibrary(currentHandle_);
