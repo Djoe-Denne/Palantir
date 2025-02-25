@@ -58,7 +58,7 @@ public:
 private:
     // Private implementation class forward declaration
     class CommandFactoryImpl;
-        // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
+        // Suppress C4251 warning for this specific line as Impl class is never accessed by client
 #pragma warning(push)
 #pragma warning(disable: 4251)
     std::unique_ptr<CommandFactoryImpl> pimpl_;
