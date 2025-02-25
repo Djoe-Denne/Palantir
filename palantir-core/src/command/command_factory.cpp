@@ -19,6 +19,8 @@ public:
         commands_[commandName] = creator;
     }
 
+    bool unregisterCommand(const std::string& commandName) { return commands_.erase(commandName) > 0; }
+
     auto getCommand(const std::string& name) -> std::unique_ptr<ICommand> {
         auto maybeCommand = commands_.find(name);
         return maybeCommand != commands_.end() ? maybeCommand->second() : nullptr;
@@ -36,6 +38,10 @@ auto CommandFactory::getInstance() -> CommandFactory& {
 
 auto CommandFactory::registerCommand(const std::string& commandName, CommandCreator creator) -> void {
     pimpl_->registerCommand(commandName, creator);
+}
+
+auto CommandFactory::unregisterCommand(const std::string& commandName) -> bool {
+    return pimpl_->unregisterCommand(commandName);
 }
 
 auto CommandFactory::getCommand(const std::string& name) -> std::unique_ptr<ICommand> {

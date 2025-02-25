@@ -3,11 +3,8 @@ file(GLOB_RECURSE PROJECT_HEADERS
     "${PROJECT_ROOT}/palantir-core/include/*.h"
 )
 
-
 set(COMMAND_SOURCES
     ${PROJECT_ROOT}/palantir-core/src/command/command_factory.cpp
-    ${PROJECT_ROOT}/palantir-core/src/command/show_command.cpp
-    ${PROJECT_ROOT}/palantir-core/src/command/stop_command.cpp
 )
 
 set(SIGNAL_SOURCES
