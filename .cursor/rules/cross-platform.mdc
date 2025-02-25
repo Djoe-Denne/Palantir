@@ -1,0 +1,54 @@
+---
+description: Cross-Platform Development and Interface Guidelines
+globs: ["include/**/*.h", "include/**/*.hpp"]
+---
+
+# Cross-Platform Interface Guidelines
+
+## Header Organization
+
+- All cross-platform headers MUST be in `@include/`
+- Use `.hpp` for C++-only headers
+- Use `.h` for headers that need C compatibility
+- Maintain clear separation between interface and implementation
+
+## Interface Design
+
+- Use platform-agnostic types and standard C++ features
+- Avoid exposing platform-specific types in public interfaces
+- Use abstract interfaces for platform-specific implementations
+- Document platform-specific behavior clearly
+
+## Compatibility Requirements
+
+- Maintain binary compatibility across platforms
+- Use `extern "C"` for C-compatible interfaces
+- Follow semantic versioning for interface changes
+- Document breaking changes in CHANGELOG.md
+
+## Platform Abstractions
+
+- Avoid using preprocessor guards for platform-specific code:
+  ```cpp
+  #ifdef __APPLE__
+  // macOS-specific implementation
+  #elif defined(_WIN32)
+  // Windows-specific implementation
+  #endif
+  ```
+- Use the folder strategy to sperate mac and windows implementations
+- Document platform support status
+
+## Documentation Standards
+
+- Document all public interfaces with detailed comments
+- Include usage examples for each major feature
+- Document platform-specific behavior and limitations
+- Reference related platform-specific implementations
+
+## Build System Integration
+
+- Maintain CMake configuration for all platforms
+- Define platform-specific compilation flags
+- Document build requirements for each platform
+- Ensure consistent behavior across build systems 

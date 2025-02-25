@@ -1,0 +1,52 @@
+---
+description: Build, Testing, and Validation Requirements
+globs: ["cmake/**/*.cmake", "**/*.cpp", "**/*.mm", "**/*.h", "**/*.hpp"]
+---
+
+# Build and Validation Guidelines
+
+## CMake Configuration
+
+- All build configurations MUST be in `@cmake/`
+- Use modern CMake practices (target-based configuration)
+- Maintain separate configuration for each platform
+- Document all custom build steps
+
+## Build Requirements
+
+- All code MUST compile without warnings
+- Enable and respect warning levels:
+  - `-Wall -Wextra -Werror` for GCC/Clang
+  - `/W4 /WX` for MSVC
+- Maintain compatibility with:
+  - Latest Xcode for macOS
+  - Visual Studio for Windows
+  - CMake for cross-platform
+
+## Testing Standards
+
+- Unit tests required for all new features
+- Integration tests for platform interfaces
+- Performance benchmarks for critical paths
+- Document test coverage requirements
+
+## Validation Procedures
+
+- Run platform-specific tests before commits
+- Validate cross-platform compatibility
+- Check documentation completeness
+- Verify API compatibility
+
+## Documentation Requirements
+
+- Update README.md for major changes
+- Document build requirements in `@docs/`
+- Maintain up-to-date API documentation
+- Include troubleshooting guides
+
+## Continuous Integration
+
+- Pass all CI/CD pipeline checks
+- Maintain build matrices for platforms
+- Regular validation of cross-platform builds
+- Performance regression testing 
