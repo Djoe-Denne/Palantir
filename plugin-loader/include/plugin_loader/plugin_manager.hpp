@@ -8,8 +8,7 @@
 #include "plugin_loader.hpp"
 #include <filesystem>
 
-namespace interview_cheater {
-namespace plugin {
+namespace interview_cheater::plugin {
 
 class PluginManager {
 public:
@@ -44,13 +43,13 @@ public:
      * @param name Name of the plugin to get
      * @return Pointer to the plugin, nullptr if not found
      */
-    auto getPlugin(const std::string& name) const -> IPlugin*;
+    [[nodiscard]] auto getPlugin(const std::string& name) const -> IPlugin*;
 
     /**
      * @brief Get all loaded plugins
      * @return Vector of pointers to loaded plugins
      */
-    auto getLoadedPlugins() const -> std::vector<IPlugin*>;
+    [[nodiscard]] auto getLoadedPlugins() const -> std::vector<IPlugin*>;
 
     /**
      * @brief Initialize all loaded plugins
@@ -74,5 +73,5 @@ private:
     PluginLoader loader_;
     std::unordered_map<std::string, std::unique_ptr<IPlugin>> plugins_;
 };
-}
-} 
+
+} // namespace interview_cheater::plugin

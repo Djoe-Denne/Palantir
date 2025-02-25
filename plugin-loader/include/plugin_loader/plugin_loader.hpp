@@ -11,8 +11,7 @@
     using LibraryHandle = void*;
 #endif
 
-namespace interview_cheater {
-namespace plugin {
+namespace interview_cheater::plugin {
 
 class PluginLoader {
 public:
@@ -24,22 +23,22 @@ public:
      * @param path Path to the plugin shared library
      * @return Pointer to the loaded plugin, nullptr if loading failed
      */
-    std::unique_ptr<IPlugin> loadPlugin(const std::string& path);
+    [[nodiscard]] auto loadPlugin(const std::string& path) -> std::unique_ptr<IPlugin>;
 
     /**
      * @brief Unload a plugin
      * @param plugin Plugin to unload
      */
-    void unloadPlugin(IPlugin* plugin);
+    auto unloadPlugin(IPlugin* plugin) -> void;
 
 private:
-    LibraryHandle loadLibrary(const std::string& path);
-    void unloadLibrary(LibraryHandle handle);
-    void* getSymbol(LibraryHandle handle, const std::string& symbol);
+    auto loadLibrary(const std::string& path) -> LibraryHandle;
+    auto unloadLibrary(LibraryHandle handle) -> void;
+    auto getSymbol(LibraryHandle handle, const std::string& symbol) -> void*;
 
     LibraryHandle currentHandle_;
     CreatePluginFunc createFunc_;
     DestroyPluginFunc destroyFunc_;
 };
-}
-} 
+
+} // namespace interview_cheater::plugin

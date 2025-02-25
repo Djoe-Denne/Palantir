@@ -1,11 +1,5 @@
 #include "plugin_loader/plugin_loader.hpp"
 
-#ifdef _WIN32
-    #include <windows.h>
-#else
-    #include <dlfcn.h>
-#endif
-
 namespace interview_cheater::plugin {
 
 PluginLoader::PluginLoader() 
@@ -20,7 +14,7 @@ PluginLoader::~PluginLoader() {
     }
 }
 
-std::unique_ptr<IPlugin> PluginLoader::loadPlugin(const std::string& path) {
+auto PluginLoader::loadPlugin(const std::string& path) -> std::unique_ptr<IPlugin> {
     // Unload any previously loaded library
     if (currentHandle_) {
         unloadLibrary(currentHandle_);
@@ -56,34 +50,10 @@ std::unique_ptr<IPlugin> PluginLoader::loadPlugin(const std::string& path) {
     return std::unique_ptr<IPlugin>(plugin);
 }
 
-void PluginLoader::unloadPlugin(IPlugin* plugin) {
+auto PluginLoader::unloadPlugin(IPlugin* plugin) -> void {
     if (plugin && destroyFunc_) {
         destroyFunc_(plugin);
     }
-}
-
-LibraryHandle PluginLoader::loadLibrary(const std::string& path) {
-#ifdef _WIN32
-    return LoadLibraryA(path.c_str());
-#else
-    return dlopen(path.c_str(), RTLD_LAZY);
-#endif
-}
-
-void PluginLoader::unloadLibrary(LibraryHandle handle) {
-#ifdef _WIN32
-    FreeLibrary(handle);
-#else
-    dlclose(handle);
-#endif
-}
-
-void* PluginLoader::getSymbol(LibraryHandle handle, const std::string& symbol) {
-#ifdef _WIN32
-    return reinterpret_cast<void*>(GetProcAddress(handle, symbol.c_str()));
-#else
-    return dlsym(handle, symbol.c_str());
-#endif
 }
 
 } // namespace interview_cheater::plugin 

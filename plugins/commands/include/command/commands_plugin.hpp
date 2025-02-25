@@ -6,10 +6,10 @@ namespace interview_cheater::plugins {
 
 class CommandsPlugin : public plugin::IPlugin {
 public:
-    bool initialize() override;
-    void shutdown() override;
-    std::string getName() const override;
-    std::string getVersion() const override;
+    auto initialize() -> bool override;
+    auto shutdown() -> void override;
+    [[nodiscard]] auto getName() const -> std::string override;
+    [[nodiscard]] auto getVersion() const -> std::string override;
 };
 
 } // namespace interview_cheater::plugins
