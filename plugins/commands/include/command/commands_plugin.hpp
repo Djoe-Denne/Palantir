@@ -1,11 +1,10 @@
 #pragma once
 
-#include "plugin_loader/iplugin.hpp"
+#include "plugin/iplugin.hpp"
 
-namespace interview_cheater {
-namespace plugins {
+namespace interview_cheater::plugins {
 
-class CommandsPlugin : public palantir::plugin::IPlugin {
+class CommandsPlugin : public plugin::IPlugin {
 public:
     bool initialize() override;
     void shutdown() override;
@@ -13,8 +12,7 @@ public:
     std::string getVersion() const override;
 };
 
-} // namespace plugins
-} // namespace interview_cheater
+} // namespace interview_cheater::plugins
 
 // Register the plugin
 IMPLEMENT_PLUGIN(interview_cheater::plugins::CommandsPlugin) 

@@ -3,8 +3,15 @@
 #include <string>
 
 #ifdef _WIN32
+    #ifdef PALANTIR_CORE_EXPORTS
+        #define PALANTIR_CORE_API __declspec(dllexport)
+    #else
+        #define PALANTIR_CORE_API __declspec(dllimport)
+    #endif
+
     #define PLUGIN_API __declspec(dllexport)
 #else
+    #define PALANTIR_CORE_API __attribute__((visibility("default")))
     #define PLUGIN_API __attribute__((visibility("default")))
 #endif
 
@@ -14,7 +21,7 @@ namespace plugin {
 /**
  * @brief Interface that all plugins must implement
  */
-class IPlugin {
+class PALANTIR_CORE_API IPlugin {
 public:
     virtual ~IPlugin() = default;
 

@@ -2,12 +2,25 @@ set(MODULE_NAME "plugin-loader")
 
 # Collect source files
 set(PLUGIN_LOADER_SOURCES
-    ${PROJECT_ROOT}/plugin-loader/src/plugin_loader.cpp
-    ${PROJECT_ROOT}/plugin-loader/src/plugin_manager.cpp
+    ${PROJECT_ROOT}/plugin-loader/src/plugin_loader/plugin_loader.cpp
+    ${PROJECT_ROOT}/plugin-loader/src/plugin_loader/plugin_manager.cpp
 )
 
+if(WIN32)
+    set(PLUGIN_LOADER_SOURCES
+        ${PLUGIN_LOADER_SOURCES}
+        ${PROJECT_ROOT}/plugin-loader/src/platform/windows/plugin_manager.cpp
+        ${PROJECT_ROOT}/plugin-loader/src/platform/windows/plugin_loader.cpp
+    )
+elseif(APPLE)
+    set(PLUGIN_LOADER_SOURCES
+        ${PLUGIN_LOADER_SOURCES}
+        ${PROJECT_ROOT}/plugin-loader/src/platform/macos/plugin_manager.cpp
+        ${PROJECT_ROOT}/plugin-loader/src/platform/macos/plugin_loader.cpp
+    )
+endif()
+
 set(PLUGIN_LOADER_HEADERS
-    ${PROJECT_ROOT}/plugin-loader/include/plugin_loader/iplugin.hpp
     ${PROJECT_ROOT}/plugin-loader/include/plugin_loader/plugin_loader.hpp
     ${PROJECT_ROOT}/plugin-loader/include/plugin_loader/plugin_manager.hpp
 )

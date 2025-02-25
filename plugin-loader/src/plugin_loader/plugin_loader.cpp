@@ -6,8 +6,7 @@
     #include <dlfcn.h>
 #endif
 
-namespace interview_cheater {
-namespace plugin {
+namespace interview_cheater::plugin {
 
 PluginLoader::PluginLoader() 
     : currentHandle_(nullptr)
@@ -87,5 +86,4 @@ void* PluginLoader::getSymbol(LibraryHandle handle, const std::string& symbol) {
 #endif
 }
 
-} // namespace plugin
-} // namespace interview_cheater 
+} // namespace interview_cheater::plugin 

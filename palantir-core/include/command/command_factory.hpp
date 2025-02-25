@@ -36,17 +36,22 @@ public:
 
     /**
      * @brief Register a command with the factory.
-     * @param command Unique pointer to the command to register.
-     * 
-     * Registers a command in the factory's command map using the command's name
-     * as the key. Takes ownership of the provided command.
+     * @param commandName Name of the command to register
+     * @param creator Function to create the command
      */
     auto registerCommand(const std::string& commandName, CommandCreator creator) -> void;
 
     /**
+     * @brief Unregister a command from the factory.
+     * @param commandName Name of the command to unregister
+     * @return true if command was unregistered, false if not found
+     */
+    auto unregisterCommand(const std::string& commandName) -> bool;
+
+    /**
      * @brief Get a command from the factory.
      * @param name The name of the command to get.
-     * @return Const pointer to the command if found, nullptr otherwise.
+     * @return Unique pointer to a new instance of the command if found, nullptr otherwise.
      */
     auto getCommand(const std::string& name) -> std::unique_ptr<ICommand>;
 

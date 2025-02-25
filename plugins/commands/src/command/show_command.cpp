@@ -2,8 +2,7 @@
 #include "window/window_manager.hpp"
 #include "window/iwindow.hpp"
 
-namespace interview_cheater {
-namespace command {
+namespace interview_cheater::command {
 
 ShowCommand::ShowCommand() : app_(*Application::getInstance()) {}  // NOLINT
 
@@ -13,5 +12,4 @@ auto ShowCommand::execute() -> void {
 
 auto ShowCommand::useDebounce() -> bool { return true; }
 
-} // namespace command
-} // namespace interview_cheater 
+} // namespace interview_cheater::command 

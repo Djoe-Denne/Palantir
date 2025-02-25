@@ -14,7 +14,8 @@ This documentation provides comprehensive information about the Interview Cheate
 ### Technical Documentation
 Located in `/docs/technical/`, this section contains detailed information about the application's architecture:
 
-- [Command System](technical/command_system.md): Command pattern implementation, registration, and plugin system
+- [Plugin System](technical/plugin_system.md): Dynamic plugin architecture, lifecycle management, and implementation
+- [Command System](technical/command_system.md): Command pattern implementation and plugin-based command management
 - [Input System](technical/input_system.md): Detailed architecture of the input handling system, including:
   - Component architecture and design principles
   - Input detection and processing

@@ -4,14 +4,17 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
-#include "iplugin.hpp"
+#include "plugin/iplugin.hpp"
 #include "plugin_loader.hpp"
+#include <filesystem>
 
 namespace interview_cheater {
 namespace plugin {
 
 class PluginManager {
 public:
+    const static std::vector<std::string> PLUGIN_EXTENSIONS;
+
     PluginManager();
     ~PluginManager();
 
@@ -20,45 +23,52 @@ public:
      * @param path Path to the plugin shared library
      * @return true if plugin loaded successfully, false otherwise
      */
-    bool loadPlugin(const std::string& path);
+    auto loadPlugin(const std::string& path) -> bool;
 
     /**
      * @brief Load all plugins from a directory
      * @param directory Directory containing plugin shared libraries
      * @return Number of plugins successfully loaded
      */
-    size_t loadPluginsFromDirectory(const std::string& directory);
+    auto loadPluginsFromDirectory(const std::string& directory) -> size_t;
 
     /**
      * @brief Unload a plugin by name
      * @param name Name of the plugin to unload
      * @return true if plugin was unloaded, false if not found
      */
-    bool unloadPlugin(const std::string& name);
+    auto unloadPlugin(const std::string& name) -> bool;
 
     /**
      * @brief Get a plugin by name
      * @param name Name of the plugin to get
      * @return Pointer to the plugin, nullptr if not found
      */
-    IPlugin* getPlugin(const std::string& name) const;
+    auto getPlugin(const std::string& name) const -> IPlugin*;
 
     /**
      * @brief Get all loaded plugins
      * @return Vector of pointers to loaded plugins
      */
-    std::vector<IPlugin*> getLoadedPlugins() const;
+    auto getLoadedPlugins() const -> std::vector<IPlugin*>;
 
     /**
      * @brief Initialize all loaded plugins
      * @return true if all plugins initialized successfully
      */
-    bool initializeAll();
+    auto initializeAll() -> bool;
+
+    /**
+     * @brief Setup all plugins from a directory
+     * @param directory Directory containing plugin shared libraries
+     * @return true if all plugins setup successfully
+     */
+    auto setupFromDirectory(const std::filesystem::path& pluginsDir) -> bool;
 
     /**
      * @brief Shutdown all loaded plugins
      */
-    void shutdownAll();
+    auto shutdownAll() -> void;
 
 private:
     PluginLoader loader_;

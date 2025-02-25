@@ -1,9 +1,9 @@
 #include "plugin_loader/plugin_manager.hpp"
 #include <filesystem>
 #include <algorithm>
+#include <stdexcept>
 
-namespace interview_cheater {
-namespace plugin {
+namespace interview_cheater::plugin {
 
 PluginManager::PluginManager() = default;
 
@@ -11,7 +11,7 @@ PluginManager::~PluginManager() {
     shutdownAll();
 }
 
-bool PluginManager::loadPlugin(const std::string& path) {
+auto PluginManager::loadPlugin(const std::string& path) -> bool {
     auto plugin = loader_.loadPlugin(path);
     if (!plugin) {
         return false;
@@ -27,7 +27,7 @@ bool PluginManager::loadPlugin(const std::string& path) {
     return true;
 }
 
-size_t PluginManager::loadPluginsFromDirectory(const std::string& directory) {
+auto PluginManager::loadPluginsFromDirectory(const std::string& directory) -> size_t {
     size_t loadedCount = 0;
     const std::filesystem::path dir(directory);
 
@@ -41,15 +41,9 @@ size_t PluginManager::loadPluginsFromDirectory(const std::string& directory) {
         }
 
         const auto& path = entry.path();
-#ifdef _WIN32
-        if (path.extension() != ".dll") {
+        if (std::find(PLUGIN_EXTENSIONS.begin(), PLUGIN_EXTENSIONS.end(), path.extension()) == PLUGIN_EXTENSIONS.end()) {
             continue;
         }
-#else
-        if (path.extension() != ".so" && path.extension() != ".dylib") {
-            continue;
-        }
-#endif
 
         if (loadPlugin(path.string())) {
             ++loadedCount;
@@ -59,7 +53,7 @@ size_t PluginManager::loadPluginsFromDirectory(const std::string& directory) {
     return loadedCount;
 }
 
-bool PluginManager::unloadPlugin(const std::string& name) {
+auto PluginManager::unloadPlugin(const std::string& name) -> bool {
     auto it = plugins_.find(name);
     if (it == plugins_.end()) {
         return false;
@@ -71,12 +65,12 @@ bool PluginManager::unloadPlugin(const std::string& name) {
     return true;
 }
 
-IPlugin* PluginManager::getPlugin(const std::string& name) const {
+auto PluginManager::getPlugin(const std::string& name) const -> IPlugin* {
     auto it = plugins_.find(name);
     return (it != plugins_.end()) ? it->second.get() : nullptr;
 }
 
-std::vector<IPlugin*> PluginManager::getLoadedPlugins() const {
+auto PluginManager::getLoadedPlugins() const -> std::vector<IPlugin*> {
     std::vector<IPlugin*> result;
     result.reserve(plugins_.size());
     
@@ -87,7 +81,7 @@ std::vector<IPlugin*> PluginManager::getLoadedPlugins() const {
     return result;
 }
 
-bool PluginManager::initializeAll() {
+auto PluginManager::initializeAll() -> bool {
     bool success = true;
     for (auto& pair : plugins_) {
         if (!pair.second->initialize()) {
@@ -97,7 +91,22 @@ bool PluginManager::initializeAll() {
     return success;
 }
 
-void PluginManager::shutdownAll() {
+auto PluginManager::setupFromDirectory(const std::filesystem::path& pluginsDir) -> bool {
+        // Load all plugins from the plugins directory
+        if (std::filesystem::exists(pluginsDir)) {
+            size_t loadedCount = this->loadPluginsFromDirectory(pluginsDir.string());
+            
+            // Initialize all loaded plugins
+            if (!this->initializeAll()) {
+                throw std::runtime_error("Some plugins failed to initialize");
+            }
+        } else {
+            throw std::runtime_error("Plugins directory not found: " + pluginsDir.string());
+        }
+        return true;
+}
+
+auto PluginManager::shutdownAll() -> void {
     for (auto& pair : plugins_) {
         pair.second->shutdown();
         loader_.unloadPlugin(pair.second.get());
@@ -105,5 +114,4 @@ void PluginManager::shutdownAll() {
     plugins_.clear();
 }
 
-} // namespace plugin
-} // namespace palantir 
+} // namespace interview_cheater::plugin 

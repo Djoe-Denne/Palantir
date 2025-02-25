@@ -14,6 +14,11 @@ set(COMMANDS_PLUGIN_HEADERS
     ${PROJECT_ROOT}/plugins/commands/include/utils/auto_command_register.hpp
 )
 
+set(ALL_SOURCES
+    ${COMMANDS_PLUGIN_SOURCES}
+    ${COMMANDS_PLUGIN_HEADERS}
+)
+
 # Create shared library
 add_library(${MODULE_NAME} SHARED
     ${COMMANDS_PLUGIN_SOURCES}

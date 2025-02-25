@@ -2,7 +2,7 @@
 
 ## Overview
 
-The command system provides a flexible and extensible way to add new commands to the application. It uses a factory pattern combined with automatic registration to make command creation straightforward and maintainable.
+The command system provides a flexible and extensible way to add new commands to the application. It uses a factory pattern combined with a plugin-based architecture to make command creation and management straightforward and maintainable.
 
 ## Architecture
 
@@ -21,13 +21,39 @@ The command system provides a flexible and extensible way to add new commands to
    - Provides instance methods for registering and retrieving commands
    - Thread-safe singleton access
 
-3. `AutoCommandRegister` Utility
-   - Macro-based automatic command registration
-   - Simplifies adding new commands to the system
+3. `CommandsPlugin`
+   - Plugin that registers all built-in commands
+   - Manages command lifecycle through plugin system
+   - Handles registration and unregistration of commands
 
 ## Creating New Commands
 
-### Step 1: Define Command Class
+### Step 1: Create a Plugin
+
+First, create a new plugin to host your commands:
+
+```cpp
+class YourCommandsPlugin final : public plugin::IPlugin {
+public:
+    bool initialize() override {
+        // Register your commands here
+        command::CommandFactory::getInstance().registerCommand("your_command", &createYourCommand);
+        return true;
+    }
+
+    void shutdown() override {
+        // Unregister your commands
+        command::CommandFactory::getInstance().unregisterCommand("your_command");
+    }
+
+    std::string getName() const override { return "Your Commands Plugin"; }
+    std::string getVersion() const override { return "1.0.0"; }
+};
+
+IMPLEMENT_PLUGIN(your::namespace::YourCommandsPlugin)
+```
+
+### Step 2: Define Command Class
 
 Create a new command class that inherits from `ICommand`:
 
@@ -46,22 +72,20 @@ public:
     auto operator=(YourCommand&&) noexcept -> YourCommand& = default;
 
     auto execute() -> void override;
-
     auto useDebounce() -> bool override;
 private:
     // Add any required member variables
 };
 ```
 
-### Step 2: Implement Command
+### Step 3: Implement Command
 
 Create the implementation file:
 
 ```cpp
 #include "command/your_command.hpp"
-#include "utils/auto_command_register.hpp"
 
-namespace interview_cheater::command {
+namespace your::namespace {
 
 YourCommand::YourCommand() {
     // Initialize your command
@@ -76,39 +100,30 @@ auto YourCommand::useDebounce() -> bool {
     return true;
 }
 
-}  // namespace interview_cheater::command
-
-// Register command with a unique name
-REGISTER_COMMAND("your_command_name", your::namespace::, YourCommand)
+}  // namespace your::namespace
 ```
 
-### Step 3: Add to Build System
+### Step 4: Add to Build System
 
-Add your command to `common-source.cmake`:
+Add your plugin to CMake:
 
 ```cmake
-set(COMMAND_SOURCES
-    ${COMMAND_SOURCES}
-    ${PROJECT_ROOT}/src/command/your_command.cpp
+add_library(your-commands-plugin SHARED
+    src/your_commands_plugin.cpp
+    src/your_command.cpp
+    include/your_command.hpp
 )
+
+target_link_libraries(your-commands-plugin PRIVATE palantir-core)
 ```
 
 ## Command Registration
 
-The `REGISTER_COMMAND` macro automatically:
-1. Creates a command factory function
-2. Registers the command with the `CommandFactory`
-3. Ensures registration happens at program startup
-
-Example:
-```cpp
-REGISTER_COMMAND("stop", interview_cheater::command, StopCommand)
-```
-
-This expands to create:
-1. A factory function to create the command
-2. An anonymous namespace to prevent symbol conflicts
-3. A static registration that happens before main()
+Commands are now registered through plugins:
+1. Plugin is loaded at startup
+2. Plugin's `initialize()` registers commands
+3. Commands are available through `CommandFactory`
+4. Plugin's `shutdown()` unregisters commands
 
 ## Using Commands
 
@@ -150,4 +165,5 @@ The `InputFactory` will automatically create appropriate input handlers for regi
 4. Follow the existing command pattern for consistency
 5. Add appropriate error handling in execute()
 6. Keep commands stateless when possible
-7. Use dependency injection for required services 
+7. Group related commands in a single plugin
+8. Handle plugin lifecycle properly 

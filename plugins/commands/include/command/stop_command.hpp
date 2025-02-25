@@ -3,8 +3,7 @@
 #include "command/icommand.hpp"
 #include "Application.hpp"
 
-namespace interview_cheater {
-namespace command {
+namespace interview_cheater::command {
 
 class StopCommand : public ICommand {
 public:
@@ -16,5 +15,4 @@ private:
     Application& app_;
 };
 
-} // namespace command
-} // namespace interview_cheater 
+} // namespace interview_cheater::command 
