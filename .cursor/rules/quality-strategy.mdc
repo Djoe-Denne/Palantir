@@ -1,0 +1,20 @@
+---
+description: 
+globs: 
+---
+## Testing Requirements
+
+- All new features MUST include unit tests using GTest
+- Test both Objective-C++ and C++ interface layers
+- Verify memory management with Instruments
+
+## Documentation
+
+- Document all public APIs in headers using HeaderDoc format
+- Include usage examples for complex implementations
+
+## Build and Validation
+
+- Ensure clean builds with both Xcode and CMake
+- Run macOS-specific tests before committing
+- Verify ARC compatibility where used 

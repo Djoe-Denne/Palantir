@@ -83,7 +83,7 @@ public:
      * Initializes the implementation with references to the managers and sets up
      * the Windows keyboard hook for global input monitoring.
      */
-    explicit Impl(signal::SignalManager& signalManager, window::WindowManager& windowManager)
+    explicit Impl(signal::SignalManager& signalManager, std::shared_ptr<window::WindowManager> windowManager)
         : signalManager_(signalManager), windowManager_(windowManager) {
         DEBUG_LOG("Initializing Windows platform application");
 
@@ -115,7 +115,7 @@ public:
 
         MSG msg;
         BOOL result;
-        this->windowManager_.getFirstWindow()->show();
+        this->windowManager_->getFirstWindow()->show();
 
         // Main message loop
         while ((result = GetMessage(&msg, nullptr, 0, 0)) != 0) {
@@ -164,7 +164,7 @@ public:
 
 private:
     signal::SignalManager& signalManager_;  ///< Reference to the signal manager
-    window::WindowManager& windowManager_;  ///< Reference to the window manager
+    std::shared_ptr<window::WindowManager> windowManager_;  ///< Reference to the window manager
 };
 
 /**

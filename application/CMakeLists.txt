@@ -31,3 +31,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     palantir-core
     plugin-loader
 )
+
+# Enable testing for this component
+#enable_testing()
+#add_subdirectory(tests)

@@ -10,9 +10,8 @@
 
 namespace interview_cheater {
 
-namespace {
-Application* instance_ = nullptr;
-}
+// Initialize static instance
+std::shared_ptr<Application> Application::instance_ = nullptr;
 
 // Implementation class definition
 class Application::ApplicationImpl {
@@ -25,7 +24,8 @@ public:
 
     auto attachSignals() -> void {
         DEBUG_LOG("Attaching signals from configuration");
-        auto signals = signal::SignalFactory::createSignals(*Application::getInstance());
+        auto app = Application::getInstance();
+        auto signals = signal::SignalFactory::createSignals(app);
         for (auto& signal : signals) {
             signal::SignalManager::getInstance().addSignal(std::move(signal));
         }
@@ -37,21 +37,36 @@ private:
     const std::string configPath_;
 };
 
-// Static member functions
-auto Application::getInstancePtr() -> Application*& { return instance_; }
+auto Application::getInstance() -> std::shared_ptr<Application> {
+    return instance_;
+}
 
-auto Application::setInstancePtr(Application* instance) -> void { instance_ = instance; }
+// Static member functions
+auto Application::setInstance(const std::shared_ptr<Application>& instance) -> void { 
+    instance_ = instance; 
+}
 
 // Constructor and destructor
 Application::Application(const std::string& configPath) : pImpl_(std::make_unique<ApplicationImpl>(configPath)) {}
 
+Application::Application() : pImpl_(nullptr) {
+    // We can't use shared_from_this() in constructor as the object isn't fully constructed yet
+    // The instance will be set by setInstance() when getInstance is called
+}
+
 Application::~Application() = default;
 
 // Public interface implementations
-auto Application::getSignalManager() -> signal::SignalManager& { return signal::SignalManager::getInstance(); }
+auto Application::getSignalManager() -> signal::SignalManager& { 
+    return signal::SignalManager::getInstance(); 
+}
 
-auto Application::getWindowManager() -> window::WindowManager& { return window::WindowManager::getInstance(); }
+auto Application::getWindowManager() -> std::shared_ptr<window::WindowManager> { 
+    return window::WindowManager::getInstance(); 
+}
 
-auto Application::attachSignals() -> void { pImpl_->attachSignals(); }
+auto Application::attachSignals() -> void { 
+    pImpl_->attachSignals(); 
+}
 
 }  // namespace interview_cheater

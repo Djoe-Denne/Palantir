@@ -33,4 +33,8 @@ if(WIN32)
     setup_windows_platform_core()
 elseif(APPLE)
     setup_macos_platform_core()
-endif() 
+endif()
+
+# Enable testing for this component
+enable_testing()
+add_subdirectory(tests) 

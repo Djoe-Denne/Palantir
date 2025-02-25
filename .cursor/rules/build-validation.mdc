@@ -1,0 +1,28 @@
+---
+description: 
+globs: 
+---
+
+# Build Validation Rules
+
+## Documentation Awareness
+Cursor must read all `.md` files under `docs/` before answering any request.
+
+## Code Quality
+- All code must be documented and lint-free (ignore error but fix warnings).
+- Follow trailing return type conventions.
+- Concatenate namespaces where possible.
+- Constructors must adhere to `hicpp-special-member-functions`.
+
+## Functional Tag Execution
+When `[functional]` tag is detected:
+1. Configure and build until functional.
+2. Format using CMake:
+   ```
+   cmake --build build --target format
+   ```
+3. Lint the code:
+   ```
+   cmake --build build --target lint
+   ```
+   Ignore errors but fix all warnings.

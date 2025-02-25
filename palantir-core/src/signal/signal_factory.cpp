@@ -13,7 +13,7 @@
 
 namespace interview_cheater::signal {
 
-auto SignalFactory::createSignals(Application& app) -> std::vector<std::unique_ptr<ISignal>> {
+auto SignalFactory::createSignals(const std::shared_ptr<Application>& app) -> std::vector<std::unique_ptr<ISignal>> {
     std::vector<std::unique_ptr<ISignal>> signals;
 
     for (const auto& commandName : input::InputFactory::getConfiguredCommands()) {

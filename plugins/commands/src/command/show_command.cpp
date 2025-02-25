@@ -4,10 +4,15 @@
 
 namespace interview_cheater::command {
 
-ShowCommand::ShowCommand() : app_(*Application::getInstance()) {}  // NOLINT
+ShowCommand::ShowCommand() : app_(Application::getInstance()) {}  // NOLINT
 
 auto ShowCommand::execute() -> void {
-    app_.getWindowManager().getFirstWindow()->show();
+    auto windowManager = app_->getWindowManager();
+    if (auto window = windowManager->getFirstWindow()) {
+        window->show();
+    } else {
+        throw std::runtime_error("No window found");
+    }
 }
 
 auto ShowCommand::useDebounce() -> bool { return true; }

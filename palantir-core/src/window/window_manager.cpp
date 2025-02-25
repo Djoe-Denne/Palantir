@@ -8,6 +8,9 @@
 
 namespace interview_cheater::window {
 
+// Initialize the static instance
+std::shared_ptr<WindowManager> WindowManager::instance_;
+
 class WindowManager::WindowManagerImpl {
 public:
     auto addWindow(std::unique_ptr<IWindow> window) -> void { windows_.push_back(std::move(window)); }
@@ -37,9 +40,16 @@ private:
 };
 
 // Singleton implementation
-WindowManager& WindowManager::getInstance() {
-    static WindowManager instance;
-    return instance;
+auto WindowManager::getInstance() -> std::shared_ptr<WindowManager> {
+    if (!instance_) {
+        // Create a new instance using make_shared
+        instance_ = std::shared_ptr<WindowManager>(new WindowManager());
+    }
+    return instance_;
+}
+
+auto WindowManager::setInstance(const std::shared_ptr<WindowManager>& instance) -> void {
+    instance_ = instance;
 }
 
 // Constructor
@@ -53,7 +63,9 @@ auto WindowManager::addWindow(std::unique_ptr<IWindow> window) -> void { pimpl_-
 
 auto WindowManager::removeWindow(const IWindow* window) -> void { pimpl_->removeWindow(window); }
 
-auto WindowManager::getFirstWindow() const -> IWindow* { return pimpl_->getFirstWindow(); }
+auto WindowManager::getFirstWindow() const -> std::shared_ptr<IWindow> {
+    return std::shared_ptr<IWindow>(pimpl_->getFirstWindow());
+}
 
 auto WindowManager::hasRunningWindows() const -> bool { return pimpl_->hasRunningWindows(); }
 

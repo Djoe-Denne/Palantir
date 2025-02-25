@@ -34,6 +34,9 @@ setup_clang_tools()
 include(platform/windows)
 include(platform/macos)
 
+# Setup Google Test
+include(setup-gtest)
+
 # Add the palantir-core subdirectory
 add_subdirectory(palantir-core)
 

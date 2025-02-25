@@ -54,14 +54,14 @@ public:
 
     /**
      * @brief Create all configured signals for the application.
-     * @param app Reference to the application instance.
+     * @param app Shared pointer to the application instance.
      * @return Vector of unique pointers to created signals.
      *
      * Creates and returns all signals configured for the application.
      * This includes both toggle and stop signals, configured according
      * to the application's settings.
      */
-    static auto createSignals(Application& app) -> std::vector<std::unique_ptr<ISignal>>;
+    static auto createSignals(const std::shared_ptr<Application>& app) -> std::vector<std::unique_ptr<ISignal>>;
 
 };
 

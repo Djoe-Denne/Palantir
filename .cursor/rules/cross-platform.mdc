@@ -1,0 +1,37 @@
+---
+description: 
+globs: 
+---
+
+# Cross-Platform Development Rules
+
+## Platform-Specific Implementations
+- Avoid `#ifdef` usage in `.cpp` files. It is tolerated in `.hpp` files.
+- For platform-specific logic, place implementations under:
+
+```
+src/platform/{platform}/{namespace-path}/{class-name}.cpp
+```
+
+## Cross-Platform Considerations
+
+- Any shared functionality MUST be exposed through the cross-platform interface in `@include/`
+- Document platform-specific behavior in headers using `#ifdef __APPLE__`
+- Maintain ABI compatibility with existing C++ interfaces and PIMPL pattern
+- Surrender PIMPL pointer with :
+```cpp
+#pragma warning(push)
+#pragma warning(disable: 4251)
+    std::unique_ptr<Impl> pimpl_;
+#pragma warning(pop)
+```
+
+## CMake Declarations for New Files
+Declare any new `.cpp` or `.mm` files in:
+
+```
+- cmake/common-source.cmake
+- cmake/platform/{platform}.cmake
+- plugin-loader/CMakeLists.cmake
+- plugins/CMakeLists.txt
+```

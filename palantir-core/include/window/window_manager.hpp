@@ -31,18 +31,20 @@ namespace window {
  * and execute window-related commands. The class supports move semantics
  * but prohibits copying to ensure unique ownership of windows.
  */
-class PALANTIR_CORE_API WindowManager {
+class PALANTIR_CORE_API WindowManager : public std::enable_shared_from_this<WindowManager> {
 public:
     /**
      * @brief Get the singleton instance of the WindowManager.
-     * @return Reference to the WindowManager instance.
+     * @return Shared pointer to the WindowManager instance.
      */
-    static auto getInstance() -> WindowManager&;
+    static auto getInstance() -> std::shared_ptr<WindowManager>;
+
+    static auto setInstance(const std::shared_ptr<WindowManager>& instance) -> void;
 
     /**
      * @brief Destroy the WindowManager object.
      */
-    ~WindowManager();
+    virtual ~WindowManager();
 
     // Delete copy operations
     /** @brief Deleted copy constructor to prevent window duplication. */
@@ -64,7 +66,7 @@ public:
      * of managed windows. The window will be managed by this class for its
      * entire lifecycle.
      */
-    auto addWindow(std::unique_ptr<IWindow> window) -> void;
+    virtual auto addWindow(std::unique_ptr<IWindow> window) -> void;
 
     /**
      * @brief Remove a window from the manager.
@@ -73,7 +75,7 @@ public:
      * Removes the specified window from management and destroys it. The
      * pointer should be one previously added through addWindow.
      */
-    auto removeWindow(const IWindow* window) -> void;
+    virtual auto removeWindow(const IWindow* window) -> void;
 
     /**
      * @brief Get the first window in the collection.
@@ -82,7 +84,7 @@ public:
      * Returns a pointer to the first window in the collection. This is
      * typically used when the application only manages a single window.
      */
-    [[nodiscard]] auto getFirstWindow() const -> IWindow*;
+    [[nodiscard]] virtual auto getFirstWindow() const -> std::shared_ptr<IWindow>;
 
     /**
      * @brief Check if any windows are currently running.
@@ -92,7 +94,7 @@ public:
      * This is typically used to determine if the application should
      * continue processing.
      */
-    [[nodiscard]] auto hasRunningWindows() const -> bool;
+    [[nodiscard]] virtual auto hasRunningWindows() const -> bool;
 
     /**
      * @brief Execute a command on the managed windows.
@@ -101,19 +103,22 @@ public:
      * Takes ownership of the provided command and executes it. The command
      * should be window-related and may affect one or more managed windows.
      */
-    auto executeCommand(std::unique_ptr<interview_cheater::command::ICommand> command) -> void;
+    virtual auto executeCommand(std::unique_ptr<interview_cheater::command::ICommand> command) -> void;
 
-private:
-    // Private constructor for singleton
+protected:
+    // Protected constructor for testing
     WindowManager();
 
+private:
     // Forward declaration of implementation class
     class WindowManagerImpl;
     // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
 #pragma warning(push)
 #pragma warning(disable: 4251)
     std::unique_ptr<WindowManagerImpl> pimpl_;
+    static std::shared_ptr<WindowManager> instance_;
 #pragma warning(pop)
+
 };
 }  // namespace window
 }  // namespace interview_cheater

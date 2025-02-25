@@ -34,26 +34,23 @@ public:
     /**
      * @brief Get the singleton instance of the application.
      * @param configPath Path to the configuration file.
-     * @return Pointer to the application instance.
+     * @return Shared pointer to the application instance.
      *
      * Returns the singleton instance of the application, creating it if
      * necessary. The instance will be platform-specific (Windows or macOS)
      * based on the compilation target.
      */
     template <typename T>
-    static auto getInstance(const std::string& configPath) -> Application* {
-        if (getInstancePtr() == nullptr) {
-            setInstancePtr(new T(configPath));
+    static auto getInstance(const std::string& configPath) -> std::shared_ptr<T> {
+        if (getInstance() == nullptr) {
+            setInstance(std::shared_ptr<T>(new T(configPath)));
         }
-        return getInstancePtr();
+        return std::static_pointer_cast<T>(getInstance());
     }
 
-    static auto getInstance() -> Application* {
-        if (getInstancePtr() == nullptr) {
-            throw std::runtime_error("Application instance not created. Call getInstance<T>(configPath) first.");
-        }
-        return getInstancePtr();
-    }
+    static auto getInstance() -> std::shared_ptr<Application>;
+
+    static auto setInstance(const std::shared_ptr<Application>& instance) -> void;
 
     /**
      * @brief Virtual destructor for proper cleanup.
@@ -108,7 +105,7 @@ public:
      * Returns a reference to the application's window manager, which handles
      * all application windows and their lifecycle.
      */
-    [[nodiscard]] auto getWindowManager() -> class window::WindowManager&;
+    [[nodiscard]] auto getWindowManager() -> std::shared_ptr<class window::WindowManager>;
 
     /**
      * @brief Initialize signals from configuration.
@@ -128,17 +125,19 @@ protected:
      * the application with the specified configuration path.
      */
     explicit Application(const std::string& configPath);
+    Application(); // for testing and mocking
 
 private:
-    static auto getInstancePtr() -> Application*&;
-    static auto setInstancePtr(Application* instance) -> void;
-
     // PIMPL implementation
     class ApplicationImpl;
-    // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
+    // Suppress C4251 warning for this specific line as Impl class is never accessed by client
 #pragma warning(push)
 #pragma warning(disable: 4251)
     std::unique_ptr<ApplicationImpl> pImpl_;
+    /**
+     * @brief The singleton instance.
+     */
+    static std::shared_ptr<Application> instance_;
 #pragma warning(pop)
 };
 

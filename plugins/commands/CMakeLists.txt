@@ -32,16 +32,29 @@ target_include_directories(${MODULE_NAME}
         ${COMMON_INCLUDE_DIRS}
 )
 
+# Add export definition
+target_compile_definitions(${MODULE_NAME} PRIVATE COMMANDS_PLUGIN_EXPORTS)
+
 # Platform specific setup
 if(WIN32)
     target_compile_definitions(${MODULE_NAME} PRIVATE WIN32_LEAN_AND_MEAN NOMINMAX)
 endif()
 
-# Set output directories
+# Set output directories - all outputs go to predictable locations
 set_target_properties(${MODULE_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/plugins"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/plugins"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
+# Add a post-build command to copy the plugin to the plugins directory
+add_custom_command(TARGET ${MODULE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/bin/plugins"
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${MODULE_NAME}> "${CMAKE_BINARY_DIR}/bin/plugins/"
 )
 
 # Link against palantir-core
-target_link_libraries(${MODULE_NAME} PRIVATE palantir-core) 
+target_link_libraries(${MODULE_NAME} PRIVATE palantir-core)
+
+add_subdirectory(tests) 

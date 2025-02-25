@@ -23,7 +23,7 @@ using interview_cheater::plugin::PluginManager;
 auto run_app() -> int {
     try {
         // Create and initialize application
-        auto* app = Application::getInstance<PlatformApplication>("config/shortcuts.ini");
+        auto app = Application::getInstance<PlatformApplication>("config/shortcuts.ini");
 
         // Initialize plugin manager and load plugins
         auto pluginManager = std::make_unique<PluginManager>();
@@ -36,10 +36,10 @@ auto run_app() -> int {
         pluginManager->setupFromDirectory(pluginsDir);
 
         // Create window
-        auto& windowManager = app->getWindowManager();
+        auto windowManager = app->getWindowManager();
         auto window = std::make_unique<OverlayWindow>();
         window->create();
-        windowManager.addWindow(std::move(window));
+        windowManager->addWindow(std::move(window));
 
         // Attach signals from configuration
         app->attachSignals();

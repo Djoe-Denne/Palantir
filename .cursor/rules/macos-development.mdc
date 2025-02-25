@@ -1,0 +1,44 @@
+---
+description: 
+globs: 
+---
+---
+description: macOS Development Guidelines and Best Practices
+globs: ["**/platform/macos/**/*.{mm,cpp,hpp}", "**/platform/macos/**/*.{m,hpp}"]
+---
+
+# MacOS Development Guidelines
+
+## Code Organization
+
+- Project is targeting a plugin architecture with :
+-- palantir-core shared library: that hold everything which not directly related to window management
+-- application
+- All macOS-specific code MUST reside in the `@macos/` directory
+- Use `.mm` extension for Objective-C++ files that mix C++ and Objective-C
+- Use `.m` extension for pure Objective-C files
+- Headers should be placed in `@include/platform/macos` for internal macOS headers
+
+## Apple API Usage Guidelines
+
+- Prefer modern Cocoa APIs over deprecated Carbon APIs where possible
+- When using Carbon APIs, document the reason and any planned migration path
+- Follow Apple's [Memory Management Guidelines](mdc:https:/developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html)
+
+## Testing Requirements
+
+- All new features MUST include unit tests
+- Test both Objective-C++ and C++ interface layers
+- Verify memory management with Instruments
+
+## Documentation
+
+- Document all public APIs in headers using HeaderDoc format
+- Include usage examples for complex implementations
+- Reference relevant Apple documentation where applicable
+
+## Build and Validation
+
+- Ensure clean builds with both Xcode and CMake
+- Run macOS-specific tests before committing
+- Verify ARC compatibility where used 
