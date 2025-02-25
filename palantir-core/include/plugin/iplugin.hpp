@@ -22,7 +22,7 @@ namespace interview_cheater::plugin {
  */
 class PALANTIR_CORE_API IPlugin {
 public:
-    IPlugin() = delete;
+    IPlugin() = default;
     virtual ~IPlugin() = default;
 
     IPlugin(const IPlugin&) = delete;
