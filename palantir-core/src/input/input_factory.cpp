@@ -43,6 +43,7 @@ auto InputFactory::createDefaultConfig(const std::string& configPath) -> void {
 #ifdef _WIN32
                << "toggle = Ctrl+F1    ; Toggle window visibility\n"
                << "stop = Win+/        ; Stop application\n"
+               << "window-screenshot = Ctrl+F2    ; Take screenshot of current window\n"
 #else
                << "toggle = Ctrl+F1    ; Toggle window visibility\n"
                << "stop = Cmd+/        ; Stop application\n"

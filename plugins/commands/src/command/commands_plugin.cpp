@@ -2,6 +2,7 @@
 #include "command/command_factory.hpp"
 #include "command/show_command.hpp"
 #include "command/stop_command.hpp"
+#include "command/window_screenshot_command.hpp"
 
 namespace interview_cheater::plugins {
 
@@ -19,10 +20,15 @@ static auto createStopCommand() -> std::unique_ptr<command::ICommand> {
     return std::make_unique<command::StopCommand>();
 }
 
+static auto createWindowScreenshotCommand() -> std::unique_ptr<command::ICommand> {
+    return std::make_unique<command::WindowScreenshotCommand>();
+}
+
 auto CommandsPlugin::initialize() -> bool {
     // Register commands using function pointers
     command::CommandFactory::getInstance().registerCommand("toggle", &createShowCommand);
     command::CommandFactory::getInstance().registerCommand("stop", &createStopCommand);
+    command::CommandFactory::getInstance().registerCommand("window-screenshot", &createWindowScreenshotCommand);
     return true;
 }
 
@@ -30,6 +36,7 @@ auto CommandsPlugin::shutdown() -> void {
     // Unregister commands
     command::CommandFactory::getInstance().unregisterCommand("toggle");
     command::CommandFactory::getInstance().unregisterCommand("stop");
+    command::CommandFactory::getInstance().unregisterCommand("window-screenshot");
 }
 
 auto CommandsPlugin::getName() const -> std::string {

@@ -5,14 +5,28 @@ set(COMMANDS_PLUGIN_SOURCES
     ${PROJECT_ROOT}/plugins/commands/src/command/commands_plugin.cpp
     ${PROJECT_ROOT}/plugins/commands/src/command/show_command.cpp
     ${PROJECT_ROOT}/plugins/commands/src/command/stop_command.cpp
+    ${PROJECT_ROOT}/plugins/commands/src/command/window_screenshot_command.cpp
 )
 
 set(COMMANDS_PLUGIN_HEADERS
     ${PROJECT_ROOT}/plugins/commands/include/command/commands_plugin.hpp
     ${PROJECT_ROOT}/plugins/commands/include/command/show_command.hpp
     ${PROJECT_ROOT}/plugins/commands/include/command/stop_command.hpp
+    ${PROJECT_ROOT}/plugins/commands/include/command/window_screenshot_command.hpp
     ${PROJECT_ROOT}/plugins/commands/include/plugin_export.hpp
 )
+
+if(WIN32)
+    set(COMMANDS_PLUGIN_SOURCES
+        ${COMMANDS_PLUGIN_SOURCES}
+        ${PROJECT_ROOT}/plugins/commands/src/platform/windows/command/windows_screenshot_command.cpp
+    )
+elseif(APPLE)
+    set(COMMANDS_PLUGIN_SOURCES
+        ${COMMANDS_PLUGIN_SOURCES}
+        ${PROJECT_ROOT}/plugins/commands/src/platform/macos/command/macos_screenshot_command.cpp
+    )
+endif()
 
 set(ALL_SOURCES
     ${COMMANDS_PLUGIN_SOURCES}
