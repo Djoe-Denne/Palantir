@@ -89,7 +89,7 @@ class OverlayWindow::Impl {
         [window_ setLevel:NSFloatingWindowLevel];
         [window_ setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces |
                                        NSWindowCollectionBehaviorFullScreenAuxiliary |
-                                       NSWindowCollectionBehaviorStationary |
+                                       NSWindowCollectionBehaviorStationary];
         // TODO(@OopsOverflow): Implement this
         //                               NSWindowCollectionBehaviorTransient];
         [window_ setSharingType:NSWindowSharingNone];
