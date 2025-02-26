@@ -19,7 +19,9 @@ public:
         commands_[commandName] = creator;
     }
 
-    [[nodiscard]] auto unregisterCommand(const std::string& commandName) -> bool { return commands_.erase(commandName) > 0; }
+    [[nodiscard]] auto unregisterCommand(const std::string& commandName) -> bool {
+        return commands_.erase(commandName) > 0;
+    }
 
     auto getCommand(const std::string& name) -> std::unique_ptr<ICommand> {
         auto maybeCommand = commands_.find(name);

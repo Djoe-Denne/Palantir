@@ -61,9 +61,7 @@ auto WindowManager::addWindow(std::unique_ptr<IWindow> window) -> void { pimpl_-
 
 auto WindowManager::removeWindow(const IWindow* window) -> void { pimpl_->removeWindow(window); }
 
-auto WindowManager::getFirstWindow() const -> std::shared_ptr<IWindow> {
-    return pimpl_->getFirstWindow();
-}
+auto WindowManager::getFirstWindow() const -> std::shared_ptr<IWindow> { return pimpl_->getFirstWindow(); }
 
 auto WindowManager::hasRunningWindows() const -> bool { return pimpl_->hasRunningWindows(); }
 
