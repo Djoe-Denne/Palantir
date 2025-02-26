@@ -42,7 +42,7 @@ public:
      * Virtual destructor to ensure proper cleanup of the implementation.
      * Required for proper PIMPL pattern usage with unique_ptr.
      */
-    ~ConfigurableInput() override = default;
+    ~ConfigurableInput() override;
 
     // Delete copy operations
     /** @brief Deleted copy constructor to prevent resource duplication. */

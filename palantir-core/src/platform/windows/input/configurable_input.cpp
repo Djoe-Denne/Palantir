@@ -90,6 +90,8 @@ private:
     int modifierCode_;  ///< Virtual key code for the modifier key
 };
 
+ConfigurableInput::~ConfigurableInput() = default;
+
 // Public interface implementation
 ConfigurableInput::ConfigurableInput(int keyCode, int modifierCode)
     : pImpl_(std::make_unique<Impl>(keyCode, modifierCode)) {
