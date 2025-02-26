@@ -130,4 +130,16 @@ To add new commands:
 5. Save the file
 6. Restart the application
 
-The application will validate new commands against its internal command registry and automatically create appropriate input handlers for registered commands. 
+The application will validate new commands against its internal command registry and automatically create appropriate input handlers for registered commands.
+
+# Keyboard Shortcuts
+
+This document describes all available keyboard shortcuts in the application.
+
+## Global Shortcuts
+
+| Shortcut | Windows | macOS | Description |
+|----------|---------|-------|-------------|
+| Toggle Window | `Ctrl+F1` | `Ctrl+F1` | Toggle main window visibility |
+| Stop Application | `Win+/` | `Cmd+/` | Stop the application |
+| Window Screenshot | `Ctrl+F2` | `Ctrl+F2` | Take a screenshot of the current window |

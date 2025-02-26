@@ -39,6 +39,15 @@ The Interview Cheater application follows a modular, layered architecture that e
   - Thread-safe command registration
   - Instance-based access
 - **AutoCommandRegister**: Automatic command registration utility
+- **Built-in Commands**:
+  - ShowCommand: Window visibility control
+  - StopCommand: Application termination
+  - WindowScreenshotCommand: Window capture functionality
+    - Platform-specific implementations
+    - Automatic file naming and storage
+    - Thread-safe file operations
+    - GDI+ integration (Windows)
+    - CoreGraphics integration (macOS)
 
 ### 2. Input System
 - **Input Layer**
@@ -107,12 +116,20 @@ Used for object creation and configuration:
 - Global event monitoring
 - Win32 API integration
 - Windows message loop
+- GDI+ based window capture
+  - HBITMAP creation and management
+  - PNG encoding and compression
+  - Memory management with RAII
 
 ### macOS
 - Event monitor system
 - Cocoa framework integration
 - Global and local event handling
 - Accessibility features
+- CoreGraphics window capture
+  - CGWindowListCreateImage usage
+  - Window identification and focus detection
+  - Image format conversion and storage
 
 ## Configuration System
 
@@ -149,12 +166,16 @@ Used for object creation and configuration:
    - Clear command naming
    - Proper error handling
    - Stateless when possible
+   - Platform-specific code isolation
+   - Resource cleanup with RAII
 
 2. **Resource Management**
    - RAII principles
    - Smart pointer usage
    - Proper cleanup in destructors
    - Exception safety
+   - Automatic resource release
+   - Memory leak prevention
 
 3. **Thread Safety**
    - Synchronized access to shared resources
@@ -166,4 +187,56 @@ Used for object creation and configuration:
    - Abstract interfaces
    - Platform-specific implementations
    - Configuration-driven behavior
-   - Portable code practices 
+   - Portable code practices
+
+## Testing Architecture
+
+### 1. Test Organization
+- **Unit Tests**: Component-level testing
+  - Command tests
+  - Plugin tests
+  - Platform-specific implementation tests
+- **Mock Objects**: Test doubles for dependencies
+  - MockApplication
+  - MockWindow
+  - MockWindowManager
+- **Test Fixtures**: Common test setup and teardown
+  - Platform-specific test environments
+  - Resource cleanup
+  - Test data management
+
+### 2. Testing Patterns
+- **Platform-Specific Testing**
+  - Conditional compilation (#ifdef)
+  - Platform-specific test suites
+  - Environment setup and teardown
+  - Resource management testing
+- **Resource Management Tests**
+  - Memory leak detection
+  - Resource cleanup verification
+  - Exception safety testing
+- **Command Testing**
+  - Command execution verification
+  - Error handling scenarios
+  - Platform-specific behavior testing
+
+### 3. Test Infrastructure
+- **Google Test Framework**
+  - Test case organization
+  - Assertion macros
+  - Test fixtures
+  - Test parameterization
+- **Google Mock Framework**
+  - Mock object creation
+  - Behavior verification
+  - Expectation setting
+  - Method call tracking
+
+### 4. Test Best Practices
+- Isolated test cases
+- Platform-specific test separation
+- Comprehensive mock objects
+- Resource cleanup verification
+- Exception handling testing
+- Thread safety verification
+- Performance benchmarking 
