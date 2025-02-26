@@ -12,6 +12,8 @@ add_executable(${TEST_TARGET_NAME}
     command/window_screenshot_command_test.cpp
     command/windows_screenshot_command_test.cpp
     command/macos_screenshot_command_test.cpp
+    command/toggle_transparency_command_test.cpp
+    command/toggle_window_anonymity_command_test.cpp
 )
 
 setup_target_testing(${TEST_TARGET_NAME})

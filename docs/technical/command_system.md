@@ -189,6 +189,19 @@ The application comes with several built-in commands:
 - **Platform-specific**: Uses GDI+ on Windows and CoreGraphics on macOS
 - **Output**: Saves PNG files to `./screenshot` directory with timestamp-based names
 
+### Toggle Transparency Command
+- **ID**: `toggle-transparency`
+- **Purpose**: Toggles the transparency of the main application window between normal (255) and semi-transparent (100)
+- **Implementation**: `ToggleTransparencyCommand` class
+- **Platform-specific**: Uses GetLayeredWindowAttributes on Windows, platform-specific implementation for macOS
+- **Behavior**: Switches between transparency values of 100 and 255
+
+### Toggle Window Anonymity Command
+- **ID**: `toggle-window-anonymity`
+- **Purpose**: Toggles the window anonymity mode
+- **Implementation**: `ToggleWindowAnonymityCommand` class
+- **Behavior**: Switches the window between normal and anonymous modes
+
 ## Command Registration
 
 Commands are registered through the `CommandFactory` singleton:

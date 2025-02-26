@@ -46,7 +46,7 @@ class OverlayWindow::Impl {
 public:
     Impl() = default;
 
-    void create() {
+    auto create() -> void {
         WNDCLASSEXW windowClass = {};
         windowClass.cbSize = sizeof(WNDCLASSEXW);
         windowClass.lpfnWndProc = WindowProc;
@@ -55,17 +55,17 @@ public:
 
         RegisterClassExW(&windowClass);
 
-        hwnd_ = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST, L"InterviewCheaterClass", L"Interview Cheater",
-                                WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT, nullptr,
-                                nullptr, GetModuleHandleW(nullptr), nullptr);
+        hwnd_ = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TOOLWINDOW, L"InterviewCheaterClass",
+                                L"Interview Cheater", WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, WINDOW_WIDTH,
+                                WINDOW_HEIGHT, nullptr, nullptr, GetModuleHandleW(nullptr), nullptr);
 
         if (hwnd_ != nullptr) {
             // Store the this pointer
             SetWindowLongPtr(hwnd_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
             // Make the window semi-transparent
-            SetLayeredWindowAttributes(hwnd_, 0, WINDOW_ALPHA, LWA_ALPHA);
-            SetWindowDisplayAffinity(hwnd_, WDA_EXCLUDEFROMCAPTURE);
+            setTransparency(WINDOW_ALPHA);
+            toggleWindowAnonymity();
 
             // Hide initially
             ShowWindow(hwnd_, SW_HIDE);
@@ -73,7 +73,7 @@ public:
         }
     }
 
-    void show() {
+    auto show() -> void {
         if (hwnd_ == nullptr) {
             return;
         }
@@ -87,7 +87,7 @@ public:
         }
     }
 
-    void update() {  // NOLINT(readability-convert-member-functions-to-static)
+    auto update() -> void {  // NOLINT(readability-convert-member-functions-to-static)
         MSG msg;
         while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE) == TRUE) {
             TranslateMessage(&msg);
@@ -95,7 +95,7 @@ public:
         }
     }
 
-    void close() {
+    auto close() -> void {
         if (hwnd_ != nullptr) {
             DestroyWindow(hwnd_);
             hwnd_ = nullptr;
@@ -103,11 +103,45 @@ public:
         running_ = false;
     }
 
+    auto setTransparency(int transparency) -> void {
+        if (hwnd_ != nullptr && transparency >= 0 && transparency <= 255) {  // NOLINT(readability-magic-numbers)
+            SetLayeredWindowAttributes(hwnd_, 0, transparency, LWA_ALPHA);
+        }
+    }
+
+    auto toggleWindowAnonymity() -> void {
+        if (hwnd_ != nullptr) {
+            // Toggle screen capture exclusion
+            DWORD affinity = WDA_NONE;
+            if (GetWindowDisplayAffinity(hwnd_, &affinity) == TRUE) {
+                if (affinity == WDA_EXCLUDEFROMCAPTURE) {
+                    SetWindowDisplayAffinity(hwnd_, WDA_NONE);
+                } else {
+                    SetWindowDisplayAffinity(hwnd_, WDA_EXCLUDEFROMCAPTURE);
+                }
+            }
+
+            // Toggle window styles
+            LONG_PTR exStyle = GetWindowLongPtrW(hwnd_, GWL_EXSTYLE);
+            if (exStyle & WS_EX_TOOLWINDOW) {
+                // Remove stealth mode
+                exStyle &= ~WS_EX_TOOLWINDOW;
+            } else {
+                // Enable stealth mode
+                exStyle |= WS_EX_TOOLWINDOW;
+            }
+            SetWindowLongPtrW(hwnd_, GWL_EXSTYLE, exStyle);
+
+            // Force window to update its appearance
+            SetWindowPos(hwnd_, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+        }
+    }
+
     [[nodiscard]] auto getNativeHandle() const -> void* { return hwnd_; }
 
     [[nodiscard]] auto isRunning() const -> bool { return running_; }
 
-    void setRunning(bool state) { running_ = state; }
+    auto setRunning(bool state) -> void { running_ = state; }
 
 private:
     HWND hwnd_{nullptr};
@@ -118,12 +152,14 @@ OverlayWindow::OverlayWindow() : pImpl_(std::make_unique<Impl>()) {}
 
 OverlayWindow::~OverlayWindow() = default;
 
-void OverlayWindow::create() { pImpl_->create(); }
-void OverlayWindow::show() { pImpl_->show(); }
-void OverlayWindow::update() { pImpl_->update(); }
-void OverlayWindow::close() { pImpl_->close(); }
+auto OverlayWindow::create() -> void { pImpl_->create(); }
+auto OverlayWindow::show() -> void { pImpl_->show(); }
+auto OverlayWindow::update() -> void { pImpl_->update(); }
+auto OverlayWindow::close() -> void { pImpl_->close(); }
+auto OverlayWindow::setTransparency(int transparency) -> void { pImpl_->setTransparency(transparency); }
+auto OverlayWindow::toggleWindowAnonymity() -> void { pImpl_->toggleWindowAnonymity(); }
 auto OverlayWindow::getNativeHandle() const -> void* { return pImpl_->getNativeHandle(); }
 auto OverlayWindow::isRunning() const -> bool { return pImpl_->isRunning(); }
-void OverlayWindow::setRunning(bool runningState) { pImpl_->setRunning(runningState); }
+auto OverlayWindow::setRunning(bool runningState) -> void { pImpl_->setRunning(runningState); }
 
 }  // namespace interview_cheater::window

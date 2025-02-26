@@ -77,6 +77,17 @@ public:
     virtual auto close() -> void = 0;
 
     /**
+     * @brief Set the window's transparency.
+     * @param transparency The transparency value to set (0-100).
+     */
+    virtual auto setTransparency(int transparency) -> void = 0; 
+
+    /**
+     * @brief Toggle the window's anonymity. Preventing any capture or screen sharing.
+     */
+    virtual auto toggleWindowAnonymity() -> void = 0;
+
+    /**
      * @brief Check if the window is currently running.
      * @return true if the window is running, false otherwise.
      *
