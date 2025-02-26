@@ -1,32 +1,49 @@
 # Interview Cheater Documentation
 
-## Overview
+This directory contains comprehensive documentation for the Interview Cheater application.
 
-This documentation provides comprehensive information about the Interview Cheater application, its architecture, build system, and usage. The documentation is organized into several sections covering both development and user aspects.
+## Features
+
+- **Window Management**: Toggle application window visibility
+- **Screenshot Capture**: Take screenshots of active windows with automatic file naming
+- **Cross-Platform**: Supports both Windows and macOS
+- **Plugin System**: Extensible command system for adding new functionality
 
 ## Documentation Structure
 
-### Build System and Tools
-- [CMake Configuration](technical/cmake-configuration.md): Project structure, build system setup, and configuration
-- [Clang Tools](technical/clang-tools.md): Code formatting, static analysis, and development tools
-- [GitHub Actions](technical/github-actions.md): CI/CD pipeline configuration and workflows
+### User Documentation
+- [Keyboard Shortcuts](user/shortcuts.md): List of all keyboard shortcuts and commands
 
 ### Technical Documentation
-Located in `/docs/technical/`, this section contains detailed information about the application's architecture:
+- [Command System](technical/command_system.md): Details about the command system and available commands
+- [Plugin System](technical/plugin_system.md): Information about the plugin architecture
+- [Input System](technical/input_system.md): Details about keyboard input handling
+- [CMake Configuration](technical/cmake-configuration.md): Build system configuration
+- [GitHub Actions](technical/github-actions.md): CI/CD pipeline configuration
+- [Clang Tools](technical/clang-tools.md): Code formatting and static analysis
 
-- [Plugin System](technical/plugin_system.md): Dynamic plugin architecture, lifecycle management, and implementation
-- [Command System](technical/command_system.md): Command pattern implementation and plugin-based command management
-- [Input System](technical/input_system.md): Detailed architecture of the input handling system, including:
-  - Component architecture and design principles
-  - Input detection and processing
-  - Signal system and command execution
-  - Platform-specific implementations
-  - Configuration management
+## Getting Started
 
-### User Documentation
-Located in `/docs/user/`, this section provides guides for end users:
+1. Review the [Keyboard Shortcuts](user/shortcuts.md) for basic usage
+2. Check the [Command System](technical/command_system.md) for available commands
+3. See [Plugin System](technical/plugin_system.md) for extending functionality
 
-- [Shortcuts Configuration](user/shortcuts.md): How to configure and customize keyboard shortcuts
+## Development
+
+For development-related information, refer to:
+- [CMake Configuration](technical/cmake-configuration.md)
+- [Clang Tools](technical/clang-tools.md)
+- [GitHub Actions](technical/github-actions.md)
+
+## Architecture
+
+The application follows a plugin-based architecture with these key components:
+- Core command system
+- Platform-specific implementations
+- Plugin management
+- Input handling and key mapping
+
+See the [architecture](technical/architecture/) directory for detailed design documents.
 
 ## Quick Start
 

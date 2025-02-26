@@ -166,4 +166,33 @@ The `InputFactory` will automatically create appropriate input handlers for regi
 5. Add appropriate error handling in execute()
 6. Keep commands stateless when possible
 7. Group related commands in a single plugin
-8. Handle plugin lifecycle properly 
+8. Handle plugin lifecycle properly
+
+## Built-in Commands
+
+The application comes with several built-in commands:
+
+### Show Command
+- **ID**: `toggle`
+- **Purpose**: Toggles the visibility of the main application window
+- **Implementation**: `ShowCommand` class
+
+### Stop Command
+- **ID**: `stop`
+- **Purpose**: Stops the application
+- **Implementation**: `StopCommand` class
+
+### Window Screenshot Command
+- **ID**: `window-screenshot`
+- **Purpose**: Captures a screenshot of the currently active window
+- **Implementation**: `WindowScreenshotCommand` class
+- **Platform-specific**: Uses GDI+ on Windows and CoreGraphics on macOS
+- **Output**: Saves PNG files to `./screenshot` directory with timestamp-based names
+
+## Command Registration
+
+Commands are registered through the `CommandFactory` singleton:
+
+```cpp
+command::CommandFactory::getInstance().registerCommand("command-id", &createCommandFunction);
+``` 
