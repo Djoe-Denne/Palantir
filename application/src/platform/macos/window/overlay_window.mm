@@ -85,23 +85,26 @@ class OverlayWindow::Impl {
         [window_ setTitle:@"Interview Notes"];
         [window_ setReleasedWhenClosed:NO];
 
-        // Configure window behavior
+        // Configure window behavior for stealth mode
         [window_ setLevel:NSFloatingWindowLevel];
         [window_ setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces |
                                        NSWindowCollectionBehaviorFullScreenAuxiliary |
                                        NSWindowCollectionBehaviorStationary];
+        // TODO(@OopsOverflow): Implement this
+        //                               NSWindowCollectionBehaviorTransient];
         [window_ setSharingType:NSWindowSharingNone];
 
         DEBUG_LOG("Window behavior configured");
 
-        // Make it a non-activating panel
+        // Configure panel for stealth mode while maintaining functionality
         [(NSPanel*)window_ setBecomesKeyOnlyIfNeeded:YES];
         [(NSPanel*)window_ setFloatingPanel:YES];
         [window_ setHidesOnDeactivate:NO];
         [window_ setMovableByWindowBackground:YES];
         [window_ setAcceptsMouseMovedEvents:YES];
         [window_ setBackgroundColor:[NSColor colorWithCalibratedWhite:K_WINDOW_WHITE alpha:K_WINDOW_ALPHA]];
-        [window_ setBackgroundColor:[NSColor colorWithCalibratedWhite:K_WINDOW_WHITE alpha:K_WINDOW_ALPHA]];
+        // TODO(@OopsOverflow): Implement this
+        // [window_ setTitlebarAppearsTransparent:YES];
 
         DEBUG_LOG("Window panel properties set");
 
@@ -201,9 +204,30 @@ class OverlayWindow::Impl {
 
     // TODO(@OopsOverflow): Implement this
     auto toggleWindowAnonymity() -> void {
-        [window_ setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces |
-                                       NSWindowCollectionBehaviorFullScreenAuxiliary |
-                                       NSWindowCollectionBehaviorStationary];
+        /*if (window_ != nil) {
+            NSWindowCollectionBehavior currentBehavior = [window_ collectionBehavior];
+            if (currentBehavior & NSWindowCollectionBehaviorTransient) {
+                // Switch to normal mode
+                [window_ setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces |
+                                             NSWindowCollectionBehaviorFullScreenAuxiliary |
+                                             NSWindowCollectionBehaviorStationary];
+                [window_ setTitlebarAppearsTransparent:NO];
+                [(NSPanel*)window_ setBecomesKeyOnlyIfNeeded:NO];
+            } else {
+                // Switch to anonymous mode
+                [window_ setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces |
+                                             NSWindowCollectionBehaviorFullScreenAuxiliary |
+                                             NSWindowCollectionBehaviorStationary |
+                                             NSWindowCollectionBehaviorTransient];  // Makes it not appear in Mission
+        Control [window_ setTitlebarAppearsTransparent:YES];
+                [(NSPanel*)window_ setBecomesKeyOnlyIfNeeded:YES];
+            }
+
+            // Ensure window stays movable and resizable in both modes
+            [window_ setMovableByWindowBackground:YES];
+            [window_ setStyleMask:([window_ styleMask] | NSWindowStyleMaskResizable |
+                                  NSWindowStyleMaskTitled | NSWindowStyleMaskClosable)];
+        }*/
     }
 
     [[nodiscard]] auto getNativeHandle() const -> void* { return (__bridge void*)window_; }
