@@ -11,6 +11,12 @@ class COMMANDS_PLUGIN_API StopCommand : public ICommand {
 public:
     StopCommand();
     ~StopCommand() override = default;
+    
+    // Rule of 5
+    StopCommand(const StopCommand&) = delete;
+    StopCommand& operator=(const StopCommand&) = delete;
+    StopCommand(StopCommand&&) = delete;
+    StopCommand& operator=(StopCommand&&) = delete;
     auto execute() -> void override;
     auto useDebounce() -> bool override;
 

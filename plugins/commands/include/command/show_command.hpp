@@ -11,6 +11,12 @@ class COMMANDS_PLUGIN_API ShowCommand : public ICommand {
 public:
     ShowCommand();
     ~ShowCommand() override = default;
+    
+    // Rule of 5
+    ShowCommand(const ShowCommand&) = delete;
+    ShowCommand& operator=(const ShowCommand&) = delete;
+    ShowCommand(ShowCommand&&) = delete;
+    ShowCommand& operator=(ShowCommand&&) = delete;
     auto execute() -> void override;
     auto useDebounce() -> bool override;
 

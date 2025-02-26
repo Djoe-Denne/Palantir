@@ -27,9 +27,9 @@ namespace interview_cheater::input {
  */
 struct ShortcutConfig {
     /** @brief The modifier key name (e.g., "Ctrl", "Alt", "Win", "Cmd"). */
-    std::string modifier{};
+    std::string modifier;
     /** @brief The main key name (e.g., "F1", "/", "A"). */
-    std::string key{};
+    std::string key;
 };
 
 /**

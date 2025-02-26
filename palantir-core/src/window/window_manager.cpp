@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    std::vector<std::shared_ptr<IWindow>> windows_{};
+    std::vector<std::shared_ptr<IWindow>> windows_;
 };
 
 // Singleton implementation

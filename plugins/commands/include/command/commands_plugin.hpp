@@ -7,8 +7,15 @@ namespace interview_cheater::plugins {
 
 class COMMANDS_PLUGIN_API CommandsPlugin : public plugin::IPlugin {
 public:
-
+    CommandsPlugin() = default;
     ~CommandsPlugin() override;
+    
+    // Rule of 5
+    CommandsPlugin(const CommandsPlugin&) = delete;
+    CommandsPlugin& operator=(const CommandsPlugin&) = delete;
+    CommandsPlugin(CommandsPlugin&&) = delete;
+    CommandsPlugin& operator=(CommandsPlugin&&) = delete;
+
     auto initialize() -> bool override;
     auto shutdown() -> void override;
     [[nodiscard]] auto getName() const -> std::string override;
