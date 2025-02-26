@@ -31,7 +31,7 @@ namespace window {
  * and execute window-related commands. The class supports move semantics
  * but prohibits copying to ensure unique ownership of windows.
  */
-class PALANTIR_CORE_API WindowManager : public std::enable_shared_from_this<WindowManager> {
+class PALANTIR_CORE_API WindowManager {
 public:
     /**
      * @brief Get the singleton instance of the WindowManager.

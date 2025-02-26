@@ -37,14 +37,10 @@ private:
     const std::string configPath_;
 };
 
-auto Application::getInstance() -> std::shared_ptr<Application> {
-    return instance_;
-}
+auto Application::getInstance() -> std::shared_ptr<Application> { return instance_; }
 
 // Static member functions
-auto Application::setInstance(const std::shared_ptr<Application>& instance) -> void { 
-    instance_ = instance; 
-}
+auto Application::setInstance(const std::shared_ptr<Application>& instance) -> void { instance_ = instance; }
 
 // Constructor and destructor
 Application::Application(const std::string& configPath) : pImpl_(std::make_unique<ApplicationImpl>(configPath)) {}
@@ -57,16 +53,12 @@ Application::Application() : pImpl_(nullptr) {
 Application::~Application() = default;
 
 // Public interface implementations
-auto Application::getSignalManager() -> signal::SignalManager& { 
-    return signal::SignalManager::getInstance(); 
+auto Application::getSignalManager() -> signal::SignalManager& { return signal::SignalManager::getInstance(); }
+
+auto Application::getWindowManager() -> std::shared_ptr<window::WindowManager> {
+    return window::WindowManager::getInstance();
 }
 
-auto Application::getWindowManager() -> std::shared_ptr<window::WindowManager> { 
-    return window::WindowManager::getInstance(); 
-}
-
-auto Application::attachSignals() -> void { 
-    pImpl_->attachSignals(); 
-}
+auto Application::attachSignals() -> void { pImpl_->attachSignals(); }
 
 }  // namespace interview_cheater

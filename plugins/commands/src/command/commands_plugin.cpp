@@ -5,6 +5,10 @@
 
 namespace interview_cheater::plugins {
 
+CommandsPlugin::~CommandsPlugin() {
+    shutdown();
+}
+
 // Static functions to create commands
 static auto createShowCommand() -> std::unique_ptr<command::ICommand> {
     return std::make_unique<command::ShowCommand>();

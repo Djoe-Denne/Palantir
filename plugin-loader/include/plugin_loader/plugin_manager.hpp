@@ -15,7 +15,7 @@ public:
     const static std::vector<std::string> PLUGIN_EXTENSIONS;
 
     PluginManager() = default;
-    ~PluginManager();
+    ~PluginManager() = default;
 
     PluginManager(const PluginManager&) = delete;
     auto operator=(const PluginManager&) -> PluginManager& = delete;

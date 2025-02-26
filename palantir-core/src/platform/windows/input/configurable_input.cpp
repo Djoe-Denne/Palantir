@@ -96,8 +96,6 @@ ConfigurableInput::ConfigurableInput(int keyCode, int modifierCode)
     DEBUG_LOG("Creating configurable input");
 }
 
-ConfigurableInput::~ConfigurableInput() = default;
-
 auto ConfigurableInput::isKeyPressed(const std::any& event) const -> bool {
     return pImpl_->isKeyPressed(event);
 }

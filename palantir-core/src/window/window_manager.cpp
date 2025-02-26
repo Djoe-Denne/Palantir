@@ -13,7 +13,7 @@ std::shared_ptr<WindowManager> WindowManager::instance_;
 
 class WindowManager::WindowManagerImpl {
 public:
-    auto addWindow(std::unique_ptr<IWindow> window) -> void { windows_.push_back(std::move(window)); }
+    auto addWindow(std::shared_ptr<IWindow> window) -> void { windows_.push_back(window); }
 
     auto removeWindow(const IWindow* window) -> void {
         auto iter =
@@ -23,7 +23,7 @@ public:
         }
     }
 
-    auto getFirstWindow() const -> IWindow* { return windows_.empty() ? nullptr : windows_.front().get(); }
+    auto getFirstWindow() const -> std::shared_ptr<IWindow> { return windows_.empty() ? nullptr : windows_.front(); }
 
     auto hasRunningWindows() const -> bool {
         return std::any_of(windows_.begin(), windows_.end(), [](const auto& window) { return window->isRunning(); });
@@ -36,7 +36,7 @@ public:
     }
 
 private:
-    std::vector<std::unique_ptr<IWindow>> windows_{};
+    std::vector<std::shared_ptr<IWindow>> windows_{};
 };
 
 // Singleton implementation
@@ -48,9 +48,7 @@ auto WindowManager::getInstance() -> std::shared_ptr<WindowManager> {
     return instance_;
 }
 
-auto WindowManager::setInstance(const std::shared_ptr<WindowManager>& instance) -> void {
-    instance_ = instance;
-}
+auto WindowManager::setInstance(const std::shared_ptr<WindowManager>& instance) -> void { instance_ = instance; }
 
 // Constructor
 WindowManager::WindowManager() : pimpl_(std::make_unique<WindowManagerImpl>()) {}
@@ -64,7 +62,7 @@ auto WindowManager::addWindow(std::unique_ptr<IWindow> window) -> void { pimpl_-
 auto WindowManager::removeWindow(const IWindow* window) -> void { pimpl_->removeWindow(window); }
 
 auto WindowManager::getFirstWindow() const -> std::shared_ptr<IWindow> {
-    return std::shared_ptr<IWindow>(pimpl_->getFirstWindow());
+    return pimpl_->getFirstWindow();
 }
 
 auto WindowManager::hasRunningWindows() const -> bool { return pimpl_->hasRunningWindows(); }

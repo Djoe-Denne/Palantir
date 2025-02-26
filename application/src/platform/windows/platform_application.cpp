@@ -163,7 +163,7 @@ public:
     }
 
 private:
-    signal::SignalManager& signalManager_;  ///< Reference to the signal manager
+    signal::SignalManager& signalManager_;                  ///< Reference to the signal manager
     std::shared_ptr<window::WindowManager> windowManager_;  ///< Reference to the window manager
 };
 

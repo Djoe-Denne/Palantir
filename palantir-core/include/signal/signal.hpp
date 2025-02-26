@@ -51,7 +51,9 @@ public:
                     bool useDebounce = false);
 
     /** @brief Default destructor. */
-    ~Signal() override = default;
+    ~Signal() override {
+        command_.release();
+    }
 
     // Delete copy operations
     /** @brief Deleted copy constructor to prevent signal duplication. */

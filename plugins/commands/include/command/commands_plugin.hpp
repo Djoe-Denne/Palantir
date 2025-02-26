@@ -1,21 +1,14 @@
 #pragma once
 
 #include "plugin/iplugin.hpp"
-
-#ifdef _WIN32
-    #ifdef COMMANDS_PLUGIN_EXPORTS
-        #define COMMANDS_PLUGIN_API __declspec(dllexport)
-    #else
-        #define COMMANDS_PLUGIN_API __declspec(dllimport)
-    #endif
-#else
-    #define COMMANDS_PLUGIN_API
-#endif
+#include "plugin_export.hpp"
 
 namespace interview_cheater::plugins {
 
 class COMMANDS_PLUGIN_API CommandsPlugin : public plugin::IPlugin {
 public:
+
+    ~CommandsPlugin() override;
     auto initialize() -> bool override;
     auto shutdown() -> void override;
     [[nodiscard]] auto getName() const -> std::string override;

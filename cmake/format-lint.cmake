@@ -48,15 +48,17 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         # Create a list of include directories and compiler flags
         set(COMPILER_FLAGS
             -std=c++17
-            -I${PROJECT_ROOT}/include
-            -I${PROJECT_ROOT}/include/mode/debug
-            -I${PROJECT_ROOT}/include/mode/release
+            # Main include directories
+            -I${CMAKE_SOURCE_DIR}/palantir-core/include
+            -I${CMAKE_SOURCE_DIR}/palantir-core/include/mode/debug
+            -I${CMAKE_SOURCE_DIR}/palantir-core/include/mode/release
+            -I${CMAKE_SOURCE_DIR}/palantir-core/include/platform/windows
+            -I${CMAKE_SOURCE_DIR}/palantir-core/include/platform/macos
+            -I${CMAKE_SOURCE_DIR}/application/include
+            -I${CMAKE_SOURCE_DIR}/application/include/platform/windows
+            -I${CMAKE_SOURCE_DIR}/application/include/platform/macos
+            -I${CMAKE_SOURCE_DIR}/plugins/commands/include
         )
-        if(WIN32)
-            list(APPEND COMPILER_FLAGS -I${PROJECT_ROOT}/include/platform/windows)
-        elseif(APPLE)
-            list(APPEND COMPILER_FLAGS -I${PROJECT_ROOT}/include/platform/macos)
-        endif()
 
         # Add lint target with compile_commands.json
         add_custom_target(lint
@@ -84,6 +86,7 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
                 --quiet
                 --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
                 --format-style=file
+                --header-filter=^(?!.*googletest).*$
                 --
                 ${COMPILER_FLAGS}
                 > ${CMAKE_BINARY_DIR}/lint-reports/report.txt

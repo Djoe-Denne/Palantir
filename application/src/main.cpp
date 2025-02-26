@@ -46,8 +46,6 @@ auto run_app() -> int {
 
         int result = app->run();
 
-        // Cleanup plugins before exit
-        pluginManager->shutdownAll();
         return result;
 
     } catch (const std::exception& e) {

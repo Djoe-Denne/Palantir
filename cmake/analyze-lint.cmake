@@ -18,8 +18,14 @@ endif()
 # Read the report file
 file(READ "${REPORT_FILE}" REPORT_CONTENT)
 
-# Count warnings using string operations
-string(REGEX MATCHALL "warning:" WARNINGS "${REPORT_CONTENT}")
+# Filter out warnings from CMakeLists.txt and GTest-related files
+string(REGEX REPLACE "[^\n]*CMakeLists\\.txt:[^\n]*\n" "" FILTERED_CONTENT "${REPORT_CONTENT}")
+string(REGEX REPLACE "[^\n]*googletest[^\n]*\n" "" FILTERED_CONTENT "${FILTERED_CONTENT}")
+string(REGEX REPLACE "[^\n]*gtest[^\n]*\n" "" FILTERED_CONTENT "${FILTERED_CONTENT}")
+string(REGEX REPLACE "[^\n]*gmock[^\n]*\n" "" FILTERED_CONTENT "${FILTERED_CONTENT}")
+
+# Count warnings using string operations on filtered content
+string(REGEX MATCHALL "warning:" WARNINGS "${FILTERED_CONTENT}")
 list(LENGTH WARNINGS WARNING_COUNT)
 
 message(STATUS "Found ${WARNING_COUNT} lint warnings")
