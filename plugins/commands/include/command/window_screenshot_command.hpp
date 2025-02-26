@@ -16,12 +16,12 @@ public:
     WindowScreenshotCommand(WindowScreenshotCommand&&) = delete;
     auto operator=(WindowScreenshotCommand&&) -> WindowScreenshotCommand& = delete;
 
-    void execute() override;
-    bool useDebounce() override { return false; }
+    auto execute() -> void override;
+    auto useDebounce() -> bool override { return false; }
 
 private:
-    std::string generateFilePath() const;
-    void captureScreenshot(); // Implemented separately per platform
+    auto generateFilePath() const -> std::string;
+    auto captureScreenshot() -> void; // Implemented separately per platform
 };
 
 } // namespace interview_cheater::command

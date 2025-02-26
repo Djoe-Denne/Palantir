@@ -1,12 +1,13 @@
 #include "command/window_screenshot_command.hpp"
-#include <ApplicationServices/ApplicationServices.h>
-#include <CoreGraphics/CoreGraphics.h>
+//#include <ApplicationServices/ApplicationServices.h>
+//#include <CoreGraphics/CoreGraphics.h>
 #include <iostream>
 
 namespace interview_cheater::command {
 
-void WindowScreenshotCommand::captureScreenshot() {
-    CGWindowID windowID = kCGNullWindowID;
+auto WindowScreenshotCommand::captureScreenshot() -> void {
+    // TODO: Implement macOS screenshot capture @OopsOverflow
+    /*CGWindowID windowID = kCGNullWindowID;
     CFArrayRef windowList = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID);
     CFIndex count = CFArrayGetCount(windowList);
 
@@ -35,7 +36,7 @@ void WindowScreenshotCommand::captureScreenshot() {
     CFRelease(dest);
     CFRelease(url);
     CFRelease(filePath);
-    CGImageRelease(screenshot);
+    CGImageRelease(screenshot);*/
 }
 
 } // namespace interview_cheater::command

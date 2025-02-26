@@ -19,12 +19,12 @@ set(COMMANDS_PLUGIN_HEADERS
 if(WIN32)
     set(COMMANDS_PLUGIN_SOURCES
         ${COMMANDS_PLUGIN_SOURCES}
-        ${PROJECT_ROOT}/plugins/commands/src/platform/windows/command/windows_screenshot_command.cpp
+        ${PROJECT_ROOT}/plugins/commands/src/platform/windows/command/window_screenshot_command.cpp
     )
 elseif(APPLE)
     set(COMMANDS_PLUGIN_SOURCES
         ${COMMANDS_PLUGIN_SOURCES}
-        ${PROJECT_ROOT}/plugins/commands/src/platform/macos/command/macos_screenshot_command.cpp
+        ${PROJECT_ROOT}/plugins/commands/src/platform/macos/command/window_screenshot_command.cpp
     )
 endif()
 

@@ -40,7 +40,7 @@ auto GetEncoderClsid(const WCHAR* format, CLSID* pClsid) -> int {
     return -1;
 }
 
-void WindowScreenshotCommand::captureScreenshot() {
+auto WindowScreenshotCommand::captureScreenshot() -> void {
     using namespace Gdiplus;
 
     HWND hwnd = GetForegroundWindow();
