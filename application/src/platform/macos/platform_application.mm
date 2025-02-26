@@ -32,7 +32,7 @@ class PlatformApplication::Impl {
      * the Cocoa application infrastructure. Also requests accessibility permissions
      * which are required for global event monitoring.
      */
-    explicit Impl(signal::SignalManager& signalManager, window::WindowManager& windowManager)
+    explicit Impl(signal::SignalManager& signalManager, std::shared_ptr<window::WindowManager> windowManager)
         : signalManager_(signalManager), windowManager_(windowManager) {
         DEBUG_LOG("Initializing PlatformApplication");
         [NSApplication sharedApplication];
@@ -80,7 +80,7 @@ class PlatformApplication::Impl {
 
    private:
     signal::SignalManager& signalManager_;  ///< Reference to the signal manager
-    window::WindowManager& windowManager_;  ///< Reference to the window manager
+    std::shared_ptr<window::WindowManager> windowManager_;  ///< Reference to the window manager
 };
 
 PlatformApplication::PlatformApplication(const std::string& configPath)
