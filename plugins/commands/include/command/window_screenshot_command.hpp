@@ -20,7 +20,7 @@ public:
     auto useDebounce() -> bool override { return false; }
 
 private:
-    auto generateFilePath() const -> std::string;
+    [[nodiscard]] auto generateFilePath() const -> std::string;
     auto captureScreenshot() -> void; // Implemented separately per platform
 };
 

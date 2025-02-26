@@ -6,7 +6,7 @@
 namespace interview_cheater::command {
 
 auto WindowScreenshotCommand::captureScreenshot() -> void {
-    // TODO: Implement macOS screenshot capture @OopsOverflow
+    // TODO(@OopsOverflow): Implement macOS screenshot capture
     /*CGWindowID windowID = kCGNullWindowID;
     CFArrayRef windowList = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID);
     CFIndex count = CFArrayGetCount(windowList);
