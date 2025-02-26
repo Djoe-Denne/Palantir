@@ -143,3 +143,5 @@ This document describes all available keyboard shortcuts in the application.
 | Toggle Window | `Ctrl+F1` | `Ctrl+F1` | Toggle main window visibility |
 | Stop Application | `Win+/` | `Cmd+/` | Stop the application |
 | Window Screenshot | `Ctrl+F2` | `Ctrl+F2` | Take a screenshot of the current window |
+| Toggle Transparency | `Ctrl+F3` | `Ctrl+F3` | Toggle window transparency |
+| Toggle Anonymity | `Ctrl+F4` | `Ctrl+F4` | Toggle window anonymity mode |

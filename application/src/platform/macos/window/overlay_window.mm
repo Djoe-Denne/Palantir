@@ -196,6 +196,16 @@ class OverlayWindow::Impl {
         [window_ close];
     }
 
+    // TODO(@OopsOverflow): Implement this
+    auto setTransparency(int transparency) -> void { [window_ setAlphaValue:transparency / 100.0]; }
+
+    // TODO(@OopsOverflow): Implement this
+    auto toggleWindowAnonymity() -> void {
+        [window_ setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces |
+                                       NSWindowCollectionBehaviorFullScreenAuxiliary |
+                                       NSWindowCollectionBehaviorStationary];
+    }
+
     [[nodiscard]] auto getNativeHandle() const -> void* { return (__bridge void*)window_; }
 
     ~Impl() {
@@ -236,6 +246,10 @@ auto OverlayWindow::close() -> void {
     pImpl_->close();
     running_ = false;
 }
+
+auto OverlayWindow::setTransparency(int transparency) -> void { pImpl_->setTransparency(transparency); }
+
+auto OverlayWindow::toggleWindowAnonymity() -> void { pImpl_->toggleWindowAnonymity(); }
 
 [[nodiscard]] auto OverlayWindow::getNativeHandle() const -> void* { return pImpl_->getNativeHandle(); }
 

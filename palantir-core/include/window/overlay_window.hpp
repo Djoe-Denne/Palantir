@@ -24,6 +24,8 @@ public:
     auto show() -> void override;
     auto update() -> void override;
     auto close() -> void override;
+    auto setTransparency(int transparency) -> void override;
+    auto toggleWindowAnonymity() -> void override;
     [[nodiscard]] auto getNativeHandle() const -> void* override;
 
     [[nodiscard]] auto isRunning() const -> bool override;

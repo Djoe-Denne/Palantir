@@ -6,6 +6,8 @@ set(COMMANDS_PLUGIN_SOURCES
     ${PROJECT_ROOT}/plugins/commands/src/command/show_command.cpp
     ${PROJECT_ROOT}/plugins/commands/src/command/stop_command.cpp
     ${PROJECT_ROOT}/plugins/commands/src/command/window_screenshot_command.cpp
+    ${PROJECT_ROOT}/plugins/commands/src/command/toggle_transparency_command.cpp
+    ${PROJECT_ROOT}/plugins/commands/src/command/toggle_window_anonymity_command.cpp
 )
 
 set(COMMANDS_PLUGIN_HEADERS
@@ -13,6 +15,8 @@ set(COMMANDS_PLUGIN_HEADERS
     ${PROJECT_ROOT}/plugins/commands/include/command/show_command.hpp
     ${PROJECT_ROOT}/plugins/commands/include/command/stop_command.hpp
     ${PROJECT_ROOT}/plugins/commands/include/command/window_screenshot_command.hpp
+    ${PROJECT_ROOT}/plugins/commands/include/command/toggle_transparency_command.hpp
+    ${PROJECT_ROOT}/plugins/commands/include/command/toggle_window_anonymity_command.hpp
     ${PROJECT_ROOT}/plugins/commands/include/plugin_export.hpp
 )
 
@@ -20,11 +24,13 @@ if(WIN32)
     set(COMMANDS_PLUGIN_SOURCES
         ${COMMANDS_PLUGIN_SOURCES}
         ${PROJECT_ROOT}/plugins/commands/src/platform/windows/command/window_screenshot_command.cpp
+        ${PROJECT_ROOT}/plugins/commands/src/platform/windows/command/toggle_transparency_command.cpp
     )
 elseif(APPLE)
     set(COMMANDS_PLUGIN_SOURCES
         ${COMMANDS_PLUGIN_SOURCES}
         ${PROJECT_ROOT}/plugins/commands/src/platform/macos/command/window_screenshot_command.cpp
+        ${PROJECT_ROOT}/plugins/commands/src/platform/macos/command/toggle_transparency_command.cpp
     )
 endif()
 

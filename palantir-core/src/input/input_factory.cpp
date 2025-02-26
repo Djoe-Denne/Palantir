@@ -44,6 +44,8 @@ auto InputFactory::createDefaultConfig(const std::string& configPath) -> void {
                << "toggle = Ctrl+F1    ; Toggle window visibility\n"
                << "stop = Win+/        ; Stop application\n"
                << "window-screenshot = Ctrl+F2    ; Take screenshot of current window\n"
+               << "toggle-transparency = Ctrl+F3    ; Toggle window transparency\n"
+               << "toggle-window-anonymity = Ctrl+F4    ; Toggle window anonymity\n"
 #else
                << "toggle = Ctrl+F1    ; Toggle window visibility\n"
                << "stop = Cmd+/        ; Stop application\n"

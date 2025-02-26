@@ -12,6 +12,8 @@ public:
     MOCK_METHOD(void, show, (), (override));
     MOCK_METHOD(void, update, (), (override));
     MOCK_METHOD(void, close, (), (override));
+    MOCK_METHOD(void, setTransparency, (int), (override));
+    MOCK_METHOD(void, toggleWindowAnonymity, (), (override));
     MOCK_METHOD(bool, isRunning, (), (const, override));
     MOCK_METHOD(void, setRunning, (bool), (override));
     MOCK_METHOD(void*, getNativeHandle, (), (const, override));
