@@ -5,6 +5,7 @@
 #include "command/window_screenshot_command.hpp"
 #include "command/toggle_transparency_command.hpp"
 #include "command/toggle_window_anonymity_command.hpp"
+#include "command/clear_screenshot_command.hpp"
 
 namespace interview_cheater::plugins {
 
@@ -34,6 +35,10 @@ static auto createToggleWindowAnonymityCommand() -> std::unique_ptr<command::ICo
     return std::make_unique<command::ToggleWindowAnonymityCommand>();
 }
 
+static auto createClearScreenshotCommand() -> std::unique_ptr<command::ICommand> {
+    return std::make_unique<command::ClearScreenshotCommand>();
+}
+
 auto CommandsPlugin::initialize() -> bool {
     // Register commands using function pointers
     command::CommandFactory::getInstance().registerCommand("toggle", &createShowCommand);
@@ -41,6 +46,7 @@ auto CommandsPlugin::initialize() -> bool {
     command::CommandFactory::getInstance().registerCommand("window-screenshot", &createWindowScreenshotCommand);
     command::CommandFactory::getInstance().registerCommand("toggle-transparency", &createToggleTransparencyCommand);
     command::CommandFactory::getInstance().registerCommand("toggle-window-anonymity", &createToggleWindowAnonymityCommand);
+    command::CommandFactory::getInstance().registerCommand("clear-screenshot", &createClearScreenshotCommand);
     return true;
 }
 
@@ -51,6 +57,7 @@ auto CommandsPlugin::shutdown() -> void {
     command::CommandFactory::getInstance().unregisterCommand("window-screenshot");
     command::CommandFactory::getInstance().unregisterCommand("toggle-transparency");
     command::CommandFactory::getInstance().unregisterCommand("toggle-window-anonymity");
+    command::CommandFactory::getInstance().unregisterCommand("clear-screenshot");
 }
 
 auto CommandsPlugin::getName() const -> std::string {
