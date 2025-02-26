@@ -56,8 +56,9 @@ public:
         RegisterClassExW(&windowClass);
 
         hwnd_ = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TOOLWINDOW, L"InterviewCheaterClass",
-                                L"Interview Cheater", WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, WINDOW_WIDTH,
-                                WINDOW_HEIGHT, nullptr, nullptr, GetModuleHandleW(nullptr), nullptr);
+                                L"Interview Cheater", WS_POPUP | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU, CW_USEDEFAULT,
+                                CW_USEDEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT, nullptr, nullptr, GetModuleHandleW(nullptr),
+                                nullptr);
 
         if (hwnd_ != nullptr) {
             // Store the this pointer
@@ -121,7 +122,7 @@ public:
                 }
             }
 
-            // Toggle window styles
+            // Toggle window styles while preserving resize/move capability
             LONG_PTR exStyle = GetWindowLongPtrW(hwnd_, GWL_EXSTYLE);
             if (exStyle & WS_EX_TOOLWINDOW) {
                 // Remove stealth mode
