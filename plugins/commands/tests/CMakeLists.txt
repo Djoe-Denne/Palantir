@@ -9,6 +9,9 @@ add_executable(${TEST_TARGET_NAME}
     command/commands_plugin_test.cpp
     command/show_command_test.cpp
     command/stop_command_test.cpp
+    command/window_screenshot_command_test.cpp
+    command/windows_screenshot_command_test.cpp
+    command/macos_screenshot_command_test.cpp
 )
 
 setup_target_testing(${TEST_TARGET_NAME})
@@ -27,6 +30,8 @@ target_include_directories(${TEST_TARGET_NAME}
         ${CMAKE_SOURCE_DIR}/plugins/commands/include
         ${CMAKE_SOURCE_DIR}/plugins/commands/tests
         ${CMAKE_SOURCE_DIR}/palantir-core/include
+        ${GTEST_INCLUDE_DIRS}
+        ${GMOCK_INCLUDE_DIRS}
 )
 
 # Let CMake know where to search for the library
@@ -39,7 +44,14 @@ set_target_properties(${TEST_TARGET_NAME} PROPERTIES
     PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
-add_test(NAME ${TEST_TARGET_NAME} 
+# Register test with CTest
+add_test(
+    NAME ${TEST_TARGET_NAME}
     COMMAND ${TEST_TARGET_NAME}
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
+# Set test properties
+set_tests_properties(${TEST_TARGET_NAME} PROPERTIES
+    ENVIRONMENT "PATH=${CMAKE_BINARY_DIR}/bin;$ENV{PATH}"
 ) 
