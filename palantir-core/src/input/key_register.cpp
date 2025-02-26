@@ -12,7 +12,7 @@ class KeyRegisterImpl {
 public:
     std::map<std::string, int> keyMap;
 
-    void registerKey(const std::string& key, int value) { keyMap[utils::StringUtils::toUpper(key)] = value; }
+    auto registerKey(const std::string& key, int value) -> void { keyMap[utils::StringUtils::toUpper(key)] = value; }
 
     [[nodiscard]] auto get(const std::string& key) const -> int {
         try {
@@ -28,19 +28,19 @@ public:
 };
 
 // Constructor and destructor
-KeyRegister::KeyRegister() : pimpl(std::make_unique<KeyRegisterImpl>()) {}
+KeyRegister::KeyRegister() : pimpl_(std::make_unique<KeyRegisterImpl>()) {}
 KeyRegister::~KeyRegister() = default;
 
 // Singleton instance getter
-KeyRegister& KeyRegister::getInstance() {
+auto KeyRegister::getInstance() -> KeyRegister& {
     static KeyRegister instance;
     return instance;
 }
 
 // Public interface implementation
-void KeyRegister::registerKey(const std::string& key, int value) { pimpl->registerKey(key, value); }
+void KeyRegister::registerKey(const std::string& key, int value) { pimpl_->registerKey(key, value); }
 
-auto KeyRegister::get(const std::string& key) const -> int { return pimpl->get(key); }
+auto KeyRegister::get(const std::string& key) const -> int { return pimpl_->get(key); }
 
-auto KeyRegister::hasKey(const std::string& key) const -> bool { return pimpl->hasKey(key); }
+auto KeyRegister::hasKey(const std::string& key) const -> bool { return pimpl_->hasKey(key); }
 }  // namespace interview_cheater::input

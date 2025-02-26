@@ -11,7 +11,7 @@ set(COMMANDS_PLUGIN_HEADERS
     ${PROJECT_ROOT}/plugins/commands/include/command/commands_plugin.hpp
     ${PROJECT_ROOT}/plugins/commands/include/command/show_command.hpp
     ${PROJECT_ROOT}/plugins/commands/include/command/stop_command.hpp
-    ${PROJECT_ROOT}/plugins/commands/include/utils/auto_command_register.hpp
+    ${PROJECT_ROOT}/plugins/commands/include/plugin_export.hpp
 )
 
 set(ALL_SOURCES

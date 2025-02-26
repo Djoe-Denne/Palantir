@@ -5,6 +5,11 @@
 
 namespace interview_cheater::plugins {
 
+CommandsPlugin::~CommandsPlugin() {
+    // Call shutdown directly to avoid virtual dispatch during destruction
+    CommandsPlugin::shutdown();
+}
+
 // Static functions to create commands
 static auto createShowCommand() -> std::unique_ptr<command::ICommand> {
     return std::make_unique<command::ShowCommand>();

@@ -63,10 +63,10 @@ using DestroyPluginFunc = PLUGIN_API void (*)(IPlugin*);
 // Macros to help with plugin implementation
 #define IMPLEMENT_PLUGIN(PluginClass) \
     extern "C" { \
-        PLUGIN_API interview_cheater::plugin::IPlugin* createPlugin() { \
+        PLUGIN_API auto createPlugin() -> interview_cheater::plugin::IPlugin* { \
             return new PluginClass(); \
         } \
-        PLUGIN_API void destroyPlugin(interview_cheater::plugin::IPlugin* plugin) { \
+        PLUGIN_API auto destroyPlugin(interview_cheater::plugin::IPlugin* plugin) -> void { \
             delete plugin; \
         } \
     } 

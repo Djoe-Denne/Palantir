@@ -90,13 +90,13 @@ private:
     int modifierCode_;  ///< Virtual key code for the modifier key
 };
 
+ConfigurableInput::~ConfigurableInput() = default;
+
 // Public interface implementation
 ConfigurableInput::ConfigurableInput(int keyCode, int modifierCode)
     : pImpl_(std::make_unique<Impl>(keyCode, modifierCode)) {
     DEBUG_LOG("Creating configurable input");
 }
-
-ConfigurableInput::~ConfigurableInput() = default;
 
 auto ConfigurableInput::isKeyPressed(const std::any& event) const -> bool {
     return pImpl_->isKeyPressed(event);

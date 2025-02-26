@@ -3,27 +3,28 @@
 #include <memory>
 #include "command/icommand.hpp"
 #include "Application.hpp"
-
-#ifdef _WIN32
-    #ifdef COMMANDS_PLUGIN_EXPORTS
-        #define COMMANDS_PLUGIN_API __declspec(dllexport)
-    #else
-        #define COMMANDS_PLUGIN_API __declspec(dllimport)
-    #endif
-#else
-    #define COMMANDS_PLUGIN_API
-#endif
+#include "plugin_export.hpp"
 
 namespace interview_cheater::command {
 
 class COMMANDS_PLUGIN_API StopCommand : public ICommand {
 public:
     StopCommand();
+    ~StopCommand() override = default;
+    
+    // Rule of 5
+    StopCommand(const StopCommand&) = delete;
+    auto operator=(const StopCommand&) -> StopCommand& = delete;
+    StopCommand(StopCommand&&) = delete;
+    auto operator=(StopCommand&&) -> StopCommand& = delete;
     auto execute() -> void override;
     auto useDebounce() -> bool override;
 
 private:
+#pragma warning(push)
+#pragma warning(disable: 4251)
     std::shared_ptr<Application> app_;
+#pragma warning(pop)
 };
 
 } // namespace interview_cheater::command 

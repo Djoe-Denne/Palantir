@@ -12,6 +12,10 @@ class CommandFactory::CommandFactoryImpl {
 public:
     CommandFactoryImpl() = default;
     ~CommandFactoryImpl() = default;
+    CommandFactoryImpl(const CommandFactoryImpl&) = delete;
+    auto operator=(const CommandFactoryImpl&) -> CommandFactoryImpl& = delete;
+    CommandFactoryImpl(CommandFactoryImpl&&) = delete;
+    auto operator=(CommandFactoryImpl&&) -> CommandFactoryImpl& = delete;
 
     std::unordered_map<std::string, CommandFactory::CommandCreator> commands_;
 
@@ -19,11 +23,13 @@ public:
         commands_[commandName] = creator;
     }
 
-    bool unregisterCommand(const std::string& commandName) { return commands_.erase(commandName) > 0; }
+    [[nodiscard]] auto unregisterCommand(const std::string& commandName) -> bool {
+        return commands_.erase(commandName) > 0;
+    }
 
     auto getCommand(const std::string& name) -> std::unique_ptr<ICommand> {
         auto maybeCommand = commands_.find(name);
-        return maybeCommand != commands_.end() ? maybeCommand->second() : nullptr;
+        return maybeCommand != commands_.end() ? std::move(maybeCommand->second()) : nullptr;
     }
 };
 
@@ -45,7 +51,7 @@ auto CommandFactory::unregisterCommand(const std::string& commandName) -> bool {
 }
 
 auto CommandFactory::getCommand(const std::string& name) -> std::unique_ptr<ICommand> {
-    return pimpl_->getCommand(name);
+    return std::move(pimpl_->getCommand(name));
 }
 
 }  // namespace interview_cheater::command

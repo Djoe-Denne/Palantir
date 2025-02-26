@@ -5,10 +5,6 @@
 
 namespace interview_cheater::plugin {
 
-PluginManager::~PluginManager() {
-    shutdownAll();
-}
-
 auto PluginManager::loadPlugin(const std::string& path) -> bool {
     auto plugin = loader_.loadPlugin(path);
     if (!plugin) {
@@ -109,7 +105,6 @@ auto PluginManager::shutdownAll() -> void {
         pair.second->shutdown();
         loader_.unloadPlugin(pair.second.get());
     }
-    plugins_.clear();
 }
 
 } // namespace interview_cheater::plugin 

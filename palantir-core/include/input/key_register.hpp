@@ -22,23 +22,23 @@ private:
     // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
 #pragma warning(push)
 #pragma warning(disable: 4251)
-    std::unique_ptr<KeyRegisterImpl> pimpl;
+    std::unique_ptr<KeyRegisterImpl> pimpl_;
 #pragma warning(pop)
 
     // Private constructor for singleton
     KeyRegister();
     ~KeyRegister();
+
+public:
     
     // Delete copy and move operations
     KeyRegister(const KeyRegister&) = delete;
-    KeyRegister& operator=(const KeyRegister&) = delete;
+    auto operator=(const KeyRegister&) -> KeyRegister& = delete;
     KeyRegister(KeyRegister&&) = delete;
-    KeyRegister& operator=(KeyRegister&&) = delete;
-
-public:
-    static KeyRegister& getInstance();
+    auto operator=(KeyRegister&&) -> KeyRegister& = delete;
+    static auto getInstance() -> KeyRegister&;
     
-    void registerKey(const std::string& key, int value);
+    auto registerKey(const std::string& key, int value) -> void;
     [[nodiscard]] auto get(const std::string& key) const -> int;
     [[nodiscard]] auto hasKey(const std::string& key) const -> bool;
 };
