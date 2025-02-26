@@ -66,7 +66,7 @@ public:
      * of managed windows. The window will be managed by this class for its
      * entire lifecycle.
      */
-    virtual auto addWindow(std::unique_ptr<IWindow> window) -> void;
+    virtual auto addWindow(const std::shared_ptr<IWindow>& window) -> void;
 
     /**
      * @brief Remove a window from the manager.

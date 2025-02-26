@@ -12,6 +12,10 @@ class CommandFactory::CommandFactoryImpl {
 public:
     CommandFactoryImpl() = default;
     ~CommandFactoryImpl() = default;
+    CommandFactoryImpl(const CommandFactoryImpl&) = delete;
+    auto operator=(const CommandFactoryImpl&) -> CommandFactoryImpl& = delete;
+    CommandFactoryImpl(CommandFactoryImpl&&) = delete;
+    auto operator=(CommandFactoryImpl&&) -> CommandFactoryImpl& = delete;
 
     std::unordered_map<std::string, CommandFactory::CommandCreator> commands_;
 

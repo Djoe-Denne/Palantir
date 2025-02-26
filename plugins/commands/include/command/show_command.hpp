@@ -10,14 +10,15 @@ namespace interview_cheater::command {
 class COMMANDS_PLUGIN_API ShowCommand : public ICommand {
 public:
     ShowCommand();
-    ~ShowCommand() override {
-        app_.reset();
-    }
+    ~ShowCommand() override = default;
     auto execute() -> void override;
     auto useDebounce() -> bool override;
 
 private:
+#pragma warning(push)
+#pragma warning(disable: 4251)
     std::shared_ptr<Application> app_;
+#pragma warning(pop)
 };
 
 } // namespace interview_cheater::command 

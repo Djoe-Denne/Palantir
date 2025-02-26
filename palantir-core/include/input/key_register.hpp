@@ -33,9 +33,9 @@ public:
     
     // Delete copy and move operations
     KeyRegister(const KeyRegister&) = delete;
-    KeyRegister& operator=(const KeyRegister&) = delete;
+    auto operator=(const KeyRegister&) -> KeyRegister& = delete;
     KeyRegister(KeyRegister&&) = delete;
-    KeyRegister& operator=(KeyRegister&&) = delete;
+    auto operator=(KeyRegister&&) -> KeyRegister& = delete;
     static auto getInstance() -> KeyRegister&;
     
     auto registerKey(const std::string& key, int value) -> void;
