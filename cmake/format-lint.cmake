@@ -18,10 +18,22 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
 
     if (ALL_SOURCES)
         # Determine which files to lint
-        set(FILES_TO_LINT ${ALL_SOURCES})
         if (LINT_FILES)
-            set(FILES_TO_LINT ${LINT_FILES})
-            message(STATUS "🔍 Linting specific files: ${LINT_FILES}")
+            # Filter out test files from specified LINT_FILES
+            foreach(SOURCE ${LINT_FILES})
+                if(NOT SOURCE MATCHES ".*/tests/.*")
+                    list(APPEND FILES_TO_LINT ${SOURCE})
+                endif()
+            endforeach()
+            message(STATUS "🔍 Linting specific non-test files: ${FILES_TO_LINT}")
+        else()
+            # Filter out test files from ALL_SOURCES
+            foreach(SOURCE ${ALL_SOURCES})
+                if(NOT SOURCE MATCHES ".*/tests/.*")
+                    list(APPEND FILES_TO_LINT ${SOURCE})
+                endif()
+            endforeach()
+            message(STATUS "🔍 Linting all non-test files")
         endif()
 
         # Add format target

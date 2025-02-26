@@ -14,9 +14,9 @@ public:
     
     // Rule of 5
     ShowCommand(const ShowCommand&) = delete;
-    ShowCommand& operator=(const ShowCommand&) = delete;
+    auto operator=(const ShowCommand&) -> ShowCommand& = delete;
     ShowCommand(ShowCommand&&) = delete;
-    ShowCommand& operator=(ShowCommand&&) = delete;
+    auto operator=(ShowCommand&&) -> ShowCommand& = delete;
     auto execute() -> void override;
     auto useDebounce() -> bool override;
 

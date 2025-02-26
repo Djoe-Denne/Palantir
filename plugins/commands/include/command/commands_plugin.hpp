@@ -12,9 +12,9 @@ public:
     
     // Rule of 5
     CommandsPlugin(const CommandsPlugin&) = delete;
-    CommandsPlugin& operator=(const CommandsPlugin&) = delete;
+    auto operator=(const CommandsPlugin&) -> CommandsPlugin& = delete;
     CommandsPlugin(CommandsPlugin&&) = delete;
-    CommandsPlugin& operator=(CommandsPlugin&&) = delete;
+    auto operator=(CommandsPlugin&&) -> CommandsPlugin& = delete;
 
     auto initialize() -> bool override;
     auto shutdown() -> void override;

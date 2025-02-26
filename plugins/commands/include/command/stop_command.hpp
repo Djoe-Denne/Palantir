@@ -14,9 +14,9 @@ public:
     
     // Rule of 5
     StopCommand(const StopCommand&) = delete;
-    StopCommand& operator=(const StopCommand&) = delete;
+    auto operator=(const StopCommand&) -> StopCommand& = delete;
     StopCommand(StopCommand&&) = delete;
-    StopCommand& operator=(StopCommand&&) = delete;
+    auto operator=(StopCommand&&) -> StopCommand& = delete;
     auto execute() -> void override;
     auto useDebounce() -> bool override;
 

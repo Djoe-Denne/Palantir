@@ -6,7 +6,8 @@
 namespace interview_cheater::plugins {
 
 CommandsPlugin::~CommandsPlugin() {
-    shutdown();
+    // Call shutdown directly to avoid virtual dispatch during destruction
+    CommandsPlugin::shutdown();
 }
 
 // Static functions to create commands
