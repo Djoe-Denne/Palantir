@@ -3,11 +3,16 @@ set(MODULE_NAME "palantir-core")
 
 if(NOT SAURON_SDK_FOUND)
     message(STATUS "System Sauron SDK not found, building from source...")
+    if(GITHUB_TOKEN)
+        set(GIT_REPOSITORY https://${GITHUB_TOKEN}@github.com/Djoe-Denne/Sauron-sdk.git)
+    else()
+        set(GIT_REPOSITORY https://github.com/Djoe-Denne/Sauron-sdk.git)
+    endif()
     # Find or install Sauron SDK
     include(FetchContent)
     FetchContent_Declare(
         SAURON_SDK
-        GIT_REPOSITORY https://github.com/Djoe-Denne/Sauron-sdk.git
+        GIT_REPOSITORY ${GIT_REPOSITORY}
         GIT_BRANCH master
     )
     FetchContent_MakeAvailable(SAURON_SDK)

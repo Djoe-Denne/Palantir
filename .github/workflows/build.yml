@@ -43,6 +43,8 @@ jobs:
     
     # Step 3: Configure CMake in Release mode
     - name: Configure CMake
+      env:
+        GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: |
         if [[ "${{ github.event_name }}" == "pull_request" && "${{ steps.changed-files.outputs.files }}" != "" ]]; then
           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DLINT_FILES="${{ steps.changed-files.outputs.files }}"
@@ -93,6 +95,8 @@ jobs:
     
     # Step 2: Configure CMake in Release mode
     - name: Configure CMake
+      env:
+        GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
     
     # Step 3: Build the project
