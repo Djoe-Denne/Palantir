@@ -1,0 +1,3 @@
+[submodule "palentir-webapp"]
+	path = palentir-webapp
+	url = https://github.com/Djoe-Denne/palentir-webapp.git

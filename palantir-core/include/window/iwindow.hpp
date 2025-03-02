@@ -11,6 +11,7 @@
 #define IWINDOW_HPP
 
 #include <memory>
+#include "core_export.hpp"
 
 namespace interview_cheater::window {
 
@@ -23,7 +24,7 @@ namespace interview_cheater::window {
  * supports move semantics but prohibits copying to ensure unique ownership of
  * window resources.
  */
-class IWindow {
+class PALANTIR_CORE_API IWindow {
 public:
     /** @brief Virtual destructor to ensure proper cleanup of derived classes. */
     virtual ~IWindow() = default;

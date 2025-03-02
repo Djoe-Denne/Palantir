@@ -83,6 +83,7 @@ function(setup_clang_tools)
         # Check for package managers and try to install LLVM
         find_program(CHOCO_EXECUTABLE choco)
         find_program(WINGET_EXECUTABLE winget)
+        find_program(VCPKG_EXECUTABLE vcpkg)
 
         if(CHOCO_EXECUTABLE)
             message(STATUS "Attempting to install LLVM via Chocolatey...")
