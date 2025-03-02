@@ -47,9 +47,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: |
         if [[ "${{ github.event_name }}" == "pull_request" && "${{ steps.changed-files.outputs.files }}" != "" ]]; then
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DLINT_FILES="${{ steps.changed-files.outputs.files }}"
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DLINT_FILES="${{ steps.changed-files.outputs.files }}" -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
         else
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
         fi
     
     # Step 4: Check code formatting
@@ -115,7 +115,7 @@ jobs:
       if: matrix.os == 'windows-latest'
       env:
         GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
     
     # Step 4: Build the project
     - name: Build
