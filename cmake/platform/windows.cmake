@@ -2,7 +2,7 @@ set(WINDOWS_SOURCES
     ${PROJECT_ROOT}/application/src/platform/windows/platform_application.cpp
     ${PROJECT_ROOT}/application/src/platform/windows/window/overlay_window.cpp
     ${PROJECT_ROOT}/application/src/platform/windows/window/overlay_window_impl.cpp
-    ${PROJECT_ROOT}/application/src/platform/windows/window/component/webview/webview2.cpp
+    ${PROJECT_ROOT}/application/src/platform/windows/window/component/webview/webview.cpp
 )
 
 set(COMMON_WINDOWS_SOURCES
@@ -17,7 +17,6 @@ set(ALL_SOURCES
 )
 
 function(setup_windows_platform_common target_name)
-    setup_windows_platform_webview(${target_name})
     # Windows-specific compile definitions
     target_compile_definitions(${target_name} PRIVATE
         UNICODE
@@ -34,6 +33,7 @@ function(setup_windows_platform_common target_name)
 endfunction()
 
 function(setup_windows_platform)    
+    setup_windows_platform_webview(${PROJECT_NAME})
     target_sources(${PROJECT_NAME} PRIVATE 
         ${COMMON_WINDOWS_SOURCES}
         ${WINDOWS_SOURCES}
@@ -126,6 +126,8 @@ function(setup_windows_platform_webview target_name)
         else()
             message(FATAL_ERROR "WebView2 library not found. Expected at: ${WEBVIEW2_LIB_PATH}")
         endif()
+    else()
+        message(STATUS "WebView2 library found at: ${WEBVIEW2_LIB_PATH}")
     endif()
     
     target_link_libraries(${target_name} PRIVATE "${WEBVIEW2_LIB_PATH}")

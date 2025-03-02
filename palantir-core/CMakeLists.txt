@@ -53,7 +53,6 @@ add_library(${MODULE_NAME} SHARED
     ${PROJECT_ROOT}/palantir-core/include/mode/debug/utils/logger.hpp
     ${PROJECT_ROOT}/palantir-core/include/input/key_register.hpp
 )
-setup_windows_platform_webview(${MODULE_NAME})
 target_include_directories(${MODULE_NAME} PUBLIC ${COMMON_INCLUDE_DIRS})
 
 # Link against Sauron SDK

@@ -1,12 +1,15 @@
+#include "window/component/webview/webview.hpp"
+
 #include <WebView2.h>
 #include <WebView2EnvironmentOptions.h>
+#include <objbase.h>
+#include <windows.h>
 #include <wrl.h>
 
 #include <stdexcept>
 #include <string>
 
 #include "utils/logger.hpp"
-#include "window/component/webview/webview.hpp"
 
 using Microsoft::WRL::ComPtr;
 
