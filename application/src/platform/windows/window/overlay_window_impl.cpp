@@ -7,6 +7,7 @@
 #include "window/component/content_manager.hpp"
 #include "window/component/webview/webview.hpp"
 
+
 namespace interview_cheater::window {
 namespace {
 
@@ -18,7 +19,7 @@ constexpr COLORREF SQUARE_COLOR = RGB(255, 0, 0);
 
 }  // namespace
 
-OverlayWindow::Impl::Impl() : contentManager_(new component::ContentManager<component::webview::WebView>()) {}
+OverlayWindow::Impl::Impl() : contentManager_(new component::ContentManager<component::webview::WebView>()) {} // NOLINT
 
 OverlayWindow::Impl::~Impl() {
     if (contentManager_) {
@@ -30,25 +31,25 @@ OverlayWindow::Impl::~Impl() {
     }
 }
 
-LRESULT CALLBACK OverlayWindow::Impl::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK OverlayWindow::Impl::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {  // NOLINT
     Impl* window = nullptr;
 
     if (uMsg == WM_NCCREATE) {
-        auto* create_struct = reinterpret_cast<LPCREATESTRUCT>(lParam);
+        auto* create_struct = reinterpret_cast<LPCREATESTRUCT>(lParam); // NOLINT
         window = static_cast<Impl*>(create_struct->lpCreateParams);
         SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
     } else {
-        window = reinterpret_cast<Impl*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+        window = reinterpret_cast<Impl*>(GetWindowLongPtr(hwnd, GWLP_USERDATA)); // NOLINT
     }
 
-    if (window) {
+    if (window != nullptr) {
         return window->HandleMessage(hwnd, uMsg, wParam, lParam);
     }
 
     return DefWindowProcW(hwnd, uMsg, wParam, lParam);
 }
 
-LRESULT OverlayWindow::Impl::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+LRESULT OverlayWindow::Impl::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {  // NOLINT
     switch (uMsg) {
         case WM_DESTROY:
             PostQuitMessage(0);
@@ -76,10 +77,10 @@ auto OverlayWindow::Impl::create() -> void {
     windowClass.lpfnWndProc = WindowProc;
     windowClass.hInstance = GetModuleHandleW(nullptr);
     windowClass.lpszClassName = L"InterviewCheaterClass";
-    windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    windowClass.hbrBackground = static_cast<HBRUSH>(COLOR_WINDOW + 1);
     windowClass.style = CS_HREDRAW | CS_VREDRAW;
 
-    if (!RegisterClassExW(&windowClass)) {
+    if (RegisterClassExW(&windowClass) == 0) {
         DWORD error = GetLastError();
         DEBUG_LOG("Failed to register window class: %lu", error);
         throw std::runtime_error("Failed to register window class");
@@ -116,7 +117,7 @@ auto OverlayWindow::Impl::create() -> void {
 
         // After WebView2 is initialized, set the window styles
         LONG_PTR exStyle = GetWindowLongPtrW(hwnd_, GWL_EXSTYLE);
-        SetWindowLongPtrW(hwnd_, GWL_EXSTYLE, exStyle | WS_EX_LAYERED | WS_EX_TOOLWINDOW);
+        SetWindowLongPtrW(hwnd_, GWL_EXSTYLE, exStyle | WS_EX_LAYERED | WS_EX_TOOLWINDOW);  // NOLINT
         setTransparency(WINDOW_ALPHA);
 
         toggleWindowAnonymity();
@@ -129,7 +130,7 @@ auto OverlayWindow::Impl::create() -> void {
         DEBUG_LOG("Window initialization completed successfully");
     } catch (const std::exception& e) {
         DEBUG_LOG("Exception during window initialization: %s", e.what());
-        if (hwnd_) {
+        if (hwnd_ != nullptr) {
             DestroyWindow(hwnd_);
             hwnd_ = nullptr;
         }
@@ -171,7 +172,7 @@ auto OverlayWindow::Impl::close() -> void {
 }
 
 auto OverlayWindow::Impl::setTransparency(int transparency) -> void {
-    if (hwnd_ != nullptr && transparency >= 0 && transparency <= 255) {
+    if (hwnd_ != nullptr && transparency >= 0 && transparency <= 255) {  // NOLINT
         SetLayeredWindowAttributes(hwnd_, 0, transparency, LWA_ALPHA);
     }
 }
@@ -201,14 +202,14 @@ auto OverlayWindow::Impl::toggleWindowAnonymity() -> void {
 auto OverlayWindow::Impl::toggleWindowTool(bool isToolWindow) -> void {
     if (hwnd_ != nullptr) {
         LONG_PTR exStyle = GetWindowLongPtrW(hwnd_, GWL_EXSTYLE);
-        if (exStyle & WS_EX_TOOLWINDOW &&
+        if (exStyle & WS_EX_TOOLWINDOW && // NOLINT
             !isToolWindow) {  // If the window is a tool window, remove the tool window flag
             DEBUG_LOG("Removing tool window flag");
-            exStyle &= ~WS_EX_TOOLWINDOW;
-        } else if (!(exStyle & WS_EX_TOOLWINDOW) &&
+            exStyle &= ~WS_EX_TOOLWINDOW; // NOLINT
+        } else if (!(exStyle & WS_EX_TOOLWINDOW) && // NOLINT
                    isToolWindow) {  // If the window is not a tool window, add the tool window flag
             DEBUG_LOG("Adding tool window flag");
-            exStyle |= WS_EX_TOOLWINDOW;
+            exStyle |= WS_EX_TOOLWINDOW; // NOLINT
         }
         DEBUG_LOG("Setting window extended style to:", exStyle);
         SetWindowLongPtrW(hwnd_, GWL_EXSTYLE, exStyle);
@@ -221,3 +222,5 @@ auto OverlayWindow::Impl::isRunning() const -> bool { return running_; }
 
 auto OverlayWindow::Impl::setRunning(bool state) -> void { running_ = state; }
 }  // namespace interview_cheater::window
+
+

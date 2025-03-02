@@ -20,9 +20,9 @@ public:
     virtual ~WebView();
 
     WebView(const WebView&) = delete;
-    WebView& operator=(const WebView&) = delete;
+    auto operator=(const WebView&) -> WebView& = delete;
     WebView(WebView&&) noexcept = delete;
-    WebView& operator=(WebView&&) noexcept = delete;
+    auto operator=(WebView&&) noexcept -> WebView& = delete;
 
     /**
      * @brief Initializes the web view with a native window handle.
@@ -30,7 +30,7 @@ public:
      * @param nativeWindowHandle A pointer to the native window handle.
      * @param initCallback A callback function to be called when the web view is initialized.
      */
-    virtual void initialize(void* nativeWindowHandle, std::function<void()> initCallback = nullptr);
+    virtual void initialize(void* nativeWindowHandle, std::function<void()> initCallback);
 
     /**
      * @brief Loads a URL in the web view.

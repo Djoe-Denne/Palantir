@@ -4,7 +4,7 @@
 
 namespace interview_cheater::window {
 
-OverlayWindow::OverlayWindow() : pImpl_(std::make_unique<Impl>()) {}
+OverlayWindow::OverlayWindow() : pImpl_(std::make_unique<Impl>()) {} // NOLINT
 OverlayWindow::~OverlayWindow() = default;
 
 auto OverlayWindow::create() -> void { pImpl_->create(); }

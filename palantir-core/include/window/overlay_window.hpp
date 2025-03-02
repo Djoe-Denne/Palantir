@@ -12,7 +12,7 @@ namespace interview_cheater::window {
 class PALANTIR_CORE_API OverlayWindow : public IWindow {
 public:
     OverlayWindow();
-    ~OverlayWindow();
+    ~OverlayWindow() override;
 
     // Delete copy operations
     OverlayWindow(const OverlayWindow&) = delete;

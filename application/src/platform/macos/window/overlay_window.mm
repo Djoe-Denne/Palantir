@@ -250,7 +250,7 @@ class OverlayWindow::Impl {
     OverlayWindow* parent_;
 };
 
-OverlayWindow::OverlayWindow() : pImpl_(std::make_unique<Impl>(this)) {}
+OverlayWindow::OverlayWindow() : pImpl_(std::make_unique<Impl>(this)) {} // NOLINT
 OverlayWindow::~OverlayWindow() = default;
 
 auto OverlayWindow::create() -> void {

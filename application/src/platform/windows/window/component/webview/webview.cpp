@@ -23,6 +23,11 @@ public:
     WebViewImpl() = default;
     ~WebViewImpl() { destroy(); }
 
+    WebViewImpl(const WebViewImpl&) = delete;
+    auto operator=(const WebViewImpl&) -> WebViewImpl& = delete;
+    WebViewImpl(WebViewImpl&&) = delete;
+    auto operator=(WebViewImpl&&) -> WebViewImpl& = delete;
+
     HWND hwnd_{nullptr};
     ComPtr<ICoreWebView2> webView_;
     ComPtr<ICoreWebView2Controller> controller_;
@@ -52,13 +57,16 @@ WebView::WebView() : pimpl_(std::make_unique<WebViewImpl>()) {}
 WebView::~WebView() = default;
 
 auto WebView::initialize(void* nativeWindowHandle, std::function<void()> initCallback) -> void {
+    // If initCallback is nullptr, use a no-op function
+    std::function<void()> callback = initCallback ? std::move(initCallback) : [](){};
+    
     pimpl_->hwnd_ = static_cast<HWND>(nativeWindowHandle);
     if (!pimpl_->hwnd_) {
         throw std::runtime_error("Invalid window handle");
     }
 
     // Store the initialization callback
-    pimpl_->initCallback_ = std::move(initCallback);
+    pimpl_->initCallback_ = std::move(callback);
 
     DEBUG_LOG("Starting WebView2 initialization");
 
@@ -71,7 +79,7 @@ auto WebView::initialize(void* nativeWindowHandle, std::function<void()> initCal
     // Set background color to white to ensure visibility
     options->put_AdditionalBrowserArguments(L"--disable-background-timer-throttling");
 
-    HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(
+    HRESULT hResult = CreateCoreWebView2EnvironmentWithOptions(
         nullptr,  // Use default browser installation
         nullptr,  // Use default user data folder
         options.Get(),
@@ -106,18 +114,18 @@ auto WebView::initialize(void* nativeWindowHandle, std::function<void()> initCal
                             pimpl_->controller_ = controller;
 
                             // Get WebView2 from controller
-                            HRESULT hr = controller->get_CoreWebView2(&pimpl_->webView_);
-                            if (FAILED(hr) || !pimpl_->webView_) {
-                                DEBUG_LOG("Failed to get CoreWebView2 from controller: 0x%08x", hr);
-                                return hr;
+                            HRESULT hResult = controller->get_CoreWebView2(&pimpl_->webView_);
+                            if (FAILED(hResult) || !pimpl_->webView_) {
+                                DEBUG_LOG("Failed to get CoreWebView2 from controller: 0x%08x", hResult);
+                                return hResult;
                             }
 
                             DEBUG_LOG("CoreWebView2 obtained successfully");
 
                             // Configure WebView2 settings
                             ComPtr<ICoreWebView2Settings> settings;
-                            hr = pimpl_->webView_->get_Settings(&settings);
-                            if (SUCCEEDED(hr)) {
+                            hResult = pimpl_->webView_->get_Settings(&settings);
+                            if (SUCCEEDED(hResult)) {
                                 settings->put_IsScriptEnabled(TRUE);
                                 settings->put_AreDefaultScriptDialogsEnabled(TRUE);
                                 settings->put_IsWebMessageEnabled(TRUE);
@@ -125,11 +133,11 @@ auto WebView::initialize(void* nativeWindowHandle, std::function<void()> initCal
                                 settings->put_AreDevToolsEnabled(TRUE);
                                 DEBUG_LOG("WebView2 settings configured successfully");
                             } else {
-                                DEBUG_LOG("Failed to configure WebView2 settings: 0x%08x", hr);
+                                DEBUG_LOG("Failed to configure WebView2 settings: 0x%08x", hResult);
                             }
 
                             // Add source changed handler first to track all changes
-                            hr = pimpl_->webView_->add_SourceChanged(
+                            hResult = pimpl_->webView_->add_SourceChanged(
                                 Microsoft::WRL::Callback<ICoreWebView2SourceChangedEventHandler>(
                                     [](ICoreWebView2* sender, ICoreWebView2SourceChangedEventArgs* args) -> HRESULT {
                                         LPWSTR uri;
@@ -141,12 +149,12 @@ auto WebView::initialize(void* nativeWindowHandle, std::function<void()> initCal
                                     .Get(),
                                 &pimpl_->sourceToken_);
 
-                            if (FAILED(hr)) {
-                                DEBUG_LOG("Failed to add source changed handler: 0x%08x", hr);
+                            if (FAILED(hResult)) {
+                                DEBUG_LOG("Failed to add source changed handler: 0x%08x", hResult);
                             }
 
                             // Add navigation completed handler before starting navigation
-                            hr = pimpl_->webView_->add_NavigationCompleted(
+                            hResult = pimpl_->webView_->add_NavigationCompleted(
                                 Microsoft::WRL::Callback<ICoreWebView2NavigationCompletedEventHandler>(
                                     [this](ICoreWebView2* sender,
                                            ICoreWebView2NavigationCompletedEventArgs* args) -> HRESULT {
@@ -201,12 +209,12 @@ auto WebView::initialize(void* nativeWindowHandle, std::function<void()> initCal
                                     .Get(),
                                 &pimpl_->navigationToken_);
 
-                            if (FAILED(hr)) {
-                                DEBUG_LOG("Failed to add navigation completed handler: 0x%08x", hr);
+                            if (FAILED(hResult)) {
+                                DEBUG_LOG("Failed to add navigation completed handler: 0x%08x", hResult);
                             }
 
                             // Set up message handler
-                            hr = pimpl_->webView_->add_WebMessageReceived(
+                            hResult = pimpl_->webView_->add_WebMessageReceived(
                                 Microsoft::WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(
                                     [this](ICoreWebView2* sender,
                                            ICoreWebView2WebMessageReceivedEventArgs* args) -> HRESULT {
@@ -223,8 +231,8 @@ auto WebView::initialize(void* nativeWindowHandle, std::function<void()> initCal
                                     .Get(),
                                 &pimpl_->messageToken_);
 
-                            if (FAILED(hr)) {
-                                DEBUG_LOG("Failed to add message received handler: 0x%08x", hr);
+                            if (FAILED(hResult)) {
+                                DEBUG_LOG("Failed to add message received handler: 0x%08x", hResult);
                             }
 
                             // Show WebView and set initial size
@@ -249,8 +257,8 @@ auto WebView::initialize(void* nativeWindowHandle, std::function<void()> initCal
             })
             .Get());
 
-    if (FAILED(hr)) {
-        DEBUG_LOG("Failed to start WebView2 environment creation: 0x%08x", hr);
+    if (FAILED(hResult)) {
+        DEBUG_LOG("Failed to start WebView2 environment creation: 0x%08x", hResult);
         throw std::runtime_error("Failed to create WebView2 environment");
     }
 
