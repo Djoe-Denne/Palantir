@@ -69,6 +69,14 @@ jobs:
       run: |
         cat ${{github.workspace}}/build/lint-reports/report.txt
         cmake --build ${{github.workspace}}/build --target lint-analyze
+    
+    # Step 7: Upload build folder as artifact
+    - name: Upload Build Folder
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-folder
+        path: ${{github.workspace}}/build
+        retention-days: 1
 
   # Build the project on both platforms
   build:
@@ -82,30 +90,34 @@ jobs:
         include:
           # Windows-specific settings
           - os: windows-latest
-            artifact_name: InterviewCheater-Windows
-            artifact_path: build/Release/InterviewCheater.exe
+            #artifact_name: InterviewCheater-Windows
+            #artifact_path: build/Release/InterviewCheater.exe
           # macOS-specific settings
           - os: macos-latest
-            artifact_name: InterviewCheater-macOS
-            artifact_path: build/InterviewCheater.app
+            #artifact_name: InterviewCheater-macOS
+            #artifact_path: build/InterviewCheater.app
+            use_quality_build: true
     
     steps:
     # Step 1: Check out the repository code
     - uses: actions/checkout@v4
     
-    # Step 2: Configure CMake in Release mode
+    # Step 2: Download build folder artifact for macOS
+    - name: Download Build Folder
+      if: matrix.os == 'macos-latest'
+      uses: actions/download-artifact@v4
+      with:
+        name: build-folder
+        path: ${{github.workspace}}/build
+    
+    # Step 3: Configure CMake in Release mode (Windows only)
     - name: Configure CMake
+      if: matrix.os == 'windows-latest'
       env:
         GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
     
-    # Step 3: Build the project
+    # Step 4: Build the project
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config Release
     
-    # Step 4: Upload the built application as an artifact
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ matrix.artifact_name }}
-        path: ${{ matrix.artifact_path }} 
