@@ -25,6 +25,12 @@ jobs:
     runs-on: macos-latest
     
     steps:
+    - name: Setup SSH Key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
     # Step 1: Check out the repository code with full history for PR comparison
     - uses: actions/checkout@v4
       with:
@@ -99,6 +105,12 @@ jobs:
             use_quality_build: true
     
     steps:
+    - name: Setup SSH Key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
     # Step 1: Check out the repository code
     - uses: actions/checkout@v4
     
