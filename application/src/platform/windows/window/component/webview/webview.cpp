@@ -1,10 +1,13 @@
 #include "window/component/webview/webview.hpp"
 
-#include <WebView2.h>
-#include <WebView2EnvironmentOptions.h>
+// clang-format off
+// order of includes is important
 #include <objbase.h>
 #include <windows.h>
+#include <WebView2.h>
+#include <WebView2EnvironmentOptions.h>
 #include <wrl.h>
+// clang-format on
 
 #include <stdexcept>
 #include <string>
