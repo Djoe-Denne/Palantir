@@ -101,10 +101,6 @@ jobs:
     steps:
     # Step 1: Check out the repository code
     - uses: actions/checkout@v4
-
-    - name: Configure Git for SSH (for CMake FetchContent)
-      run: |
-        git config --global url."git@github.com:".insteadOf "https://github.com/"
     
     # Step 2: Download build folder artifact for macOS
     - name: Download Build Folder
