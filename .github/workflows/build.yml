@@ -70,14 +70,6 @@ jobs:
         cat ${{github.workspace}}/build/lint-reports/report.txt
         cmake --build ${{github.workspace}}/build --target lint-analyze
     
-    # Step 7: Upload build folder as artifact
-    - name: Upload Build Folder
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-folder
-        path: ${{github.workspace}}/build
-        retention-days: 1
-
   # Build the project on both platforms
   build:
     name: Build-${{ matrix.os }}
@@ -102,17 +94,8 @@ jobs:
     # Step 1: Check out the repository code
     - uses: actions/checkout@v4
     
-    # Step 2: Download build folder artifact for macOS
-    - name: Download Build Folder
-      if: matrix.os == 'macos-latest'
-      uses: actions/download-artifact@v4
-      with:
-        name: build-folder
-        path: ${{github.workspace}}/build
-    
     # Step 3: Configure CMake in Release mode (Windows only)
     - name: Configure CMake
-      if: matrix.os == 'windows-latest'
       env:
         GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
