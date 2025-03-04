@@ -22,7 +22,7 @@ jobs:
   # Code quality checks (formatting and linting) - macOS only
   code-quality:
     name: Code Quality
-    runs-on: macos-latest
+    runs-on: windows-latest
     
     steps:
     # Step 1: Check out the repository code with full history for PR comparison
@@ -78,7 +78,7 @@ jobs:
     strategy:
       fail-fast: false  # Don't cancel other platforms if one fails
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [windows-latest] #, macos-latest]  # Macos is to costly for private builds
         include:
           # Windows-specific settings
           - os: windows-latest

@@ -11,7 +11,7 @@ namespace interview_cheater::command {
 
 class COMMANDS_PLUGIN_API SendSauronRequestCommand : public ICommand {
 public:
-    SendSauronRequestCommand(std::string prompt);
+    explicit SendSauronRequestCommand(std::string prompt);
     ~SendSauronRequestCommand() override = default;
 
     SendSauronRequestCommand(const SendSauronRequestCommand&) = delete;

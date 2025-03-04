@@ -9,7 +9,7 @@ namespace interview_cheater::window::component {
 template<typename T>
 class PALANTIR_CORE_API ContentManager : public IContentManager {
 public:
-    ContentManager() : pimpl_(std::make_unique<ContentManagerImpl>()) {}
+    ContentManager() : pimpl_(std::make_unique<ContentManagerImpl>()) {}  // NOLINT
     explicit ContentManager(std::unique_ptr<T> view) : pimpl_(std::make_unique<ContentManagerImpl>(view)) {}
     ~ContentManager() override = default;
 
