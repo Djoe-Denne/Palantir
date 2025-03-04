@@ -16,7 +16,7 @@ The Palantir project is a cross-platform application designed to create an overl
 
 ## File Structure
 ```
-interview-cheater
+palantir
 ├── palantir-core/           # Core library
 ├── plugins/                 # Plugin modules
 │   ├── commands/            # Command implementations
