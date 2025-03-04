@@ -22,7 +22,7 @@ function(copy_curl_libs)
             endif()
         endif()
     else()
-        message(FATAL_ERROR "CURL_BINARY_DIR is not set")
+        message(WARNING "CURL_BINARY_DIR is not set. It can mean that curl is installed on system, so no copy is needed.")
     endif()    
 endfunction(copy_curl_libs)
 
