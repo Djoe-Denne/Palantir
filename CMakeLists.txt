@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 
+option(BUILD_TESTS "Build tests" OFF)
+# Option to control automatic installation
+option(AUTO_INSTALL_MISSING_TOOLS "Automatically try to install missing clang tools via package managers" ON)
+option(MAGIC_DEPS_INSTALL "Try to install missing dependencies via package managers" ON)
+
 # Set policies if needed
 if(POLICY CMP0091)
     cmake_policy(SET CMP0091 NEW)
@@ -51,3 +56,8 @@ add_subdirectory(application)
 
 # Include format-lint after the target is created
 include(format-lint)
+
+include(copy-shared-libs)
+copy_curl_libs()
+copy_sauron_sdk_libs()
+

@@ -12,6 +12,7 @@
 
 #include <any>
 #include <memory>
+#include <core_export.hpp>
 
 namespace interview_cheater::signal {
 // Forward declaration for ISignal
@@ -26,7 +27,7 @@ class ISignal;
  * signal processing, and check signal conditions. The class is implemented
  * as a singleton with PIMPL idiom to prevent C4251 warnings.
  */
-class SignalManager {
+class PALANTIR_CORE_API SignalManager {
 public:
     // Forward declaration of platform-specific implementation
     class Impl;

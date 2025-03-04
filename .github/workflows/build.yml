@@ -22,7 +22,7 @@ jobs:
   # Code quality checks (formatting and linting) - macOS only
   code-quality:
     name: Code Quality
-    runs-on: macos-latest
+    runs-on: windows-latest
     
     steps:
     # Step 1: Check out the repository code with full history for PR comparison
@@ -43,12 +43,17 @@ jobs:
     
     # Step 3: Configure CMake in Release mode
     - name: Configure CMake
+      env:
+        GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: |
-        if [[ "${{ github.event_name }}" == "pull_request" && "${{ steps.changed-files.outputs.files }}" != "" ]]; then
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DLINT_FILES="${{ steps.changed-files.outputs.files }}"
-        else
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
-        fi
+        $buildDir = "${{ github.workspace }}/build"
+        New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
+
+        if ("${{ github.event_name }}" -eq "pull_request" -and "${{ steps.changed-files.outputs.files }}" -ne "") {
+          cmake -B $buildDir -DCMAKE_BUILD_TYPE=Release -DLINT_FILES="${{ steps.changed-files.outputs.files }}" -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
+        } else {
+          cmake -B $buildDir -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
+        }
     
     # Step 4: Check code formatting
     - name: Check Format
@@ -67,7 +72,7 @@ jobs:
       run: |
         cat ${{github.workspace}}/build/lint-reports/report.txt
         cmake --build ${{github.workspace}}/build --target lint-analyze
-
+    
   # Build the project on both platforms
   build:
     name: Build-${{ matrix.os }}
@@ -76,32 +81,29 @@ jobs:
     strategy:
       fail-fast: false  # Don't cancel other platforms if one fails
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [windows-latest] #, macos-latest]  # Macos is to costly for private builds
         include:
           # Windows-specific settings
           - os: windows-latest
-            artifact_name: InterviewCheater-Windows
-            artifact_path: build/Release/InterviewCheater.exe
+            #artifact_name: InterviewCheater-Windows
+            #artifact_path: build/Release/InterviewCheater.exe
           # macOS-specific settings
-          - os: macos-latest
-            artifact_name: InterviewCheater-macOS
-            artifact_path: build/InterviewCheater.app
+          #- os: macos-latest
+            #artifact_name: InterviewCheater-macOS
+            #artifact_path: build/InterviewCheater.app
+            #use_quality_build: true
     
     steps:
     # Step 1: Check out the repository code
     - uses: actions/checkout@v4
     
-    # Step 2: Configure CMake in Release mode
+    # Step 3: Configure CMake in Release mode (Windows only)
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
     
-    # Step 3: Build the project
+    # Step 4: Build the project
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config Release
     
-    # Step 4: Upload the built application as an artifact
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ matrix.artifact_name }}
-        path: ${{ matrix.artifact_path }} 

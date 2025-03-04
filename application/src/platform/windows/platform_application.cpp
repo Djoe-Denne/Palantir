@@ -115,7 +115,6 @@ public:
 
         MSG msg;
         BOOL result;
-        this->windowManager_->getFirstWindow()->show();
 
         // Main message loop
         while ((result = GetMessage(&msg, nullptr, 0, 0)) != 0) {

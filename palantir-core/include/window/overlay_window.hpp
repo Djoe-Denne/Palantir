@@ -2,12 +2,14 @@
 #define OVERLAY_WINDOW_HPP
 
 #include <memory>
-
 #include "window/iwindow.hpp"
+#include "window/component/content_manager.hpp"
+#include "window/component/content_manager_impl.hpp"
+#include "core_export.hpp"
 
 namespace interview_cheater::window {
 
-class OverlayWindow : public IWindow {
+class PALANTIR_CORE_API OverlayWindow : public IWindow {
 public:
     OverlayWindow();
     ~OverlayWindow() override;
@@ -17,8 +19,8 @@ public:
     auto operator=(const OverlayWindow&) -> OverlayWindow& = delete;
 
     // Define move operations
-    OverlayWindow(OverlayWindow&&) noexcept = default;
-    auto operator=(OverlayWindow&&) noexcept -> OverlayWindow& = default;
+    OverlayWindow(OverlayWindow&&) noexcept = delete;
+    auto operator=(OverlayWindow&&) noexcept -> OverlayWindow& = delete;
 
     auto create() -> void override;
     auto show() -> void override;
@@ -31,9 +33,14 @@ public:
     [[nodiscard]] auto isRunning() const -> bool override;
     auto setRunning(bool runningState) -> void override;
 
+    [[nodiscard]] auto getContentManager() const -> std::shared_ptr<component::IContentManager> override;
+
 private:
     class Impl;
+    #pragma warning(push)
+    #pragma warning(disable: 4251)
     std::unique_ptr<Impl> pImpl_;
+    #pragma warning(pop)
     bool running_ = false;
 };
 

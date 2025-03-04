@@ -11,6 +11,8 @@
 #define IWINDOW_HPP
 
 #include <memory>
+#include "core_export.hpp"
+#include "window/component/icontent_manager.hpp"
 
 namespace interview_cheater::window {
 
@@ -23,7 +25,7 @@ namespace interview_cheater::window {
  * supports move semantics but prohibits copying to ensure unique ownership of
  * window resources.
  */
-class IWindow {
+class PALANTIR_CORE_API IWindow {
 public:
     /** @brief Virtual destructor to ensure proper cleanup of derived classes. */
     virtual ~IWindow() = default;
@@ -115,6 +117,11 @@ public:
      */
     [[nodiscard]] virtual auto getNativeHandle() const -> void* = 0;
 
+    /**
+     * @brief Get the window's content.
+     * @return A string representing the window's content.
+     */
+    [[nodiscard]] virtual auto getContentManager() const -> std::shared_ptr<component::IContentManager> = 0;
 protected:
     /** @brief Protected default constructor to prevent direct instantiation. */
     IWindow() = default;

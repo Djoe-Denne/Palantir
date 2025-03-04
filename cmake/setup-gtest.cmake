@@ -1,12 +1,11 @@
 include(FetchContent)
 
-# Option to control automatic GTest installation
-option(AUTO_INSTALL_GTEST "Automatically install Google Test if not found" ON)
-
+# Helper function to setup testing for a target
+function(setup_target_testing TARGET_NAME)
 # First try to find GTest in the system
 find_package(GTest QUIET)
 
-if(NOT GTEST_FOUND AND AUTO_INSTALL_GTEST)
+if(NOT GTEST_FOUND AND MAGIC_DEPS_INSTALL)
     message(STATUS "GTest not found. Setting up GTest via FetchContent...")
     
     set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
@@ -38,8 +37,6 @@ elseif(NOT GTEST_FOUND AND NOT AUTO_INSTALL_GTEST)
     return()
 endif()
 
-# Helper function to setup testing for a target
-function(setup_target_testing TARGET_NAME)
     if(NOT GTEST_FOUND)
         return()
     endif()

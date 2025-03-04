@@ -1,6 +1,4 @@
 function(setup_clang_tools)
-    # Option to control automatic installation
-    option(AUTO_INSTALL_MISSING_TOOLS "Automatically try to install missing clang tools via package managers" ON)
 
     # Allow manual override of clang tool paths via CMake arguments
     set(CLANG_FORMAT_PATH "" CACHE PATH "Manual path to clang-format executable")
@@ -32,7 +30,7 @@ function(setup_clang_tools)
     endif()
 
     # If auto-install is disabled, exit with error
-    if(NOT AUTO_INSTALL_MISSING_TOOLS)
+    if(NOT MAGIC_DEPS_INSTALL)
         message(WARNING "Clang tools not found and AUTO_INSTALL_MISSING_TOOLS is OFF. Please either:")
         message(WARNING "1. Install LLVM manually")
         message(WARNING "2. Add clang tools to your PATH")
@@ -83,6 +81,7 @@ function(setup_clang_tools)
         # Check for package managers and try to install LLVM
         find_program(CHOCO_EXECUTABLE choco)
         find_program(WINGET_EXECUTABLE winget)
+        find_program(VCPKG_EXECUTABLE vcpkg)
 
         if(CHOCO_EXECUTABLE)
             message(STATUS "Attempting to install LLVM via Chocolatey...")
