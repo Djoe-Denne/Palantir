@@ -88,10 +88,10 @@ jobs:
             #artifact_name: InterviewCheater-Windows
             #artifact_path: build/Release/InterviewCheater.exe
           # macOS-specific settings
-          - os: macos-latest
+          #- os: macos-latest
             #artifact_name: InterviewCheater-macOS
             #artifact_path: build/InterviewCheater.app
-            use_quality_build: true
+            #use_quality_build: true
     
     steps:
     # Step 1: Check out the repository code
