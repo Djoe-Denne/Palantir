@@ -1,7 +1,7 @@
 function(install_palantir_deps)
     message(STATUS "Checking or installing palantir dependencies")
     find_package(Sauron-sdk QUIET)
-    if(NOT SAURON_SDK_FOUND AND NOT TARGET sauron_sdk::curl AND MAGIC_DEPS_INSTALL)
+    if((NOT SAURON_SDK_FOUND OR NOT TARGET sauron_sdk::curl) AND MAGIC_DEPS_INSTALL)
     
         # Define the repository URL outside the if statement
         if(GITHUB_TOKEN)
