@@ -58,8 +58,8 @@ WebView::~WebView() = default;
 
 auto WebView::initialize(void* nativeWindowHandle, std::function<void()> initCallback) -> void {
     // If initCallback is nullptr, use a no-op function
-    std::function<void()> callback = initCallback ? std::move(initCallback) : [](){};
-    
+    std::function<void()> callback = initCallback ? std::move(initCallback) : []() {};
+
     pimpl_->hwnd_ = static_cast<HWND>(nativeWindowHandle);
     if (!pimpl_->hwnd_) {
         throw std::runtime_error("Invalid window handle");

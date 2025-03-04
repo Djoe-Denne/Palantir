@@ -7,7 +7,6 @@
 #include "window/component/content_manager.hpp"
 #include "window/component/webview/webview.hpp"
 
-
 namespace interview_cheater::window {
 namespace {
 
@@ -19,7 +18,8 @@ constexpr COLORREF SQUARE_COLOR = RGB(255, 0, 0);
 
 }  // namespace
 
-OverlayWindow::Impl::Impl() : contentManager_(new component::ContentManager<component::webview::WebView>()) {} // NOLINT
+OverlayWindow::Impl::Impl()
+    : contentManager_(new component::ContentManager<component::webview::WebView>()) {}  // NOLINT
 
 OverlayWindow::Impl::~Impl() {
     if (contentManager_) {
@@ -35,11 +35,11 @@ LRESULT CALLBACK OverlayWindow::Impl::WindowProc(HWND hwnd, UINT uMsg, WPARAM wP
     Impl* window = nullptr;
 
     if (uMsg == WM_NCCREATE) {
-        auto* create_struct = reinterpret_cast<LPCREATESTRUCT>(lParam); // NOLINT
+        auto* create_struct = reinterpret_cast<LPCREATESTRUCT>(lParam);  // NOLINT
         window = static_cast<Impl*>(create_struct->lpCreateParams);
         SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
     } else {
-        window = reinterpret_cast<Impl*>(GetWindowLongPtr(hwnd, GWLP_USERDATA)); // NOLINT
+        window = reinterpret_cast<Impl*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));  // NOLINT
     }
 
     if (window != nullptr) {
@@ -202,14 +202,14 @@ auto OverlayWindow::Impl::toggleWindowAnonymity() -> void {
 auto OverlayWindow::Impl::toggleWindowTool(bool isToolWindow) -> void {
     if (hwnd_ != nullptr) {
         LONG_PTR exStyle = GetWindowLongPtrW(hwnd_, GWL_EXSTYLE);
-        if (exStyle & WS_EX_TOOLWINDOW && // NOLINT
-            !isToolWindow) {  // If the window is a tool window, remove the tool window flag
+        if (exStyle & WS_EX_TOOLWINDOW &&  // NOLINT
+            !isToolWindow) {               // If the window is a tool window, remove the tool window flag
             DEBUG_LOG("Removing tool window flag");
-            exStyle &= ~WS_EX_TOOLWINDOW; // NOLINT
-        } else if (!(exStyle & WS_EX_TOOLWINDOW) && // NOLINT
-                   isToolWindow) {  // If the window is not a tool window, add the tool window flag
+            exStyle &= ~WS_EX_TOOLWINDOW;            // NOLINT
+        } else if (!(exStyle & WS_EX_TOOLWINDOW) &&  // NOLINT
+                   isToolWindow) {                   // If the window is not a tool window, add the tool window flag
             DEBUG_LOG("Adding tool window flag");
-            exStyle |= WS_EX_TOOLWINDOW; // NOLINT
+            exStyle |= WS_EX_TOOLWINDOW;  // NOLINT
         }
         DEBUG_LOG("Setting window extended style to:", exStyle);
         SetWindowLongPtrW(hwnd_, GWL_EXSTYLE, exStyle);
@@ -222,7 +222,7 @@ auto OverlayWindow::Impl::isRunning() const -> bool { return running_; }
 
 auto OverlayWindow::Impl::setRunning(bool state) -> void { running_ = state; }
 
-auto OverlayWindow::Impl::getContentManager() const -> std::shared_ptr<component::IContentManager> { return contentManager_; }
+auto OverlayWindow::Impl::getContentManager() const -> std::shared_ptr<component::IContentManager> {
+    return contentManager_;
+}
 }  // namespace interview_cheater::window
-
-

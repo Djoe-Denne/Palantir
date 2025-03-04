@@ -2,10 +2,12 @@
 #define OVERLAY_WINDOW_IMPL_HPP
 
 #include <windows.h>
+
 #include <memory>
-#include "window/overlay_window.hpp"
+
 #include "window/component/content_manager.hpp"
 #include "window/component/webview/webview.hpp"
+#include "window/overlay_window.hpp"
 
 namespace interview_cheater::window {
 
@@ -19,8 +21,8 @@ public:
     Impl(Impl&&) noexcept = delete;
     auto operator=(Impl&&) noexcept -> Impl& = delete;
 
-    static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); // NOLINT
-    LRESULT HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); // NOLINT
+    static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);  // NOLINT
+    LRESULT HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);               // NOLINT
     auto create() -> void;
     auto show() -> void;
     auto update() -> void;
@@ -44,6 +46,6 @@ private:
     std::shared_ptr<component::ContentManager<component::webview::WebView>> contentManager_;
 };
 
-} // namespace interview_cheater::window
+}  // namespace interview_cheater::window
 
-#endif // OVERLAY_WINDOW_IMPL_HPP 
+#endif  // OVERLAY_WINDOW_IMPL_HPP

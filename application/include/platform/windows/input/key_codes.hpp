@@ -21,7 +21,7 @@ namespace interview_cheater::input::KeyCodes {
 static const struct KeyCodeInitializer {
     KeyCodeInitializer() {  // NOLINT
         auto& keyRegister = KeyRegister::getInstance();
-        
+
         // Letters
         keyRegister.registerKey(utils::StringUtils::toUpper("A"), 'A');
         keyRegister.registerKey(utils::StringUtils::toUpper("B"), 'B');
