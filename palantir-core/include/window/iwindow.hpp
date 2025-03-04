@@ -12,6 +12,7 @@
 
 #include <memory>
 #include "core_export.hpp"
+#include "window/component/icontent_manager.hpp"
 
 namespace interview_cheater::window {
 
@@ -116,6 +117,11 @@ public:
      */
     [[nodiscard]] virtual auto getNativeHandle() const -> void* = 0;
 
+    /**
+     * @brief Get the window's content.
+     * @return A string representing the window's content.
+     */
+    [[nodiscard]] virtual auto getContentManager() const -> std::shared_ptr<component::IContentManager> = 0;
 protected:
     /** @brief Protected default constructor to prevent direct instantiation. */
     IWindow() = default;

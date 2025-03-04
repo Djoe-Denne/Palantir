@@ -77,7 +77,7 @@ auto OverlayWindow::Impl::create() -> void {
     windowClass.lpfnWndProc = WindowProc;
     windowClass.hInstance = GetModuleHandleW(nullptr);
     windowClass.lpszClassName = L"InterviewCheaterClass";
-    windowClass.hbrBackground = static_cast<HBRUSH>(COLOR_WINDOW + 1);
+    windowClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
     windowClass.style = CS_HREDRAW | CS_VREDRAW;
 
     if (RegisterClassExW(&windowClass) == 0) {
@@ -221,6 +221,8 @@ auto OverlayWindow::Impl::getNativeHandle() const -> void* { return hwnd_; }
 auto OverlayWindow::Impl::isRunning() const -> bool { return running_; }
 
 auto OverlayWindow::Impl::setRunning(bool state) -> void { running_ = state; }
+
+auto OverlayWindow::Impl::getContentManager() const -> std::shared_ptr<component::IContentManager> { return contentManager_; }
 }  // namespace interview_cheater::window
 
 

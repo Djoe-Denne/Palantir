@@ -1,13 +1,14 @@
 set(MODULE_NAME "palantir-core")
 
+# Define the repository URL outside the if statement
+if(GITHUB_TOKEN)
+    set(GIT_REPOSITORY https://${GITHUB_TOKEN}@github.com/Djoe-Denne/Sauron-sdk.git)
+else()
+    set(GIT_REPOSITORY https://github.com/Djoe-Denne/Sauron-sdk.git)
+endif()
 
 if(NOT SAURON_SDK_FOUND)
     message(STATUS "System Sauron SDK not found, building from source...")
-    if(GITHUB_TOKEN)
-        set(GIT_REPOSITORY https://${GITHUB_TOKEN}@github.com/Djoe-Denne/Sauron-sdk.git)
-    else()
-        set(GIT_REPOSITORY https://github.com/Djoe-Denne/Sauron-sdk.git)
-    endif()
     # Find or install Sauron SDK
     include(FetchContent)
     FetchContent_Declare(
@@ -24,27 +25,40 @@ else()
     message(STATUS "Found system Sauron SDK: ${SAURON_SDK_LIBRARIES}")
 endif()
 
+# Check if the target exists regardless of how we found/built it
+if(NOT TARGET sauron_sdk::curl)
+    message(STATUS "Target sauron_sdk::curl not found, attempting to build from source...")
+    # Try to build from source as a fallback
+    include(FetchContent)
+    FetchContent_Declare(
+        SAURON_SDK
+        GIT_REPOSITORY ${GIT_REPOSITORY}
+        GIT_BRANCH master
+        OVERRIDE_FIND_PACKAGE
+    )
+    FetchContent_MakeAvailable(SAURON_SDK)
+endif()
+
 # Check for nlohmann_json
 find_package(nlohmann_json QUIET)
-if(NOT nlohmann_json_FOUND)
+if(NOT nlohmann_json_FOUND AND NOT TARGET nlohmann_json::nlohmann_json)
     # If not found directly, it should be available through Sauron SDK
     # But we'll add a fallback just in case
-    if(NOT TARGET nlohmann_json::nlohmann_json)
-        message(STATUS "nlohmann_json not found directly, fetching it...")
-        include(FetchContent)
-        FetchContent_Declare(
-            nlohmann_json
-            GIT_REPOSITORY https://github.com/nlohmann/json.git
-            GIT_TAG v3.11.2
-        )
-        FetchContent_MakeAvailable(nlohmann_json)
-    endif()
+    message(STATUS "nlohmann_json not found directly, fetching it...")
+    include(FetchContent)
+    FetchContent_Declare(
+        nlohmann_json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG v3.11.2
+    )
+    FetchContent_MakeAvailable(nlohmann_json)
 endif()
 
 # Create the shared library with basic sources
 add_library(${MODULE_NAME} SHARED
     ${CORE_SOURCES}
     ${COMMAND_SOURCES}
+    ${CLIENT_SOURCES}
     ${SIGNAL_SOURCES}
     ${WINDOW_SOURCES}
     ${INPUT_SOURCES}
@@ -57,6 +71,7 @@ add_library(${MODULE_NAME} SHARED
     ${PROJECT_ROOT}/palantir-core/include/command/command_factory.hpp
     ${PROJECT_ROOT}/palantir-core/include/mode/debug/utils/logger.hpp
     ${PROJECT_ROOT}/palantir-core/include/input/key_register.hpp
+    ${PROJECT_ROOT}/palantir-core/include/client/sauron_register.hpp
 )
 target_include_directories(${MODULE_NAME} PUBLIC ${COMMON_INCLUDE_DIRS})
 
@@ -68,7 +83,7 @@ else()
 endif()
 
 # Include Sauron SDK include directories
-target_include_directories(${MODULE_NAME} PRIVATE ${SAURON_SDK_INCLUDE_DIRS}) 
+target_include_directories(${MODULE_NAME} PUBLIC ${SAURON_SDK_INCLUDE_DIRS}) 
 
 # Make nlohmann_json available to consumers of this library
 if(TARGET nlohmann_json::nlohmann_json)
@@ -77,6 +92,13 @@ else()
     # If using the version from Sauron SDK, we need to expose the include directories
     if(DEFINED NLOHMANN_JSON_INCLUDE_DIRS)
         target_include_directories(${MODULE_NAME} PUBLIC ${NLOHMANN_JSON_INCLUDE_DIRS})
+    else()
+        message(WARNING "nlohmann_json target not found and NLOHMANN_JSON_INCLUDE_DIRS not defined. JSON functionality may not work correctly.")
+        # Try to find it one more time
+        find_package(nlohmann_json QUIET)
+        if(nlohmann_json_FOUND)
+            target_link_libraries(${MODULE_NAME} PUBLIC nlohmann_json::nlohmann_json)
+        endif()
     endif()
 endif()
 

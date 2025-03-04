@@ -16,5 +16,5 @@ auto OverlayWindow::toggleWindowAnonymity() -> void { pImpl_->toggleWindowAnonym
 auto OverlayWindow::getNativeHandle() const -> void* { return pImpl_->getNativeHandle(); }
 auto OverlayWindow::isRunning() const -> bool { return pImpl_->isRunning(); }
 auto OverlayWindow::setRunning(bool runningState) -> void { pImpl_->setRunning(runningState); }
-
+auto OverlayWindow::getContentManager() const -> std::shared_ptr<component::IContentManager> { return pImpl_->getContentManager(); }
 }  // namespace interview_cheater::window

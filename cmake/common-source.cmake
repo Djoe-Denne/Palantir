@@ -7,6 +7,10 @@ set(COMMAND_SOURCES
     ${PROJECT_ROOT}/palantir-core/src/command/command_factory.cpp
 )
 
+set(CLIENT_SOURCES
+    ${PROJECT_ROOT}/palantir-core/src/client/sauron_register.cpp
+)
+
 set(SIGNAL_SOURCES
     ${PROJECT_ROOT}/palantir-core/src/signal/signal.cpp
     ${PROJECT_ROOT}/palantir-core/src/signal/signal_factory.cpp
@@ -50,6 +54,7 @@ set(COMMON_INCLUDE_DIRS
 # Set ALL_SOURCES variable for clang tools
 set(ALL_SOURCES
     ${COMMAND_SOURCES}
+    ${CLIENT_SOURCES}
     ${SIGNAL_SOURCES}
     ${WINDOW_SOURCES}
     ${INPUT_SOURCES}

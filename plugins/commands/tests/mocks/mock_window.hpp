@@ -17,6 +17,7 @@ public:
     MOCK_METHOD(bool, isRunning, (), (const, override));
     MOCK_METHOD(void, setRunning, (bool), (override));
     MOCK_METHOD(void*, getNativeHandle, (), (const, override));
+    MOCK_METHOD(std::shared_ptr<window::component::IContentManager>, getContentManager, (), (const, override));
 };
 
 } // namespace interview_cheater::test 
