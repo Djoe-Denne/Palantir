@@ -56,3 +56,8 @@ add_subdirectory(application)
 
 # Include format-lint after the target is created
 include(format-lint)
+
+include(copy-shared-libs)
+copy_curl_libs()
+copy_sauron_sdk_libs()
+

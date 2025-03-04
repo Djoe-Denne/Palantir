@@ -1,23 +1,22 @@
-set(MACOS_SOURCES
+set(MACOS_APPLICATION_SOURCES
     ${PROJECT_ROOT}/application/src/platform/macos/platform_application.mm
     ${PROJECT_ROOT}/application/src/platform/macos/window/overlay_window.mm
 )
 
-set(COMMON_MACOS_SOURCES
-    ${PROJECT_ROOT}/palantir-core/src/platform/macos/input/configurable_input.mm
-    ${PROJECT_ROOT}/palantir-core/src/platform/macos/signal/signal_manager.mm
-    ${PROJECT_ROOT}/palantir-core/src/platform/macos/utils/logger.mm
-)
-
-file(GLOB_RECURSE MACOS_HEADERS
+file(GLOB_RECURSE MACOS_APPLICATION_HEADERS
     "${PROJECT_ROOT}/application/include/platform/macos/*.hpp"
     "${PROJECT_ROOT}/application/include/platform/macos/*.h"
 )
 
+set(ALL_APPLICATION_SOURCES
+    ${ALL_APPLICATION_SOURCES}
+    ${MACOS_APPLICATION_SOURCES}
+    ${MACOS_APPLICATION_HEADERS}
+)
+
 set(ALL_SOURCES
     ${ALL_SOURCES}
-    ${MACOS_SOURCES}
-    ${MACOS_HEADERS}
+    ${ALL_APPLICATION_SOURCES}
 )
 
 function(setup_macos_platform_common target_name)
@@ -36,9 +35,9 @@ endfunction()
 
 function(setup_macos_platform)
     target_sources(${PROJECT_NAME} PRIVATE 
-        ${MACOS_SOURCES}
-        ${COMMON_MACOS_SOURCES}
-        ${MACOS_HEADERS}
+        ${MACOS_APPLICATION_SOURCES}
+        ${COMMON_MACOS_APPLICATION_SOURCES}
+        ${MACOS_APPLICATION_HEADERS}
     )
     
     target_include_directories(${PROJECT_NAME} PRIVATE
@@ -56,15 +55,3 @@ function(setup_macos_platform)
         XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES
     )
 endfunction()
-
-function(setup_macos_platform_core)
-    target_sources(palantir-core PRIVATE
-        ${COMMON_MACOS_SOURCES}
-    )
-
-    target_include_directories(palantir-core PRIVATE
-        ${COMMON_INCLUDE_DIRS}
-        ${PROJECT_ROOT}/application/include/platform/macos
-    )
-    setup_macos_platform_common(palantir-core)
-endfunction() 

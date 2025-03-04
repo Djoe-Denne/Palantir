@@ -1,19 +1,24 @@
-set(WINDOWS_SOURCES
+set(WINDOWS_APPLICATION_SOURCES
     ${PROJECT_ROOT}/application/src/platform/windows/platform_application.cpp
     ${PROJECT_ROOT}/application/src/platform/windows/window/overlay_window.cpp
     ${PROJECT_ROOT}/application/src/platform/windows/window/overlay_window_impl.cpp
     ${PROJECT_ROOT}/application/src/platform/windows/window/component/webview/webview.cpp
 )
 
-set(COMMON_WINDOWS_SOURCES
-    ${PROJECT_ROOT}/palantir-core/src/platform/windows/input/configurable_input.cpp
-    ${PROJECT_ROOT}/palantir-core/src/platform/windows/signal/signal_manager.cpp
-    ${PROJECT_ROOT}/palantir-core/src/platform/windows/utils/logger.cpp
+file(GLOB_RECURSE WINDOWS_APPLICATION_HEADERS
+    "${PROJECT_ROOT}/application/include/platform/windows/*.hpp"
+    "${PROJECT_ROOT}/application/include/platform/windows/*.h"
+)
+
+set(ALL_APPLICATION_SOURCES
+    ${ALL_APPLICATION_SOURCES}
+    ${WINDOWS_APPLICATION_SOURCES}
+    ${WINDOWS_APPLICATION_HEADERS}
 )
 
 set(ALL_SOURCES
     ${ALL_SOURCES}
-    ${WINDOWS_SOURCES}
+    ${ALL_APPLICATION_SOURCES}
 )
 
 function(setup_windows_platform_common target_name)
@@ -35,8 +40,8 @@ endfunction()
 function(setup_windows_platform)    
     setup_windows_platform_webview(${PROJECT_NAME})
     target_sources(${PROJECT_NAME} PRIVATE 
-        ${COMMON_WINDOWS_SOURCES}
-        ${WINDOWS_SOURCES}
+        ${COMMON_WINDOWS_APPLICATION_SOURCES}
+        ${WINDOWS_APPLICATION_SOURCES}
     )
     
     target_include_directories(${PROJECT_NAME} PRIVATE
@@ -46,18 +51,6 @@ function(setup_windows_platform)
     
     setup_windows_platform_common(${PROJECT_NAME})
 endfunction()
-
-function(setup_windows_platform_core)    
-    target_sources(palantir-core PRIVATE
-        ${COMMON_WINDOWS_SOURCES}
-    )
-
-    target_include_directories(palantir-core PRIVATE
-        ${COMMON_INCLUDE_DIRS}
-        ${PROJECT_ROOT}/application/include/platform/windows
-    )
-    setup_windows_platform_common(palantir-core)
-endfunction() 
 
 function(setup_vcpkg)
     find_program(VCPKG_EXECUTABLE vcpkg)
