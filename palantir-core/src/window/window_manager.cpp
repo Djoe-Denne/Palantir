@@ -6,7 +6,7 @@
 #include "command/icommand.hpp"
 #include "window/iwindow.hpp"
 
-namespace interview_cheater::window {
+namespace palantir::window {
 
 // Initialize the static instance
 std::shared_ptr<WindowManager> WindowManager::instance_;
@@ -31,7 +31,7 @@ public:
         return std::any_of(windows_.begin(), windows_.end(), [](const auto& window) { return window->isRunning(); });
     }
 
-    auto executeCommand(std::unique_ptr<interview_cheater::command::ICommand> command) -> void {
+    auto executeCommand(std::unique_ptr<palantir::command::ICommand> command) -> void {
         if (command) {
             command->execute();
         }
@@ -67,8 +67,8 @@ auto WindowManager::getFirstWindow() const -> std::shared_ptr<IWindow> { return 
 
 auto WindowManager::hasRunningWindows() const -> bool { return pimpl_->hasRunningWindows(); }
 
-auto WindowManager::executeCommand(std::unique_ptr<interview_cheater::command::ICommand> command) -> void {
+auto WindowManager::executeCommand(std::unique_ptr<palantir::command::ICommand> command) -> void {
     pimpl_->executeCommand(std::move(command));
 }
 
-}  // namespace interview_cheater::window
+}  // namespace palantir::window

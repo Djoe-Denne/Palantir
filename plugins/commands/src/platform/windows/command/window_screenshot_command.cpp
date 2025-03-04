@@ -10,7 +10,7 @@
 
 #pragma comment(lib, "Gdiplus.lib")
 
-namespace interview_cheater::command {
+namespace palantir::command {
 
 auto stringToWString(const std::string& str) -> std::wstring {
     std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
@@ -101,6 +101,6 @@ auto WindowScreenshotCommand::captureScreenshot() -> void {
     DeleteDC(hdcMem);
 }
 
-} // namespace interview_cheater::command
+} // namespace palantir::command
 
 #endif

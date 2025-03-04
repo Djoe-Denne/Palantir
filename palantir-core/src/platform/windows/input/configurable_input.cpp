@@ -5,7 +5,7 @@
 #include "input/key_register.hpp"
 #include "utils/logger.hpp"
 
-namespace interview_cheater::input {
+namespace palantir::input {
 
 /**
  * @brief Implementation details for the configurable input.
@@ -110,4 +110,4 @@ auto ConfigurableInput::update() -> void {
     pImpl_->update();
 }
 
-}  // namespace interview_cheater::input
+}  // namespace palantir::input

@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 #include "command/commands_plugin.hpp"
 
-using namespace interview_cheater::plugins;
+using namespace palantir::plugins;
 using namespace testing;
 
 class CommandsPluginTest : public Test {

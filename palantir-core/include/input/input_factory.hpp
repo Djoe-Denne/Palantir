@@ -17,7 +17,7 @@
 #include "input/key_config.hpp"
 #include "input/key_mapper.hpp"
 
-namespace interview_cheater::input {
+namespace palantir::input {
 
 // Forward declaration of ConfigurableInput
 class ConfigurableInput;
@@ -107,6 +107,6 @@ private:
     static std::unique_ptr<KeyConfig> keyConfig_;
 };
 
-}  // namespace interview_cheater::input
+}  // namespace palantir::input
 
 #endif  // INPUT_FACTORY_HPP

@@ -2,7 +2,7 @@
 
 #include "window/overlay_window_impl.hpp"
 
-namespace interview_cheater::window {
+namespace palantir::window {
 
 OverlayWindow::OverlayWindow() : pImpl_(std::make_unique<Impl>()) {}  // NOLINT
 OverlayWindow::~OverlayWindow() = default;
@@ -19,4 +19,4 @@ auto OverlayWindow::setRunning(bool runningState) -> void { pImpl_->setRunning(r
 auto OverlayWindow::getContentManager() const -> std::shared_ptr<component::IContentManager> {
     return pImpl_->getContentManager();
 }
-}  // namespace interview_cheater::window
+}  // namespace palantir::window

@@ -8,7 +8,7 @@
 #include "plugin_loader.hpp"
 #include <filesystem>
 
-namespace interview_cheater::plugin {
+namespace palantir::plugin {
 
 class PluginManager {
 public:
@@ -79,4 +79,4 @@ private:
     std::unordered_map<std::string, std::unique_ptr<IPlugin>> plugins_;
 };
 
-} // namespace interview_cheater::plugin
+} // namespace palantir::plugin

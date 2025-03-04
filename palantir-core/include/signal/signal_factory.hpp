@@ -15,14 +15,14 @@
 
 #include "signal/isignal.hpp"
 
-namespace interview_cheater {
+namespace palantir {
 class Application;  // Forward declaration
 namespace window {
 class WindowManager;  // Forward declaration
 }
-}  // namespace interview_cheater
+}  // namespace palantir
 
-namespace interview_cheater::signal {
+namespace palantir::signal {
 
 /**
  * @class SignalFactory
@@ -65,6 +65,6 @@ public:
 
 };
 
-}  // namespace interview_cheater::signal
+}  // namespace palantir::signal
 
 #endif  // SIGNAL_FACTORY_HPP

@@ -15,7 +15,7 @@ constexpr double K_FONT_SIZE = 14.0;
 }  // namespace
 
 @interface OverlayWindowDelegate : NSObject <NSWindowDelegate>
-@property(nonatomic, assign) interview_cheater::window::OverlayWindow* overlayWindow;
+@property(nonatomic, assign) palantir::window::OverlayWindow* overlayWindow;
 @end
 
 @implementation OverlayWindowDelegate
@@ -57,7 +57,7 @@ constexpr double K_FONT_SIZE = 14.0;
 
 @end
 
-namespace interview_cheater::window {
+namespace palantir::window {
 
 class OverlayWindow::Impl {
    public:
@@ -284,4 +284,4 @@ auto OverlayWindow::setRunning(bool runningState) -> void {
     running_ = runningState;
 }
 
-}  // namespace interview_cheater::window
+}  // namespace palantir::window

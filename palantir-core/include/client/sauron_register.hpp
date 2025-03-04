@@ -3,7 +3,7 @@
 #include "sauron/client/SauronClient.hpp"
 #include "core_export.hpp"
 
-namespace interview_cheater::client {
+namespace palantir::client {
 class PALANTIR_CORE_API SauronRegister {
 public:
     SauronRegister() = delete;
@@ -16,4 +16,4 @@ public:
 
     [[nodiscard]] static auto getSauronClient() -> std::shared_ptr<sauron::client::SauronClient>;
 };
-} // namespace interview_cheater::client
+} // namespace palantir::client

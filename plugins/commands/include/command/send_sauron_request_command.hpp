@@ -7,7 +7,7 @@
 #include "Application.hpp"
 #include <vector>
 
-namespace interview_cheater::command {
+namespace palantir::command {
 
 class COMMANDS_PLUGIN_API SendSauronRequestCommand : public ICommand {
 public:
@@ -32,4 +32,4 @@ private:
 #pragma warning(pop)
 };
 
-} // namespace interview_cheater::command
+} // namespace palantir::command

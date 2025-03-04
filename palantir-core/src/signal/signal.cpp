@@ -6,7 +6,7 @@
 #include "input/iinput.hpp"
 #include "utils/logger.hpp"
 
-namespace interview_cheater::signal {
+namespace palantir::signal {
 
 Signal::Signal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command, const bool useDebounce)
     : input_(std::move(input)), command_(std::move(command)), useDebounce_(useDebounce) {
@@ -41,4 +41,4 @@ auto Signal::check(const std::any& event) -> void {
     }
 }
 
-}  // namespace interview_cheater::signal
+}  // namespace palantir::signal

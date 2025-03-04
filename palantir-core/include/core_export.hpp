@@ -6,8 +6,8 @@
  * used for proper DLL/shared library symbol visibility.
  */
 
-#ifndef INTERVIEW_CHEATER_CORE_EXPORT_HPP
-#define INTERVIEW_CHEATER_CORE_EXPORT_HPP
+#ifndef PALANTIR_CORE_EXPORT_HPP
+#define PALANTIR_CORE_EXPORT_HPP
 
 #ifdef _WIN32
     #ifdef PALANTIR_CORE_EXPORTS
@@ -19,4 +19,4 @@
     #define PALANTIR_CORE_API 
 #endif
 
-#endif  // INTERVIEW_CHEATER_CORE_EXPORT_HPP 
+#endif  // PALANTIR_CORE_EXPORT_HPP 

@@ -5,7 +5,7 @@
 #include <string>
 #include "core_export.hpp"
 
-namespace interview_cheater::window::component {
+namespace palantir::window::component {
 template<typename T>
 class PALANTIR_CORE_API ContentManager : public IContentManager {
 public:
@@ -110,4 +110,4 @@ private:
     #pragma warning(pop)
 };
 
-} // namespace interview_cheater::window::component
+} // namespace palantir::window::component

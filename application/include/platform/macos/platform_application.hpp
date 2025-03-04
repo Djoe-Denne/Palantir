@@ -7,8 +7,8 @@
  * functionality for application lifecycle and event handling.
  */
 
-#ifndef INTERVIEW_CHEATER_PLATFORM_MACOS_PLATFORM_APPLICATION_HPP
-#define INTERVIEW_CHEATER_PLATFORM_MACOS_PLATFORM_APPLICATION_HPP
+#ifndef PALANTIR_PLATFORM_MACOS_PLATFORM_APPLICATION_HPP
+#define PALANTIR_PLATFORM_MACOS_PLATFORM_APPLICATION_HPP
 
 #include <memory>
 #include <string>
@@ -17,7 +17,7 @@
 #include "signal/signal_manager.hpp"
 #include "window/window_manager.hpp"
 
-namespace interview_cheater {
+namespace palantir {
 
 /**
  * @class PlatformApplication
@@ -72,6 +72,6 @@ private:
     std::unique_ptr<Impl> pImpl_;
 };
 
-}  // namespace interview_cheater
+}  // namespace palantir
 
-#endif  // INTERVIEW_CHEATER_PLATFORM_MACOS_PLATFORM_APPLICATION_HPP
+#endif  // PALANTIR_PLATFORM_MACOS_PLATFORM_APPLICATION_HPP

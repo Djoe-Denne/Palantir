@@ -4,7 +4,7 @@
 #include "plugin_export.hpp"
 #include <string>
 
-namespace interview_cheater::command {
+namespace palantir::command {
 
 class COMMANDS_PLUGIN_API ClearScreenshotCommand : public ICommand {
 public:
@@ -24,4 +24,4 @@ private:
     auto clearFolder() -> void;
 };
 
-} // namespace interview_cheater::command
+} // namespace palantir::command

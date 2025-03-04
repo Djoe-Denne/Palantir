@@ -85,12 +85,12 @@ jobs:
         include:
           # Windows-specific settings
           - os: windows-latest
-            #artifact_name: InterviewCheater-Windows
-            #artifact_path: build/Release/InterviewCheater.exe
+            #artifact_name: Palantir-Windows
+            #artifact_path: build/Release/Palantir.exe
           # macOS-specific settings
           #- os: macos-latest
-            #artifact_name: InterviewCheater-macOS
-            #artifact_path: build/InterviewCheater.app
+            #artifact_name: Palantir-macOS
+            #artifact_path: build/Palantir.app
             #use_quality_build: true
     
     steps:

@@ -14,7 +14,7 @@
 #include <memory>
 #include <core_export.hpp>
 
-namespace interview_cheater::signal {
+namespace palantir::signal {
 // Forward declaration for ISignal
 class ISignal;
 
@@ -83,6 +83,6 @@ private:
 #pragma warning(pop)
 };
 
-}  // namespace interview_cheater::signal
+}  // namespace palantir::signal
 
 #endif  // SIGNAL_MANAGER_HPP

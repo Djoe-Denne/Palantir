@@ -6,7 +6,7 @@
 
 #include "utils/string_utils.hpp"
 
-namespace interview_cheater::input {
+namespace palantir::input {
 
 class KeyRegisterImpl {
 public:
@@ -43,4 +43,4 @@ void KeyRegister::registerKey(const std::string& key, int value) { pimpl_->regis
 auto KeyRegister::get(const std::string& key) const -> int { return pimpl_->get(key); }
 
 auto KeyRegister::hasKey(const std::string& key) const -> bool { return pimpl_->hasKey(key); }
-}  // namespace interview_cheater::input
+}  // namespace palantir::input

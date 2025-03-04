@@ -13,7 +13,7 @@
 #include <cstdint>
 #include <string>
 
-namespace interview_cheater::input {
+namespace palantir::input {
 
 /**
  * @class KeyMapper
@@ -86,6 +86,6 @@ public:
     [[nodiscard]] static auto isValidModifier(const std::string& modifierName) -> bool;
 };
 
-}  // namespace interview_cheater::input
+}  // namespace palantir::input
 
 #endif  // KEY_MAPPER_HPP

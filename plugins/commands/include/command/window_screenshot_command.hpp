@@ -4,7 +4,7 @@
 #include <string>
 #include "plugin_export.hpp"
 
-namespace interview_cheater::command {
+namespace palantir::command {
 
 class COMMANDS_PLUGIN_API WindowScreenshotCommand : public ICommand {
 public:
@@ -24,4 +24,4 @@ private:
     auto captureScreenshot() -> void; // Implemented separately per platform
 };
 
-} // namespace interview_cheater::command
+} // namespace palantir::command

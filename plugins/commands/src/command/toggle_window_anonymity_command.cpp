@@ -2,7 +2,7 @@
 #include "window/window_manager.hpp"
 #include "window/iwindow.hpp"
 
-namespace interview_cheater::command {
+namespace palantir::command {
 
 ToggleWindowAnonymityCommand::ToggleWindowAnonymityCommand() : app_(Application::getInstance()) {}  // NOLINT
 
@@ -17,4 +17,4 @@ auto ToggleWindowAnonymityCommand::execute() -> void {
 
 auto ToggleWindowAnonymityCommand::useDebounce() -> bool { return true; }
 
-} // namespace interview_cheater::command 
+} // namespace palantir::command 

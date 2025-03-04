@@ -26,7 +26,7 @@
 @interface SignalChecker : NSObject
 
 /** Pointer to the implementation that owns this checker */
-@property(nonatomic, assign) interview_cheater::signal::SignalManager::Impl* pImpl_;
+@property(nonatomic, assign) palantir::signal::SignalManager::Impl* pImpl_;
 
 /** Monitor for global keyboard events (when app is not active) */
 @property(nonatomic, strong) id globalMonitor;
@@ -37,7 +37,7 @@
 /**
  * @brief Initialize the signal checker with a signal manager implementation
  */
-- (instancetype)initWithSignalManagerImpl:(interview_cheater::signal::SignalManager::Impl*)impl;
+- (instancetype)initWithSignalManagerImpl:(palantir::signal::SignalManager::Impl*)impl;
 
 /**
  * @brief Stop checking events
@@ -48,7 +48,7 @@
 
 @end
 
-namespace interview_cheater::signal {
+namespace palantir::signal {
 
 class SignalManager::Impl {
 public:
@@ -72,7 +72,7 @@ private:
     std::vector<std::unique_ptr<ISignal>> signals_;  ///< Collection of managed signals
 };
 
-} // namespace interview_cheater::signal
+} // namespace palantir::signal
 
 @implementation SignalChecker
 
@@ -84,7 +84,7 @@ private:
  * This method initializes the signal checker and immediately sets up
  * the event monitors to start capturing keyboard events.
  */
-- (instancetype)initWithSignalManagerImpl:(interview_cheater::signal::SignalManager::Impl*)impl {
+- (instancetype)initWithSignalManagerImpl:(palantir::signal::SignalManager::Impl*)impl {
     if ((self = [super init]) != nil) {
         DEBUG_LOG("Initializing SignalChecker");
         self.pImpl_ = impl;
@@ -183,7 +183,7 @@ private:
 
 @end
 
-namespace interview_cheater::signal {
+namespace palantir::signal {
     
 SignalManager::Impl::Impl(SignalManager* parent) : parent_(parent) {
     signalChecker_ = [[SignalChecker alloc] initWithSignalManagerImpl:this];
@@ -278,4 +278,4 @@ auto SignalManager::getInstance() -> SignalManager& {
     return instance;
 }
 
-}  // namespace interview_cheater::signal
+}  // namespace palantir::signal

@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string_view>
 
-namespace interview_cheater::utils {
+namespace palantir::utils {
 
 auto PlatformLog(std::string_view function, int line, const std::string& message) -> void {
     std::ostringstream finalStream;
@@ -13,4 +13,4 @@ auto PlatformLog(std::string_view function, int line, const std::string& message
     NSLog(@"%@", logMessage);
 }
 
-}  // namespace interview_cheater::utils
+}  // namespace palantir::utils

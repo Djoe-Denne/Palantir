@@ -9,7 +9,7 @@
 #include "window/component/webview/webview.hpp"
 #include "window/overlay_window.hpp"
 
-namespace interview_cheater::window {
+namespace palantir::window {
 
 class OverlayWindow::Impl {
 public:
@@ -46,6 +46,6 @@ private:
     std::shared_ptr<component::ContentManager<component::webview::WebView>> contentManager_;
 };
 
-}  // namespace interview_cheater::window
+}  // namespace palantir::window
 
 #endif  // OVERLAY_WINDOW_IMPL_HPP

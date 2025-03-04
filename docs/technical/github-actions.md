@@ -35,8 +35,8 @@ Steps:
 1. Configure CMake in Release mode
 2. Build the project
 3. Upload artifacts:
-   - Windows: `InterviewCheater.exe`
-   - macOS: `InterviewCheater.app`
+   - Windows: `Palantir.exe`
+   - macOS: `Palantir.app`
 
 ## Job Dependencies
 
@@ -47,10 +47,10 @@ Steps:
 ## Artifacts
 
 Each successful build produces platform-specific artifacts:
-- Windows: `InterviewCheater-Windows`
-  - Path: `build/Release/InterviewCheater.exe`
-- macOS: `InterviewCheater-macOS`
-  - Path: `build/InterviewCheater.app`
+- Windows: `Palantir-Windows`
+  - Path: `build/Release/Palantir.exe`
+- macOS: `Palantir-macOS`
+  - Path: `build/Palantir.app`
 
 ## Concurrency
 

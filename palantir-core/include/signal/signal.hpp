@@ -7,8 +7,8 @@
  * the lifecycle of signal processing.
  */
 
-#ifndef INTERVIEW_CHEATER_SIGNAL_SIGNAL_HPP
-#define INTERVIEW_CHEATER_SIGNAL_SIGNAL_HPP
+#ifndef PALANTIR_SIGNAL_SIGNAL_HPP
+#define PALANTIR_SIGNAL_SIGNAL_HPP
 
 #include <any>
 #include <chrono>
@@ -16,7 +16,7 @@
 
 #include "signal/isignal.hpp"
 
-namespace interview_cheater {
+namespace palantir {
 namespace input {
 class IInput;  // Forward declaration
 }  // namespace input
@@ -119,6 +119,6 @@ private:
 };
 
 }  // namespace signal
-}  // namespace interview_cheater
+}  // namespace palantir
 
-#endif  // INTERVIEW_CHEATER_SIGNAL_SIGNAL_HPP
+#endif  // PALANTIR_SIGNAL_SIGNAL_HPP

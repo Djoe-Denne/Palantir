@@ -9,7 +9,7 @@
 #include "input/key_mapper.hpp"
 #include "utils/logger.hpp"
 
-namespace interview_cheater::input {
+namespace palantir::input {
 
 std::unique_ptr<KeyConfig> InputFactory::keyConfig_;
 
@@ -99,4 +99,4 @@ auto InputFactory::getConfiguredCommands() -> std::vector<std::string> {
     return keyConfig_->getConfiguredCommands();
 }
 
-}  // namespace interview_cheater::input
+}  // namespace palantir::input

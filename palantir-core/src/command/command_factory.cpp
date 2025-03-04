@@ -6,7 +6,7 @@
 
 #include "command/icommand.hpp"
 
-namespace interview_cheater::command {
+namespace palantir::command {
 
 class CommandFactory::CommandFactoryImpl {
 public:
@@ -54,4 +54,4 @@ auto CommandFactory::getCommand(const std::string& name) -> std::unique_ptr<ICom
     return std::move(pimpl_->getCommand(name));
 }
 
-}  // namespace interview_cheater::command
+}  // namespace palantir::command

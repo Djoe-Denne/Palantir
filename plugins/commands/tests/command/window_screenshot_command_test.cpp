@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <regex>
 
-namespace interview_cheater::command::test {
+namespace palantir::command::test {
 
 class WindowScreenshotCommandTest : public ::testing::Test {
 protected:
@@ -55,4 +55,4 @@ TEST_F(WindowScreenshotCommandTest, DoesNotUseDebounce) {
     EXPECT_FALSE(cmd.useDebounce());
 }
 
-} // namespace interview_cheater::command::test 
+} // namespace palantir::command::test 

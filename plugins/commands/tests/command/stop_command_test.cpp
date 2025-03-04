@@ -4,19 +4,19 @@
 #include "command/stop_command.hpp"
 #include "../mocks/mock_application.hpp"
 
-using namespace interview_cheater::command;
-using namespace interview_cheater::test;
+using namespace palantir::command;
+using namespace palantir::test;
 using namespace testing;
 
 class StopCommandTest : public Test {
 protected:
     void SetUp() override {
         mock_app_ = std::make_shared<MockApplication>("");
-        interview_cheater::Application::setInstance(mock_app_);
+        palantir::Application::setInstance(mock_app_);
     }
 
     void TearDown() override {
-        interview_cheater::Application::setInstance(nullptr);
+        palantir::Application::setInstance(nullptr);
         mock_app_.reset();
     }
 

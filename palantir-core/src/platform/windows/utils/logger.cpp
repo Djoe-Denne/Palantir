@@ -4,7 +4,7 @@
 
 #include <sstream>
 
-namespace interview_cheater::utils {
+namespace palantir::utils {
 
 auto PlatformLog(std::string_view function, int line, const std::string& message) -> void {
     std::ostringstream finalStream;
@@ -12,4 +12,4 @@ auto PlatformLog(std::string_view function, int line, const std::string& message
     OutputDebugStringA(finalStream.str().c_str());
 }
 
-}  // namespace interview_cheater::utils
+}  // namespace palantir::utils

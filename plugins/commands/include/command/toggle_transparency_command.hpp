@@ -5,7 +5,7 @@
 #include "Application.hpp"
 #include "plugin_export.hpp"
 
-namespace interview_cheater::command {
+namespace palantir::command {
 
 class COMMANDS_PLUGIN_API ToggleTransparencyCommand : public ICommand {
 public:
@@ -29,4 +29,4 @@ private:
     auto getTransparency() -> int;
 };
 
-} // namespace interview_cheater::command 
+} // namespace palantir::command 

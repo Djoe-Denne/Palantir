@@ -14,7 +14,7 @@
 #include "core_export.hpp"
 #include "window/iwindow.hpp"
 
-namespace interview_cheater {
+namespace palantir {
 namespace command {
 // Forward declaration for ICommand
 class ICommand;
@@ -103,7 +103,7 @@ public:
      * Takes ownership of the provided command and executes it. The command
      * should be window-related and may affect one or more managed windows.
      */
-    virtual auto executeCommand(std::unique_ptr<interview_cheater::command::ICommand> command) -> void;
+    virtual auto executeCommand(std::unique_ptr<palantir::command::ICommand> command) -> void;
 
 protected:
     // Protected constructor for testing
@@ -121,6 +121,6 @@ private:
 
 };
 }  // namespace window
-}  // namespace interview_cheater
+}  // namespace palantir
 
 #endif  // WINDOW_MANAGER_HPP

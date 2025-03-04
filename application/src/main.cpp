@@ -14,10 +14,10 @@
 #include <windows.h>
 #endif
 
-using interview_cheater::Application;
-using interview_cheater::PlatformApplication;
-using interview_cheater::window::OverlayWindow;
-using interview_cheater::plugin::PluginManager;
+using palantir::Application;
+using palantir::PlatformApplication;
+using palantir::window::OverlayWindow;
+using palantir::plugin::PluginManager;
 
 // Platform-agnostic application code
 auto run_app() -> int {

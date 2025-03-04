@@ -6,7 +6,7 @@
 #include <filesystem>
 #include <ApplicationServices/ApplicationServices.h>
 
-namespace interview_cheater::command::test {
+namespace palantir::command::test {
 
 class MacOSScreenshotCommandTest : public ::testing::Test {
 protected:
@@ -52,6 +52,6 @@ TEST_F(MacOSScreenshotCommandTest, HandlesNoActiveWindow) {
     EXPECT_TRUE(std::filesystem::exists("./screenshot"));
 }
 
-} // namespace interview_cheater::command::test
+} // namespace palantir::command::test
 
 #endif // __APPLE__ 

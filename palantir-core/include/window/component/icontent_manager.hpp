@@ -4,7 +4,7 @@
 #include <string>
 #include "core_export.hpp"
 
-namespace interview_cheater::window::component {
+namespace palantir::window::component {
 class PALANTIR_CORE_API IContentManager {
 public:
     virtual ~IContentManager() = default;
@@ -84,4 +84,4 @@ protected:
     IContentManager() = default;
 };
 
-} // namespace interview_cheater::window::component
+} // namespace palantir::window::component

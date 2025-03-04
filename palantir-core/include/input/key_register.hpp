@@ -5,7 +5,7 @@
 #include <string>
 #include "core_export.hpp"
 
-namespace interview_cheater::input {
+namespace palantir::input {
 
 class KeyRegisterImpl;
 
@@ -43,6 +43,6 @@ public:
     [[nodiscard]] auto hasKey(const std::string& key) const -> bool;
 };
 
-} // namespace interview_cheater::input
+} // namespace palantir::input
 
 #endif // KEY_REGISTER_HPP

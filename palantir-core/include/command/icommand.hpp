@@ -15,7 +15,7 @@
 #include <string>
 #include "core_export.hpp"
 
-namespace interview_cheater::command {
+namespace palantir::command {
 
 /**
  * @class ICommand
@@ -58,5 +58,5 @@ protected:
     /** @brief Protected default constructor to prevent direct instantiation. */
     ICommand() = default;
 };
-}  // namespace interview_cheater::command
+}  // namespace palantir::command
 #endif  // ICOMMAND_HPP

@@ -4,7 +4,7 @@
 #include <utils/logger.hpp>
 
 namespace fs = std::filesystem;
-namespace interview_cheater::command {
+namespace palantir::command {
 
 auto ClearScreenshotCommand::getScreenshotFolder() const -> std::string {
     return "./screenshot";
@@ -33,4 +33,4 @@ auto ClearScreenshotCommand::clearFolder() -> void {
 
 auto ClearScreenshotCommand::execute() -> void { clearFolder(); }
 
-} // namespace interview_cheater::command
+} // namespace palantir::command

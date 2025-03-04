@@ -14,7 +14,7 @@
 
 #include "input/iinput.hpp"
 
-namespace interview_cheater::input {
+namespace palantir::input {
 
 /**
  * @class ConfigurableInput
@@ -93,6 +93,6 @@ private:
 #pragma warning(pop)
 };
 
-}  // namespace interview_cheater::input
+}  // namespace palantir::input
 
 #endif  // CONFIGURABLE_INPUT_HPP

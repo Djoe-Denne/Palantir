@@ -6,7 +6,7 @@
 #include <string_view>
 #include "core_export.hpp"
 
-namespace interview_cheater::utils {
+namespace palantir::utils {
 
 void PALANTIR_CORE_API PlatformLog(std::string_view function, int line, const std::string& message);
 
@@ -20,13 +20,13 @@ void PALANTIR_CORE_API LogStream(std::ostringstream& stream, const T& value, con
     stream << value;  // NOLINT
     LogStream(stream, args...);
 }
-}  // namespace interview_cheater::utils
+}  // namespace palantir::utils
 
 #define DEBUG_LOG(...)                                                               \
     do {                                                                             \
         std::ostringstream stream;                                                   \
-        interview_cheater::utils::LogStream(stream, __VA_ARGS__);                    \
-        interview_cheater::utils::PlatformLog(__FUNCTION__, __LINE__, stream.str()); \
+        palantir::utils::LogStream(stream, __VA_ARGS__);                    \
+        palantir::utils::PlatformLog(__FUNCTION__, __LINE__, stream.str()); \
     } while (0)
 
 #endif  // LOGGER_HPP

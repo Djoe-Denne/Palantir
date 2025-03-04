@@ -1,5 +1,5 @@
-#ifndef INTERVIEW_CHEATER_KEY_CODES_HPP
-#define INTERVIEW_CHEATER_KEY_CODES_HPP
+#ifndef PALANTIR_KEY_CODES_HPP
+#define PALANTIR_KEY_CODES_HPP
 
 #include <windows.h>
 
@@ -15,7 +15,7 @@
  * The key codes are mapped to Windows Virtual Key Codes (VK_*) and
  * are guaranteed to be compatible with macOS equivalents.
  */
-namespace interview_cheater::input::KeyCodes {
+namespace palantir::input::KeyCodes {
 
 // Initialize all key codes using KeyRegister
 static const struct KeyCodeInitializer {
@@ -160,6 +160,6 @@ static const struct KeyCodeInitializer {
     }
 } keyCodeInitializer;  // NOLINT
 
-}  // namespace interview_cheater::input::KeyCodes
+}  // namespace palantir::input::KeyCodes
 
-#endif  // INTERVIEW_CHEATER_KEY_CODES_HPP
+#endif  // PALANTIR_KEY_CODES_HPP

@@ -6,7 +6,7 @@
 #include <sstream>
 
 namespace fs = std::filesystem;
-namespace interview_cheater::command {
+namespace palantir::command {
 
 WindowScreenshotCommand::WindowScreenshotCommand() {
     fs::create_directories("./screenshot");
@@ -30,4 +30,4 @@ auto WindowScreenshotCommand::execute() -> void {
     captureScreenshot();
 }
 
-} // namespace interview_cheater::command
+} // namespace palantir::command

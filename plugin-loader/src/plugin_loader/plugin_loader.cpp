@@ -1,6 +1,6 @@
 #include "plugin_loader/plugin_loader.hpp"
 
-namespace interview_cheater::plugin {
+namespace palantir::plugin {
 
 PluginLoader::~PluginLoader() {
     if (currentHandle_) {
@@ -50,4 +50,4 @@ auto PluginLoader::unloadPlugin(IPlugin* plugin) -> void {
     }
 }
 
-} // namespace interview_cheater::plugin 
+} // namespace palantir::plugin 

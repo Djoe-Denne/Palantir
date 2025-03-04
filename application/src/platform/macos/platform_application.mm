@@ -6,7 +6,7 @@
 #include "input/key_codes.hpp"
 #import "utils/logger.hpp"
 
-namespace interview_cheater {
+namespace palantir {
 
 /**
  * @brief Implementation details for the macOS platform application.
@@ -95,4 +95,4 @@ PlatformApplication::~PlatformApplication() = default;
 
 auto PlatformApplication::quit() -> void { pImpl_->quit(); }
 
-}  // namespace interview_cheater
+}  // namespace palantir

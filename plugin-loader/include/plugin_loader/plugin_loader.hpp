@@ -11,7 +11,7 @@
     using LibraryHandle = void*;
 #endif
 
-namespace interview_cheater::plugin {
+namespace palantir::plugin {
 
 class PluginLoader {
 public:
@@ -46,4 +46,4 @@ private:
     DestroyPluginFunc destroyFunc_;
 };
 
-} // namespace interview_cheater::plugin
+} // namespace palantir::plugin

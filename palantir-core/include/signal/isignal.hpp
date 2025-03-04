@@ -11,7 +11,7 @@
 #define ISIGNAL_HPP
 #include <any>
 
-namespace interview_cheater::signal {
+namespace palantir::signal {
 
 /**
  * @class ISignal
@@ -80,6 +80,6 @@ protected:
     ISignal() = default;
 };
 
-}  // namespace interview_cheater::signal
+}  // namespace palantir::signal
 
 #endif  // ISIGNAL_HPP

@@ -7,7 +7,7 @@
 #include "window/component/content_manager.hpp"
 #include "window/component/webview/webview.hpp"
 
-namespace interview_cheater::window {
+namespace palantir::window {
 namespace {
 
 constexpr int WINDOW_WIDTH = 800;
@@ -76,7 +76,7 @@ auto OverlayWindow::Impl::create() -> void {
     windowClass.cbSize = sizeof(WNDCLASSEXW);
     windowClass.lpfnWndProc = WindowProc;
     windowClass.hInstance = GetModuleHandleW(nullptr);
-    windowClass.lpszClassName = L"InterviewCheaterClass";
+    windowClass.lpszClassName = L"PalantirClass";
     windowClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);  // NOLINT
     windowClass.style = CS_HREDRAW | CS_VREDRAW;
 
@@ -86,7 +86,7 @@ auto OverlayWindow::Impl::create() -> void {
         throw std::runtime_error("Failed to register window class");
     }
 
-    hwnd_ = CreateWindowExW(WS_EX_TOPMOST, L"InterviewCheaterClass", L"Interview Cheater", WS_OVERLAPPEDWINDOW,
+    hwnd_ = CreateWindowExW(WS_EX_TOPMOST, L"PalantirClass", L"Palantir", WS_OVERLAPPEDWINDOW,
                             CW_USEDEFAULT, CW_USEDEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT, nullptr, nullptr,
                             GetModuleHandleW(nullptr), this);
 
@@ -225,4 +225,4 @@ auto OverlayWindow::Impl::setRunning(bool state) -> void { running_ = state; }
 auto OverlayWindow::Impl::getContentManager() const -> std::shared_ptr<component::IContentManager> {
     return contentManager_;
 }
-}  // namespace interview_cheater::window
+}  // namespace palantir::window

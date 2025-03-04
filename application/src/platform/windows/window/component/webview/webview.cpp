@@ -16,7 +16,7 @@
 
 using Microsoft::WRL::ComPtr;
 
-namespace interview_cheater::window::component::webview {
+namespace palantir::window::component::webview {
 
 class WebView::WebViewImpl {
 public:
@@ -368,4 +368,4 @@ auto WebView::resize(int width, int height) -> void {
 
 auto WebView::destroy() -> void { pimpl_->destroy(); }
 
-}  // namespace interview_cheater::window::component::webview
+}  // namespace palantir::window::component::webview

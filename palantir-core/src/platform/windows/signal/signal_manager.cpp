@@ -6,7 +6,7 @@
 #include "signal/isignal.hpp"
 #include "utils/logger.hpp"
 
-namespace interview_cheater::signal {
+namespace palantir::signal {
 
 /**
  * @brief Windows-specific implementation of SignalManager
@@ -136,4 +136,4 @@ auto SignalManager::checkSignals(const std::any& event) -> void {
     pImpl_->checkSignals(event);
 }
 
-}  // namespace interview_cheater::signal
+}  // namespace palantir::signal

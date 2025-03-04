@@ -2,7 +2,7 @@
 #include "window/window_manager.hpp"
 #include "window/iwindow.hpp"
 
-namespace interview_cheater::command {
+namespace palantir::command {
 
 ToggleTransparencyCommand::ToggleTransparencyCommand() : app_(Application::getInstance()) {}  // NOLINT
 
@@ -22,4 +22,4 @@ auto ToggleTransparencyCommand::execute() -> void {
 
 auto ToggleTransparencyCommand::useDebounce() -> bool { return true; }
 
-} // namespace interview_cheater::command 
+} // namespace palantir::command 

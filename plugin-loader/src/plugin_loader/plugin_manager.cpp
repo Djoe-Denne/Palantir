@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-namespace interview_cheater::plugin {
+namespace palantir::plugin {
 
 auto PluginManager::loadPlugin(const std::string& path) -> bool {
     auto plugin = loader_.loadPlugin(path);
@@ -107,4 +107,4 @@ auto PluginManager::shutdownAll() -> void {
     }
 }
 
-} // namespace interview_cheater::plugin 
+} // namespace palantir::plugin 

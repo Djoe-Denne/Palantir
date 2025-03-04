@@ -10,7 +10,7 @@
 #include <fstream>
 #include <iostream>
 
-namespace interview_cheater::command {
+namespace palantir::command {
 
 SendSauronRequestCommand::SendSauronRequestCommand(std::string prompt) : prompt_(prompt), app_(Application::getInstance()) {}  // NOLINT
 
@@ -66,5 +66,5 @@ auto SendSauronRequestCommand::loadImagesFromFolder() const -> std::vector<std::
     return images;
 }
 
-} // namespace interview_cheater::command
+} // namespace palantir::command
 

@@ -7,8 +7,8 @@
  * for application lifecycle, signal management, and window management.
  */
 
-#ifndef INTERVIEW_CHEATER_PLATFORM_APPLICATION_HPP
-#define INTERVIEW_CHEATER_PLATFORM_APPLICATION_HPP
+#ifndef PALANTIR_PLATFORM_APPLICATION_HPP
+#define PALANTIR_PLATFORM_APPLICATION_HPP
 
 #include <memory>
 #include <string>
@@ -18,7 +18,7 @@
 #include "window/window_manager.hpp"
 #include "core_export.hpp"
 
-namespace interview_cheater {
+namespace palantir {
 
 /**
  * @class Application
@@ -141,6 +141,6 @@ private:
 #pragma warning(pop)
 };
 
-}  // namespace interview_cheater
+}  // namespace palantir
 
-#endif  // INTERVIEW_CHEATER_PLATFORM_APPLICATION_HPP
+#endif  // PALANTIR_PLATFORM_APPLICATION_HPP

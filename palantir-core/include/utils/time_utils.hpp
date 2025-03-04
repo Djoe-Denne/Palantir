@@ -3,7 +3,7 @@
 #include <chrono>
 #include <ctime>
 
-namespace interview_cheater::utils {
+namespace palantir::utils {
 
 inline auto safe_localtime(const std::time_t* time, std::tm* tm_buf) -> void {
 #ifdef _WIN32
@@ -13,4 +13,4 @@ inline auto safe_localtime(const std::time_t* time, std::tm* tm_buf) -> void {
 #endif
 }
 
-} // namespace interview_cheater::utils 
+} // namespace palantir::utils 

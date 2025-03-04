@@ -4,7 +4,7 @@
 #include <string>
 #include "core_export.hpp"
 
-namespace interview_cheater::command {
+namespace palantir::command {
 
 class ICommand;  // Forward declaration
 
@@ -68,5 +68,5 @@ private:
     CommandFactory();
 };
 
-}  // namespace interview_cheater::command
+}  // namespace palantir::command
 

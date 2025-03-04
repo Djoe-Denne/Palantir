@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Interview Cheater application follows a modular, layered architecture that emphasizes separation of concerns, extensibility, and platform independence. The system is built using modern C++ design patterns and principles to ensure maintainability, testability, and robustness.
+The Palantir application follows a modular, layered architecture that emphasizes separation of concerns, extensibility, and platform independence. The system is built using modern C++ design patterns and principles to ensure maintainability, testability, and robustness.
 
 ## Core Design Principles
 

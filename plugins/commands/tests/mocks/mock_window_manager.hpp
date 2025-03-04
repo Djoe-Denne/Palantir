@@ -4,7 +4,7 @@
 #include "window/window_manager.hpp"
 #include "mocks/mock_window.hpp"
 
-namespace interview_cheater::test {
+namespace palantir::test {
 
 class MockWindowManager : public window::WindowManager {
 public:
@@ -16,4 +16,4 @@ public:
     MOCK_METHOD(bool, hasRunningWindows, (), (const, override));
 };
 
-} // namespace interview_cheater::test 
+} // namespace palantir::test 

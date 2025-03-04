@@ -3,7 +3,7 @@
 #include "plugin/iplugin.hpp"
 #include "plugin_export.hpp"
 
-namespace interview_cheater::plugins {
+namespace palantir::plugins {
 
 class COMMANDS_PLUGIN_API CommandsPlugin : public plugin::IPlugin {
 public:
@@ -22,7 +22,7 @@ public:
     [[nodiscard]] auto getVersion() const -> std::string override;
 };
 
-} // namespace interview_cheater::plugins
+} // namespace palantir::plugins
 
 // Register the plugin
-IMPLEMENT_PLUGIN(interview_cheater::plugins::CommandsPlugin) 
+IMPLEMENT_PLUGIN(palantir::plugins::CommandsPlugin) 

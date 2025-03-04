@@ -1,11 +1,11 @@
-#ifndef INTERVIEW_CHEATER_WINDOW_COMPONENT_WEBVIEW_IWEBVIEW_HPP
-#define INTERVIEW_CHEATER_WINDOW_COMPONENT_WEBVIEW_IWEBVIEW_HPP
+#ifndef PALANTIR_WINDOW_COMPONENT_WEBVIEW_IWEBVIEW_HPP
+#define PALANTIR_WINDOW_COMPONENT_WEBVIEW_IWEBVIEW_HPP
 #include <functional>
 #include <string>
 #include <memory>
 #include "core_export.hpp"
 
-namespace interview_cheater::window::component::webview {
+namespace palantir::window::component::webview {
 /**
  * @class WebView
  * @brief An abstract class representing a web view component.
@@ -132,6 +132,6 @@ private:
 #pragma warning(pop)
 
 };
-}  // namespace interview_cheater::window::component::webview
+}  // namespace palantir::window::component::webview
 
-#endif  // INTERVIEW_CHEATER_WINDOW_COMPONENT_WEBVIEW_IWEBVIEW_HPP
+#endif  // PALANTIR_WINDOW_COMPONENT_WEBVIEW_IWEBVIEW_HPP

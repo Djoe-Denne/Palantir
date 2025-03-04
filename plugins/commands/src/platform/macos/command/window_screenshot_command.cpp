@@ -3,7 +3,7 @@
 //#include <CoreGraphics/CoreGraphics.h>
 #include <iostream>
 
-namespace interview_cheater::command {
+namespace palantir::command {
 
 auto WindowScreenshotCommand::captureScreenshot() -> void {
     // TODO(@OopsOverflow): Implement macOS screenshot capture
@@ -39,5 +39,5 @@ auto WindowScreenshotCommand::captureScreenshot() -> void {
     CGImageRelease(screenshot);*/
 }
 
-} // namespace interview_cheater::command
+} // namespace palantir::command
 

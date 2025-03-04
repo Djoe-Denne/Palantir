@@ -15,7 +15,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace interview_cheater::input {
+namespace palantir::input {
 
 /**
  * @struct ShortcutConfig
@@ -107,6 +107,6 @@ private:
     auto loadConfig(const std::string& configPath) -> void;
 };
 
-}  // namespace interview_cheater::input
+}  // namespace palantir::input
 
 #endif  // KEY_CONFIG_HPP

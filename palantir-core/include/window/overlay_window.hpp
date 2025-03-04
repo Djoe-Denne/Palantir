@@ -7,7 +7,7 @@
 #include "window/component/content_manager_impl.hpp"
 #include "core_export.hpp"
 
-namespace interview_cheater::window {
+namespace palantir::window {
 
 class PALANTIR_CORE_API OverlayWindow : public IWindow {
 public:
@@ -44,6 +44,6 @@ private:
     bool running_ = false;
 };
 
-}  // namespace interview_cheater::window
+}  // namespace palantir::window
 
 #endif  // OVERLAY_WINDOW_HPP

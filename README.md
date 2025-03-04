@@ -1,7 +1,7 @@
-# Interview Cheater Project
+# Palantir Project
 
 ## Overview
-The Interview Cheater project is a cross-platform application designed to create an overlay window that can be controlled via keyboard shortcuts. It utilizes a modular architecture with interfaces and command patterns to manage window operations and input signals. The application includes AI integration through Sauron SDK for assisting with coding interviews.
+The Palantir project is a cross-platform application designed to create an overlay window that can be controlled via keyboard shortcuts. It utilizes a modular architecture with interfaces and command patterns to manage window operations and input signals. The application includes AI integration through Sauron SDK for assisting with coding interviews.
 
 ## Features
 - **Overlay Window**: Displays a floating window with interview notes

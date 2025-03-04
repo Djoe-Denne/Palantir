@@ -7,7 +7,7 @@
 #include <array>
 #include "core_export.hpp"
 
-namespace interview_cheater::utils {
+namespace palantir::utils {
 
 class PALANTIR_CORE_API StringUtils {
 public:
@@ -92,6 +92,6 @@ public:
     #pragma warning(pop)
 };
 
-}  // namespace interview_cheater::utils
+}  // namespace palantir::utils
 
 #endif  // STRING_UTILS_HPP

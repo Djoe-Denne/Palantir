@@ -3,7 +3,7 @@
 #include <gmock/gmock.h>
 #include "Application.hpp"
 
-namespace interview_cheater::test {
+namespace palantir::test {
 
 // Mock base class to ensure virtual methods
 class ApplicationBase {
@@ -37,4 +37,4 @@ public:
     MOCK_METHOD(void, attachSignals, (), (override));
 };
 
-} // namespace interview_cheater::test 
+} // namespace palantir::test 

@@ -1,5 +1,5 @@
-#ifndef INTERVIEW_CHEATER_PLATFORM_MACOS_KEY_CODES_HPP
-#define INTERVIEW_CHEATER_PLATFORM_MACOS_KEY_CODES_HPP
+#ifndef PALANTIR_PLATFORM_MACOS_KEY_CODES_HPP
+#define PALANTIR_PLATFORM_MACOS_KEY_CODES_HPP
 
 #include <Carbon/Carbon.h>
 
@@ -15,7 +15,7 @@
  * The key codes are mapped to macOS Carbon key codes and
  * are guaranteed to be compatible with Windows equivalents.
  */
-namespace interview_cheater::input::KeyCodes {
+namespace palantir::input::KeyCodes {
 
 // Initialize all key codes using KeyRegister
 static const struct KeyCodeInitializer {
@@ -165,6 +165,6 @@ static const struct KeyCodeInitializer {
     }
 } keyCodeInitializer;
 
-}  // namespace interview_cheater::input::KeyCodes
+}  // namespace palantir::input::KeyCodes
 
-#endif  // INTERVIEW_CHEATER_PLATFORM_MACOS_KEY_CODES_HPP
+#endif  // PALANTIR_PLATFORM_MACOS_KEY_CODES_HPP

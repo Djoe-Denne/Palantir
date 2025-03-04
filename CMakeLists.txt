@@ -10,9 +10,9 @@ if(POLICY CMP0091)
     cmake_policy(SET CMP0091 NEW)
 endif()
 
-project(InterviewCheater 
+project(Palantir 
     VERSION 1.0.0
-    DESCRIPTION "Interview Cheater Application"
+    DESCRIPTION "Palantir Application"
     LANGUAGES CXX
 )
 

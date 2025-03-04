@@ -14,7 +14,7 @@
 #include "core_export.hpp"
 #include "window/component/icontent_manager.hpp"
 
-namespace interview_cheater::window {
+namespace palantir::window {
 
 /**
  * @class IWindow
@@ -127,6 +127,6 @@ protected:
     IWindow() = default;
 };
 
-}  // namespace interview_cheater::window
+}  // namespace palantir::window
 
 #endif  // IWINDOW_HPP

@@ -18,7 +18,7 @@ namespace {
  * Used by the low-level keyboard hook to access the signal manager
  * for checking signals when keyboard events occur.
  */
-interview_cheater::signal::SignalManager* g_signalManager = nullptr;
+palantir::signal::SignalManager* g_signalManager = nullptr;
 
 /**
  * @brief Global keyboard hook handle.
@@ -58,7 +58,7 @@ auto CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) -> L
 
 }  // namespace
 
-namespace interview_cheater {
+namespace palantir {
 
 /**
  * @brief Implementation details for the Windows platform application.
@@ -198,4 +198,4 @@ PlatformApplication::~PlatformApplication() = default;
  */
 auto PlatformApplication::quit() -> void { pImpl_->quit(); }
 
-}  // namespace interview_cheater
+}  // namespace palantir

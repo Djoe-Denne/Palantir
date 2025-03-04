@@ -4,7 +4,7 @@
 //#include "window/component/webview/webview.hpp"
 #include "utils/logger.hpp"
 
-namespace interview_cheater::window::component {
+namespace palantir::window::component {
 
 template<typename T>
 class ContentManager<T>::ContentManagerImpl {
@@ -165,4 +165,4 @@ private:
     }
 };
 
-} // namespace interview_cheater::window::component
+} // namespace palantir::window::component

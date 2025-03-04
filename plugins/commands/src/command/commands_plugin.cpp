@@ -9,7 +9,7 @@
 #include "command/send_sauron_request_command.hpp"
 #include "prompt/prompts.hpp"
 
-namespace interview_cheater::plugins {
+namespace palantir::plugins {
 
 CommandsPlugin::~CommandsPlugin() {
     // Call shutdown directly to avoid virtual dispatch during destruction
@@ -100,4 +100,4 @@ auto CommandsPlugin::getVersion() const -> std::string {
     return "1.0.0";
 }
 
-} // namespace interview_cheater::plugins 
+} // namespace palantir::plugins 

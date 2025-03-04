@@ -6,9 +6,9 @@
 #include "../mocks/mock_window_manager.hpp"
 #include "../mocks/mock_window.hpp"
 
-using namespace interview_cheater;
-using namespace interview_cheater::command;
-using namespace interview_cheater::test;
+using namespace palantir;
+using namespace palantir::command;
+using namespace palantir::test;
 using namespace testing;
 
 class ToggleTransparencyCommandTest : public Test {
@@ -22,13 +22,13 @@ protected:
         EXPECT_CALL(*mockApp, getWindowManager())
             .WillRepeatedly(Return(mockWindowManager));
         
-        interview_cheater::Application::setInstance(mockApp);
-        interview_cheater::window::WindowManager::setInstance(mockWindowManager);
+        palantir::Application::setInstance(mockApp);
+        palantir::window::WindowManager::setInstance(mockWindowManager);
     }
 
     void TearDown() override {
-        interview_cheater::Application::setInstance(nullptr);
-        interview_cheater::window::WindowManager::setInstance(nullptr);
+        palantir::Application::setInstance(nullptr);
+        palantir::window::WindowManager::setInstance(nullptr);
         mockApp.reset();
         mockWindow.reset();
         mockWindowManager.reset();

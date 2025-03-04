@@ -5,7 +5,7 @@
 #include "window/window_manager.hpp"
 #include "window/iwindow.hpp"
 
-namespace interview_cheater::command {
+namespace palantir::command {
 
 auto ToggleTransparencyCommand::getTransparency() -> int {
     auto windowManager = app_->getWindowManager();
@@ -20,4 +20,4 @@ auto ToggleTransparencyCommand::getTransparency() -> int {
     }
     return 0;
 }
-} // namespace interview_cheater::command 
+} // namespace palantir::command 

@@ -14,7 +14,7 @@
 
 #include "application.hpp"
 
-namespace interview_cheater {
+namespace palantir {
 namespace signal {
 // Forward declaration for SignalManager
 class SignalManager;
@@ -84,6 +84,6 @@ private:
     /** @brief Pointer to the implementation details. */
     std::unique_ptr<Impl> pImpl_;
 };
-}  // namespace interview_cheater
+}  // namespace palantir
 
 #endif  // WINDOWS_APPLICATION_HPP

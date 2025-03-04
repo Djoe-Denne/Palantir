@@ -1,6 +1,6 @@
-# Interview Cheater Documentation
+# Palantir Documentation
 
-This directory contains comprehensive documentation for the Interview Cheater application.
+This directory contains comprehensive documentation for the Palantir application.
 
 ## Features
 

@@ -6,7 +6,7 @@
 
 #include "utils/logger.hpp"
 
-namespace interview_cheater::input {
+namespace palantir::input {
 
 KeyConfig::KeyConfig(const std::string& configPath) { loadConfig(configPath); }
 
@@ -99,4 +99,4 @@ auto KeyConfig::getConfiguredCommands() const -> std::vector<std::string> {
     return commands;
 }
 
-}  // namespace interview_cheater::input
+}  // namespace palantir::input

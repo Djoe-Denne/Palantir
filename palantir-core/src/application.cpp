@@ -8,7 +8,7 @@
 #include "utils/logger.hpp"
 #include "window/window_manager.hpp"
 
-namespace interview_cheater {
+namespace palantir {
 
 // Initialize static instance
 std::shared_ptr<Application> Application::instance_ = nullptr;
@@ -61,4 +61,4 @@ auto Application::getWindowManager() -> std::shared_ptr<window::WindowManager> {
 
 auto Application::attachSignals() -> void { pImpl_->attachSignals(); }
 
-}  // namespace interview_cheater
+}  // namespace palantir

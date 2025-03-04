@@ -5,7 +5,7 @@
 #include "Application.hpp"
 #include "plugin_export.hpp"
 
-namespace interview_cheater::command {
+namespace palantir::command {
 
 class COMMANDS_PLUGIN_API StopCommand : public ICommand {
 public:
@@ -27,4 +27,4 @@ private:
 #pragma warning(pop)
 };
 
-} // namespace interview_cheater::command 
+} // namespace palantir::command 

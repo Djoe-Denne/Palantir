@@ -6,7 +6,7 @@
 #include "input/key_codes.hpp"
 #include "utils/logger.hpp"
 
-namespace interview_cheater::input {
+namespace palantir::input {
 
 class ConfigurableInput::Impl {
    public:
@@ -85,4 +85,4 @@ auto ConfigurableInput::isModifierActive(const std::any& event) const -> bool {
 }
 auto ConfigurableInput::update() -> void { pImpl_->update(); }
 
-}  // namespace interview_cheater::input
+}  // namespace palantir::input

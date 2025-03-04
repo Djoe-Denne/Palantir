@@ -11,7 +11,7 @@
 #include "utils/logger.hpp"
 #include "window/window_manager.hpp"
 
-namespace interview_cheater::signal {
+namespace palantir::signal {
 
 auto SignalFactory::createSignals(const std::shared_ptr<Application>& app) -> std::vector<std::unique_ptr<ISignal>> {
     std::vector<std::unique_ptr<ISignal>> signals;
@@ -30,4 +30,4 @@ auto SignalFactory::createSignals(const std::shared_ptr<Application>& app) -> st
     return signals;
 }
 
-}  // namespace interview_cheater::signal
+}  // namespace palantir::signal

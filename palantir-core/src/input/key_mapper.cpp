@@ -7,7 +7,7 @@
 #include "utils/logger.hpp"
 #include "utils/string_utils.hpp"
 
-namespace interview_cheater::input {
+namespace palantir::input {
 
 /**
  * @brief Get the virtual key code for a given key name.
@@ -85,4 +85,4 @@ auto KeyMapper::isValidModifier(const std::string& modifierName) -> bool {
     return valid;
 }
 
-}  // namespace interview_cheater::input
+}  // namespace palantir::input

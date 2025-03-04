@@ -3,7 +3,7 @@
 #include <gmock/gmock.h>
 #include "window/iwindow.hpp"
 
-namespace interview_cheater::test {
+namespace palantir::test {
 
 class MockWindow : public window::IWindow {
 public:
@@ -20,4 +20,4 @@ public:
     MOCK_METHOD(std::shared_ptr<window::component::IContentManager>, getContentManager, (), (const, override));
 };
 
-} // namespace interview_cheater::test 
+} // namespace palantir::test 

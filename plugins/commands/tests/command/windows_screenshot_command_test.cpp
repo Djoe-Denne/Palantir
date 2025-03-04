@@ -8,7 +8,7 @@
 #include <windows.h>
 #include <filesystem>
 
-namespace interview_cheater::command::test {
+namespace palantir::command::test {
 
 class WindowsScreenshotCommandTest : public ::testing::Test {
 protected:
@@ -103,6 +103,6 @@ TEST_F(WindowsScreenshotCommandTest, HandlesNoActiveWindow) {
     EXPECT_TRUE(std::filesystem::exists("./screenshot"));
 }
 
-} // namespace interview_cheater::command::test
+} // namespace palantir::command::test
 
 #endif // _WIN32 

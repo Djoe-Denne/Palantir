@@ -12,7 +12,7 @@
 
 #include <any>
 
-namespace interview_cheater::input {
+namespace palantir::input {
 
 /**
  * @class IInput
@@ -72,6 +72,6 @@ protected:
     IInput() = default;
 };
 
-}  // namespace interview_cheater::input
+}  // namespace palantir::input
 
 #endif  // IINPUT_HPP

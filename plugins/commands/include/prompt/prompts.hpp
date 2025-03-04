@@ -1,6 +1,6 @@
 #pragma once
 
-namespace interview_cheater::prompt {
+namespace palantir::prompt {
 
 constexpr auto SAURON_IMPLEM_REQUEST_PROMPT = R"(
 Focus on Left side (Editor) where the code is written. you should find a comment that explain an exercise or task.
@@ -37,5 +37,5 @@ Focus on Left side (Editor) where the code is written. you should find a TODO co
 * Respect any method signature requirements.
 )";
 
-} // namespace interview_cheater::prompt
+} // namespace palantir::prompt
 

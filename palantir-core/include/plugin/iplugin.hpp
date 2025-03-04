@@ -15,7 +15,7 @@
     #define PLUGIN_API __attribute__((visibility("default")))
 #endif
 
-namespace interview_cheater::plugin {
+namespace palantir::plugin {
 
 /**
  * @brief Interface that all plugins must implement
@@ -58,15 +58,15 @@ public:
 using CreatePluginFunc = PLUGIN_API IPlugin* (*)();
 using DestroyPluginFunc = PLUGIN_API void (*)(IPlugin*);
 
-} // namespace interview_cheater::plugin
+} // namespace palantir::plugin
 
 // Macros to help with plugin implementation
 #define IMPLEMENT_PLUGIN(PluginClass) \
     extern "C" { \
-        PLUGIN_API auto createPlugin() -> interview_cheater::plugin::IPlugin* { \
+        PLUGIN_API auto createPlugin() -> palantir::plugin::IPlugin* { \
             return new PluginClass(); \
         } \
-        PLUGIN_API auto destroyPlugin(interview_cheater::plugin::IPlugin* plugin) -> void { \
+        PLUGIN_API auto destroyPlugin(palantir::plugin::IPlugin* plugin) -> void { \
             delete plugin; \
         } \
     } 
