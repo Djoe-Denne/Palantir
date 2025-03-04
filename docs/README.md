@@ -8,6 +8,9 @@ This directory contains comprehensive documentation for the Interview Cheater ap
 - **Screenshot Capture**: Take screenshots of active windows with automatic file naming
 - **Cross-Platform**: Supports both Windows and macOS
 - **Plugin System**: Extensible command system for adding new functionality
+- **AI Integration**: Connect to Sauron SDK for AI-powered assistance
+- **Content Management**: Display and manage content in the overlay window
+- **Sauron Requests**: Send various types of requests to the Sauron AI service
 
 ## Documentation Structure
 
@@ -42,6 +45,8 @@ The application follows a plugin-based architecture with these key components:
 - Platform-specific implementations
 - Plugin management
 - Input handling and key mapping
+- Content management system
+- AI integration through Sauron SDK
 
 See the [architecture](technical/architecture/) directory for detailed design documents.
 
@@ -50,11 +55,27 @@ See the [architecture](technical/architecture/) directory for detailed design do
 ### For Users
 1. Install the application
 2. Configure shortcuts using the [Shortcuts Configuration Guide](user/shortcuts.md)
+3. Use Ctrl+Num 1 to toggle the overlay window
+4. Use Ctrl+Num 2 to take screenshots of the current window
+5. Use Ctrl+Num 4-8 to send various requests to the Sauron AI service
 
 ### For Developers
 1. Review the [CMake Configuration](cmake-configuration.md) for build setup
 2. Set up development tools using the [Clang Tools Guide](clang-tools.md)
 3. Review technical documentation to understand the architecture
+
+## AI Integration
+
+The application integrates with the Sauron SDK to provide AI-powered assistance:
+
+1. **Screenshot Capture**: Use Ctrl+Num 2 to capture screenshots of the current window
+2. **AI Requests**: Use Ctrl+Num 4-8 to send different types of requests to the Sauron AI service:
+   - Ctrl+Num 4: Ask Sauron to implement code based on comments
+   - Ctrl+Num 5: Ask Sauron to fix errors shown in the console
+   - Ctrl+Num 6: Ask Sauron to validate code with tests
+   - Ctrl+Num 7: Ask Sauron to fix test failures
+   - Ctrl+Num 8: Ask Sauron to implement TODOs in the code
+3. **Response Display**: AI responses are displayed in the overlay window
 
 ## Contributing
 

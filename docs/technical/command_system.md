@@ -202,6 +202,27 @@ The application comes with several built-in commands:
 - **Implementation**: `ToggleWindowAnonymityCommand` class
 - **Behavior**: Switches the window between normal and anonymous modes
 
+### Clear Screenshot Command
+- **ID**: `clear-screenshot`
+- **Purpose**: Clears all screenshots from the screenshot directory
+- **Implementation**: `ClearScreenshotCommand` class
+- **Behavior**: Deletes all files in the `./screenshot` directory
+
+### Send Sauron Request Command
+- **ID**: `send-sauron-implement-request`, `send-sauron-fix-errors-request`, `send-sauron-validate-with-tests-request`, `send-sauron-fix-test-failures-request`, `send-sauron-handle-todos-request`
+- **Purpose**: Sends a request to the Sauron AI service with screenshots of the current window
+- **Implementation**: `SendSauronRequestCommand` class
+- **Behavior**: 
+  - Collects all screenshots from the `./screenshot` directory
+  - Sends them to the Sauron AI service with a specific prompt
+  - Displays the AI response in the application window
+- **Variants**:
+  - `send-sauron-implement-request`: Asks Sauron to implement code based on comments
+  - `send-sauron-fix-errors-request`: Asks Sauron to fix errors shown in the console
+  - `send-sauron-validate-with-tests-request`: Asks Sauron to validate code with tests
+  - `send-sauron-fix-test-failures-request`: Asks Sauron to fix test failures
+  - `send-sauron-handle-todos-request`: Asks Sauron to implement TODOs in the code
+
 ## Command Registration
 
 Commands are registered through the `CommandFactory` singleton:

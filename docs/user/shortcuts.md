@@ -15,7 +15,7 @@ command_name = modifier+key    ; Optional comment
 ### Example Configuration
 ```ini
 [commands]
-toggle = Ctrl+F1    ; Toggle window visibility
+toggle = Ctrl+Num 1    ; Toggle window visibility
 stop = Win+/        ; Stop application
 ```
 
@@ -24,6 +24,15 @@ stop = Win+/        ; Stop application
 The application supports a plugin-based command system, allowing for easy extension with new commands. Currently supported built-in commands:
 - `toggle`: Shows/hides the application window
 - `stop`: Exits the application
+- `window-screenshot`: Takes a screenshot of the current window
+- `toggle-transparency`: Toggles window transparency
+- `toggle-window-anonymity`: Toggles window anonymity mode
+- `send-sauron-implement-request`: Sends a request to Sauron to implement code
+- `send-sauron-fix-errors-request`: Sends a request to Sauron to fix errors
+- `send-sauron-validate-with-tests-request`: Sends a request to Sauron to validate with tests
+- `send-sauron-fix-test-failures-request`: Sends a request to Sauron to fix test failures
+- `send-sauron-handle-todos-request`: Sends a request to Sauron to handle TODOs
+- `clear-screenshot`: Clears the screenshot folder
 
 ### Adding Custom Commands
 
@@ -52,6 +61,7 @@ Common keys that can be used:
 - Special characters: `/` (forward slash)
 - Letters: `A` through `Z`
 - Numbers: `0` through `9`
+- Numpad: `Num 0` through `Num 9`
 
 ## Configuration Rules
 
@@ -67,7 +77,7 @@ Common keys that can be used:
 ### Basic Configuration
 ```ini
 [commands]
-toggle = Ctrl+F1
+toggle = Ctrl+Num 1
 stop = Win+/
 ```
 
@@ -75,14 +85,14 @@ stop = Win+/
 ```ini
 ; Keyboard shortcuts configuration
 [commands]
-toggle = Ctrl+F1    ; Show/hide window
+toggle = Ctrl+Num 1    ; Show/hide window
 stop = Win+/        ; Exit application
 ```
 
 ### macOS Configuration
 ```ini
 [commands]
-toggle = Ctrl+F1    ; Show/hide window
+toggle = Ctrl+Num 1    ; Show/hide window
 stop = Cmd+/        ; Exit application
 ```
 
@@ -116,8 +126,16 @@ If the configuration file is missing or corrupted, the application will create a
 ; Available modifiers: Ctrl, Alt, Shift, Win (Windows) / Cmd (macOS)
 
 [commands]
-toggle = Ctrl+F1    ; Toggle window visibility
+toggle = Ctrl+Num 1    ; Toggle window visibility
 stop = Win+/        ; Stop application
+window-screenshot = Ctrl+Num 2    ; Take screenshot of current window
+toggle-transparency = Ctrl+Num 3    ; Toggle window transparency
+send-sauron-implement-request = Ctrl+Num 4    ; Send request to Sauron to implement
+send-sauron-fix-errors-request = Ctrl+Num 5    ; Send request to Sauron to fix errors
+send-sauron-validate-with-tests-request = Ctrl+Num 6    ; Send request to Sauron to validate with tests
+send-sauron-fix-test-failures-request = Ctrl+Num 7    ; Send request to Sauron to fix test failures
+send-sauron-handle-todos-request = Ctrl+Num 8    ; Send request to Sauron to handle todos
+clear-screenshot = Ctrl+Num 9    ; Clear screenshot folder
 ```
 
 ## Adding New Commands
@@ -138,10 +156,15 @@ This document describes all available keyboard shortcuts in the application.
 
 ## Global Shortcuts
 
-| Shortcut | Windows | macOS | Description |
-|----------|---------|-------|-------------|
-| Toggle Window | `Ctrl+F1` | `Ctrl+F1` | Toggle main window visibility |
-| Stop Application | `Win+/` | `Cmd+/` | Stop the application |
-| Window Screenshot | `Ctrl+F2` | `Ctrl+F2` | Take a screenshot of the current window |
-| Toggle Transparency | `Ctrl+F3` | `Ctrl+F3` | Toggle window transparency |
-| Toggle Anonymity | `Ctrl+F4` | `Ctrl+F4` | Toggle window anonymity mode |
+| Shortcut | Windows | Description |
+|----------|---------|-------------|
+| Toggle Window | `Ctrl+Num 1` | Toggle main window visibility |
+| Stop Application | `Win+/` | Stop the application |
+| Window Screenshot | `Ctrl+Num 2` | Take a screenshot of the current window |
+| Toggle Transparency | `Ctrl+Num 3` | Toggle window transparency |
+| Send Implement Request | `Ctrl+Num 4` | Send request to Sauron to implement code |
+| Send Fix Errors Request | `Ctrl+Num 5` | Send request to Sauron to fix errors |
+| Send Validate with Tests Request | `Ctrl+Num 6` | Send request to Sauron to validate with tests |
+| Send Fix Test Failures Request | `Ctrl+Num 7` | Send request to Sauron to fix test failures |
+| Send Handle TODOs Request | `Ctrl+Num 8` | Send request to Sauron to handle TODOs |
+| Clear Screenshot Folder | `Ctrl+Num 9` | Clear the screenshot folder |

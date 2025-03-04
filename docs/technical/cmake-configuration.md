@@ -69,7 +69,7 @@ Platform-specific sources are defined in their respective CMake files:
 #### Windows (`windows.cmake`)
 ```cmake
 set(WINDOWS_SOURCES
-    ${PROJECT_ROOT}/src/platform/windows/input/configurable_input.cpp
+    ${PROJECT_ROOT}/palantir-core/src/platform/windows/input/configurable_input.cpp
     # ... other Windows sources
 )
 
@@ -83,7 +83,7 @@ set(ALL_SOURCES
 #### macOS (`macos.cmake`)
 ```cmake
 set(MACOS_SOURCES
-    ${PROJECT_ROOT}/src/platform/macos/input/configurable_input.mm
+    ${PROJECT_ROOT}/palantir-core/src/platform/macos/input/configurable_input.mm
     # ... other macOS sources
 )
 
@@ -102,23 +102,34 @@ The project uses a modular CMake configuration split across multiple files for b
 cmake/
 ├── common-source.cmake      # Common source files and variables
 ├── format-lint.cmake        # Clang format and tidy configuration
-├── help.cmake              # Help target configuration
-├── setup-clang-tools.cmake # Clang tools setup
+├── help.cmake               # Help target configuration
+├── setup-clang-tools.cmake  # Clang tools setup
+├── install-palantir-deps.cmake # Dependencies installation
 └── platform/
-    ├── windows.cmake       # Windows-specific configuration
-    └── macos.cmake        # macOS-specific configuration
+    ├── windows.cmake        # Windows-specific configuration
+    └── macos.cmake          # macOS-specific configuration
 
-application/               # Main application directory
-├── include/              # Header files
-│   ├── command/         # Command system headers
-│   ├── input/          # Input system headers
-│   ├── platform/       # Platform-specific headers
+palantir-core/               # Core library
+├── include/                 # Header files
+│   ├── command/             # Command system headers
+│   ├── input/               # Input system headers
+│   ├── window/              # Window system headers
+│   ├── client/              # Client system headers
 │   └── ...
-└── src/                # Source files
-    ├── command/        # Command system implementation
-    ├── input/         # Input system implementation
-    ├── platform/      # Platform-specific implementation
+└── src/                     # Source files
+    ├── command/             # Command system implementation
+    ├── input/               # Input system implementation
+    ├── window/              # Window system implementation
+    ├── client/              # Client system implementation
     └── ...
+
+plugins/                     # Plugin modules
+├── commands/                # Command plugin
+│   ├── include/             # Command plugin headers
+│   └── src/                 # Command plugin implementation
+└── ...
+
+palentir-webapp/            # Web application frontend
 ```
 
 ## Main Components
@@ -130,17 +141,17 @@ Sources are organized into logical groups in `common-source.cmake`:
 ```cmake
 # Headers (automatically found via GLOB)
 file(GLOB_RECURSE PROJECT_HEADERS
-    "${PROJECT_ROOT}/application/include/*.hpp"
-    "${PROJECT_ROOT}/application/include/*.h"
+    "${PROJECT_ROOT}/palantir-core/include/*.hpp"
+    "${PROJECT_ROOT}/palantir-core/include/*.h"
 )
 
 # Source groups
 set(CORE_SOURCES
-    ${PROJECT_ROOT}/application/src/main.cpp
+    ${PROJECT_ROOT}/palantir-core/src/main.cpp
 )
 
 set(COMMAND_SOURCES
-    ${PROJECT_ROOT}/application/src/command/command_factory.cpp
+    ${PROJECT_ROOT}/palantir-core/src/command/command_factory.cpp
     # ... other command sources
 )
 
@@ -149,71 +160,54 @@ set(COMMAND_SOURCES
 
 ### 2. Build Configuration
 
-The main CMakeLists.txt includes platform configurations and then adds the application subdirectory:
+The main CMakeLists.txt includes platform configurations and then adds the core library and plugins:
 
 ```cmake
 include(platform/windows)
 include(platform/macos)
 
-# Add the application subdirectory
-add_subdirectory(application)
+# Add the core library
+add_subdirectory(palantir-core)
+
+# Add plugins
+add_subdirectory(plugins/commands)
 ```
 
-The application's CMakeLists.txt then creates the executable with platform-specific settings:
+### 3. Dependencies Management
+
+The project uses FetchContent to manage dependencies:
 
 ```cmake
-if(WIN32)
-    add_executable(${PROJECT_NAME} WIN32 ${ALL_SOURCES})
-    setup_windows_platform()
-elseif(APPLE)
-    add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${ALL_SOURCES})
-    setup_macos_platform()
-endif()
+include(FetchContent)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${COMMON_INCLUDE_DIRS})
-```
-
-### 3. Variable Scope Handling
-
-The project uses a specific pattern for handling source file variables:
-
-1. Base Sources (in `common-source.cmake`):
-```cmake
-set(ALL_SOURCES
-    ${CORE_SOURCES}
-    ${COMMAND_SOURCES}
-    ${SIGNAL_SOURCES}
-    ${WINDOW_SOURCES}
-    ${INPUT_SOURCES}
-    ${PLATFORM_COMMON_SOURCES}
+# Sauron SDK
+FetchContent_Declare(
+    SAURON_SDK
+    GIT_REPOSITORY https://github.com/Djoe-Denne/Sauron-sdk.git
+    GIT_BRANCH master
 )
-```
+FetchContent_MakeAvailable(SAURON_SDK)
 
-2. Platform-Specific Sources:
-```cmake
-# Platform sources are added directly to ALL_SOURCES
-set(ALL_SOURCES
-    ${ALL_SOURCES}
-    ${PLATFORM_SOURCES}
-    ${PLATFORM_HEADERS}
+# nlohmann_json
+FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.11.2
 )
+FetchContent_MakeAvailable(nlohmann_json)
 ```
 
-### 4. Platform-Specific Configuration
+### 4. Plugin System
 
-Platform configurations are included early to ensure proper source file collection:
+Plugins are built as shared libraries and loaded dynamically:
 
 ```cmake
-include(platform/windows)
-include(platform/macos)
+add_library(commands-plugin SHARED
+    ${COMMANDS_PLUGIN_SOURCES}
+    ${COMMANDS_PLUGIN_HEADERS}
+)
 
-if(WIN32)
-    add_executable(${PROJECT_NAME} WIN32 ${ALL_SOURCES})
-    setup_windows_platform()
-elseif(APPLE)
-    add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${ALL_SOURCES})
-    setup_macos_platform()
-endif()
+target_link_libraries(commands-plugin PRIVATE palantir-core)
 ```
 
 ## Adding New Source Files
@@ -224,7 +218,7 @@ Add your source files to the appropriate group in `common-source.cmake`:
 
 ```cmake
 set(COMMAND_SOURCES
-    ${PROJECT_ROOT}/application/src/command/your_new_command.cpp
+    ${PROJECT_ROOT}/palantir-core/src/command/your_new_command.cpp
 )
 ```
 
@@ -234,7 +228,7 @@ For new feature groups, add a new source group:
 
 ```cmake
 set(YOUR_FEATURE_SOURCES
-    ${PROJECT_ROOT}/application/src/your_feature/feature_impl.cpp
+    ${PROJECT_ROOT}/palantir-core/src/your_feature/feature_impl.cpp
 )
 
 set(ALL_SOURCES
@@ -248,63 +242,137 @@ set(ALL_SOURCES
 Add platform-specific files to the appropriate platform CMake file:
 
 ```cmake
-# In windows.cmake or macos.cmake
-set(PLATFORM_SOURCES
-    ${PLATFORM_SOURCES}
-    ${PROJECT_ROOT}/application/src/platform/<platform>/your_feature.cpp
+set(WINDOWS_SOURCES
+    ${WINDOWS_SOURCES}
+    ${PROJECT_ROOT}/palantir-core/src/platform/windows/your_feature/feature_impl.cpp
 )
 ```
 
-## Code Quality Tools
+### Adding New Plugins
 
-### Clang Format
+To add a new plugin:
 
-Format your code using:
-```bash
-# Format all files
-cmake --build . --target format
+1. Create a new directory in the `plugins` directory
+2. Create a CMakeLists.txt file in the new directory
+3. Define the plugin sources and headers
+4. Add the plugin to the main CMakeLists.txt
 
-# Format specific files
-cmake -DLINT_FILES="file1.cpp;file2.cpp" -B build
-cmake --build build --target format
-```
-
-Configuration: `.clang-format` file in project root
-
-### Clang Tidy
-
-Lint your code using:
-```bash
-# Lint all files
-cmake --build . --target lint
-
-# Lint specific files
-cmake -DLINT_FILES="file1.cpp;file2.cpp" -B build
-cmake --build build --target lint
-```
-
-Configuration: `.clang-tidy` file in project root
-
-### Combined Targets
-
-- `fix-all`: Run both format and lint with fixes
-- `check-all`: Run both format and lint checks
-
-## Build Configuration
-
-### Debug vs Release
-
-Debug configuration:
 ```cmake
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(COMMON_INCLUDES
-        ${PROJECT_ROOT}/include/mode/debug
-    )
-    add_definitions(-DDEBUG)
+# In plugins/your_plugin/CMakeLists.txt
+set(YOUR_PLUGIN_SOURCES
+    ${PROJECT_ROOT}/plugins/your_plugin/src/your_plugin.cpp
+)
+
+set(YOUR_PLUGIN_HEADERS
+    ${PROJECT_ROOT}/plugins/your_plugin/include/your_plugin.hpp
+)
+
+add_library(your-plugin SHARED
+    ${YOUR_PLUGIN_SOURCES}
+    ${YOUR_PLUGIN_HEADERS}
+)
+
+target_link_libraries(your-plugin PRIVATE palantir-core)
 ```
 
-Release uses `include/mode/release` instead.
+## Sauron SDK Integration
 
-## Helper Targets
+The project integrates with the Sauron SDK for AI-powered assistance:
 
-Run `cmake --build . --target helper` for a list of available targets and their descriptions. 
+```cmake
+# In cmake/install-palantir-deps.cmake
+function(install_palantir_deps)
+    message(STATUS "Checking or installing palantir dependencies")
+    find_package(Sauron-sdk QUIET)
+    
+    if((NOT SAURON_SDK_FOUND OR NOT TARGET sauron_sdk::curl) AND MAGIC_DEPS_INSTALL)
+        # Define the repository URL
+        if(GITHUB_TOKEN)
+            set(GIT_REPOSITORY https://${GITHUB_TOKEN}@github.com/Djoe-Denne/Sauron-sdk.git)
+        else()
+            set(GIT_REPOSITORY https://github.com/Djoe-Denne/Sauron-sdk.git)
+        endif()
+
+        message(STATUS "System Sauron SDK not found, building from source...")
+        # Find or install Sauron SDK
+        include(FetchContent)
+        FetchContent_Declare(
+            SAURON_SDK
+            GIT_REPOSITORY ${GIT_REPOSITORY}
+            GIT_BRANCH master
+        )
+        FetchContent_MakeAvailable(SAURON_SDK) 
+    endif()
+    
+    if(NOT SAURON_SDK_FOUND)
+        message(FATAL_ERROR "Sauron SDK not found")
+    endif()
+    
+    message(STATUS "Found system Sauron SDK: ${SAURON_SDK_LIBRARIES}")
+endfunction()
+```
+
+## Content Management System
+
+The project includes a content management system for displaying and managing content in the overlay window:
+
+```cmake
+# In palantir-core/CMakeLists.txt
+set(CONTENT_MANAGER_SOURCES
+    ${PROJECT_ROOT}/palantir-core/src/window/component/content_manager.cpp
+)
+
+set(CONTENT_MANAGER_HEADERS
+    ${PROJECT_ROOT}/palantir-core/include/window/component/content_manager.hpp
+    ${PROJECT_ROOT}/palantir-core/include/window/component/content_manager_impl.hpp
+    ${PROJECT_ROOT}/palantir-core/include/window/component/icontent_manager.hpp
+)
+
+set(ALL_SOURCES
+    ${ALL_SOURCES}
+    ${CONTENT_MANAGER_SOURCES}
+    ${CONTENT_MANAGER_HEADERS}
+)
+```
+
+## Building for Different Platforms
+
+### Windows
+```bash
+# Configure for Windows
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+# Build
+cmake --build build --config Release
+```
+
+### macOS (Future Support)
+```bash
+# Configure for macOS
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+# Build
+cmake --build build --config Release
+```
+
+## Testing
+
+The project includes a testing framework:
+
+```cmake
+# Enable testing
+enable_testing()
+
+# Add test subdirectory
+add_subdirectory(tests)
+```
+
+Tests can be run using:
+
+```bash
+# Run all tests
+ctest -C Debug
+
+# Run specific tests
+ctest -C Debug -R "command_tests"
+``` 
