@@ -59,7 +59,7 @@ auto SendSauronRequestCommand::loadImagesFromFolder() const -> std::vector<std::
     for (const auto& file : std::filesystem::directory_iterator("./screenshot")) {
         // load image in base64 format
         std::ifstream file(file.path(), std::ios::binary);
-        std::vector<char> buffer(std::istreambuf_iterator<char>(file), {});
+        std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(file), {});
         std::string image_base64 = "data:image/png;base64," + utils::StringUtils::base64_encode(buffer);
         images.push_back(image_base64);
     }

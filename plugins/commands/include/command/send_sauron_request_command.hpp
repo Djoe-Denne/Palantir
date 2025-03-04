@@ -25,9 +25,9 @@ public:
 private:
     [[nodiscard]] auto loadImagesFromFolder() const -> std::vector<std::string>;
 
-    std::string prompt_;
 #pragma warning(push)
 #pragma warning(disable: 4251)
+    std::string prompt_;
     std::shared_ptr<Application> app_;
 #pragma warning(pop)
 };

@@ -11,7 +11,7 @@ class PALANTIR_CORE_API ContentManager : public IContentManager {
 public:
     ContentManager() : pimpl_(std::make_unique<ContentManagerImpl>()) {}
     explicit ContentManager(std::unique_ptr<T> view) : pimpl_(std::make_unique<ContentManagerImpl>(view)) {}
-    virtual ~ContentManager() = default;
+    ~ContentManager() override = default;
 
     ContentManager(const ContentManager&) = delete;
     auto operator=(const ContentManager&) -> ContentManager& = delete;
@@ -23,7 +23,7 @@ public:
      * 
      * @param nativeWindowHandle The native window handle.
      */
-    virtual auto initialize(void* nativeWindowHandle) -> void {
+    auto initialize(void* nativeWindowHandle) -> void override {
         pimpl_->initialize(nativeWindowHandle);
     }
 
@@ -32,7 +32,7 @@ public:
      * 
      * @param content The content to set.
      */
-    virtual auto setRootContent(const std::string& content) -> void {
+    auto setRootContent(const std::string& content) -> void override {
         pimpl_->setRootContent(content);
     }
 
@@ -42,7 +42,7 @@ public:
      * @param elementId The element id.
      * @param content The content to set.
      */
-    virtual auto setContent(const std::string& elementId, const std::string& content) -> void {
+    auto setContent(const std::string& elementId, const std::string& content) -> void override {
         pimpl_->setContent(elementId, content);
     }
 
@@ -52,7 +52,7 @@ public:
      * @param elementId The element id.
      * @return std::string The content.
      */
-    virtual auto getContent(const std::string& elementId) -> std::string {
+    auto getContent(const std::string& elementId) -> std::string override {
         return pimpl_->getContent(elementId);
     }
 
@@ -61,7 +61,7 @@ public:
      * 
      * @param elementId The element id.
      */
-    virtual auto toggleContentVisibility(const std::string& elementId) -> void {
+    auto toggleContentVisibility(const std::string& elementId) -> void override {
         pimpl_->toggleContentVisibility(elementId);
     }
 
@@ -71,7 +71,7 @@ public:
      * @param elementId The element id.
      * @param visible The visibility to set.
      */
-    virtual auto setContentVisibility(const std::string& elementId, bool visible) -> void {
+    auto setContentVisibility(const std::string& elementId, bool visible) -> void override {
         pimpl_->setContentVisibility(elementId, visible);
     }
 
@@ -81,14 +81,14 @@ public:
      * @param elementId The element id.
      * @return bool The visibility.
      */
-    virtual auto getContentVisibility(const std::string& elementId) -> bool {
+    auto getContentVisibility(const std::string& elementId) -> bool override {
         return pimpl_->getContentVisibility(elementId);
     }
 
     /**
      * @brief Destroy the content manager.
      */
-    virtual auto destroy() -> void {
+    auto destroy() -> void override {
         pimpl_->destroy();
     }
 
@@ -98,7 +98,7 @@ public:
      * @param width The width to resize to.
      * @param height The height to resize to.
      */
-    virtual auto resize(int width, int height) -> void {
+    auto resize(int width, int height) -> void override {
         pimpl_->resize(width, height);
     }
 

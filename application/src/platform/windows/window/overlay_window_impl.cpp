@@ -18,8 +18,8 @@ constexpr COLORREF SQUARE_COLOR = RGB(255, 0, 0);
 
 }  // namespace
 
-OverlayWindow::Impl::Impl()
-    : contentManager_(new component::ContentManager<component::webview::WebView>()) {}  // NOLINT
+OverlayWindow::Impl::Impl() // NOLINT
+    : contentManager_(new component::ContentManager<component::webview::WebView>()) {}  
 
 OverlayWindow::Impl::~Impl() {
     if (contentManager_) {
@@ -77,7 +77,7 @@ auto OverlayWindow::Impl::create() -> void {
     windowClass.lpfnWndProc = WindowProc;
     windowClass.hInstance = GetModuleHandleW(nullptr);
     windowClass.lpszClassName = L"InterviewCheaterClass";
-    windowClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
+    windowClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1); // NOLINT
     windowClass.style = CS_HREDRAW | CS_VREDRAW;
 
     if (RegisterClassExW(&windowClass) == 0) {
