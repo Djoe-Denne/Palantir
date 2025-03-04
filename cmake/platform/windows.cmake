@@ -94,7 +94,7 @@ endfunction()
 
 function(setup_windows_platform_webview target_name)
     find_package(webview2 QUIET)
-    if(NOT webview2_FOUND)
+    if(NOT webview2_FOUND AND MAGIC_DEPS_INSTALL)
         message(STATUS "Webview2 not found! Fetching from nuget...")
         # Microsoft.Web.WebView2
         FetchContent_Declare(

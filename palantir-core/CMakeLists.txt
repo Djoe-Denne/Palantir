@@ -120,5 +120,7 @@ elseif(APPLE)
 endif()
 
 # Enable testing for this component
-enable_testing()
-add_subdirectory(tests) 
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests) 
+endif()

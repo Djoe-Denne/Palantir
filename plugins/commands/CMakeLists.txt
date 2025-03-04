@@ -81,4 +81,7 @@ add_custom_command(TARGET ${MODULE_NAME} POST_BUILD
 # Link against palantir-core
 target_link_libraries(${MODULE_NAME} PRIVATE palantir-core)
 
-add_subdirectory(tests) 
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests) 
+endif()
