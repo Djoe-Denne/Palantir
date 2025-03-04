@@ -30,6 +30,7 @@ public:
     [[nodiscard]] auto getNativeHandle() const -> void*;
     [[nodiscard]] auto isRunning() const -> bool;
     auto setRunning(bool state) -> void;
+    [[nodiscard]] auto getContentManager() const -> std::shared_ptr<component::IContentManager>;
 
 private:
     static constexpr int WINDOW_WIDTH = 800;
@@ -40,7 +41,7 @@ private:
 
     HWND hwnd_{nullptr};
     bool running_{false};
-    std::unique_ptr<component::ContentManager<component::webview::WebView>> contentManager_;
+    std::shared_ptr<component::ContentManager<component::webview::WebView>> contentManager_;
 };
 
 } // namespace interview_cheater::window

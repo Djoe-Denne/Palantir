@@ -1,12 +1,13 @@
 #pragma once
 
+#include "window/component/icontent_manager.hpp"
 #include <memory>
 #include <string>
 #include "core_export.hpp"
 
 namespace interview_cheater::window::component {
 template<typename T>
-class PALANTIR_CORE_API ContentManager {
+class PALANTIR_CORE_API ContentManager : public IContentManager {
 public:
     ContentManager() : pimpl_(std::make_unique<ContentManagerImpl>()) {}
     explicit ContentManager(std::unique_ptr<T> view) : pimpl_(std::make_unique<ContentManagerImpl>(view)) {}

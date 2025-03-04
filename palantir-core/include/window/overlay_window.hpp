@@ -33,6 +33,8 @@ public:
     [[nodiscard]] auto isRunning() const -> bool override;
     auto setRunning(bool runningState) -> void override;
 
+    [[nodiscard]] auto getContentManager() const -> std::shared_ptr<component::IContentManager> override;
+
 private:
     class Impl;
     #pragma warning(push)

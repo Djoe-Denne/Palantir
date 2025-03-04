@@ -9,6 +9,7 @@ set(COMMANDS_PLUGIN_SOURCES
     ${PROJECT_ROOT}/plugins/commands/src/command/toggle_transparency_command.cpp
     ${PROJECT_ROOT}/plugins/commands/src/command/toggle_window_anonymity_command.cpp
     ${PROJECT_ROOT}/plugins/commands/src/command/clear_screenshot_command.cpp
+    ${PROJECT_ROOT}/plugins/commands/src/command/send_sauron_request_command.cpp
 )
 
 set(COMMANDS_PLUGIN_HEADERS
@@ -19,6 +20,7 @@ set(COMMANDS_PLUGIN_HEADERS
     ${PROJECT_ROOT}/plugins/commands/include/command/toggle_transparency_command.hpp
     ${PROJECT_ROOT}/plugins/commands/include/command/toggle_window_anonymity_command.hpp
     ${PROJECT_ROOT}/plugins/commands/include/command/clear_screenshot_command.hpp
+    ${PROJECT_ROOT}/plugins/commands/include/command/send_sauron_request_command.hpp
     ${PROJECT_ROOT}/plugins/commands/include/plugin_export.hpp
 )
 
