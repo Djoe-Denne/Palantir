@@ -6,6 +6,8 @@
 
 The system is designed with **security and modularity** in mind, supporting **on-premise deployments** for sensitive data while offering **cloud-hosted** versions for scalability.
 
+![Sauron System Architecture Diagram](global-archi-v2.png)
+
 ## Core Design Principles
 
 ### 1. AI-Driven Flow Creation
@@ -26,7 +28,7 @@ The system is designed with **security and modularity** in mind, supporting **on
 
 - Supports **custom services** in JS, TS, or Rust.
 - Pluggable **AI models** (OpenAI, Mistral, Anthropic, and hosted models).
-- APIs are exposed through **Sauron’s API Gateway**.
+- APIs are exposed through **Sauron's API Gateway**.
 
 ## System Components
 
@@ -109,7 +111,7 @@ The system is designed with **security and modularity** in mind, supporting **on
 
 ### 1. **Encryption & Data Protection**
 
-- **Gandalf (Client-Side Encryption):** Ensures data is encrypted before leaving the user’s environment.
+- **Gandalf (Client-Side Encryption):** Ensures data is encrypted before leaving the user's environment.
 - **Osgiliath (Server-Side Decryption API):** Fetches keys and decrypts data **only if required**.
 - **Cirith Ungol (On-Premise Decryption):** Allows enterprises to keep sensitive data **off-cloud**.
 
