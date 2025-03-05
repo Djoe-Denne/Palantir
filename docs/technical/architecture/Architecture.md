@@ -1,242 +1,155 @@
-# System Architecture
+# Sauron System Architecture
 
 ## Overview
 
-The Palantir application follows a modular, layered architecture that emphasizes separation of concerns, extensibility, and platform independence. The system is built using modern C++ design patterns and principles to ensure maintainability, testability, and robustness.
+**Sauron** is a cloud-based **API workflow automation service** that allows users to define APIs using a **flow diagram UI**. The system enables users to upload custom code blocks in **JavaScript (JS), TypeScript (TS), or Rust** or to rely on **AI-generated inferences** for missing components. Once a user finalizes a flow (**"Ring"**), AI generates any remaining elements, validates the structure through testing, and ensures correctness before deployment.
+
+The system is designed with **security and modularity** in mind, supporting **on-premise deployments** for sensitive data while offering **cloud-hosted** versions for scalability.
 
 ## Core Design Principles
 
-### 1. Separation of Concerns
-- Clear boundaries between system components
-- Platform-specific code isolated in dedicated implementations
-- Business logic separated from UI and configuration
-- Implementation details hidden through PIMPL pattern
+### 1. AI-Driven Flow Creation
 
-### 2. Thread Safety
-- Singleton instances provide thread-safe access
-- Synchronized key registration and signal processing
-- Thread-safe event handling and command execution
-- Protected shared resource access
+- Users create API flows using **Orodruin**, the flow editor web app.
+- AI (**Sammath Naur**) completes missing components and generates test suites.
+- AI iteratively fixes issues until all tests pass.
+- Users manually validate before deployment.
 
-### 3. Extensibility
-- Plugin-based command system
-- Platform-agnostic input abstraction
-- Configurable keyboard shortcuts
-- Modular window management
+### 2. Security & Encryption
 
-### 4. Configuration-Driven
-- External configuration files
-- Runtime behavior customization
-- Default configurations provided
-- Validation at load time
+- **Sauron** avoids direct access to sensitive user data.
+- **Gandalf** (on the client-side) and **Osgiliath** (on the server-side) handle encryption.
+- **Cirith Ungol** provides optional **on-premise** decryption for workflows requiring clear-text processing.
+- The **Morannon** authentication service validates API calls and tokens.
+
+### 3. Modular & Extensible
+
+- Supports **custom services** in JS, TS, or Rust.
+- Pluggable **AI models** (OpenAI, Mistral, Anthropic, and hosted models).
+- APIs are exposed through **Sauron’s API Gateway**.
 
 ## System Components
 
-### 1. Command System
-- **ICommand Interface**: Base contract for all commands
-- **CommandFactory**: Singleton factory for command management
-  - PIMPL pattern implementation
-  - Thread-safe command registration
-  - Instance-based access
-- **AutoCommandRegister**: Automatic command registration utility
-- **Built-in Commands**:
-  - ShowCommand: Window visibility control
-  - StopCommand: Application termination
-  - WindowScreenshotCommand: Window capture functionality
-    - Platform-specific implementations
-    - Automatic file naming and storage
-    - Thread-safe file operations
-    - GDI+ integration (Windows)
-    - CoreGraphics integration (macOS)
+### 1. **Orodruin (Flow Editor Web App)**
 
-### 2. Input System
-- **Input Layer**
-  - IInput Interface: Platform-agnostic input detection
-  - ConfigurableInput: Keyboard shortcut implementation
-  - KeyRegister: Singleton key registration service
-  - KeyMapper: Key configuration mapping
-  - KeyConfig: Configuration management
+- The UI where users design API workflows (**Rings**).
+- Integrates with AI-powered code generation and testing.
+- Communicates with **Sauron API Gateway** to save and deploy Rings.
 
-- **Signal Layer**
-  - ISignal Interface: Signal processing contract
-  - Signal: Generic signal implementation
-  - SignalManager: Signal lifecycle management
-  - SignalFactory: Signal creation service
+### 2. **Sammath Naur (AI Code Generator & Tester)**
 
-### 3. Window System
-- **WindowManager**: Singleton window management service
-  - PIMPL pattern implementation
-  - Window lifecycle management
-  - Platform-specific window handling
+- Completes missing workflow components.
+- Generates test suites and iteratively fixes errors.
+- Ensures the final Ring is functional before deployment.
 
-### 4. Application Core
-- **Application**: Base application functionality
-  - Configuration management
-  - Component initialization
-  - Resource management
+### 3. **Sauron API Gateway**
 
-- **PlatformApplication**: Platform-specific implementation
-  - Windows/macOS specific event loops
-  - Native window management
-  - System integration
+- Routes API calls to the appropriate **Ring**.
+- Verifies requests using **Morannon IAM**.
+- Ensures secure and efficient API handling.
 
-## Implementation Patterns
+### 4. **Cirith Ungol (Optional Decryption Service)**
 
-### 1. PIMPL (Pointer to Implementation)
-Used throughout the system to:
-- Hide implementation details
-- Reduce compilation dependencies
-- Enable binary compatibility
-- Facilitate platform-specific implementations
+- Provides **on-premise** decryption for Rings that require access to raw data.
+- Prevents **Sauron** from handling unencrypted data.
 
-Example components using PIMPL:
-- CommandFactory
-- WindowManager
-- KeyRegister
-- ConfigurableInput
+### 5. **Uruk-hai (Proxy Service)**
 
-### 2. Singleton Pattern
-Applied to key system services:
-- CommandFactory: Command creation and management
-- WindowManager: Window lifecycle and state
-- KeyRegister: Key code registration and mapping
-- SignalManager: Signal processing and management
+- Simple passthrough service that forwards API calls to **Osgiliath**.
+- Reduces latency by handling high-throughput requests efficiently.
 
-### 3. Factory Pattern
-Used for object creation and configuration:
-- CommandFactory: Command instantiation
-- InputFactory: Input handler creation
-- SignalFactory: Signal creation and configuration
-- WindowFactory: Window creation
+### 6. **Morannon (Identity & Access Management)**
 
-## Platform-Specific Implementation
+- Handles user authentication.
+- Issues and validates access tokens.
+- Required for both **Palantir** (desktop app) and **Orodruin** (web app) interactions.
 
-### Windows
-- Low-level keyboard hook system
-- Global event monitoring
-- Win32 API integration
-- Windows message loop
-- GDI+ based window capture
-  - HBITMAP creation and management
-  - PNG encoding and compression
-  - Memory management with RAII
+### 7. **Osgiliath (Decryption API Gateway)**
 
-### macOS
-- Event monitor system
-- Cocoa framework integration
-- Global and local event handling
-- Accessibility features
-- CoreGraphics window capture
-  - CGWindowListCreateImage usage
-  - Window identification and focus detection
-  - Image format conversion and storage
+- Fetches decryption keys and processes queries for **Gondor**.
+- Ensures encrypted data remains secure before forwarding requests.
 
-## Configuration System
+### 8. **Gondor (AI Model Execution Layer)**
 
-### 1. Shortcut Configuration
-- INI file format
-- Command-to-key mapping
-- Platform-specific modifiers
-- Default configuration support
+- Executes requests to third-party **AI providers** (OpenAI, Mistral, Anthropic, etc.).
+- Supports hosted AI models for enterprise clients.
 
-### 2. Input Configuration
-- Key code mapping
-- Platform-specific key registration
-- Modifier key support
-- Input validation
+## Palantir: Virtual AI Assistant
 
-## Error Handling
+### 1. Overview
 
-### 1. Configuration Errors
-- Validation at load time
-- Default fallback mechanisms
-- Descriptive error messages
-- Configuration syntax checking
+**Palantir** is a **desktop virtual AI assistant** designed to operate **in the background without recording anything**. It passively listens for signals and becomes active only when the user triggers an interaction.
 
-### 2. Runtime Errors
-- Platform-specific error handling
-- Graceful degradation
-- Error logging and reporting
-- Resource cleanup
+### 2. Features
 
-## Best Practices
+- **Signal-Based Activation:** The **Signals module** listens for specific user interactions to trigger Palantir without constant monitoring.
+- **Controlled Access to Screen Data:** 
+  - Users define which parts of their screen are accessible.
+  - The assistant can process:
+    - **Clicked zones**
+    - **Entire windows**
+    - **Full screen**
+- **Direct API Querying:** Users can enter a prompt and send requests to **Sauron via Uruk-hai**.
+- **Ring-Based Execution:** Users can select a predefined **Ring** before submitting a query to structure responses more effectively.
+- **Flexible UI Rendering:**
+  - UI is managed via a **webview component**.
+  - Supports both predefined UI elements and **AI-generated HTML responses** as query outputs.
 
-1. **Command Implementation**
-   - Single responsibility principle
-   - Clear command naming
-   - Proper error handling
-   - Stateless when possible
-   - Platform-specific code isolation
-   - Resource cleanup with RAII
+### 3. Workflow
 
-2. **Resource Management**
-   - RAII principles
-   - Smart pointer usage
-   - Proper cleanup in destructors
-   - Exception safety
-   - Automatic resource release
-   - Memory leak prevention
+1. **User triggers an interaction** (e.g., selecting part of the screen or entering a prompt).
+2. **Palantir** activates and processes the query.
+3. **Query is sent to Sauron** via **Uruk-hai**.
+4. **If a Ring is selected, it structures the query flow**.
+5. **Response is displayed in the webview**, either as:
+   - A structured UI element.
+   - A fully AI-generated HTML page.
 
-3. **Thread Safety**
-   - Synchronized access to shared resources
-   - Thread-safe singleton access
-   - Protected signal processing
-   - Safe event handling
+## Security Model
 
-4. **Platform Independence**
-   - Abstract interfaces
-   - Platform-specific implementations
-   - Configuration-driven behavior
-   - Portable code practices
+### 1. **Encryption & Data Protection**
 
-## Testing Architecture
+- **Gandalf (Client-Side Encryption):** Ensures data is encrypted before leaving the user’s environment.
+- **Osgiliath (Server-Side Decryption API):** Fetches keys and decrypts data **only if required**.
+- **Cirith Ungol (On-Premise Decryption):** Allows enterprises to keep sensitive data **off-cloud**.
 
-### 1. Test Organization
-- **Unit Tests**: Component-level testing
-  - Command tests
-  - Plugin tests
-  - Platform-specific implementation tests
-- **Mock Objects**: Test doubles for dependencies
-  - MockApplication
-  - MockWindow
-  - MockWindowManager
-- **Test Fixtures**: Common test setup and teardown
-  - Platform-specific test environments
-  - Resource cleanup
-  - Test data management
+### 2. **Authentication & Authorization**
 
-### 2. Testing Patterns
-- **Platform-Specific Testing**
-  - Conditional compilation (#ifdef)
-  - Platform-specific test suites
-  - Environment setup and teardown
-  - Resource management testing
-- **Resource Management Tests**
-  - Memory leak detection
-  - Resource cleanup verification
-  - Exception safety testing
-- **Command Testing**
-  - Command execution verification
-  - Error handling scenarios
-  - Platform-specific behavior testing
+- **Morannon IAM** issues **JWT tokens** for API authentication.
+- Tokens are **validated** by the **Sauron API Gateway** before request execution.
+- **Multi-factor authentication (MFA)** is enforced for high-security workflows.
 
-### 3. Test Infrastructure
-- **Google Test Framework**
-  - Test case organization
-  - Assertion macros
-  - Test fixtures
-  - Test parameterization
-- **Google Mock Framework**
-  - Mock object creation
-  - Behavior verification
-  - Expectation setting
-  - Method call tracking
+### 3. **On-Premise vs. Cloud Hosting**
 
-### 4. Test Best Practices
-- Isolated test cases
-- Platform-specific test separation
-- Comprehensive mock objects
-- Resource cleanup verification
-- Exception handling testing
-- Thread safety verification
-- Performance benchmarking 
+- **Sensitive data workflows** can run entirely **on-premise**.
+- Cloud-hosted workflows only decrypt **minimal necessary data** via **Cirith Ungol**.
+
+## Workflow Execution
+
+### 1. **Designing a Flow (Ring)**
+
+- User defines an API workflow in **Orodruin**.
+- AI (**Sammath Naur**) completes missing components.
+- AI generates a test suite and iteratively fixes failures.
+- User validates and saves the Ring.
+
+### 2. **Executing a Flow**
+
+- Requests are sent to the **Sauron API Gateway**.
+- The Gateway routes calls to:
+  - **Uruk-hai** (if simple proxy is needed).
+  - **Cirith Ungol** (if decryption is required).
+  - **Osgiliath** (for AI-powered execution).
+- Responses are sent back **securely** to the client.
+
+## Future Considerations
+
+- **Deciding on Ring Binary Storage:** Currently under discussion.
+- **Expanding Model Support:** Adding new AI models for workflow execution.
+- **Performance Optimizations:** Improving the efficiency of the **Uruk-hai** proxy service.
+- **Enhanced Security Auditing:** Providing cryptographic proofs for sensitive workflows.
+
+## Conclusion
+
+Sauron provides a **secure, AI-powered workflow automation platform** with **modular execution, strong encryption**, and **scalable API integrations**. With **Orodruin** for flow design, **Sammath Naur** for AI-driven validation, and **Osgiliath** for secure execution, the system ensures **flexibility, security, and ease of use** for developers and enterprises alike.
+
