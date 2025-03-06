@@ -32,9 +32,25 @@ jobs:
       pr_number: ${{ steps.trigger-check.outputs.pr_number }}
       cache_valid: ${{ steps.check-cache.outputs.cache_valid }}
       cache_status: ${{ steps.check-cache.outputs.cache_status }}
+      cache_restored: ${{ steps.restore-cache.outputs.cache-hit }}
     steps:
       - uses: actions/checkout@v4
       
+      # Try to restore cache first
+      - name: Restore CMake cache
+        id: restore-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ env.CMAKE_BUILD_DIR }}
+            ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
+            ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
+            ${{ env.CMAKE_BUILD_DIR }}/_deps
+          key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+          restore-keys: |
+            ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-
+      
+      # Now check cache status after restore attempt
       - name: Check CMake cache status
         id: check-cache
         shell: pwsh
@@ -44,6 +60,8 @@ jobs:
           $status = "Cache not found"
           
           Write-Host "Checking cache at: $cachePath"
+          Write-Host "Cache restore attempt: ${{ steps.restore-cache.outputs.cache-hit }}"
+          
           if (Test-Path $cachePath) {
             $cacheAge = (Get-Date) - (Get-Item $cachePath).LastWriteTime
             $ageHours = [math]::Round($cacheAge.TotalHours, 2)
@@ -72,6 +90,7 @@ jobs:
           Write-Host "Trigger Status Summary:"
           Write-Host "======================="
           Write-Host "Event type: ${{ github.event_name }}"
+          Write-Host "Cache restore: ${{ steps.restore-cache.outputs.cache-hit }}"
           Write-Host "Cache status: ${{ steps.check-cache.outputs.cache_status }}"
           Write-Host "Should run setup: ${{ steps.trigger-check.outputs.should_run_setup }}"
           Write-Host "Should run quality: ${{ steps.trigger-check.outputs.should_run_quality }}"
@@ -82,7 +101,8 @@ jobs:
     needs: check-trigger
     if: |
       needs.check-trigger.outputs.should_run_setup == 'true' ||
-      needs.check-trigger.outputs.cache_valid != 'true'
+      needs.check-trigger.outputs.cache_valid != 'true' ||
+      needs.check-trigger.outputs.cache_restored != 'true'
     runs-on: windows-latest
     outputs:
       changed_files: ${{ steps.cmake-setup.outputs.changed_files }}
@@ -94,9 +114,11 @@ jobs:
           Write-Host "=========================="
           Write-Host "Cache status: ${{ needs.check-trigger.outputs.cache_status }}"
           Write-Host "Cache valid: ${{ needs.check-trigger.outputs.cache_valid }}"
+          Write-Host "Cache restored: ${{ needs.check-trigger.outputs.cache_restored }}"
           Write-Host "Should run setup: ${{ needs.check-trigger.outputs.should_run_setup }}"
           Write-Host "Trigger condition 1 (should_run_setup): ${{ needs.check-trigger.outputs.should_run_setup == 'true' }}"
           Write-Host "Trigger condition 2 (cache_valid): ${{ needs.check-trigger.outputs.cache_valid != 'true' }}"
+          Write-Host "Trigger condition 3 (cache_restored): ${{ needs.check-trigger.outputs.cache_restored != 'true' }}"
           
       - uses: actions/checkout@v4
       - id: cmake-setup
