@@ -18,18 +18,18 @@ class Application::ApplicationImpl {
 public:
     explicit ApplicationImpl(const std::string& configPath) : configPath_(configPath) {
         DEBUG_LOG("Creating application with config: {}", configPath);
-        input::InputFactory::initialize(configPath_);
+        input::InputFactory::getInstance()->initialize(configPath_);
         DEBUG_LOG("Input configuration initialized");
     }
 
     auto attachSignals() -> void {
         DEBUG_LOG("Attaching signals from configuration");
         auto app = Application::getInstance();
-        auto signals = signal::SignalFactory::createSignals(app);
+        auto signals = signal::SignalFactory::getInstance()->createSignals(app);
         for (auto& signal : signals) {
-            signal::SignalManager::getInstance().addSignal(std::move(signal));
+            signal::SignalManager::getInstance()->addSignal(std::move(signal));
         }
-        signal::SignalManager::getInstance().startSignals();
+        signal::SignalManager::getInstance()->startSignals();
         DEBUG_LOG("Signals attached and started");
     }
 
@@ -53,7 +53,9 @@ Application::Application() : pImpl_(nullptr) {
 Application::~Application() = default;
 
 // Public interface implementations
-auto Application::getSignalManager() -> signal::SignalManager& { return signal::SignalManager::getInstance(); }
+auto Application::getSignalManager() -> std::shared_ptr<signal::SignalManager> {
+    return signal::SignalManager::getInstance();
+}
 
 auto Application::getWindowManager() -> std::shared_ptr<window::WindowManager> {
     return window::WindowManager::getInstance();

@@ -11,6 +11,8 @@
 #define ISIGNAL_HPP
 #include <any>
 
+#include "core_export.hpp"
+
 namespace palantir::signal {
 
 /**
@@ -22,7 +24,7 @@ namespace palantir::signal {
  * when specific conditions are met. The interface supports move semantics but
  * prohibits copying to ensure unique ownership of resources.
  */
-class ISignal {
+class PALANTIR_CORE_API ISignal {
 public:
     /** @brief Virtual destructor to ensure proper cleanup of derived classes. */
     virtual ~ISignal() = default;

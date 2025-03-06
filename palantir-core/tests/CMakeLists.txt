@@ -7,6 +7,9 @@ add_executable(${TEST_TARGET_NAME}
     input/key_mapper_test.cpp
     input/key_register_test.cpp
     input/configurable_input_test.cpp
+    signal/signal_factory_test.cpp
+    signal/signal_test.cpp
+    window/window_manager_test.cpp
 )
 
 message(STATUS "Setting up testing for target ${TEST_TARGET_NAME}")

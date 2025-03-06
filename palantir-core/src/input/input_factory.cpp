@@ -11,56 +11,115 @@
 
 namespace palantir::input {
 
-std::unique_ptr<KeyConfig> InputFactory::keyConfig_;
+std::shared_ptr<InputFactory> InputFactory::instance_;
+
+class InputFactory::InputFactoryImpl {
+public:
+    InputFactoryImpl() = default;
+    ~InputFactoryImpl() = default;
+
+    auto initialize(const std::string& configPath) -> void {
+        // Create directory if it doesn't exist
+        const auto directory = std::filesystem::path(configPath).parent_path();
+        if (!std::filesystem::exists(directory)) {
+            std::filesystem::create_directories(directory);
+        }
+
+        // Create default config if file doesn't exist
+        if (!std::filesystem::exists(configPath)) {
+            createDefaultConfig(configPath);
+        }
+
+        keyConfig_ = std::make_unique<KeyConfig>(configPath);
+    }
+
+    auto createDefaultConfig(const std::string& configPath) -> void {
+        
+        std::ofstream configFile(configPath);
+        if (!configFile) {
+            throw std::runtime_error("Failed to create default config file: " + configPath);
+        }
+
+        // Write default configuration
+        configFile << "; Default keyboard shortcuts configuration\n"
+                << "; Format: command = modifier+key\n"
+                << "; Available modifiers: Ctrl, Alt, Shift, Win (Windows) / Cmd (macOS)\n"
+                << "\n"
+                << "[commands]\n"
+#ifdef _WIN32
+                << "toggle = Ctrl+Num 1    ; Toggle window visibility\n"
+                << "stop = Win+/        ; Stop application\n"
+                << "window-screenshot = Ctrl+Num 2    ; Take screenshot of current window\n"
+                << "toggle-transparency = Ctrl+Num 3    ; Toggle window transparency\n"
+                //<< "toggle-window-anonymity = Ctrl+Num 4    ; Toggle window anonymity\n"
+                << "send-sauron-implement-request = Ctrl+Num 4    ; Send request to Sauron to implement\n"
+                << "send-sauron-fix-errors-request = Ctrl+Num 5    ; Send request to Sauron to fix errors\n"
+                << "send-sauron-validate-with-tests-request = Ctrl+Num 6    ; Send request to Sauron to validate with tests\n"
+                << "send-sauron-fix-test-failures-request = Ctrl+Num 7    ; Send request to Sauron to fix test failures\n"
+                << "send-sauron-handle-todos-request = Ctrl+Num 8    ; Send request to Sauron to handle todos\n"
+                << "clear-screenshot = Ctrl+Num 9    ; Clear screenshot folder\n"
+#else
+                << "toggle = Ctrl+F1    ; Toggle window visibility\n"
+                << "stop = Cmd+/        ; Stop application\n"
+#endif
+                << "\n";
+
+        if (!configFile) {
+            throw std::runtime_error("Failed to write default configuration to: " + configPath);
+        }
+    }
+
+    [[nodiscard]] auto createInput(const std::string& commandName) -> std::unique_ptr<ConfigurableInput> {
+        if (!keyConfig_) {
+            throw std::runtime_error("InputFactory not initialized. Call initialize() first.");
+        }
+        const auto& shortcut = keyConfig_->getShortcut(commandName);
+        if (!KeyMapper::isValidKey(shortcut.key) || !KeyMapper::isValidModifier(shortcut.modifier)) {
+            throw std::invalid_argument("Invalid shortcut configuration for command: " + commandName);
+        }
+        int keyCode = KeyMapper::getKeyCode(shortcut.key);
+        int modifierCode = KeyMapper::getModifierCode(shortcut.modifier);
+        return std::make_unique<ConfigurableInput>(keyCode, modifierCode);
+    }
+
+    auto hasShortcut(const std::string& commandName) -> bool {
+        if (!keyConfig_) {
+            throw std::runtime_error("InputFactory not initialized. Call initialize() first.");
+        }
+        return keyConfig_->hasShortcut(commandName);
+    }
+
+    auto getConfiguredCommands() -> std::vector<std::string> {
+        if (!keyConfig_) {
+            throw std::runtime_error("InputFactory not initialized. Call initialize() first.");
+        }
+        return keyConfig_->getConfiguredCommands();
+}
+
+private:
+    std::unique_ptr<KeyConfig> keyConfig_;
+};
+
+InputFactory::InputFactory() : pimpl_(std::make_unique<InputFactoryImpl>()) {}
+InputFactory::~InputFactory() = default;
+
+auto InputFactory::getInstance() -> std::shared_ptr<InputFactory> {
+    if (!instance_) {
+        instance_ = std::shared_ptr<InputFactory>(new InputFactory());
+    }
+    return instance_;
+}
+
+auto InputFactory::setInstance(const std::shared_ptr<InputFactory>& instance) -> void {
+    instance_ = instance;
+}
 
 auto InputFactory::initialize(const std::string& configPath) -> void {
-    // Create directory if it doesn't exist
-    const auto directory = std::filesystem::path(configPath).parent_path();
-    if (!std::filesystem::exists(directory)) {
-        std::filesystem::create_directories(directory);
-    }
-
-    // Create default config if file doesn't exist
-    if (!std::filesystem::exists(configPath)) {
-        createDefaultConfig(configPath);
-    }
-
-    keyConfig_ = std::make_unique<KeyConfig>(configPath);
+    pimpl_->initialize(configPath);
 }
 
 auto InputFactory::createDefaultConfig(const std::string& configPath) -> void {
-    std::ofstream configFile(configPath);
-    if (!configFile) {
-        throw std::runtime_error("Failed to create default config file: " + configPath);
-    }
-
-    // Write default configuration
-    configFile << "; Default keyboard shortcuts configuration\n"
-               << "; Format: command = modifier+key\n"
-               << "; Available modifiers: Ctrl, Alt, Shift, Win (Windows) / Cmd (macOS)\n"
-               << "\n"
-               << "[commands]\n"
-#ifdef _WIN32
-               << "toggle = Ctrl+Num 1    ; Toggle window visibility\n"
-               << "stop = Win+/        ; Stop application\n"
-               << "window-screenshot = Ctrl+Num 2    ; Take screenshot of current window\n"
-               << "toggle-transparency = Ctrl+Num 3    ; Toggle window transparency\n"
-               //<< "toggle-window-anonymity = Ctrl+Num 4    ; Toggle window anonymity\n"
-               << "send-sauron-implement-request = Ctrl+Num 4    ; Send request to Sauron to implement\n"
-               << "send-sauron-fix-errors-request = Ctrl+Num 5    ; Send request to Sauron to fix errors\n"
-               << "send-sauron-validate-with-tests-request = Ctrl+Num 6    ; Send request to Sauron to validate with tests\n"
-               << "send-sauron-fix-test-failures-request = Ctrl+Num 7    ; Send request to Sauron to fix test failures\n"
-               << "send-sauron-handle-todos-request = Ctrl+Num 8    ; Send request to Sauron to handle todos\n"
-               << "clear-screenshot = Ctrl+Num 9    ; Clear screenshot folder\n"
-#else
-               << "toggle = Ctrl+F1    ; Toggle window visibility\n"
-               << "stop = Cmd+/        ; Stop application\n"
-#endif
-               << "\n";
-
-    if (!configFile) {
-        throw std::runtime_error("Failed to write default configuration to: " + configPath);
-    }
+    pimpl_->createDefaultConfig(configPath);
 }
 
 /**
@@ -73,30 +132,15 @@ auto InputFactory::createDefaultConfig(const std::string& configPath) -> void {
  * input object creation and configuration.
  */
 [[nodiscard]] auto InputFactory::createInput(const std::string& commandName) -> std::unique_ptr<ConfigurableInput> {
-    if (!keyConfig_) {
-        throw std::runtime_error("InputFactory not initialized. Call initialize() first.");
-    }
-    const auto& shortcut = keyConfig_->getShortcut(commandName);
-    if (!KeyMapper::isValidKey(shortcut.key) || !KeyMapper::isValidModifier(shortcut.modifier)) {
-        throw std::invalid_argument("Invalid shortcut configuration for command: " + commandName);
-    }
-    int keyCode = KeyMapper::getKeyCode(shortcut.key);
-    int modifierCode = KeyMapper::getModifierCode(shortcut.modifier);
-    return std::make_unique<ConfigurableInput>(keyCode, modifierCode);
+    return pimpl_->createInput(commandName);
 }
 
-auto InputFactory::hasShortcut(const std::string& commandName) -> bool {
-    if (!keyConfig_) {
-        throw std::runtime_error("InputFactory not initialized. Call initialize() first.");
-    }
-    return keyConfig_->hasShortcut(commandName);
+auto InputFactory::hasShortcut(const std::string& commandName) const -> bool {
+    return pimpl_->hasShortcut(commandName);
 }
 
-auto InputFactory::getConfiguredCommands() -> std::vector<std::string> {
-    if (!keyConfig_) {
-        throw std::runtime_error("InputFactory not initialized. Call initialize() first.");
-    }
-    return keyConfig_->getConfiguredCommands();
+auto InputFactory::getConfiguredCommands() const -> std::vector<std::string> {
+    return pimpl_->getConfiguredCommands();
 }
 
 }  // namespace palantir::input

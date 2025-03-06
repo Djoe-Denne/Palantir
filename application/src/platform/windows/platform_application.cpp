@@ -83,12 +83,12 @@ public:
      * Initializes the implementation with references to the managers and sets up
      * the Windows keyboard hook for global input monitoring.
      */
-    explicit Impl(signal::SignalManager& signalManager, const std::shared_ptr<window::WindowManager>& windowManager)
+    explicit Impl(std::shared_ptr<signal::SignalManager> signalManager, const std::shared_ptr<window::WindowManager>& windowManager)
         : signalManager_(signalManager), windowManager_(windowManager) {
         DEBUG_LOG("Initializing Windows platform application");
 
         // Store signal manager pointer for hook callback
-        g_signalManager = &signalManager;
+        g_signalManager = signalManager.get();
 
         // Install keyboard hook
         g_keyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, GetModuleHandle(nullptr), 0);
@@ -162,7 +162,7 @@ public:
     }
 
 private:
-    signal::SignalManager& signalManager_;                  ///< Reference to the signal manager
+    std::shared_ptr<signal::SignalManager> signalManager_;                  ///< Reference to the signal manager
     std::shared_ptr<window::WindowManager> windowManager_;  ///< Reference to the window manager
 };
 

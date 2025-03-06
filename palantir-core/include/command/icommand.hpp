@@ -39,9 +39,9 @@ public:
 
     // Define move operations
     /** @brief Default move constructor for transfer of command ownership. */
-    ICommand(ICommand&&) noexcept = default;
+    ICommand(ICommand&&) noexcept = delete;
     /** @brief Default move assignment for transfer of command ownership. */
-    auto operator=(ICommand&&) noexcept -> ICommand& = default;
+    auto operator=(ICommand&&) noexcept -> ICommand& = delete;
 
     /**
      * @brief Execute the command's action.

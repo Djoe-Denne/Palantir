@@ -13,21 +13,48 @@
 
 namespace palantir::signal {
 
-auto SignalFactory::createSignals(const std::shared_ptr<Application>& app) -> std::vector<std::unique_ptr<ISignal>> {
-    std::vector<std::unique_ptr<ISignal>> signals;
+std::shared_ptr<SignalFactory> SignalFactory::instance_;
 
-    for (const auto& commandName : input::InputFactory::getConfiguredCommands()) {
-        auto command = command::CommandFactory::getInstance().getCommand(commandName);
-        if (command) {
-            auto input = input::InputFactory::createInput(commandName);
-            signals.push_back(std::make_unique<Signal>(std::move(input), std::move(command), command->useDebounce()));
-        } else {
-            DEBUG_LOG("Unknown command in configuration: {}", commandName);
-            throw std::runtime_error("Unknown command in configuration: " + commandName);
+class SignalFactory::SignalFactoryImpl {
+public:
+    SignalFactoryImpl() = default;
+    ~SignalFactoryImpl() = default;
+
+    auto createSignals(const std::shared_ptr<Application>& app) -> std::vector<std::unique_ptr<ISignal>> {
+        std::vector<std::unique_ptr<ISignal>> signals;
+
+        for (const auto& commandName : input::InputFactory::getInstance()->getConfiguredCommands()) {
+            auto command = command::CommandFactory::getInstance()->getCommand(commandName);
+            if (command) {
+                auto input = input::InputFactory::getInstance()->createInput(commandName);
+                signals.push_back(std::make_unique<Signal>(std::move(input), std::move(command), command->useDebounce()));
+            } else {
+                DEBUG_LOG("Unknown command in configuration: {}", commandName);
+                throw std::runtime_error("Unknown command in configuration: " + commandName);
+            }
         }
-    }
 
-    return signals;
+        return signals;
+    }
+};
+
+SignalFactory::SignalFactory() : pimpl_(std::make_unique<SignalFactoryImpl>()) {}
+
+SignalFactory::~SignalFactory() = default;
+
+auto SignalFactory::getInstance() -> std::shared_ptr<SignalFactory> {
+    if (!instance_) {
+        instance_ = std::shared_ptr<SignalFactory>(new SignalFactory());
+    }
+    return instance_;
+}
+
+auto SignalFactory::setInstance(const std::shared_ptr<SignalFactory>& instance) -> void {
+    instance_ = instance;
+}
+
+auto SignalFactory::createSignals(const std::shared_ptr<Application>& app) -> std::vector<std::unique_ptr<ISignal>> {
+    return pimpl_->createSignals(app);
 }
 
 }  // namespace palantir::signal

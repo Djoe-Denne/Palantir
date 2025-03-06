@@ -29,13 +29,17 @@ class ISignal;
  */
 class PALANTIR_CORE_API SignalManager {
 public:
-    // Forward declaration of platform-specific implementation
-    class Impl;
     /**
      * @brief Get the singleton instance of SignalManager
      * @return Reference to the singleton instance
      */
-    static auto getInstance() -> SignalManager&;
+    static auto getInstance() -> std::shared_ptr<SignalManager>;
+
+    /**
+     * @brief Set the singleton instance of SignalManager
+     * @param instance The instance to set
+     */
+    static auto setInstance(const std::shared_ptr<SignalManager>& instance) -> void;
 
     /**
      * @brief Destroy the SignalManager object.
@@ -55,31 +59,35 @@ public:
      * @brief Add a new signal to be managed.
      * @param signal Unique pointer to the signal to be added.
      */
-    auto addSignal(std::unique_ptr<ISignal> signal) -> void;
+    virtual auto addSignal(std::unique_ptr<ISignal> signal) -> void;
 
     /**
      * @brief Start processing all managed signals.
      */
-    auto startSignals() -> void;
+    virtual auto startSignals() -> void;
 
     /**
      * @brief Stop processing all managed signals.
      */
-    auto stopSignals() -> void;
+    virtual auto stopSignals() -> void;
 
     /**
      * @brief Check all managed signals.
      */
-    auto checkSignals(const std::any& event) -> void;
+    virtual auto checkSignals(const std::any& event) -> void;
 
-private:
+protected:
     // Private constructor for singleton
     SignalManager();
+private:
 
+    // Forward declaration of platform-specific implementation
+    class Impl;
     // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
 #pragma warning(push)
 #pragma warning(disable: 4251)
     std::unique_ptr<Impl> pImpl_;  ///< Platform-specific implementation details
+    static std::shared_ptr<SignalManager> instance_;
 #pragma warning(pop)
 };
 
