@@ -30,15 +30,35 @@ jobs:
       should_run_quality: ${{ steps.trigger-check.outputs.should_run_quality }}
       should_run_setup: ${{ steps.trigger-check.outputs.should_run_setup }}
       pr_number: ${{ steps.trigger-check.outputs.pr_number }}
+      cache_valid: ${{ steps.check-cache.outputs.cache_valid }}
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Check CMake cache status
+        id: check-cache
+        shell: pwsh
+        run: |
+          $cachePath = "${{ env.CMAKE_BUILD_DIR }}"
+          $cacheValid = "false"
+          
+          if (Test-Path $cachePath) {
+            $cacheAge = (Get-Date) - (Get-Item $cachePath).LastWriteTime
+            if ($cacheAge.TotalHours -lt 12) {
+              $cacheValid = "true"
+            }
+          }
+          
+          echo "cache_valid=$cacheValid" >> $env:GITHUB_OUTPUT
+          
       - id: trigger-check
         uses: ./.github/workflows/actions/check-triggers
 
   setup:
     name: Setup
     needs: check-trigger
-    if: needs.check-trigger.outputs.should_run_setup == 'true'
+    if: |
+      needs.check-trigger.outputs.should_run_setup == 'true' ||
+      needs.check-trigger.outputs.cache_valid != 'true'
     runs-on: windows-latest
     outputs:
       changed_files: ${{ steps.cmake-setup.outputs.changed_files }}
