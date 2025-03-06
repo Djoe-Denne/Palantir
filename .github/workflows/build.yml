@@ -31,6 +31,7 @@ jobs:
       should_run_setup: ${{ steps.trigger-check.outputs.should_run_setup }}
       pr_number: ${{ steps.trigger-check.outputs.pr_number }}
     steps:
+      - uses: actions/checkout@v4
       - id: trigger-check
         uses: ./.github/workflows/actions/check-triggers
 
@@ -42,6 +43,7 @@ jobs:
     outputs:
       changed_files: ${{ steps.cmake-setup.outputs.changed_files }}
     steps:
+      - uses: actions/checkout@v4
       - id: cmake-setup
         uses: ./.github/workflows/actions/setup-cmake
         with:
@@ -57,6 +59,7 @@ jobs:
     if: needs.check-trigger.outputs.should_run_quality == 'true'
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/code-quality
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
