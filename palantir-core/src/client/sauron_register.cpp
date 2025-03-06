@@ -20,7 +20,7 @@ public:
 };
 
 // Singleton instance
-std::shared_ptr<SauronRegister> SauronRegister::getInstance() {
+auto SauronRegister::getInstance() -> std::shared_ptr<SauronRegister> {
     if (!instance_) {
         instance_ = std::shared_ptr<SauronRegister>(new SauronRegister());
     }
@@ -32,10 +32,9 @@ auto SauronRegister::setInstance(const std::shared_ptr<SauronRegister>& instance
 }
 
 // Constructor
-SauronRegister::SauronRegister() : pImpl(std::make_unique<Impl>()) {
-}
+SauronRegister::SauronRegister() = default;
 
-SauronRegister::SauronRegister(const std::shared_ptr<sauron::client::SauronClient>& sauronClient) : pImpl(std::make_unique<Impl>(sauronClient)) {
+SauronRegister::SauronRegister(const std::shared_ptr<sauron::client::SauronClient>& sauronClient) : pImpl_(std::make_unique<Impl>(sauronClient)) {
 }
 
 // Destructor
@@ -43,7 +42,7 @@ SauronRegister::~SauronRegister() = default;
 
 // Client accessor
 auto SauronRegister::getSauronClient() const -> std::shared_ptr<sauron::client::SauronClient> {
-    return pImpl->sauronClient;
+    return pImpl_->sauronClient;
 }
 
 } // namespace palantir::client

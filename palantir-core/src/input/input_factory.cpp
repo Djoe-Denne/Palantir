@@ -18,6 +18,11 @@ public:
     InputFactoryImpl() = default;
     ~InputFactoryImpl() = default;
 
+    InputFactoryImpl(const InputFactoryImpl&) = delete;
+    auto operator=(const InputFactoryImpl&) -> InputFactoryImpl& = delete;
+    InputFactoryImpl(InputFactoryImpl&&) = delete;
+    auto operator=(InputFactoryImpl&&) -> InputFactoryImpl& = delete;
+
     auto initialize(const std::string& configPath) -> void {
         // Create directory if it doesn't exist
         const auto directory = std::filesystem::path(configPath).parent_path();

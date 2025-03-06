@@ -28,13 +28,13 @@ public:
 protected:
     // Protected constructor for testing
     SauronRegister();
-    SauronRegister(const std::shared_ptr<sauron::client::SauronClient>& sauronClient);
+    explicit SauronRegister(const std::shared_ptr<sauron::client::SauronClient>& sauronClient);
 private:
 #pragma warning(push)
 #pragma warning(disable: 4251)
     // PIMPL
     class Impl;
-    std::unique_ptr<Impl> pImpl;    
+    std::unique_ptr<Impl> pImpl_;    
     static std::shared_ptr<SauronRegister> instance_;
 #pragma warning(pop)
 };

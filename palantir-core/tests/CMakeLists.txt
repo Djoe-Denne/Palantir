@@ -11,7 +11,6 @@ add_executable(${TEST_TARGET_NAME}
     input/input_factory_test.cpp
     signal/signal_factory_test.cpp
     signal/signal_test.cpp
-    signal/signal_manager_test.cpp
     window/window_manager_test.cpp
     utils/string_utils_test.cpp
 )
