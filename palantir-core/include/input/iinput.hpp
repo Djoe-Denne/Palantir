@@ -35,11 +35,11 @@ public:
     /** @brief Deleted copy assignment to prevent resource duplication. */
     auto operator=(const IInput&) -> IInput& = delete;
 
-    // Define move operations
-    /** @brief Default move constructor for transfer of input handler ownership. */
-    IInput(IInput&&) noexcept = default;
-    /** @brief Default move assignment for transfer of input handler ownership. */
-    auto operator=(IInput&&) noexcept -> IInput& = default;
+    // Delete move operations
+    /** @brief Deleted move constructor to prevent resource duplication. */
+    IInput(IInput&&) noexcept = delete;
+    /** @brief Deleted move assignment to prevent resource duplication. */
+    auto operator=(IInput&&) noexcept -> IInput& = delete;
 
     /**
      * @brief Check if the configured key is currently pressed.

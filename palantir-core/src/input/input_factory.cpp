@@ -33,6 +33,14 @@ public:
         keyConfig_ = std::make_unique<KeyConfig>(configPath);
     }
 
+    /**
+     * @brief Create a default configuration file.
+     * @param configPath Path where the default configuration should be created.
+     *
+     * Creates a default configuration file with platform-specific shortcuts
+     * when no configuration file exists.
+     * @throws std::runtime_error if the file cannot be created or written to.
+     */
     auto createDefaultConfig(const std::string& configPath) -> void {
         
         std::ofstream configFile(configPath);
@@ -116,10 +124,6 @@ auto InputFactory::setInstance(const std::shared_ptr<InputFactory>& instance) ->
 
 auto InputFactory::initialize(const std::string& configPath) -> void {
     pimpl_->initialize(configPath);
-}
-
-auto InputFactory::createDefaultConfig(const std::string& configPath) -> void {
-    pimpl_->createDefaultConfig(configPath);
 }
 
 /**

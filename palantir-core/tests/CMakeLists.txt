@@ -3,13 +3,17 @@ set(TEST_TARGET_NAME palantir_core_tests)
 add_executable(${TEST_TARGET_NAME}
     # Add test source files here
         main_test.cpp
+    command/command_factory_test.cpp
     input/key_config_test.cpp
     input/key_mapper_test.cpp
     input/key_register_test.cpp
     input/configurable_input_test.cpp
+    input/input_factory_test.cpp
     signal/signal_factory_test.cpp
     signal/signal_test.cpp
+    signal/signal_manager_test.cpp
     window/window_manager_test.cpp
+    utils/string_utils_test.cpp
 )
 
 message(STATUS "Setting up testing for target ${TEST_TARGET_NAME}")

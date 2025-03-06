@@ -108,15 +108,6 @@ public:
 
 protected:
     InputFactory();
-    /**
-     * @brief Create a default configuration file.
-     * @param configPath Path where the default configuration should be created.
-     *
-     * Creates a default configuration file with platform-specific shortcuts
-     * when no configuration file exists.
-     * @throws std::runtime_error if the file cannot be created or written to.
-     */
-    virtual auto createDefaultConfig(const std::string& configPath) -> void;
 
 private:
     class InputFactoryImpl;

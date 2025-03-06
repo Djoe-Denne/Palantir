@@ -64,9 +64,9 @@ public:
     KeyConfig(const KeyConfig&) = delete;
     auto operator=(const KeyConfig&) -> KeyConfig& = delete;
 
-    // Define move operations
-    KeyConfig(KeyConfig&&) noexcept = default;
-    auto operator=(KeyConfig&&) noexcept -> KeyConfig& = default;
+    // Delete move operations
+    KeyConfig(KeyConfig&&) noexcept = delete;
+    auto operator=(KeyConfig&&) noexcept -> KeyConfig& = delete;
 
     /**
      * @brief Get the shortcut configuration for a command.

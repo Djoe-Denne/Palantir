@@ -35,11 +35,11 @@ public:
     /** @brief Deleted copy assignment to prevent signal duplication. */
     auto operator=(const ISignal&) -> ISignal& = delete;
 
-    // Define move operations
-    /** @brief Default move constructor for transfer of signal ownership. */
-    ISignal(ISignal&&) noexcept = default;
-    /** @brief Default move assignment for transfer of signal ownership. */
-    auto operator=(ISignal&&) noexcept -> ISignal& = default;
+    // Delete move operations
+    /** @brief Deleted move constructor to prevent signal duplication. */
+    ISignal(ISignal&&) noexcept = delete;
+    /** @brief Deleted move assignment to prevent signal duplication. */
+    auto operator=(ISignal&&) noexcept -> ISignal& = delete;
 
     /**
      * @brief Start monitoring for the signal's conditions.

@@ -55,9 +55,9 @@ public:
 
     // Define move operations
     /** @brief Default move constructor for transfer of signal ownership. */
-    Signal(Signal&&) noexcept = default;
+    Signal(Signal&&) noexcept = delete;
     /** @brief Default move assignment for transfer of signal ownership. */
-    auto operator=(Signal&&) noexcept -> Signal& = default;
+    auto operator=(Signal&&) noexcept -> Signal& = delete;
 
     /**
      * @brief Start monitoring for the signal's conditions.
