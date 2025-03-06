@@ -12,6 +12,7 @@
 
 #include <cstdint>
 #include <string>
+#include "core_export.hpp"
 
 namespace palantir::input {
 
@@ -24,7 +25,7 @@ namespace palantir::input {
  * modifier keys, providing validation and mapping services. The class is
  * non-instantiable and provides only static methods.
  */
-class KeyMapper {
+class PALANTIR_CORE_API KeyMapper {
 public:
     /** @brief Deleted constructor to prevent instantiation. */
     KeyMapper() = delete;

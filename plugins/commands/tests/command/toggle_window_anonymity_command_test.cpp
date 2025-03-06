@@ -2,9 +2,9 @@
 #include <gmock/gmock.h>
 
 #include "command/toggle_window_anonymity_command.hpp"
-#include "../mocks/mock_application.hpp"
-#include "../mocks/mock_window_manager.hpp"
-#include "../mocks/mock_window.hpp"
+#include "mock/mock_application.hpp"
+#include "mock/window/mock_window_manager.hpp"
+#include "mock/window/mock_window.hpp"
 
 using namespace palantir;
 using namespace palantir::command;

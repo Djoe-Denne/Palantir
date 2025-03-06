@@ -16,11 +16,11 @@
 
 #include "input/key_config.hpp"
 #include "input/key_mapper.hpp"
+#include "input/configurable_input.hpp"
+#include "core_export.hpp"
 
 namespace palantir::input {
 
-// Forward declaration of ConfigurableInput
-class ConfigurableInput;
 
 /**
  * @class InputFactory
@@ -31,7 +31,7 @@ class ConfigurableInput;
  * input handlers and manage their configuration. The class is non-instantiable
  * and provides only static methods.
  */
-class InputFactory {
+class PALANTIR_CORE_API InputFactory {
 public:
     /** @brief Deleted constructor to prevent instantiation. */
     InputFactory() = delete;
@@ -103,8 +103,11 @@ private:
      */
     static auto createDefaultConfig(const std::string& configPath) -> void;
 
+#pragma warning(push)
+#pragma warning(disable: 4251)
     /** @brief Pointer to the key configuration object. */
     static std::unique_ptr<KeyConfig> keyConfig_;
+#pragma warning(pop)
 };
 
 }  // namespace palantir::input

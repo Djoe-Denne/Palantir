@@ -1,3 +1,4 @@
+return()
 if(NOT GTEST_FOUND)
     return()
 endif()

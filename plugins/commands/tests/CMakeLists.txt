@@ -1,6 +1,4 @@
-if(NOT GTEST_FOUND)
-    return()
-endif()
+
 
 set(TEST_TARGET_NAME commands_plugin_tests)
 
@@ -15,8 +13,9 @@ add_executable(${TEST_TARGET_NAME}
     command/toggle_transparency_command_test.cpp
     command/toggle_window_anonymity_command_test.cpp
     command/clear_screenshot_command_test.cpp
+    command/send_sauron_request_command_test.cpp
 )
-
+message(STATUS "Setting up testing for target ${TEST_TARGET_NAME}")
 setup_target_testing(${TEST_TARGET_NAME})
 
 # Add dependencies to ensure libraries are built first
@@ -32,6 +31,7 @@ target_include_directories(${TEST_TARGET_NAME}
     PRIVATE
         ${CMAKE_SOURCE_DIR}/plugins/commands/include
         ${CMAKE_SOURCE_DIR}/plugins/commands/tests
+        ${CMAKE_SOURCE_DIR}/palantir-core/tests
         ${CMAKE_SOURCE_DIR}/palantir-core/include
         ${GTEST_INCLUDE_DIRS}
         ${GMOCK_INCLUDE_DIRS}

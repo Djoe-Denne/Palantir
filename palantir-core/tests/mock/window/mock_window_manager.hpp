@@ -1,14 +1,14 @@
 #pragma once
 
-#include <gmock/gmock.h>
+#include "mock/palantir_mock.hpp"
 #include "window/window_manager.hpp"
-#include "mocks/mock_window.hpp"
 
 namespace palantir::test {
 
-class MockWindowManager : public window::WindowManager {
+class MockWindowManager : public window::WindowManager, public PalantirMock {
 public:
     MockWindowManager() : WindowManager() {}
+    ~MockWindowManager() override = default;
 
     MOCK_METHOD(std::shared_ptr<window::IWindow>, getFirstWindow, (), (const, override));
     MOCK_METHOD(void, addWindow, (const std::shared_ptr<window::IWindow>&), (override));

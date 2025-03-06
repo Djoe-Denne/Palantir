@@ -11,7 +11,7 @@
 #define CONFIGURABLE_INPUT_HPP
 
 #include <memory>
-
+#include "core_export.hpp"
 #include "input/iinput.hpp"
 
 namespace palantir::input {
@@ -24,7 +24,7 @@ namespace palantir::input {
  * with specific key and modifier codes at runtime. It uses the PIMPL idiom to
  * hide platform-specific implementation details and provide a clean interface.
  */
-class ConfigurableInput : public IInput {
+class PALANTIR_CORE_API ConfigurableInput : public IInput {
 public:
     /**
      * @brief Construct a new ConfigurableInput object.
@@ -52,9 +52,9 @@ public:
 
     // Define move operations
     /** @brief Default move constructor for transfer of input handler ownership. */
-    ConfigurableInput(ConfigurableInput&&) noexcept = default;
+    ConfigurableInput(ConfigurableInput&&) noexcept = delete;
     /** @brief Default move assignment for transfer of input handler ownership. */
-    auto operator=(ConfigurableInput&&) noexcept -> ConfigurableInput& = default;
+    auto operator=(ConfigurableInput&&) noexcept -> ConfigurableInput& = delete;
 
     /**
      * @brief Check if the configured key is currently pressed.

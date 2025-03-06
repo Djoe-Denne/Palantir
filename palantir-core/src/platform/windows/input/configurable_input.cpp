@@ -44,7 +44,7 @@ public:
      */
     [[nodiscard]] auto isKeyPressed(const std::any& event) const -> bool {
         bool pressed = (static_cast<uint16_t>(GetAsyncKeyState(keyCode_)) &
-                        static_cast<uint16_t>(KeyRegister::getInstance().get("KEY_PRESSED_MASK"))) != 0;
+                        static_cast<uint16_t>(KeyRegister::getInstance()->get("KEY_PRESSED_MASK"))) != 0;
         if (pressed) {
             DEBUG_LOG("Key 0x{:x} is pressed", keyCode_);
         }
@@ -60,7 +60,7 @@ public:
      */
     [[nodiscard]] auto isModifierActive(const std::any& event) const -> bool {
         bool active = (static_cast<uint16_t>(GetAsyncKeyState(modifierCode_)) &
-                       static_cast<uint16_t>(KeyRegister::getInstance().get("KEY_PRESSED_MASK"))) != 0;
+                       static_cast<uint16_t>(KeyRegister::getInstance()->get("KEY_PRESSED_MASK"))) != 0;
         if (active) {
             DEBUG_LOG("Modifier 0x{:x} is active", modifierCode_);
         }

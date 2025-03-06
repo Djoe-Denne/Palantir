@@ -11,6 +11,7 @@
 #define IINPUT_HPP
 
 #include <any>
+#include "core_export.hpp"
 
 namespace palantir::input {
 
@@ -23,7 +24,7 @@ namespace palantir::input {
  * keys (like Ctrl, Alt, etc.) in a platform-independent way. It supports move
  * semantics but prohibits copying to ensure unique ownership of platform resources.
  */
-class IInput {
+class PALANTIR_CORE_API IInput {
 public:
     /** @brief Virtual destructor to ensure proper cleanup of derived classes. */
     virtual ~IInput() = default;

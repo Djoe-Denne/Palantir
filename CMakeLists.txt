@@ -16,6 +16,10 @@ project(Palantir
     LANGUAGES CXX
 )
 
+# Enable testing at the top level
+include(CTest)
+enable_testing()
+
 # Set CMake to look in the cmake/ folder for additional scripts
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 

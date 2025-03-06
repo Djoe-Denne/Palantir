@@ -82,6 +82,7 @@ add_custom_command(TARGET ${MODULE_NAME} POST_BUILD
 target_link_libraries(${MODULE_NAME} PRIVATE palantir-core)
 
 if(BUILD_TESTS)
+    message(STATUS "Building tests for ${MODULE_NAME}")
     enable_testing()
     add_subdirectory(tests) 
 endif()
