@@ -17,12 +17,14 @@ concurrency:
 env:
   FORCE_COLOR: 1  # Enable colored output in logs
   TERM: xterm-256color  # Terminal type for better formatting
+  CMAKE_BUILD_DIR: ${{ github.workspace }}/build
 
 jobs:
-  # Code quality checks (formatting and linting) - macOS only
-  code-quality:
-    name: Code Quality
+  setup:
+    name: Setup
     runs-on: windows-latest
+    outputs:
+      changed_files: ${{ steps.changed-files.outputs.files }}
     
     steps:
     # Step 1: Check out the repository code with full history for PR comparison
@@ -41,12 +43,23 @@ jobs:
         echo "files=${CHANGED_FILES}" >> $GITHUB_OUTPUT
         echo "Changed files: ${CHANGED_FILES}"
     
+    # Cache CMake configuration
+    - name: Cache CMake files
+      uses: actions/cache@v3
+      with:
+        path: |
+          ${{ env.CMAKE_BUILD_DIR }}
+          ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
+          ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
+        key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+        restore-keys: ${{ runner.os }}-cmake-
+    
     # Step 3: Configure CMake in Release mode
     - name: Configure CMake
       env:
         GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: |
-        $buildDir = "${{ github.workspace }}/build"
+        $buildDir = "${{ env.CMAKE_BUILD_DIR }}"
         New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
 
         if ("${{ github.event_name }}" -eq "pull_request" -and "${{ steps.changed-files.outputs.files }}" -ne "") {
@@ -55,29 +68,50 @@ jobs:
           cmake -B $buildDir -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
         }
           
-    # Step 4: Check code formatting
+  # Code quality checks (formatting and linting) - macOS only
+  code-quality:
+    name: Code Quality
+    needs: setup
+    runs-on: windows-latest
+    
+    steps:
+    # Step 1: Check out the repository code
+    - uses: actions/checkout@v4
+    
+    # Restore CMake configuration from cache
+    - name: Restore CMake cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ${{ env.CMAKE_BUILD_DIR }}
+          ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
+          ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
+        key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+        restore-keys: ${{ runner.os }}-cmake-
+    
+    # Step 3: Check code formatting
     - name: Check Format
       id: format
       continue-on-error: true
-      run: cmake --build ${{github.workspace}}/build --target format-check
+      run: cmake --build ${{ env.CMAKE_BUILD_DIR }} --target format-check
     
-    # Step 5: Run static analysis with clang-tidy
+    # Step 4: Run static analysis with clang-tidy
     - name: Run Lint Check
       id: lint
       continue-on-error: true
-      run: cmake --build ${{github.workspace}}/build --target lint-check
+      run: cmake --build ${{ env.CMAKE_BUILD_DIR }} --target lint-check
 
-    # Step 6: Analyze lint results using CMake target
+    # Step 5: Analyze lint results using CMake target
     - name: Analyze Lint Results
       run: |
-        cat ${{github.workspace}}/build/lint-reports/report.txt
-        cmake --build ${{github.workspace}}/build --target lint-analyze
+        cat ${{ env.CMAKE_BUILD_DIR }}/lint-reports/report.txt
+        cmake --build ${{ env.CMAKE_BUILD_DIR }} --target lint-analyze
     
   # Build the project on both platforms
   build:
     name: Build-${{ matrix.os }}
+    needs: setup
     runs-on: ${{ matrix.os }}
-    needs: code-quality  # Wait for code quality checks to pass
     strategy:
       fail-fast: false  # Don't cancel other platforms if one fails
       matrix:
@@ -97,13 +131,20 @@ jobs:
     # Step 1: Check out the repository code
     - uses: actions/checkout@v4
     
-    # Step 3: Configure CMake in Release mode (Windows only)
-    - name: Configure CMake
+    # Restore CMake configuration from cache
+    - name: Restore CMake cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ${{ env.CMAKE_BUILD_DIR }}
+          ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
+          ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
+        key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+        restore-keys: ${{ runner.os }}-cmake-
+    
+    # Step 3: Build the project
+    - name: Build
       env:
         GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
-    
-    # Step 4: Build the project
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build --config Release
+      run: cmake --build ${{ env.CMAKE_BUILD_DIR }} --config Release
     
