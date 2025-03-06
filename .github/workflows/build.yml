@@ -31,6 +31,7 @@ jobs:
       should_run_setup: ${{ steps.trigger-check.outputs.should_run_setup }}
       pr_number: ${{ steps.trigger-check.outputs.pr_number }}
       cache_valid: ${{ steps.check-cache.outputs.cache_valid }}
+      cache_status: ${{ steps.check-cache.outputs.cache_status }}
     steps:
       - uses: actions/checkout@v4
       
@@ -40,18 +41,41 @@ jobs:
         run: |
           $cachePath = "${{ env.CMAKE_BUILD_DIR }}"
           $cacheValid = "false"
+          $status = "Cache not found"
           
+          Write-Host "Checking cache at: $cachePath"
           if (Test-Path $cachePath) {
             $cacheAge = (Get-Date) - (Get-Item $cachePath).LastWriteTime
+            $ageHours = [math]::Round($cacheAge.TotalHours, 2)
+            $status = "Cache found, age: $ageHours hours"
+            
             if ($cacheAge.TotalHours -lt 12) {
               $cacheValid = "true"
+              $status = "$status (Valid)"
+            } else {
+              $status = "$status (Expired)"
             }
           }
           
+          Write-Host "Cache status: $status"
+          Write-Host "Cache valid: $cacheValid"
+          
           echo "cache_valid=$cacheValid" >> $env:GITHUB_OUTPUT
+          echo "cache_status=$status" >> $env:GITHUB_OUTPUT
           
       - id: trigger-check
         uses: ./.github/workflows/actions/check-triggers
+
+      - name: Log trigger status
+        shell: pwsh
+        run: |
+          Write-Host "Trigger Status Summary:"
+          Write-Host "======================="
+          Write-Host "Event type: ${{ github.event_name }}"
+          Write-Host "Cache status: ${{ steps.check-cache.outputs.cache_status }}"
+          Write-Host "Should run setup: ${{ steps.trigger-check.outputs.should_run_setup }}"
+          Write-Host "Should run quality: ${{ steps.trigger-check.outputs.should_run_quality }}"
+          Write-Host "PR number: ${{ steps.trigger-check.outputs.pr_number }}"
 
   setup:
     name: Setup
@@ -63,6 +87,17 @@ jobs:
     outputs:
       changed_files: ${{ steps.cmake-setup.outputs.changed_files }}
     steps:
+      - name: Log setup triggers
+        shell: pwsh
+        run: |
+          Write-Host "Setup Job Trigger Analysis:"
+          Write-Host "=========================="
+          Write-Host "Cache status: ${{ needs.check-trigger.outputs.cache_status }}"
+          Write-Host "Cache valid: ${{ needs.check-trigger.outputs.cache_valid }}"
+          Write-Host "Should run setup: ${{ needs.check-trigger.outputs.should_run_setup }}"
+          Write-Host "Trigger condition 1 (should_run_setup): ${{ needs.check-trigger.outputs.should_run_setup == 'true' }}"
+          Write-Host "Trigger condition 2 (cache_valid): ${{ needs.check-trigger.outputs.cache_valid != 'true' }}"
+          
       - uses: actions/checkout@v4
       - id: cmake-setup
         uses: ./.github/workflows/actions/setup-cmake
