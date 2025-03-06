@@ -1,0 +1,50 @@
+name: 'Check Workflow Triggers'
+description: 'Determines if quality checks and setup should run'
+
+outputs:
+  should_run_quality:
+    description: 'Whether quality checks should run'
+    value: ${{ steps.check.outputs.should_run_quality }}
+  should_run_setup:
+    description: 'Whether setup should run'
+    value: ${{ steps.check.outputs.should_run_setup }}
+  pr_number:
+    description: 'PR number if applicable'
+    value: ${{ steps.check.outputs.pr_number }}
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - id: check
+      shell: bash
+      run: |
+        # Check for code quality trigger
+        if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/master" ]]; then
+          echo "should_run_quality=true" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.event_name }}" == "issue_comment" && "${{ contains(github.event.comment.body, '/check-quality') }}" == "true" ]]; then
+          echo "should_run_quality=true" >> $GITHUB_OUTPUT
+          echo "pr_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+        else
+          echo "should_run_quality=false" >> $GITHUB_OUTPUT
+        fi
+
+        # Check for CMake file changes
+        if [[ "${{ github.event_name }}" == "push" ]]; then
+          CHANGED_CMAKE=$(git diff --name-only HEAD^...HEAD | grep -E '\.cmake$|CMakeLists\.txt$' || echo "")
+        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          CHANGED_CMAKE=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.cmake$|CMakeLists\.txt$' || echo "")
+        elif [[ "${{ github.event_name }}" == "issue_comment" ]]; then
+          if [[ "${{ contains(github.event.comment.body, '/reconfigure') }}" == "true" ]]; then
+            CHANGED_CMAKE="force_reconfigure"
+          fi
+        fi
+
+        if [[ -n "$CHANGED_CMAKE" ]]; then
+          echo "should_run_setup=true" >> $GITHUB_OUTPUT
+        else
+          echo "should_run_setup=false" >> $GITHUB_OUTPUT
+        fi 

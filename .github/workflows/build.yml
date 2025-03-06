@@ -6,7 +6,9 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master ]
+    types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created]
 
 # Prevent multiple workflows from running simultaneously on the same ref
 concurrency:
@@ -18,99 +20,55 @@ env:
   FORCE_COLOR: 1  # Enable colored output in logs
   TERM: xterm-256color  # Terminal type for better formatting
   CMAKE_BUILD_DIR: ${{ github.workspace }}/build
+  CACHE_KEY_PREFIX: v1  # Increment this to invalidate all caches
 
 jobs:
-  setup:
-    name: Setup
+  # Check if we should run code quality checks based on the comment
+  check-trigger:
     runs-on: windows-latest
     outputs:
-      changed_files: ${{ steps.changed-files.outputs.files }}
-    
+      should_run_quality: ${{ steps.trigger-check.outputs.should_run_quality }}
+      should_run_setup: ${{ steps.trigger-check.outputs.should_run_setup }}
+      pr_number: ${{ steps.trigger-check.outputs.pr_number }}
     steps:
-    # Step 1: Check out the repository code with full history for PR comparison
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Required to get changed files in PRs
-    
-    # Step 2: Get list of changed files (only in PR)
-    - name: Get changed files
-      id: changed-files
-      if: github.event_name == 'pull_request'
-      shell: bash
-      run: |
-        # Get list of changed C++ files
-        CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(cpp|hpp|h|cc)$' | tr '\n' ';' || echo "")
-        echo "files=${CHANGED_FILES}" >> $GITHUB_OUTPUT
-        echo "Changed files: ${CHANGED_FILES}"
-    
-    # Cache CMake configuration
-    - name: Cache CMake files
-      uses: actions/cache@v3
-      with:
-        path: |
-          ${{ env.CMAKE_BUILD_DIR }}
-          ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
-          ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
-        key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
-        restore-keys: ${{ runner.os }}-cmake-
-    
-    # Step 3: Configure CMake in Release mode
-    - name: Configure CMake
-      env:
-        GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
-      run: |
-        $buildDir = "${{ env.CMAKE_BUILD_DIR }}"
-        New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
+      - id: trigger-check
+        uses: ./.github/workflows/actions/check-triggers
 
-        if ("${{ github.event_name }}" -eq "pull_request" -and "${{ steps.changed-files.outputs.files }}" -ne "") {
-          cmake -B $buildDir -DCMAKE_BUILD_TYPE=Release -DLINT_FILES="${{ steps.changed-files.outputs.files }}" -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
-        } else {
-          cmake -B $buildDir -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
-        }
-          
+  setup:
+    name: Setup
+    needs: check-trigger
+    if: needs.check-trigger.outputs.should_run_setup == 'true'
+    runs-on: windows-latest
+    outputs:
+      changed_files: ${{ steps.cmake-setup.outputs.changed_files }}
+    steps:
+      - id: cmake-setup
+        uses: ./.github/workflows/actions/setup-cmake
+        with:
+          github-token: ${{ secrets.PALANTIR_GHA }}
+          pr-number: ${{ needs.check-trigger.outputs.pr_number }}
+          cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
+          build-dir: ${{ env.CMAKE_BUILD_DIR }}
+
   # Code quality checks (formatting and linting) - macOS only
   code-quality:
     name: Code Quality
-    needs: setup
+    needs: [check-trigger, setup]
+    if: needs.check-trigger.outputs.should_run_quality == 'true'
     runs-on: windows-latest
-    
     steps:
-    # Step 1: Check out the repository code
-    - uses: actions/checkout@v4
-    
-    # Restore CMake configuration from cache
-    - name: Restore CMake cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          ${{ env.CMAKE_BUILD_DIR }}
-          ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
-          ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
-        key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
-        restore-keys: ${{ runner.os }}-cmake-
-    
-    # Step 3: Check code formatting
-    - name: Check Format
-      id: format
-      continue-on-error: true
-      run: cmake --build ${{ env.CMAKE_BUILD_DIR }} --target format-check
-    
-    # Step 4: Run static analysis with clang-tidy
-    - name: Run Lint Check
-      id: lint
-      continue-on-error: true
-      run: cmake --build ${{ env.CMAKE_BUILD_DIR }} --target lint-check
+      - uses: ./.github/workflows/actions/code-quality
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ needs.check-trigger.outputs.pr_number }}
+          build-dir: ${{ env.CMAKE_BUILD_DIR }}
+          cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
 
-    # Step 5: Analyze lint results using CMake target
-    - name: Analyze Lint Results
-      run: |
-        cat ${{ env.CMAKE_BUILD_DIR }}/lint-reports/report.txt
-        cmake --build ${{ env.CMAKE_BUILD_DIR }} --target lint-analyze
-    
   # Build the project on both platforms
   build:
     name: Build-${{ matrix.os }}
-    needs: setup
+    needs: [check-trigger, setup]
+    if: always()  # Build should run regardless of code-quality status
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false  # Don't cancel other platforms if one fails
@@ -139,8 +97,10 @@ jobs:
           ${{ env.CMAKE_BUILD_DIR }}
           ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
           ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
-        key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
-        restore-keys: ${{ runner.os }}-cmake-
+          ${{ env.CMAKE_BUILD_DIR }}/_deps
+        key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+        restore-keys: |
+          ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-
     
     # Step 3: Build the project
     - name: Build

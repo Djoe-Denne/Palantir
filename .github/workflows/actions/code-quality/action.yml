@@ -1,0 +1,68 @@
+name: 'Code Quality Checks'
+description: 'Runs code formatting and linting checks'
+
+inputs:
+  github-token:
+    description: 'GitHub token for authentication'
+    required: true
+  pr-number:
+    description: 'PR number if in PR context'
+    required: false
+  build-dir:
+    description: 'CMake build directory'
+    required: true
+  cache-prefix:
+    description: 'Prefix for cache keys'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    
+    - name: Restore CMake cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ${{ inputs.build-dir }}
+          ${{ inputs.build-dir }}/CMakeCache.txt
+          ${{ inputs.build-dir }}/CMakeFiles
+          ${{ inputs.build-dir }}/_deps
+        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+        restore-keys: |
+          ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-
+    
+    - name: Check Format
+      shell: pwsh
+      run: cmake --build ${{ inputs.build-dir }} --target format-check
+    
+    - name: Run Lint Check
+      shell: pwsh
+      run: cmake --build ${{ inputs.build-dir }} --target lint-check
+
+    - name: Analyze Lint Results
+      shell: pwsh
+      run: |
+        cat ${{ inputs.build-dir }}/lint-reports/report.txt
+        cmake --build ${{ inputs.build-dir }} --target lint-analyze
+    
+    - name: Comment PR
+      if: inputs.pr-number != ''
+      shell: node16
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: |
+        const fs = require('fs');
+        const { Octokit } = require('@octokit/rest');
+        const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+        
+        const report = fs.readFileSync('${{ inputs.build-dir }}/lint-reports/report.txt', 'utf8');
+        
+        await octokit.issues.createComment({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          issue_number: ${{ inputs.pr-number }},
+          body: '## Code Quality Check Results\n\n```\n' + report + '\n```'
+        }); 
