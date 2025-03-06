@@ -8,12 +8,12 @@ std::shared_ptr<SauronRegister> SauronRegister::instance_;
 // Implementation class (PIMPL)
 class SauronRegister::Impl {
 public:
-    Impl() : sauronClient(std::make_shared<sauron::client::SauronClient>(
+    Impl() : sauronClient(std::make_shared<sauron::client::SauronClient>( // NOLINT
                 std::make_unique<sauron::client::HttpClientCurl>("http://localhost:3000"))) {
         sauronClient->login(sauron::dto::LoginRequest("sk-proj-******", sauron::dto::AIProvider::OPENAI)); // put that outside the constructor
     }
 
-    Impl(const std::shared_ptr<sauron::client::SauronClient>& sauronClient) : sauronClient(sauronClient) {
+    explicit Impl(const std::shared_ptr<sauron::client::SauronClient>& sauronClient) : sauronClient(sauronClient) {
     }
 
     std::shared_ptr<sauron::client::SauronClient> sauronClient;
