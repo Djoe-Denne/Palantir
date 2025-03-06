@@ -22,29 +22,62 @@ runs:
     - id: check
       shell: bash
       run: |
-        # Check for code quality trigger
+        # Initialize outputs
+        should_run_quality="false"
+        should_run_setup="false"
+        pr_number=""
+        
+        echo "Debug: Event name is ${{ github.event_name }}"
+        
         if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/master" ]]; then
-          echo "should_run_quality=true" >> $GITHUB_OUTPUT
-        elif [[ "${{ github.event_name }}" == "issue_comment" && "${{ contains(github.event.comment.body, '/check-quality') }}" == "true" ]]; then
-          echo "should_run_quality=true" >> $GITHUB_OUTPUT
-          echo "pr_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
-        else
-          echo "should_run_quality=false" >> $GITHUB_OUTPUT
+          should_run_quality="true"
+          echo "Trigger: Push to master"
+        
+        elif [[ "${{ github.event_name }}" == "issue_comment" ]]; then
+          # Check if comment is on a PR
+          if [[ "${{ github.event.issue.pull_request }}" != "" ]]; then
+            pr_number="${{ github.event.issue.number }}"
+            echo "Comment on PR #$pr_number"
+            
+            # Check comment content
+            comment="${{ github.event.comment.body }}"
+            echo "Comment content: $comment"
+            
+            if [[ "$comment" == "/check-quality" ]]; then
+              should_run_quality="true"
+              echo "Trigger: /check-quality command"
+            elif [[ "$comment" == "/reconfigure" ]]; then
+              should_run_setup="true"
+              echo "Trigger: /reconfigure command"
+            fi
+          else
+            echo "Comment not on a PR, ignoring"
+          fi
+        
+        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          pr_number="${{ github.event.pull_request.number }}"
+          echo "Pull request #$pr_number"
         fi
-
+        
         # Check for CMake file changes
         if [[ "${{ github.event_name }}" == "push" ]]; then
           CHANGED_CMAKE=$(git diff --name-only HEAD^...HEAD | grep -E '\.cmake$|CMakeLists\.txt$' || echo "")
         elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
           CHANGED_CMAKE=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.cmake$|CMakeLists\.txt$' || echo "")
-        elif [[ "${{ github.event_name }}" == "issue_comment" ]]; then
-          if [[ "${{ contains(github.event.comment.body, '/reconfigure') }}" == "true" ]]; then
-            CHANGED_CMAKE="force_reconfigure"
-          fi
         fi
-
+        
         if [[ -n "$CHANGED_CMAKE" ]]; then
-          echo "should_run_setup=true" >> $GITHUB_OUTPUT
-        else
-          echo "should_run_setup=false" >> $GITHUB_OUTPUT
-        fi 
+          should_run_setup="true"
+          echo "Trigger: CMake files changed"
+        fi
+        
+        # Output results
+        echo "should_run_quality=$should_run_quality" >> $GITHUB_OUTPUT
+        echo "should_run_setup=$should_run_setup" >> $GITHUB_OUTPUT
+        echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
+        
+        # Debug output
+        echo "Final outputs:"
+        echo "should_run_quality: $should_run_quality"
+        echo "should_run_setup: $should_run_setup"
+        echo "pr_number: $pr_number" 

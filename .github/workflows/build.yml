@@ -10,6 +10,12 @@ on:
   issue_comment:
     types: [created]
 
+# Add required permissions
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
 # Prevent multiple workflows from running simultaneously on the same ref
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
