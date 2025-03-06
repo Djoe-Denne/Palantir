@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gmock/gmock.h>
+#include "mock/palantir_mock.hpp"
 #include "Application.hpp"
 
 namespace palantir::test {
@@ -20,7 +20,7 @@ public:
 };
 
 // Mock Application class inheriting from both Application and our base with virtuals
-class MockApplication : public Application, public ApplicationBase {
+class MockApplication : public Application, public ApplicationBase, public PalantirMock {
 public:    
     // Constructor with config path
     explicit MockApplication(const std::string& configPath) : Application() {

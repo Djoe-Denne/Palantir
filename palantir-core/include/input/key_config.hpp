@@ -14,6 +14,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "core_export.hpp"
 
 namespace palantir::input {
 
@@ -25,7 +26,7 @@ namespace palantir::input {
  * the modifier key (e.g., Ctrl, Alt) and the main key. It provides a
  * simple data container for shortcut configurations.
  */
-struct ShortcutConfig {
+struct PALANTIR_CORE_API ShortcutConfig {
     /** @brief The modifier key name (e.g., "Ctrl", "Alt", "Win", "Cmd"). */
     std::string modifier;
     /** @brief The main key name (e.g., "F1", "/", "A"). */
@@ -40,7 +41,7 @@ struct ShortcutConfig {
  * configurations from INI files. It provides methods to access and query
  * the loaded configurations, supporting the application's input system.
  */
-class KeyConfig {
+class PALANTIR_CORE_API KeyConfig {
 public:
     /**
      * @brief Construct a new KeyConfig object.
@@ -63,9 +64,9 @@ public:
     KeyConfig(const KeyConfig&) = delete;
     auto operator=(const KeyConfig&) -> KeyConfig& = delete;
 
-    // Define move operations
-    KeyConfig(KeyConfig&&) noexcept = default;
-    auto operator=(KeyConfig&&) noexcept -> KeyConfig& = default;
+    // Delete move operations
+    KeyConfig(KeyConfig&&) noexcept = delete;
+    auto operator=(KeyConfig&&) noexcept -> KeyConfig& = delete;
 
     /**
      * @brief Get the shortcut configuration for a command.
@@ -75,7 +76,7 @@ public:
      * Retrieves the shortcut configuration for a specific command.
      * @throws std::runtime_error if the command is not found in configuration.
      */
-    [[nodiscard]] auto getShortcut(const std::string& commandName) const -> const ShortcutConfig&;
+    [[nodiscard]] virtual auto getShortcut(const std::string& commandName) const -> const ShortcutConfig&;
 
     /**
      * @brief Check if a shortcut exists for a command.
@@ -84,7 +85,7 @@ public:
      *
      * Checks whether a shortcut configuration exists for the specified command.
      */
-    [[nodiscard]] auto hasShortcut(const std::string& commandName) const -> bool;
+    [[nodiscard]] virtual auto hasShortcut(const std::string& commandName) const -> bool;
 
     /**
      * @brief Get a list of all configured commands.
@@ -93,11 +94,14 @@ public:
      * Returns a list of all commands that have shortcut configurations.
      * The command names include their section prefix (e.g., "commands.stop").
      */
-    [[nodiscard]] auto getConfiguredCommands() const -> std::vector<std::string>;
+    [[nodiscard]] virtual auto getConfiguredCommands() const -> std::vector<std::string>;
 
 private:
+#pragma warning(push)
+#pragma warning(disable: 4251)
     /** @brief Map of command names to their shortcut configurations. */
     std::unordered_map<std::string, ShortcutConfig> shortcuts_;
+#pragma warning(pop)
 
     /**
      * @brief Loads and parses the shortcut configuration from the specified INI file.

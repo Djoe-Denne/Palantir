@@ -14,13 +14,9 @@
 #include <vector>
 
 #include "signal/isignal.hpp"
-
-namespace palantir {
-class Application;  // Forward declaration
-namespace window {
-class WindowManager;  // Forward declaration
-}
-}  // namespace palantir
+#include "application.hpp"
+#include "window/window_manager.hpp"
+#include "core_export.hpp"
 
 namespace palantir::signal {
 
@@ -33,12 +29,9 @@ namespace palantir::signal {
  * specific types of signals as well as collections of signals based on
  * configuration. The class is non-instantiable and provides only static methods.
  */
-class SignalFactory {
+class PALANTIR_CORE_API SignalFactory {
 public:
-    /** @brief Deleted constructor to prevent instantiation. */
-    SignalFactory() = delete;
-    /** @brief Deleted destructor to prevent instantiation. */
-    ~SignalFactory() = delete;
+    virtual ~SignalFactory();
 
     // Delete copy operations
     /** @brief Deleted copy constructor to prevent instantiation. */
@@ -52,6 +45,22 @@ public:
     /** @brief Deleted move assignment to prevent instantiation. */
     auto operator=(SignalFactory&&) -> SignalFactory& = delete;
 
+    /** 
+     * @brief Get the singleton instance of the SignalFactory.
+     * @return A shared pointer to the SignalFactory instance.
+     *
+     * Returns the singleton instance of the SignalFactory.
+     */
+    [[nodiscard]] static auto getInstance() -> std::shared_ptr<SignalFactory>;
+
+    /** 
+     * @brief Set the singleton instance of the SignalFactory.
+     * @param instance A shared pointer to the SignalFactory instance.
+     *
+     * Sets the singleton instance of the SignalFactory.
+     */
+    static auto setInstance(const std::shared_ptr<SignalFactory>& instance) -> void;
+
     /**
      * @brief Create all configured signals for the application.
      * @param app Shared pointer to the application instance.
@@ -61,8 +70,18 @@ public:
      * This includes both toggle and stop signals, configured according
      * to the application's settings.
      */
-    static auto createSignals(const std::shared_ptr<Application>& app) -> std::vector<std::unique_ptr<ISignal>>;
+    [[nodiscard]] virtual auto createSignals(const std::shared_ptr<Application>& app) -> std::vector<std::unique_ptr<ISignal>>;
 
+protected:
+    SignalFactory();
+
+private:
+    class SignalFactoryImpl;
+#pragma warning(push)
+#pragma warning(disable: 4251)
+    std::unique_ptr<SignalFactoryImpl> pimpl_;
+    static std::shared_ptr<SignalFactory> instance_;
+#pragma warning(pop)
 };
 
 }  // namespace palantir::signal

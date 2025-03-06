@@ -11,6 +11,7 @@
 #define IINPUT_HPP
 
 #include <any>
+#include "core_export.hpp"
 
 namespace palantir::input {
 
@@ -23,7 +24,7 @@ namespace palantir::input {
  * keys (like Ctrl, Alt, etc.) in a platform-independent way. It supports move
  * semantics but prohibits copying to ensure unique ownership of platform resources.
  */
-class IInput {
+class PALANTIR_CORE_API IInput {
 public:
     /** @brief Virtual destructor to ensure proper cleanup of derived classes. */
     virtual ~IInput() = default;
@@ -34,11 +35,11 @@ public:
     /** @brief Deleted copy assignment to prevent resource duplication. */
     auto operator=(const IInput&) -> IInput& = delete;
 
-    // Define move operations
-    /** @brief Default move constructor for transfer of input handler ownership. */
-    IInput(IInput&&) noexcept = default;
-    /** @brief Default move assignment for transfer of input handler ownership. */
-    auto operator=(IInput&&) noexcept -> IInput& = default;
+    // Delete move operations
+    /** @brief Deleted move constructor to prevent resource duplication. */
+    IInput(IInput&&) noexcept = delete;
+    /** @brief Deleted move assignment to prevent resource duplication. */
+    auto operator=(IInput&&) noexcept -> IInput& = delete;
 
     /**
      * @brief Check if the configured key is currently pressed.

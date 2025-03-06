@@ -8,6 +8,7 @@
 
 namespace palantir::command {
 
+std::shared_ptr<CommandFactory> CommandFactory::instance_;
 class CommandFactory::CommandFactoryImpl {
 public:
     CommandFactoryImpl() = default;
@@ -37,9 +38,15 @@ CommandFactory::CommandFactory() : pimpl_(std::make_unique<CommandFactoryImpl>()
 
 CommandFactory::~CommandFactory() = default;
 
-auto CommandFactory::getInstance() -> CommandFactory& {
-    static CommandFactory instance;
-    return instance;
+auto CommandFactory::getInstance() -> std::shared_ptr<CommandFactory> {
+    if (!instance_) {
+        instance_ = std::shared_ptr<CommandFactory>(new CommandFactory());
+    }
+    return instance_;
+}
+
+auto CommandFactory::setInstance(const std::shared_ptr<CommandFactory>& instance) -> void {
+    instance_ = instance;
 }
 
 auto CommandFactory::registerCommand(const std::string& commandName, CommandCreator creator) -> void {

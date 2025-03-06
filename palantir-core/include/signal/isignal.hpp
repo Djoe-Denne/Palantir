@@ -11,6 +11,8 @@
 #define ISIGNAL_HPP
 #include <any>
 
+#include "core_export.hpp"
+
 namespace palantir::signal {
 
 /**
@@ -22,7 +24,7 @@ namespace palantir::signal {
  * when specific conditions are met. The interface supports move semantics but
  * prohibits copying to ensure unique ownership of resources.
  */
-class ISignal {
+class PALANTIR_CORE_API ISignal {
 public:
     /** @brief Virtual destructor to ensure proper cleanup of derived classes. */
     virtual ~ISignal() = default;
@@ -33,11 +35,11 @@ public:
     /** @brief Deleted copy assignment to prevent signal duplication. */
     auto operator=(const ISignal&) -> ISignal& = delete;
 
-    // Define move operations
-    /** @brief Default move constructor for transfer of signal ownership. */
-    ISignal(ISignal&&) noexcept = default;
-    /** @brief Default move assignment for transfer of signal ownership. */
-    auto operator=(ISignal&&) noexcept -> ISignal& = default;
+    // Delete move operations
+    /** @brief Deleted move constructor to prevent signal duplication. */
+    ISignal(ISignal&&) noexcept = delete;
+    /** @brief Deleted move assignment to prevent signal duplication. */
+    auto operator=(ISignal&&) noexcept -> ISignal& = delete;
 
     /**
      * @brief Start monitoring for the signal's conditions.

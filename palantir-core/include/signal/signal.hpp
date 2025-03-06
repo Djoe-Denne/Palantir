@@ -15,17 +15,11 @@
 #include <memory>
 
 #include "signal/isignal.hpp"
+#include "input/iinput.hpp"
+#include "command/icommand.hpp"
+#include "core_export.hpp"
 
-namespace palantir {
-namespace input {
-class IInput;  // Forward declaration
-}  // namespace input
-
-namespace command {
-class ICommand;  // Forward declaration
-}  // namespace command
-
-namespace signal {
+namespace palantir::signal {
 
 /**
  * @class Signal
@@ -35,7 +29,7 @@ namespace signal {
  * processing system. It connects an input handler with a command and manages
  * the signal's lifecycle, including optional debouncing of rapid inputs.
  */
-class Signal final : public ISignal {
+class PALANTIR_CORE_API Signal final : public ISignal {
 public:
     /**
      * @brief Construct a new Signal object.
@@ -51,9 +45,7 @@ public:
                     bool useDebounce = false);
 
     /** @brief Default destructor. */
-    ~Signal() override {
-        command_.release();
-    }
+    ~Signal() override = default;
 
     // Delete copy operations
     /** @brief Deleted copy constructor to prevent signal duplication. */
@@ -63,9 +55,9 @@ public:
 
     // Define move operations
     /** @brief Default move constructor for transfer of signal ownership. */
-    Signal(Signal&&) noexcept = default;
+    Signal(Signal&&) noexcept = delete;
     /** @brief Default move assignment for transfer of signal ownership. */
-    auto operator=(Signal&&) noexcept -> Signal& = default;
+    auto operator=(Signal&&) noexcept -> Signal& = delete;
 
     /**
      * @brief Start monitoring for the signal's conditions.
@@ -118,7 +110,6 @@ private:
         std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::milliseconds(300)).count();
 };
 
-}  // namespace signal
-}  // namespace palantir
+}  // namespace palantir::signal
 
 #endif  // PALANTIR_SIGNAL_SIGNAL_HPP

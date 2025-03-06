@@ -21,7 +21,10 @@ public:
     using CommandCreator = std::unique_ptr<ICommand>(*)(); // Function pointer to create a command
 
     /** @brief Get the singleton instance of the factory. */
-    static auto getInstance() -> CommandFactory&;
+    static auto getInstance() -> std::shared_ptr<CommandFactory>;
+
+    /** @brief Set the singleton instance of the factory. */
+    static auto setInstance(const std::shared_ptr<CommandFactory>& instance) -> void;
 
     /** @brief Destructor. */
     ~CommandFactory();
@@ -39,22 +42,24 @@ public:
      * @param commandName Name of the command to register
      * @param creator Function to create the command
      */
-    auto registerCommand(const std::string& commandName, CommandCreator creator) -> void;
+    virtual auto registerCommand(const std::string& commandName, CommandCreator creator) -> void;
 
     /**
      * @brief Unregister a command from the factory.
      * @param commandName Name of the command to unregister
      * @return true if command was unregistered, false if not found
      */
-    auto unregisterCommand(const std::string& commandName) -> bool;
+    virtual auto unregisterCommand(const std::string& commandName) -> bool;
 
     /**
      * @brief Get a command from the factory.
      * @param name The name of the command to get.
      * @return Unique pointer to a new instance of the command if found, nullptr otherwise.
      */
-    auto getCommand(const std::string& name) -> std::unique_ptr<ICommand>;
+    virtual auto getCommand(const std::string& name) -> std::unique_ptr<ICommand>;
 
+protected:
+    CommandFactory();
 private:
     // Private implementation class forward declaration
     class CommandFactoryImpl;
@@ -62,10 +67,9 @@ private:
 #pragma warning(push)
 #pragma warning(disable: 4251)
     std::unique_ptr<CommandFactoryImpl> pimpl_;
+    static std::shared_ptr<CommandFactory> instance_;
 #pragma warning(pop)
 
-    /** @brief Private constructor for singleton pattern. */
-    CommandFactory();
 };
 
 }  // namespace palantir::command

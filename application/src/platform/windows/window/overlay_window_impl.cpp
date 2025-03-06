@@ -86,9 +86,9 @@ auto OverlayWindow::Impl::create() -> void {
         throw std::runtime_error("Failed to register window class");
     }
 
-    hwnd_ = CreateWindowExW(WS_EX_TOPMOST, L"PalantirClass", L"Palantir", WS_OVERLAPPEDWINDOW,
-                            CW_USEDEFAULT, CW_USEDEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT, nullptr, nullptr,
-                            GetModuleHandleW(nullptr), this);
+    hwnd_ =
+        CreateWindowExW(WS_EX_TOPMOST, L"PalantirClass", L"Palantir", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+                        WINDOW_WIDTH, WINDOW_HEIGHT, nullptr, nullptr, GetModuleHandleW(nullptr), this);
 
     if (hwnd_ == nullptr) {
         DWORD error = GetLastError();

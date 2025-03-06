@@ -8,6 +8,7 @@
 
 namespace palantir::input {
 
+std::shared_ptr<KeyRegister> KeyRegister::instance_ = nullptr;
 class KeyRegisterImpl {
 public:
     std::map<std::string, int> keyMap;
@@ -18,7 +19,7 @@ public:
         try {
             return keyMap.at(utils::StringUtils::toUpper(key));
         } catch (const std::out_of_range&) {
-            throw std::out_of_range("Key not found: " + key);
+            throw std::invalid_argument("Key not found: " + key);
         }
     }
 
@@ -32,9 +33,15 @@ KeyRegister::KeyRegister() : pimpl_(std::make_unique<KeyRegisterImpl>()) {}
 KeyRegister::~KeyRegister() = default;
 
 // Singleton instance getter
-auto KeyRegister::getInstance() -> KeyRegister& {
-    static KeyRegister instance;
-    return instance;
+auto KeyRegister::getInstance() -> std::shared_ptr<KeyRegister> {
+    if (!instance_) {
+        instance_ = std::shared_ptr<KeyRegister>(new KeyRegister());
+    }
+    return instance_;
+}
+
+auto KeyRegister::setInstance(std::shared_ptr<KeyRegister> instance) -> void {
+    instance_ = instance;
 }
 
 // Public interface implementation

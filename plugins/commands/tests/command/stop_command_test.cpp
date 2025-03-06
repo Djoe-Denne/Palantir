@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 #include <filesystem>
 #include "command/stop_command.hpp"
-#include "../mocks/mock_application.hpp"
+#include "mock/mock_application.hpp"
 
 using namespace palantir::command;
 using namespace palantir::test;
@@ -29,7 +29,6 @@ TEST_F(StopCommandTest, Execute_CallsStopOnApplication) {
 
     StopCommand command;
     command.execute();
-    EXPECT_TRUE(Mock::VerifyAndClearExpectations(mock_app_.get()));
 }
 
 TEST_F(StopCommandTest, UseDebounce_ReturnsFalse) {

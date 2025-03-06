@@ -8,6 +8,8 @@
 
 namespace palantir::signal {
 
+std::shared_ptr<SignalManager> SignalManager::instance_;
+
 /**
  * @brief Windows-specific implementation of SignalManager
  *
@@ -101,9 +103,15 @@ private:
 };
 
 // Singleton instance
-auto SignalManager::getInstance() -> SignalManager& {
-    static SignalManager instance;
-    return instance;
+auto SignalManager::getInstance() -> std::shared_ptr<SignalManager> {
+    if (!instance_) {
+        instance_ = std::shared_ptr<SignalManager>(new SignalManager());
+    }
+    return instance_;
+}
+
+auto SignalManager::setInstance(const std::shared_ptr<SignalManager>& instance) -> void {
+    instance_ = instance;
 }
 
 SignalManager::SignalManager() : pImpl_(std::make_unique<Impl>(this)) {

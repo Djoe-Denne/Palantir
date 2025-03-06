@@ -54,7 +54,7 @@ jobs:
         } else {
           cmake -B $buildDir -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
         }
-    
+          
     # Step 4: Check code formatting
     - name: Check Format
       id: format

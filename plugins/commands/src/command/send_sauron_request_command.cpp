@@ -23,7 +23,8 @@ auto SendSauronRequestCommand::execute() -> void {
     DEBUG_LOG("Prompt: ", prompt_); 
     auto images = loadImagesFromFolder();
     DEBUG_LOG("Images: ", images.size());
-    auto sauronClient = client::SauronRegister::getSauronClient();
+    auto sauronRegister = client::SauronRegister::getInstance();
+    auto sauronClient = sauronRegister->getSauronClient();
     DEBUG_LOG("Sauron client: ", sauronClient);
 
     auto aiAlgorithmWithImageQuery = sauron::dto::AIQueryRequest(prompt_, sauron::dto::AIProvider::OPENAI, "gpt-4o");
@@ -38,7 +39,7 @@ auto SendSauronRequestCommand::execute() -> void {
         DEBUG_LOG("Response: ", responseStr);
     } catch (const std::exception& e) {
         DEBUG_LOG("Error: ", e.what());
-        return;
+        throw std::runtime_error("Failed to query AI algorithm");
     }
 
     auto windowManager = app_->getWindowManager();
@@ -56,10 +57,13 @@ auto SendSauronRequestCommand::execute() -> void {
 
 auto SendSauronRequestCommand::loadImagesFromFolder() const -> std::vector<std::string> {
     std::vector<std::string> images;
+    if (!std::filesystem::exists("./screenshot")) {
+        return images;
+    }
     for (const auto& file : std::filesystem::directory_iterator("./screenshot")) {
         // load image in base64 format
-        std::ifstream file(file.path(), std::ios::binary);
-        std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(file), {});
+        std::ifstream fileStream(file.path(), std::ios::binary);
+        std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(fileStream), {});
         std::string image_base64 = "data:image/png;base64," + utils::StringUtils::base64_encode(buffer);
         images.push_back(image_base64);
     }

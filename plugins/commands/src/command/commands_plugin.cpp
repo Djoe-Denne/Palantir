@@ -63,33 +63,33 @@ static auto createSendSauronHandleTodosRequestCommand() -> std::unique_ptr<comma
 
 auto CommandsPlugin::initialize() -> bool {
     // Register commands using function pointers
-    command::CommandFactory::getInstance().registerCommand("toggle", &createShowCommand);
-    command::CommandFactory::getInstance().registerCommand("stop", &createStopCommand);
-    command::CommandFactory::getInstance().registerCommand("window-screenshot", &createWindowScreenshotCommand);
-    command::CommandFactory::getInstance().registerCommand("toggle-transparency", &createToggleTransparencyCommand);
-    command::CommandFactory::getInstance().registerCommand("toggle-window-anonymity", &createToggleWindowAnonymityCommand);
-    command::CommandFactory::getInstance().registerCommand("clear-screenshot", &createClearScreenshotCommand);
-    command::CommandFactory::getInstance().registerCommand("send-sauron-implement-request", &createSendSauronImplementRequestCommand);
-    command::CommandFactory::getInstance().registerCommand("send-sauron-fix-errors-request", &createSendSauronFixErrorsRequestCommand);
-    command::CommandFactory::getInstance().registerCommand("send-sauron-validate-with-tests-request", &createSendSauronValidateWithTestsRequestCommand);
-    command::CommandFactory::getInstance().registerCommand("send-sauron-fix-test-failures-request", &createSendSauronFixTestFailuresRequestCommand);
-    command::CommandFactory::getInstance().registerCommand("send-sauron-handle-todos-request", &createSendSauronHandleTodosRequestCommand);
+    command::CommandFactory::getInstance()->registerCommand("toggle", &createShowCommand);
+    command::CommandFactory::getInstance()->registerCommand("stop", &createStopCommand);
+    command::CommandFactory::getInstance()->registerCommand("window-screenshot", &createWindowScreenshotCommand);
+    command::CommandFactory::getInstance()->registerCommand("toggle-transparency", &createToggleTransparencyCommand);
+    command::CommandFactory::getInstance()->registerCommand("toggle-window-anonymity", &createToggleWindowAnonymityCommand);
+    command::CommandFactory::getInstance()->registerCommand("clear-screenshot", &createClearScreenshotCommand);
+    command::CommandFactory::getInstance()->registerCommand("send-sauron-implement-request", &createSendSauronImplementRequestCommand);
+    command::CommandFactory::getInstance()->registerCommand("send-sauron-fix-errors-request", &createSendSauronFixErrorsRequestCommand);
+    command::CommandFactory::getInstance()->registerCommand("send-sauron-validate-with-tests-request", &createSendSauronValidateWithTestsRequestCommand);
+    command::CommandFactory::getInstance()->registerCommand("send-sauron-fix-test-failures-request", &createSendSauronFixTestFailuresRequestCommand);
+    command::CommandFactory::getInstance()->registerCommand("send-sauron-handle-todos-request", &createSendSauronHandleTodosRequestCommand);
     return true;
 }
 
 auto CommandsPlugin::shutdown() -> void {
     // Unregister commands
-    command::CommandFactory::getInstance().unregisterCommand("toggle");
-    command::CommandFactory::getInstance().unregisterCommand("stop");
-    command::CommandFactory::getInstance().unregisterCommand("window-screenshot");
-    command::CommandFactory::getInstance().unregisterCommand("toggle-transparency");
-    command::CommandFactory::getInstance().unregisterCommand("toggle-window-anonymity");
-    command::CommandFactory::getInstance().unregisterCommand("clear-screenshot");
-    command::CommandFactory::getInstance().unregisterCommand("send-sauron-implement-request");
-    command::CommandFactory::getInstance().unregisterCommand("send-sauron-fix-errors-request");
-    command::CommandFactory::getInstance().unregisterCommand("send-sauron-validate-with-tests-request");
-    command::CommandFactory::getInstance().unregisterCommand("send-sauron-fix-test-failures-request");
-    command::CommandFactory::getInstance().unregisterCommand("send-sauron-handle-todos-request");
+    command::CommandFactory::getInstance()->unregisterCommand("toggle");
+    command::CommandFactory::getInstance()->unregisterCommand("stop");
+    command::CommandFactory::getInstance()->unregisterCommand("window-screenshot");
+    command::CommandFactory::getInstance()->unregisterCommand("toggle-transparency");
+    command::CommandFactory::getInstance()->unregisterCommand("toggle-window-anonymity");
+    command::CommandFactory::getInstance()->unregisterCommand("clear-screenshot");
+    command::CommandFactory::getInstance()->unregisterCommand("send-sauron-implement-request");
+    command::CommandFactory::getInstance()->unregisterCommand("send-sauron-fix-errors-request");
+    command::CommandFactory::getInstance()->unregisterCommand("send-sauron-validate-with-tests-request");
+    command::CommandFactory::getInstance()->unregisterCommand("send-sauron-fix-test-failures-request");
+    command::CommandFactory::getInstance()->unregisterCommand("send-sauron-handle-todos-request");
 }
 
 auto CommandsPlugin::getName() const -> std::string {

@@ -18,29 +18,32 @@ class KeyRegisterImpl;
  * and retrieval of registered values.
  */
 class PALANTIR_CORE_API KeyRegister {
-private:
+protected:
     // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
 #pragma warning(push)
 #pragma warning(disable: 4251)
     std::unique_ptr<KeyRegisterImpl> pimpl_;
 #pragma warning(pop)
 
+    static std::shared_ptr<KeyRegister> instance_;
+
     // Private constructor for singleton
     KeyRegister();
-    ~KeyRegister();
 
 public:
+    virtual ~KeyRegister();
     
     // Delete copy and move operations
     KeyRegister(const KeyRegister&) = delete;
     auto operator=(const KeyRegister&) -> KeyRegister& = delete;
     KeyRegister(KeyRegister&&) = delete;
     auto operator=(KeyRegister&&) -> KeyRegister& = delete;
-    static auto getInstance() -> KeyRegister&;
+    static auto getInstance() -> std::shared_ptr<KeyRegister>;
+    static auto setInstance(std::shared_ptr<KeyRegister> instance) -> void;
     
-    auto registerKey(const std::string& key, int value) -> void;
-    [[nodiscard]] auto get(const std::string& key) const -> int;
-    [[nodiscard]] auto hasKey(const std::string& key) const -> bool;
+    virtual auto registerKey(const std::string& key, int value) -> void;
+    [[nodiscard]] virtual auto get(const std::string& key) const -> int;
+    [[nodiscard]] virtual auto hasKey(const std::string& key) const -> bool;
 };
 
 } // namespace palantir::input

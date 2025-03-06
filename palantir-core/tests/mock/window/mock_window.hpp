@@ -1,11 +1,11 @@
 #pragma once
 
-#include <gmock/gmock.h>
+#include "mock/palantir_mock.hpp"
 #include "window/iwindow.hpp"
 
 namespace palantir::test {
 
-class MockWindow : public window::IWindow {
+class MockWindow : public window::IWindow, public PalantirMock {
 public:
     ~MockWindow() override = default;
     MOCK_METHOD(void, create, (), (override));

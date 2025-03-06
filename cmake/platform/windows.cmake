@@ -104,8 +104,10 @@ function(setup_windows_platform_webview target_name)
 
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(PLATFORM "x64")
+        message(STATUS "Platform: x64")
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
         set(PLATFORM "x86")
+        message(STATUS "Platform: x86")
     endif()
     
     # Check if the WebView2 library exists at the expected path

@@ -2,9 +2,9 @@
 #include <gmock/gmock.h>
 #include <filesystem>
 #include "command/show_command.hpp"
-#include "../mocks/mock_application.hpp"
-#include "../mocks/mock_window_manager.hpp"
-#include "../mocks/mock_window.hpp"
+#include "mock/mock_application.hpp"
+#include "mock/window/mock_window_manager.hpp"
+#include "mock/window/mock_window.hpp"
 
 using namespace palantir::command;
 using namespace palantir::test;

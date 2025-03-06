@@ -36,11 +36,11 @@ public:
     /** @brief Deleted copy assignment to prevent window duplication. */
     auto operator=(const IWindow&) -> IWindow& = delete;
 
-    // Define move operations
-    /** @brief Default move constructor for transfer of window ownership. */
-    IWindow(IWindow&&) noexcept = default;
-    /** @brief Default move assignment for transfer of window ownership. */
-    auto operator=(IWindow&&) noexcept -> IWindow& = default;
+    // Delete move operations
+    /** @brief Deleted move constructor to prevent window duplication. */
+    IWindow(IWindow&&) noexcept = delete;
+    /** @brief Deleted move assignment to prevent window duplication. */
+    auto operator=(IWindow&&) noexcept -> IWindow& = delete;
 
     /**
      * @brief Create and initialize the window.

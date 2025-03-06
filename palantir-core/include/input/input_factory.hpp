@@ -16,11 +16,11 @@
 
 #include "input/key_config.hpp"
 #include "input/key_mapper.hpp"
+#include "input/configurable_input.hpp"
+#include "core_export.hpp"
 
 namespace palantir::input {
 
-// Forward declaration of ConfigurableInput
-class ConfigurableInput;
 
 /**
  * @class InputFactory
@@ -31,12 +31,10 @@ class ConfigurableInput;
  * input handlers and manage their configuration. The class is non-instantiable
  * and provides only static methods.
  */
-class InputFactory {
+class PALANTIR_CORE_API InputFactory {
 public:
-    /** @brief Deleted constructor to prevent instantiation. */
-    InputFactory() = delete;
     /** @brief Deleted destructor to prevent instantiation. */
-    ~InputFactory() = delete;
+    virtual ~InputFactory();
 
     // Delete copy operations
     /** @brief Deleted copy constructor to prevent instantiation. */
@@ -51,6 +49,22 @@ public:
     auto operator=(InputFactory&&) -> InputFactory& = delete;
 
     /**
+     * @brief Get the singleton instance of the InputFactory.
+     * @return A shared pointer to the InputFactory instance.
+     *
+     * Returns the singleton instance of the InputFactory.
+     */
+    [[nodiscard]] static auto getInstance() -> std::shared_ptr<InputFactory>;
+    
+    /**
+     * @brief Set the singleton instance of the InputFactory.
+     * @param instance A shared pointer to the InputFactory instance.
+     *
+     * Sets the singleton instance of the InputFactory.
+     */
+    static auto setInstance(const std::shared_ptr<InputFactory>& instance) -> void;
+
+    /**
      * @brief Initialize the input factory with configuration.
      * @param configPath Path to the configuration file.
      *
@@ -58,7 +72,7 @@ public:
      * It loads and validates the configuration file, creating a default one
      * if it doesn't exist.
      */
-    static auto initialize(const std::string& configPath) -> void;
+    virtual auto initialize(const std::string& configPath) -> void;
 
     /**
      * @brief Create an input handler for a specific command.
@@ -70,7 +84,7 @@ public:
      * @throws std::runtime_error if the factory is not initialized or the command
      * is not found in configuration.
      */
-    [[nodiscard]] static auto createInput(const std::string& commandName) -> std::unique_ptr<ConfigurableInput>;
+    [[nodiscard]] virtual auto createInput(const std::string& commandName) -> std::unique_ptr<ConfigurableInput>;
 
     /**
      * @brief Check if a shortcut exists for a command.
@@ -80,7 +94,7 @@ public:
      * Checks if there is a configured shortcut for the specified command.
      * @throws std::runtime_error if the factory is not initialized.
      */
-    [[nodiscard]] static auto hasShortcut(const std::string& commandName) -> bool;
+    [[nodiscard]] virtual auto hasShortcut(const std::string& commandName) const -> bool;
 
     /**
      * @brief Get a list of all configured commands.
@@ -90,21 +104,18 @@ public:
      * configuration file.
      * @throws std::runtime_error if the factory is not initialized.
      */
-    [[nodiscard]] static auto getConfiguredCommands() -> std::vector<std::string>;
+    [[nodiscard]] virtual auto getConfiguredCommands() const -> std::vector<std::string>;
+
+protected:
+    InputFactory();
 
 private:
-    /**
-     * @brief Create a default configuration file.
-     * @param configPath Path where the default configuration should be created.
-     *
-     * Creates a default configuration file with platform-specific shortcuts
-     * when no configuration file exists.
-     * @throws std::runtime_error if the file cannot be created or written to.
-     */
-    static auto createDefaultConfig(const std::string& configPath) -> void;
-
-    /** @brief Pointer to the key configuration object. */
-    static std::unique_ptr<KeyConfig> keyConfig_;
+    class InputFactoryImpl;
+#pragma warning(push)
+#pragma warning(disable: 4251)
+    std::unique_ptr<InputFactoryImpl> pimpl_;
+    static std::shared_ptr<InputFactory> instance_;
+#pragma warning(pop)
 };
 
 }  // namespace palantir::input
