@@ -21,9 +21,9 @@ public:
     ~SignalFactoryImpl() = default;
 
     SignalFactoryImpl(const SignalFactoryImpl&) = delete;
-    SignalFactoryImpl& operator=(const SignalFactoryImpl&) = delete;
+    auto operator=(const SignalFactoryImpl&) -> SignalFactoryImpl& = delete;
     SignalFactoryImpl(SignalFactoryImpl&&) = delete;
-    SignalFactoryImpl& operator=(SignalFactoryImpl&&) = delete;
+    auto operator=(SignalFactoryImpl&&) -> SignalFactoryImpl& = delete;
 
     auto createSignals(const std::shared_ptr<Application>& app) -> std::vector<std::unique_ptr<ISignal>> {
         std::vector<std::unique_ptr<ISignal>> signals;
