@@ -3,7 +3,7 @@ name: Code Quality PR
 
 # Trigger the workflow on push and pull request events for the master branch
 on:
-  issue_comment:
+  pull_request_comment:
     types: [created]
 
 # Add required permissions
@@ -22,7 +22,6 @@ env:
 jobs:
   code-quality:
     runs-on: windows-latest
-    if: ${{ github.event.issue.pull_request }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/quality
