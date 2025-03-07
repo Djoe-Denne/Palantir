@@ -25,6 +25,8 @@ jobs:
     if: github.event.issue.pull_request && github.event.comment.body == 'run code quality'
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.issue.pull_request }}
       - uses: ./.github/workflows/actions/quality
         with:
           github-token: ${{ secrets.PALANTIR_GHA }}
