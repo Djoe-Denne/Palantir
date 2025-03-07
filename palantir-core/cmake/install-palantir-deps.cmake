@@ -45,7 +45,7 @@ function(install_sauron_sdk)
             set(AUTH_ARGS "-H" "Authorization: token ${GITHUB_TOKEN}")
         endif()
 
-        function(download_and_extract URL DEST)
+        function(download_and_extract URL DEST EXTRACT_DEST)
             set(FILE_PATH "${DEPS_DIR}/${DEST}")
             message(STATUS "Downloading ${URL}")
             execute_process(COMMAND curl -L ${AUTH_ARGS} -o ${FILE_PATH} ${URL} RESULT_VARIABLE RESULT)
@@ -55,15 +55,15 @@ function(install_sauron_sdk)
             message(STATUS "✅ Downloaded ${FILE_PATH}")
 
             message(STATUS "Extracting ${DEST}")
-            execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf ${FILE_PATH} WORKING_DIRECTORY ${BIN_DIR} RESULT_VARIABLE EXTRACT_RESULT)
+            execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf ${FILE_PATH} WORKING_DIRECTORY ${EXTRACT_DEST} RESULT_VARIABLE EXTRACT_RESULT)
             if(EXTRACT_RESULT)
                 message(FATAL_ERROR "❌ Failed to extract ${DEST}")
             endif()
-            message(STATUS "✅ Extracted ${DEST}")
+            message(STATUS "✅ Extracted ${DEST} in ${EXTRACT_DEST}")
         endfunction()
 
-        download_and_extract(${ARTIFACT_URL} ${ARTIFACT_NAME})
-        download_and_extract(${SOURCE_URL} ${SOURCE_ARCHIVE})
+        download_and_extract(${ARTIFACT_URL} ${ARTIFACT_NAME} ${BIN_DIR})
+        download_and_extract(${SOURCE_URL} ${SOURCE_ARCHIVE} ${DEPS_DIR})
 
         set(SAURON_SDK_PATH "${DEPS_DIR}/api_spec/cpp-sdk")
         set(SAURON_SDK_CURL_PATH "${DEPS_DIR}/sauron-sdk-curl")
@@ -72,6 +72,8 @@ function(install_sauron_sdk)
         file(COPY ${BIN_DIR}/sauron-sdk-curl.lib DESTINATION ${SAURON_SDK_CURL_PATH}/lib)
 
         set(SAURON_SDK_INCLUDE_DIRS "${SAURON_SDK_PATH}/include" "${SAURON_SDK_CURL_PATH}/include" CACHE PATH "Path to Sauron SDK include directories")
+
+        message(STATUS "include dirs: ${SAURON_SDK_INCLUDE_DIRS}")
 
         add_library(sauron_sdk::curl UNKNOWN IMPORTED)
         set_target_properties(sauron_sdk::curl PROPERTIES
