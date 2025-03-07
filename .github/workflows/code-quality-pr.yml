@@ -35,6 +35,7 @@ jobs:
               head_sha: context.payload.comment.commit_id,
               status: 'in_progress',
               started_at: new Date()
+              token: ${{ secrets.PALANTIR_GHA }}
             })
 
       - uses: actions/checkout@v4
@@ -63,4 +64,5 @@ jobs:
               status: 'completed',
               conclusion: conclusion,
               completed_at: new Date()
+              token: ${{ secrets.PALANTIR_GHA }}
             })
