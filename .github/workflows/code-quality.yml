@@ -43,7 +43,22 @@ jobs:
           key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
           restore-keys: |
             ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-
+
+
+      - name: Get changed files
+        id: changed-files
+        if: github.event_name == 'pull_request' || github.event_name == 'issue_comment'
+        shell: bash
+        run: |
+          CHANGED_FILES=$(git diff --name-only origin/master...HEAD | grep -E '\.(cpp|hpp|h|cc)$' | tr '\n' ';' || echo "")
+          echo "files=${CHANGED_FILES}" >> $GITHUB_OUTPUT
+          echo "Changed files: ${CHANGED_FILES}"
       
+      - name: Configure CMake
+        shell: pwsh
+        run: |
+          cmake -B ${{ env.CMAKE_BUILD_DIR }} -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
+
       - name: Check Format
         shell: pwsh
         run: cmake --build ${{ env.CMAKE_BUILD_DIR }} --target format-check
