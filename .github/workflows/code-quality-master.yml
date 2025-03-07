@@ -25,7 +25,7 @@ env:
 
 jobs:
   code-quality:
-    runs-on: macos-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/quality
