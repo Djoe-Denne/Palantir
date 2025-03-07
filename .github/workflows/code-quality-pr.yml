@@ -27,6 +27,7 @@ jobs:
       - name: Create in-progress check
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.PALANTIR_GHA }}
           script: |
             github.rest.checks.create({
               owner: context.repo.owner,
@@ -35,7 +36,6 @@ jobs:
               head_sha: context.payload.comment.commit_id,
               status: 'in_progress',
               started_at: new Date()
-              token: ${{ secrets.PALANTIR_GHA }}
             })
 
       - uses: actions/checkout@v4
@@ -54,6 +54,7 @@ jobs:
         if: always()
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.PALANTIR_GHA }}
           script: |
             const conclusion = '${{ steps.quality.outcome }}' === 'success' ? 'success' : 'failure';
             github.rest.checks.create({
@@ -64,5 +65,4 @@ jobs:
               status: 'completed',
               conclusion: conclusion,
               completed_at: new Date()
-              token: ${{ secrets.PALANTIR_GHA }}
             })
