@@ -6,7 +6,8 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches:
+      - '**'
   issue_comment:
     types: [created]
 
