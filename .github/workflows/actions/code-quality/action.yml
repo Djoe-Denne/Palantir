@@ -1,19 +1,17 @@
-name: 'Code Quality Checks'
-description: 'Runs code formatting and linting checks'
+# Main workflow for building and checking code quality
+name: Build
 
-inputs:
-  github-token:
-    description: 'GitHub token for authentication'
-    required: true
-  build-dir:
-    description: 'CMake build directory'
-    required: true
-  cache-prefix:
-    description: 'Prefix for cache keys'
-    required: true
+# Trigger the workflow on push and pull request events for the master branch
+on:
+  push:
+    branches: [ master ]
+  issue_comment:
+    types: [created]
+
 
 runs:
   using: "composite"
+  if: github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.comment.body == '/quality')
   steps:
     - uses: actions/checkout@v4
       with:
