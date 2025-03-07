@@ -1,5 +1,5 @@
 # Main workflow for building and checking code quality
-name: Code Quality
+name: Code Quality Master
 
 # Trigger the workflow on push and pull request events for the master branch
 on:
