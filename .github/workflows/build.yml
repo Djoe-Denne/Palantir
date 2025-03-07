@@ -103,7 +103,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: |
-        Write-Output "Build dir: ${{ env.CMAKE_BUILD_DIR }}"
-        Get-ChildItem -Path ${{ env.CMAKE_BUILD_DIR }} -Recurse
-        cmake --build ${{ env.CMAKE_BUILD_DIR }} --target package
-    
+        cmake --build ${{ env.CMAKE_BUILD_DIR }} --config Release
