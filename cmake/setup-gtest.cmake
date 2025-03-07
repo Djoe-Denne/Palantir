@@ -1,4 +1,7 @@
-include(FetchContent)# First try to find GTest in the system
+include(FetchContent)
+
+# First try to find GTest in the system
+find_package(GTest QUIET)
 
 # Helper function to setup testing for a target
 function(setup_target_testing TARGET_NAME)
@@ -14,10 +17,12 @@ if(NOT GTEST_FOUND AND MAGIC_DEPS_INSTALL)
         GIT_TAG v1.16.0
     )
     
-    
     # Windows-specific settings
     if(WIN32)
         set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+        # Ensure DLL compatibility
+        set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
+        add_compile_definitions(GTEST_CREATE_SHARED_LIBRARY=1)
     endif()
 
     FetchContent_MakeAvailable(googletest)
@@ -44,8 +49,15 @@ elseif(NOT GTEST_FOUND AND NOT AUTO_INSTALL_GTEST)
     return()
 endif()
 
-    
     message(STATUS "Setting up testing for target ${TARGET_NAME}")
+    
+    if(WIN32)
+        target_compile_definitions(${TARGET_NAME}
+            PRIVATE
+                GTEST_LINKED_AS_SHARED_LIBRARY=1
+        )
+    endif()
+    
     target_link_libraries(${TARGET_NAME}
         PRIVATE
             ${GTEST_LIBRARIES}
@@ -58,10 +70,5 @@ endif()
         PRIVATE
             ${GTEST_INCLUDE_DIRS}
             ${GMOCK_INCLUDE_DIRS}
-    )
-
-    target_compile_definitions(${TARGET_NAME}
-        PRIVATE
-            GTEST_LINKED_AS_SHARED_LIBRARY=1
     )
 endfunction() 
