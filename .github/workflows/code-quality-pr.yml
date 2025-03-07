@@ -25,6 +25,18 @@ jobs:
     runs-on: windows-latest
     if: github.event.issue.pull_request && github.event.comment.body == 'run code quality'
     steps:
+      - name: Get PR data
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            return pr.head.sha;
+
       - name: Create in-progress check
         uses: actions/github-script@v7
         with:
@@ -34,7 +46,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               name: 'Code Quality Check',
-              head_sha: context.payload.comment.commit_id,
+              head_sha: '${{ steps.pr.outputs.result }}',
               status: 'in_progress',
               started_at: new Date()
             })
@@ -43,6 +55,7 @@ jobs:
         with:
           ref: refs/pull/${{ github.event.issue.number }}/head
           fetch-depth: 0
+
 
       - uses: ./.github/workflows/actions/quality
         id: quality
@@ -62,7 +75,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               name: 'Code Quality Check',
-              head_sha: context.payload.comment.commit_id,
+              head_sha: '${{ steps.pr.outputs.result }}',
               status: 'completed',
               conclusion: conclusion,
               completed_at: new Date()
