@@ -8,6 +8,17 @@ on:
   issue_comment:
     types: [created]
 
+# Add required permissions
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+  
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 # Global environment variables
 env:
   FORCE_COLOR: 1  # Enable colored output in logs
@@ -24,7 +35,7 @@ jobs:
         uses: actions/checkout@v4
     
       - name: Restore CMake cache
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v3
         with:
           path: |
             ${{ env.CMAKE_BUILD_DIR }}
