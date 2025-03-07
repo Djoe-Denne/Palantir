@@ -99,7 +99,12 @@ jobs:
     
     # Step 3: Build the project
     - name: Build
+      shell: pwsh
       env:
         GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
-      run: cmake --build ${{ env.CMAKE_BUILD_DIR }} --config Release
+      run: |
+        # echo the build dir
+        Write-Output "Build dir: ${{ env.CMAKE_BUILD_DIR }}"
+        Get-ChildItem -Path ${{ env.CMAKE_BUILD_DIR }}
+        cmake --build ${{ env.CMAKE_BUILD_DIR }} --target package
     
