@@ -16,18 +16,6 @@ inputs:
 runs:
   using: "composite"
   steps:  
-    - name: Restore CMake cache
-      uses: actions/cache/restore@v3
-      with:
-        path: |
-          ${{ inputs.build-dir }}
-          ${{ inputs.build-dir }}/CMakeCache.txt
-          ${{ inputs.build-dir }}/CMakeFiles
-          ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
-        restore-keys: |
-          ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-
-    
     - name: Configure CMake
       shell: pwsh
       run: |
