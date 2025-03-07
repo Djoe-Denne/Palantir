@@ -5,9 +5,6 @@ outputs:
   should_run_quality:
     description: 'Whether quality checks should run'
     value: ${{ steps.check.outputs.should_run_quality }}
-  should_run_setup:
-    description: 'Whether setup should run'
-    value: ${{ steps.check.outputs.should_run_setup }}
   pr_number:
     description: 'PR number if applicable'
     value: ${{ steps.check.outputs.pr_number }}
@@ -24,7 +21,6 @@ runs:
       run: |
         # Initialize outputs
         should_run_quality="false"
-        should_run_setup="false"
         pr_number=""
         
         echo "Debug: Event name is ${{ github.event_name }}"
@@ -46,9 +42,6 @@ runs:
             if [[ "$comment" == "/check-quality" ]]; then
               should_run_quality="true"
               echo "Trigger: /check-quality command"
-            elif [[ "$comment" == "/reconfigure" ]]; then
-              should_run_setup="true"
-              echo "Trigger: /reconfigure command"
             fi
           else
             echo "Comment not on a PR, ignoring"
@@ -59,25 +52,11 @@ runs:
           echo "Pull request #$pr_number"
         fi
         
-        # Check for CMake file changes
-        if [[ "${{ github.event_name }}" == "push" ]]; then
-          CHANGED_CMAKE=$(git diff --name-only HEAD^...HEAD | grep -E '\.cmake$|CMakeLists\.txt$' || echo "")
-        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
-          CHANGED_CMAKE=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.cmake$|CMakeLists\.txt$' || echo "")
-        fi
-        
-        if [[ -n "$CHANGED_CMAKE" ]]; then
-          should_run_setup="true"
-          echo "Trigger: CMake files changed"
-        fi
-        
         # Output results
         echo "should_run_quality=$should_run_quality" >> $GITHUB_OUTPUT
-        echo "should_run_setup=$should_run_setup" >> $GITHUB_OUTPUT
         echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
         
         # Debug output
         echo "Final outputs:"
         echo "should_run_quality: $should_run_quality"
-        echo "should_run_setup: $should_run_setup"
         echo "pr_number: $pr_number" 

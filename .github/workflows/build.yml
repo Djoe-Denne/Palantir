@@ -34,7 +34,6 @@ jobs:
     runs-on: windows-latest
     outputs:
       should_run_quality: ${{ steps.trigger-check.outputs.should_run_quality }}
-      should_run_setup: ${{ steps.trigger-check.outputs.should_run_setup }}
       pr_number: ${{ steps.trigger-check.outputs.pr_number }}
       cache_valid: ${{ steps.check-cache.outputs.cache_valid }}
       cache_status: ${{ steps.check-cache.outputs.cache_status }}
@@ -55,37 +54,6 @@ jobs:
           key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
           restore-keys: |
             ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-
-      
-      # Now check cache status after restore attempt
-      - name: Check CMake cache status
-        id: check-cache
-        shell: pwsh
-        run: |
-          $cachePath = "${{ env.CMAKE_BUILD_DIR }}"
-          $cacheValid = "false"
-          $status = "Cache not found"
-          
-          Write-Host "Checking cache at: $cachePath"
-          Write-Host "Cache restore attempt: ${{ steps.restore-cache.outputs.cache-hit }}"
-          
-          if (Test-Path $cachePath) {
-            $cacheAge = (Get-Date) - (Get-Item $cachePath).LastWriteTime
-            $ageHours = [math]::Round($cacheAge.TotalHours, 2)
-            $status = "Cache found, age: $ageHours hours"
-            
-            if ($cacheAge.TotalHours -lt 12) {
-              $cacheValid = "true"
-              $status = "$status (Valid)"
-            } else {
-              $status = "$status (Expired)"
-            }
-          }
-          
-          Write-Host "Cache status: $status"
-          Write-Host "Cache valid: $cacheValid"
-          
-          echo "cache_valid=$cacheValid" >> $env:GITHUB_OUTPUT
-          echo "cache_status=$status" >> $env:GITHUB_OUTPUT
           
       - id: trigger-check
         uses: ./.github/workflows/actions/check-triggers
@@ -97,7 +65,6 @@ jobs:
           Write-Host "======================="
           Write-Host "Event type: ${{ github.event_name }}"
           Write-Host "Cache restore: ${{ steps.restore-cache.outputs.cache-hit }}"
-          Write-Host "Cache status: ${{ steps.check-cache.outputs.cache_status }}"
           Write-Host "Should run setup: ${{ steps.trigger-check.outputs.should_run_setup }}"
           Write-Host "Should run quality: ${{ steps.trigger-check.outputs.should_run_quality }}"
           Write-Host "PR number: ${{ steps.trigger-check.outputs.pr_number }}"
@@ -105,27 +72,11 @@ jobs:
   setup:
     name: Setup
     needs: check-trigger
-    if: |
-      needs.check-trigger.outputs.should_run_setup == 'true' ||
-      needs.check-trigger.outputs.cache_valid != 'true' ||
-      needs.check-trigger.outputs.cache_restored != 'true'
+    if: 
     runs-on: windows-latest
     outputs:
       changed_files: ${{ steps.cmake-setup.outputs.changed_files }}
     steps:
-      - name: Log setup triggers
-        shell: pwsh
-        run: |
-          Write-Host "Setup Job Trigger Analysis:"
-          Write-Host "=========================="
-          Write-Host "Cache status: ${{ needs.check-trigger.outputs.cache_status }}"
-          Write-Host "Cache valid: ${{ needs.check-trigger.outputs.cache_valid }}"
-          Write-Host "Cache restored: ${{ needs.check-trigger.outputs.cache_restored }}"
-          Write-Host "Should run setup: ${{ needs.check-trigger.outputs.should_run_setup }}"
-          Write-Host "Trigger condition 1 (should_run_setup): ${{ needs.check-trigger.outputs.should_run_setup == 'true' }}"
-          Write-Host "Trigger condition 2 (cache_valid): ${{ needs.check-trigger.outputs.cache_valid != 'true' }}"
-          Write-Host "Trigger condition 3 (cache_restored): ${{ needs.check-trigger.outputs.cache_restored != 'true' }}"
-          
       - uses: actions/checkout@v4
       - id: cmake-setup
         uses: ./.github/workflows/actions/setup-cmake
