@@ -65,7 +65,7 @@ function(install_sauron_sdk)
         download_and_extract(${ARTIFACT_URL} ${ARTIFACT_NAME})
         download_and_extract(${SOURCE_URL} ${SOURCE_ARCHIVE})
 
-        set(SAURON_SDK_PATH "${DEPS_DIR}/api_sepc/cpp-sdk")
+        set(SAURON_SDK_PATH "${DEPS_DIR}/api_spec/cpp-sdk")
         set(SAURON_SDK_CURL_PATH "${DEPS_DIR}/sauron-sdk-curl")
         set(SAURON_SDK_CURL_LIBRARY "${SAURON_SDK_CURL_PATH}/lib/sauron-sdk-curl.lib")
 
