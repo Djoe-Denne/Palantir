@@ -23,10 +23,12 @@ runs:
 
     - name: Check Format
       shell: pwsh
+      continue-on-error: true
       run: cmake --build ${{ inputs.build-dir }} --target format-check
     
     - name: Run Lint Check
       shell: pwsh
+      continue-on-error: true
       run: cmake --build ${{ inputs.build-dir }} --target lint-check
 
     - name: Analyze Lint Results

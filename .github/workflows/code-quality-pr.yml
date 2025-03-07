@@ -1,5 +1,5 @@
 # Main workflow for building and checking code quality
-name: Code Quality
+name: Code Quality PR
 
 # Trigger the workflow on push and pull request events for the master branch
 on:
@@ -12,10 +12,6 @@ permissions:
   pull-requests: write
   issues: write
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
-
 # Global environment variables
 env:
   FORCE_COLOR: 1  # Enable colored output in logs
@@ -26,7 +22,7 @@ env:
 jobs:
   code-quality:
     runs-on: windows-latest
-    if: ${{ github.event.issue.pull_request }}
+    if: github.event.issue.pull_request && github.event.comment.body == 'run code quality'
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/quality
