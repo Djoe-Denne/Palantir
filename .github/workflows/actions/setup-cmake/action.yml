@@ -40,8 +40,8 @@ runs:
         echo "files=${CHANGED_FILES}" >> $GITHUB_OUTPUT
         echo "Changed files: ${CHANGED_FILES}"
     
-    - name: Cache CMake files
-      uses: actions/cache@v3
+    - name: Restore CMake cache
+      uses: actions/cache/restore@v3
       with:
         path: |
           ${{ inputs.build-dir }}
@@ -51,7 +51,7 @@ runs:
         key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
         restore-keys: |
           ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-
-    
+
     - name: Configure CMake
       shell: pwsh
       env:
@@ -65,3 +65,13 @@ runs:
         } else {
           cmake -B $buildDir -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ inputs.github-token }}
         } 
+
+    - name: Save CMake cache
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          ${{ inputs.build-dir }}
+          ${{ inputs.build-dir }}/CMakeCache.txt
+          ${{ inputs.build-dir }}/CMakeFiles
+          ${{ inputs.build-dir }}/_deps
+        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }} 
