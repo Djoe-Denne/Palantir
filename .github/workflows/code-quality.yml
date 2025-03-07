@@ -55,9 +55,16 @@ jobs:
           echo "Changed files: ${CHANGED_FILES}"
       
       - name: Configure CMake
+        if: github.event_name == 'pull_request' || github.event_name == 'issue_comment'
         shell: pwsh
         run: |
           cmake -B ${{ env.CMAKE_BUILD_DIR }} -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }} -DLINT_FILES="${{ steps.changed-files.outputs.files }}"
+
+      - name: Configure CMake
+        if: github.event_name == 'push'
+        shell: pwsh
+        run: |
+          cmake -B ${{ env.CMAKE_BUILD_DIR }} -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
 
       - name: Check Format
         shell: pwsh
