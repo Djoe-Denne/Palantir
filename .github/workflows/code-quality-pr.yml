@@ -24,9 +24,17 @@ jobs:
     runs-on: windows-latest
     if: github.event.issue.pull_request && github.event.comment.body == 'run code quality'
     steps:
+      - name: Get PR number
+        id: pr
+        run: echo "pull_number=$(gh api ${{ github.event.issue.pull_request.url }} --jq .number)" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.issue.pull_request }}
+          ref: refs/pull/${{ steps.pr.outputs.pull_number }}/head
+          fetch-depth: 0
+
       - uses: ./.github/workflows/actions/quality
         with:
           github-token: ${{ secrets.PALANTIR_GHA }}
