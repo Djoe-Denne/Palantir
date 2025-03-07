@@ -35,7 +35,7 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-            core.setOutput('sha', pr.head.sha);
+            return pr.head.sha;
 
       - name: Create in-progress check
         uses: actions/github-script@v7
@@ -46,17 +46,16 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               name: 'Code Quality Check',
-              head_sha: process.env.PR_SHA,
+              head_sha: ${{ steps.pr.outputs.result }},
               status: 'in_progress',
               started_at: new Date()
             })
-        env:
-          PR_SHA: ${{ steps.pr.outputs.sha }}
 
       - uses: actions/checkout@v4
         with:
           ref: refs/pull/${{ github.event.issue.number }}/head
           fetch-depth: 0
+
 
       - uses: ./.github/workflows/actions/quality
         id: quality
@@ -71,14 +70,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const conclusion = '${{ steps.quality.outcome }}' === 'success' ? 'success' : 'failure';
             github.rest.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               name: 'Code Quality Check',
-              head_sha: process.env.PR_SHA,
+              head_sha: ${{ steps.pr.outputs.result }},
               status: 'completed',
-              conclusion: '${{ steps.quality.outcome }}' === 'success' ? 'success' : 'failure',
+              conclusion: conclusion,
               completed_at: new Date()
             })
-        env:
-          PR_SHA: ${{ steps.pr.outputs.sha }}
