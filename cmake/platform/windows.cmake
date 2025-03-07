@@ -86,7 +86,6 @@ function(setup_vcpkg)
 endfunction()
 
 function(setup_windows_platform_webview target_name)
-    find_package(webview2 QUIET)
     if(NOT webview2_FOUND AND MAGIC_DEPS_INSTALL)
         message(STATUS "Webview2 not found! Fetching from nuget...")
         # Microsoft.Web.WebView2
@@ -95,6 +94,8 @@ function(setup_windows_platform_webview target_name)
             URL  https://www.nuget.org/api/v2/package/Microsoft.Web.WebView2/1.0.3065.39
         )
         FetchContent_MakeAvailable(webview2)
+        set(webview2_FOUND TRUE CACHE BOOL "Webview2 found")
+        set(webview2_SOURCE_DIR "${webview2_SOURCE_DIR}" CACHE PATH "Path to Webview2 source directory")
         message(STATUS "Webview2 fetched from nuget!")
     endif()
 
@@ -111,12 +112,12 @@ function(setup_windows_platform_webview target_name)
     endif()
     
     # Check if the WebView2 library exists at the expected path
-    set(WEBVIEW2_LIB_PATH "${webview2_SOURCE_DIR}/build/native/${PLATFORM}/WebView2LoaderStatic.lib")
+    set(WEBVIEW2_LIB_PATH "${webview2_SOURCE_DIR}/build/native/${PLATFORM}/WebView2LoaderStatic.lib" CACHE FILEPATH "Path to WebView2 library")
     if(NOT EXISTS "${WEBVIEW2_LIB_PATH}")
         # Try to find the library in a different location
         file(GLOB_RECURSE WEBVIEW2_LIB_FILES "${webview2_SOURCE_DIR}/*WebView2LoaderStatic.lib")
         if(WEBVIEW2_LIB_FILES)
-            list(GET WEBVIEW2_LIB_FILES 0 WEBVIEW2_LIB_PATH)
+            list(GET WEBVIEW2_LIB_FILES 0 WEBVIEW2_LIB_PATH CACHE FILEPATH "Path to WebView2 library")
             message(STATUS "Found WebView2 library at: ${WEBVIEW2_LIB_PATH}")
         else()
             message(FATAL_ERROR "WebView2 library not found. Expected at: ${WEBVIEW2_LIB_PATH}")

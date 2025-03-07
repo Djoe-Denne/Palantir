@@ -1,0 +1,80 @@
+name: 'Setup CMake'
+description: 'Sets up CMake build environment and caching'
+
+inputs:
+  github-token:
+    description: 'GitHub token for authentication'
+    required: true
+  cache-prefix:
+    description: 'Prefix for cache keys'
+    required: true
+  build-dir:
+    description: 'CMake build directory'
+    required: true
+
+outputs:
+  changed_files:
+    description: 'List of changed C++ files'
+    value: ${{ steps.changed-files.outputs.files }}
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        ref: ${{ github.event.pull_request.head.sha }}
+    
+    - name: Get changed files
+      id: changed-files
+      if: github.event_name == 'pull_request' || github.event_name == 'issue_comment'
+      shell: bash
+      run: |
+        if [[ -n "${{ inputs.pr-number }}" ]]; then
+          git fetch origin pull/${{ inputs.pr-number }}/head:pr-branch
+          git checkout pr-branch
+          CHANGED_FILES=$(git diff --name-only origin/master...HEAD | grep -E '\.(cpp|hpp|h|cc)$' | tr '\n' ';' || echo "")
+        else
+          CHANGED_FILES=$(git diff --name-only HEAD^...HEAD | grep -E '\.(cpp|hpp|h|cc)$' | tr '\n' ';' || echo "")
+        fi
+        echo "files=${CHANGED_FILES}" >> $GITHUB_OUTPUT
+        echo "Changed files: ${CHANGED_FILES}"
+    
+    - name: Restore CMake cache
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          ${{ inputs.build-dir }}
+          ${{ inputs.build-dir }}/CMakeCache.txt
+          ${{ inputs.build-dir }}/CMakeFiles
+          ${{ inputs.build-dir }}/_deps
+        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+        restore-keys: |
+          ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-
+
+    - name: Configure CMake
+      shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: |
+        Write-Output "Build dir: ${{ inputs.build-dir }}"
+        Get-ChildItem -Path ${{ inputs.build-dir }} -Recurse
+        $buildDir = "${{ inputs.build-dir }}"
+        New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
+
+        if ("${{ github.event_name }}" -ne "push" -and "${{ steps.changed-files.outputs.files }}" -ne "") {
+          cmake -B $buildDir -DCMAKE_BUILD_TYPE=Release -DLINT_FILES="${{ steps.changed-files.outputs.files }}" -DGITHUB_TOKEN=${{ inputs.github-token }}
+        } else {
+          cmake -B $buildDir -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ inputs.github-token }}
+        } 
+
+    - name: Save CMake cache
+      uses: actions/cache/save@v3
+      continue-on-error: true  # Prevent the workflow from failing if cache save fails
+      with:
+        path: |
+          ${{ inputs.build-dir }}
+          ${{ inputs.build-dir }}/CMakeCache.txt
+          ${{ inputs.build-dir }}/CMakeFiles
+          ${{ inputs.build-dir }}/_deps
+        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }} 

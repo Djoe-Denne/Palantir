@@ -1,4 +1,4 @@
-include(FetchContent)# First try to find GTest in the system
+include(FetchContent)
 
 # Helper function to setup testing for a target
 function(setup_target_testing TARGET_NAME)
@@ -14,10 +14,12 @@ if(NOT GTEST_FOUND AND MAGIC_DEPS_INSTALL)
         GIT_TAG v1.16.0
     )
     
-    
     # Windows-specific settings
     if(WIN32)
         set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+        # Ensure DLL compatibility
+        set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
+        add_compile_definitions(GTEST_CREATE_SHARED_LIBRARY=1)
     endif()
 
     FetchContent_MakeAvailable(googletest)
@@ -25,13 +27,13 @@ if(NOT GTEST_FOUND AND MAGIC_DEPS_INSTALL)
     message(STATUS "GTest setup complete.")
 
     # Set variables to match find_package behavior
-    set(GTEST_FOUND TRUE)
-    set(GTEST_INCLUDE_DIRS ${gtest_SOURCE_DIR}/include)
-    set(GMOCK_INCLUDE_DIRS ${gmock_SOURCE_DIR}/include)
-    set(GTEST_LIBRARIES gtest)
-    set(GTEST_MAIN_LIBRARIES gtest_main)
-    set(GMOCK_LIBRARIES gmock)
-    set(GMOCK_MAIN_LIBRARIES gmock_main)
+    set(GTEST_FOUND TRUE CACHE BOOL "GTest found")
+    set(GTEST_INCLUDE_DIRS ${gtest_SOURCE_DIR}/include CACHE PATH "GTest include directories")
+    set(GMOCK_INCLUDE_DIRS ${gmock_SOURCE_DIR}/include CACHE PATH "GMock include directories")
+    set(GTEST_LIBRARIES lib/gtest CACHE FILEPATH "GTest libraries")
+    set(GTEST_MAIN_LIBRARIES lib/gtest_main CACHE FILEPATH "GTest main libraries")
+    set(GMOCK_LIBRARIES lib/gmock CACHE FILEPATH "GMock libraries")
+    set(GMOCK_MAIN_LIBRARIES lib/gmock_main CACHE FILEPATH "GMock main libraries")
     
     message(STATUS "GTest include dirs: ${GTEST_INCLUDE_DIRS}")
     message(STATUS "GMock include dirs: ${GMOCK_INCLUDE_DIRS}")
@@ -44,8 +46,15 @@ elseif(NOT GTEST_FOUND AND NOT AUTO_INSTALL_GTEST)
     return()
 endif()
 
-    
     message(STATUS "Setting up testing for target ${TARGET_NAME}")
+    
+    if(WIN32)
+        target_compile_definitions(${TARGET_NAME}
+            PRIVATE
+                GTEST_LINKED_AS_SHARED_LIBRARY=1
+        )
+    endif()
+    
     target_link_libraries(${TARGET_NAME}
         PRIVATE
             ${GTEST_LIBRARIES}
@@ -58,10 +67,5 @@ endif()
         PRIVATE
             ${GTEST_INCLUDE_DIRS}
             ${GMOCK_INCLUDE_DIRS}
-    )
-
-    target_compile_definitions(${TARGET_NAME}
-        PRIVATE
-            GTEST_LINKED_AS_SHARED_LIBRARY=1
     )
 endfunction() 

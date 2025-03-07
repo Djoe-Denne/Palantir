@@ -15,6 +15,7 @@ install_palantir_deps()
 add_library(${MODULE_NAME} SHARED
     ${ALL_PALANTIR_SOURCES}
 )
+
 target_include_directories(${MODULE_NAME} PUBLIC ${ALL_PALANTIR_INCLUDE_DIRS})
 
 target_link_libraries(${MODULE_NAME} PRIVATE sauron_sdk::curl)
