@@ -97,11 +97,3 @@ jobs:
           ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
           ${{ env.CMAKE_BUILD_DIR }}/_deps
         key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
-
-    # Delete current run cache
-    - name: Delete current run cache
-      shell: pwsh
-      run: |
-        Remove-Item -Recurse -Force ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
-        Remove-Item -Recurse -Force ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
-        Remove-Item -Recurse -Force ${{ env.CMAKE_BUILD_DIR }}/_deps
