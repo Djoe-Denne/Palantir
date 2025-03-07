@@ -35,24 +35,7 @@ jobs:
     outputs:
       should_run_quality: ${{ steps.trigger-check.outputs.should_run_quality }}
       pr_number: ${{ steps.trigger-check.outputs.pr_number }}
-      cache_restored: ${{ steps.restore-cache.outputs.cache-hit }}
     steps:
-      - uses: actions/checkout@v4
-      
-      # Try to restore cache first
-      - name: Restore CMake cache
-        id: restore-cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ${{ env.CMAKE_BUILD_DIR }}
-            ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
-            ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
-            ${{ env.CMAKE_BUILD_DIR }}/_deps
-          key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
-          restore-keys: |
-            ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-
-          
       - id: trigger-check
         uses: ./.github/workflows/actions/check-triggers
 
