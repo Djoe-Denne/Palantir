@@ -22,7 +22,7 @@ env:
 
 jobs:
   code-quality:
-    runs-on: windows-latest
+    runs-on: macos-latest
     if: github.event.issue.pull_request && github.event.comment.body == 'run code quality'
     steps:
       - name: Get PR data
