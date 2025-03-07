@@ -14,6 +14,7 @@ inputs:
 
 
 runs:
+  using: composite
   steps:  
     - name: Configure CMake
       shell: bash
