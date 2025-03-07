@@ -14,7 +14,6 @@ permissions:
   pull-requests: write
   issues: write
 
-  
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -29,7 +28,6 @@ env:
 jobs:
   code-quality:
     runs-on: windows-latest
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/master') || (github.event.issue.pull_request && github.event.comment.body == '/quality')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
