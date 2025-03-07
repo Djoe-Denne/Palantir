@@ -57,7 +57,7 @@ jobs:
       - name: Configure CMake
         shell: pwsh
         run: |
-          cmake -B ${{ env.CMAKE_BUILD_DIR }} -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
+          cmake -B ${{ env.CMAKE_BUILD_DIR }} -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }} -DLINT_FILES="${{ steps.changed-files.outputs.files }}"
 
       - name: Check Format
         shell: pwsh
