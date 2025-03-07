@@ -93,7 +93,7 @@ jobs:
           ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
           ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
           ${{ env.CMAKE_BUILD_DIR }}/_deps
-        key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+        key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }} 
         restore-keys: |
           ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-
     

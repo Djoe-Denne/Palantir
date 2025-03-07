@@ -8,7 +8,7 @@ endfunction()
 function(install_nlohmann_json)
     find_package(nlohmann_json QUIET)
 
-    if(NOT nlohmann_json_FOUND)
+    if(NOT nlohmann_json_SOURCE_DIR)
         message(STATUS "System nlohmann_json not found, building from source...")
         # Find or install nlohmann_json
         FetchContent_Declare(
@@ -19,13 +19,18 @@ function(install_nlohmann_json)
         FetchContent_MakeAvailable(nlohmann_json)
 
     else()
+        # force nlohmann_json::nlohmann_json target 
+        add_library(nlohmann_json::nlohmann_json INTERFACE IMPORTED)
+        set_target_properties(nlohmann_json::nlohmann_json PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${nlohmann_json_SOURCE_DIR}/include")
+
         message(STATUS "Found system nlohmann_json")
     endif()
 endfunction()
 
 function(install_sauron_sdk)
-    find_package(Sauron-sdk QUIET)
-    if ((NOT SAURON_SDK_FOUND OR NOT TARGET sauron_sdk::curl) AND MAGIC_DEPS_INSTALL)
+    # check if zip fil
+    if (NOT SAURON_SDK_FOUND AND MAGIC_DEPS_INSTALL)
         set(GITHUB_OWNER "Djoe-Denne")
         set(GITHUB_REPO "Sauron-sdk")
         set(GITHUB_TAG "sauron-sdk-curl-latest")
@@ -65,26 +70,25 @@ function(install_sauron_sdk)
         download_and_extract(${ARTIFACT_URL} ${ARTIFACT_NAME} ${BIN_DIR})
         download_and_extract(${SOURCE_URL} ${SOURCE_ARCHIVE} ${DEPS_DIR})
 
-        set(SAURON_SDK_PATH "${DEPS_DIR}/api_spec/cpp-sdk")
-        set(SAURON_SDK_CURL_PATH "${DEPS_DIR}/sauron-sdk-curl")
-        set(SAURON_SDK_CURL_LIBRARY "${SAURON_SDK_CURL_PATH}/lib/sauron-sdk-curl.lib")
-
+        set(SAURON_SDK_PATH "${DEPS_DIR}/api_spec/cpp-sdk" CACHE PATH "Path to Sauron SDK path")
+        set(SAURON_SDK_CURL_PATH "${DEPS_DIR}/sauron-sdk-curl" CACHE PATH "Path to Sauron SDK curl path")
         file(COPY ${BIN_DIR}/sauron-sdk-curl.lib DESTINATION ${SAURON_SDK_CURL_PATH}/lib)
+        set(SAURON_SDK_CURL_LIBRARY "${SAURON_SDK_CURL_PATH}/lib/sauron-sdk-curl.lib" CACHE FILEPATH "Path to Sauron SDK curl library")
 
         set(SAURON_SDK_INCLUDE_DIRS "${SAURON_SDK_PATH}/include" "${SAURON_SDK_CURL_PATH}/include" CACHE PATH "Path to Sauron SDK include directories")
 
-        message(STATUS "include dirs: ${SAURON_SDK_INCLUDE_DIRS}")
-
-        add_library(sauron_sdk::curl UNKNOWN IMPORTED)
-        set_target_properties(sauron_sdk::curl PROPERTIES
-            IMPORTED_LOCATION "${SAURON_SDK_CURL_LIBRARY}"
-            INTERFACE_INCLUDE_DIRECTORIES "${SAURON_SDK_INCLUDE_DIRS}")
-
-        set(SAURON_SDK_FOUND TRUE PARENT_SCOPE)
-        set(SAURON_SDK_LIBRARIES sauron_sdk::curl PARENT_SCOPE)
-
         message(STATUS "✅ Sauron SDK installed at ${SAURON_SDK_CURL_PATH}")
     endif()
+
+    message(STATUS "include dirs: ${SAURON_SDK_INCLUDE_DIRS}")
+
+    add_library(sauron_sdk::curl UNKNOWN IMPORTED)
+    set_target_properties(sauron_sdk::curl PROPERTIES
+        IMPORTED_LOCATION "${SAURON_SDK_CURL_LIBRARY}"
+        INTERFACE_INCLUDE_DIRECTORIES "${SAURON_SDK_INCLUDE_DIRS}")
+
+    set(SAURON_SDK_FOUND TRUE CACHE BOOL "Sauron SDK found")
+    set(SAURON_SDK_LIBRARIES sauron_sdk::curl PARENT_SCOPE)
 
     message(STATUS "✅ Found system Sauron SDK: ${SAURON_SDK_LIBRARIES}")
 endfunction()

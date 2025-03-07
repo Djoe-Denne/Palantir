@@ -1,8 +1,5 @@
 include(FetchContent)
 
-# First try to find GTest in the system
-find_package(GTest QUIET)
-
 # Helper function to setup testing for a target
 function(setup_target_testing TARGET_NAME)
 if(NOT GTEST_FOUND AND MAGIC_DEPS_INSTALL)
@@ -30,13 +27,13 @@ if(NOT GTEST_FOUND AND MAGIC_DEPS_INSTALL)
     message(STATUS "GTest setup complete.")
 
     # Set variables to match find_package behavior
-    set(GTEST_FOUND TRUE)
-    set(GTEST_INCLUDE_DIRS ${gtest_SOURCE_DIR}/include)
-    set(GMOCK_INCLUDE_DIRS ${gmock_SOURCE_DIR}/include)
-    set(GTEST_LIBRARIES gtest)
-    set(GTEST_MAIN_LIBRARIES gtest_main)
-    set(GMOCK_LIBRARIES gmock)
-    set(GMOCK_MAIN_LIBRARIES gmock_main)
+    set(GTEST_FOUND TRUE CACHE BOOL "GTest found")
+    set(GTEST_INCLUDE_DIRS ${gtest_SOURCE_DIR}/include CACHE PATH "GTest include directories")
+    set(GMOCK_INCLUDE_DIRS ${gmock_SOURCE_DIR}/include CACHE PATH "GMock include directories")
+    set(GTEST_LIBRARIES lib/gtest CACHE FILEPATH "GTest libraries")
+    set(GTEST_MAIN_LIBRARIES lib/gtest_main CACHE FILEPATH "GTest main libraries")
+    set(GMOCK_LIBRARIES lib/gmock CACHE FILEPATH "GMock libraries")
+    set(GMOCK_MAIN_LIBRARIES lib/gmock_main CACHE FILEPATH "GMock main libraries")
     
     message(STATUS "GTest include dirs: ${GTEST_INCLUDE_DIRS}")
     message(STATUS "GMock include dirs: ${GMOCK_INCLUDE_DIRS}")
