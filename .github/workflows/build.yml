@@ -35,8 +35,6 @@ jobs:
     outputs:
       should_run_quality: ${{ steps.trigger-check.outputs.should_run_quality }}
       pr_number: ${{ steps.trigger-check.outputs.pr_number }}
-      cache_valid: ${{ steps.check-cache.outputs.cache_valid }}
-      cache_status: ${{ steps.check-cache.outputs.cache_status }}
       cache_restored: ${{ steps.restore-cache.outputs.cache-hit }}
     steps:
       - uses: actions/checkout@v4
@@ -57,17 +55,6 @@ jobs:
           
       - id: trigger-check
         uses: ./.github/workflows/actions/check-triggers
-
-      - name: Log trigger status
-        shell: pwsh
-        run: |
-          Write-Host "Trigger Status Summary:"
-          Write-Host "======================="
-          Write-Host "Event type: ${{ github.event_name }}"
-          Write-Host "Cache restore: ${{ steps.restore-cache.outputs.cache-hit }}"
-          Write-Host "Should run setup: ${{ steps.trigger-check.outputs.should_run_setup }}"
-          Write-Host "Should run quality: ${{ steps.trigger-check.outputs.should_run_quality }}"
-          Write-Host "PR number: ${{ steps.trigger-check.outputs.pr_number }}"
 
   setup:
     name: Setup
