@@ -12,14 +12,10 @@ inputs:
     description: 'CMake build directory'
     required: true
 
+
 runs:
   using: "composite"
-  steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        ref: ${{ github.event.pull_request.head.sha }}
-    
+  steps:  
     - name: Restore CMake cache
       uses: actions/cache/restore@v3
       with:
@@ -31,21 +27,23 @@ runs:
         key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
         restore-keys: |
           ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-
-
+    
     - name: Configure CMake
       shell: pwsh
-      env:
-        GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
         cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ inputs.github-token }}
 
-    - name: Save CMake cache
-      uses: actions/cache/save@v3
-      continue-on-error: true  # Prevent the workflow from failing if cache save fails
-      with:
-        path: |
-          ${{ inputs.build-dir }}
-          ${{ inputs.build-dir }}/CMakeCache.txt
-          ${{ inputs.build-dir }}/CMakeFiles
-          ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }} 
+    - name: Check Format
+      shell: pwsh
+      run: cmake --build ${{ inputs.build-dir }} --target format-check
+    
+    - name: Run Lint Check
+      shell: pwsh
+      run: cmake --build ${{ inputs.build-dir }} --target lint-check
+
+    - name: Analyze Lint Results
+      shell: pwsh
+      run: |
+        cat ${{ inputs.build-dir }}/lint-reports/report.txt
+        cmake --build ${{ inputs.build-dir }} --target lint-analyze
+        
