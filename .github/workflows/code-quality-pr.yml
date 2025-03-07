@@ -1,0 +1,36 @@
+# Main workflow for building and checking code quality
+name: Code Quality
+
+# Trigger the workflow on push and pull request events for the master branch
+on:
+  issue_comment:
+    types: [created]
+
+# Add required permissions
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+# Global environment variables
+env:
+  FORCE_COLOR: 1  # Enable colored output in logs
+  TERM: xterm-256color  # Terminal type for better formatting
+  CMAKE_BUILD_DIR: ${{ github.workspace }}/build
+  CACHE_KEY_PREFIX: v1  # Increment this to invalidate all caches
+
+jobs:
+  code-quality:
+    runs-on: windows-latest
+    if: ${{ github.event.issue.pull_request }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/workflows/actions/quality
+        with:
+          github-token: ${{ secrets.PALANTIR_GHA }}
+          cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
+          build-dir: ${{ env.CMAKE_BUILD_DIR }}
