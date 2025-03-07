@@ -86,7 +86,7 @@ jobs:
     
     # Restore CMake configuration from cache
     - name: Restore CMake cache
-      uses: actions/cache@v3
+      uses: actions/cache/restore@v3
       with:
         path: |
           ${{ env.CMAKE_BUILD_DIR }}
@@ -104,3 +104,14 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: |
         cmake --build ${{ env.CMAKE_BUILD_DIR }} --config Release
+
+    # Restore CMake configuration from cache
+    - name: Restore CMake cache
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          ${{ env.CMAKE_BUILD_DIR }}
+          ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
+          ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
+          ${{ env.CMAKE_BUILD_DIR }}/_deps
+        key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
