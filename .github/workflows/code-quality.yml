@@ -3,8 +3,6 @@ name: Code Quality
 
 # Trigger the workflow on push and pull request events for the master branch
 on:
-  push:
-    branches: [ master ]
   issue_comment:
     types: [created]
 
