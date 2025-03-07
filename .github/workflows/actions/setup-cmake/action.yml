@@ -57,6 +57,8 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
+        Write-Output "Build dir: ${{ inputs.build-dir }}"
+        Get-ChildItem -Path ${{ inputs.build-dir }} -Recurse
         $buildDir = "${{ inputs.build-dir }}"
         New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
 
