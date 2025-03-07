@@ -29,19 +29,8 @@ env:
   CACHE_KEY_PREFIX: v1  # Increment this to invalidate all caches
 
 jobs:
-  # Check if we should run code quality checks based on the comment
-  check-trigger:
-    runs-on: windows-latest
-    outputs:
-      should_run_quality: ${{ steps.trigger-check.outputs.should_run_quality }}
-      pr_number: ${{ steps.trigger-check.outputs.pr_number }}
-    steps:
-      - id: trigger-check
-        uses: ./.github/workflows/actions/check-triggers
-
   setup:
     name: Setup
-    needs: check-trigger
     if: 
     runs-on: windows-latest
     outputs:
@@ -52,29 +41,28 @@ jobs:
         uses: ./.github/workflows/actions/setup-cmake
         with:
           github-token: ${{ secrets.PALANTIR_GHA }}
-          pr-number: ${{ needs.check-trigger.outputs.pr_number }}
           cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
 
   # Code quality checks (formatting and linting) - macOS only
   code-quality:
     name: Code Quality
-    needs: [check-trigger, setup]
-    if: needs.check-trigger.outputs.should_run_quality == 'true'
+    needs: [setup]
+    # if trigger is an issue_comment with /quality, then run code quality checks
+    if: github.event_name == 'issue_comment' && github.event.comment.body == '/quality'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/code-quality
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          pr-number: ${{ needs.check-trigger.outputs.pr_number }}
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
           cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
 
   # Build the project on both platforms
   build:
     name: Build-${{ matrix.os }}
-    needs: [check-trigger, setup]
+    needs: [setup]
     if: always()  # Build should run regardless of code-quality status
     runs-on: ${{ matrix.os }}
     strategy:
