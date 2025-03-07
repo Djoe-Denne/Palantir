@@ -1,0 +1,76 @@
+name: Code Quality
+
+on:
+  issue_comment:
+    types: [created]
+  push:
+    branches: [master]
+  pull_request:
+    types: [closed]
+    branches: [master]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORCE_COLOR: 1
+  TERM: xterm-256color
+  CMAKE_BUILD_DIR: ${{ github.workspace }}/build
+  CACHE_KEY_PREFIX: v1
+
+jobs:
+  code-quality:
+    runs-on: windows-latest
+    if: |
+      (github.event_name == 'issue_comment' && 
+       github.event.issue.pull_request && 
+       contains(github.event.comment.body, '/run-checks')) ||
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && 
+       github.event.action == 'closed' && 
+       github.event.pull_request.merged == true)
+    steps:
+      - uses: actions/checkout@v4
+      - id: cmake-setup
+        uses: ./.github/workflows/actions/setup-cmake
+        with:
+          github-token: ${{ secrets.PALANTIR_GHA }}
+          cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
+          build-dir: ${{ env.CMAKE_BUILD_DIR }}
+
+      - name: Restore CMake cache
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ${{ env.CMAKE_BUILD_DIR }}
+            ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
+            ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
+            ${{ env.CMAKE_BUILD_DIR }}/_deps
+          key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+          restore-keys: |
+            ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-
+
+      - name: Configure CMake
+        shell: pwsh
+        run: |
+          cmake -B ${{ env.CMAKE_BUILD_DIR }} -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ secrets.PALANTIR_GHA }}
+
+      - name: Check Format
+        shell: pwsh
+        run: cmake --build ${{ env.CMAKE_BUILD_DIR }} --target format-check
+
+      - name: Run Lint Check
+        shell: pwsh
+        run: cmake --build ${{ env.CMAKE_BUILD_DIR }} --target lint-check
+
+      - name: Analyze Lint Results
+        shell: pwsh
+        run: |
+          cat ${{ env.CMAKE_BUILD_DIR }}/lint-reports/report.txt
+          cmake --build ${{ env.CMAKE_BUILD_DIR }} --target lint-analyze
