@@ -15,7 +15,6 @@ outputs:
   lint-report:
     description: 'Lint report'
 
-
 runs:
   using: composite
   steps:  
