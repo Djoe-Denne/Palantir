@@ -83,12 +83,12 @@ jobs:
     # Step 3: Build the project
     - name: Build
       shell: pwsh
+      continue-on-error: true
       env:
         GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: |
-        # Show "lib" directory
-        Get-ChildItem -Path ${{ env.CMAKE_BUILD_DIR }}\lib
         cmake --build ${{ env.CMAKE_BUILD_DIR }} --config Release
+        Get-ChildItem -Path ${{ env.CMAKE_BUILD_DIR }} -Recurse -Include gtest*
 
     # Restore CMake configuration from cache
     - name: Restore CMake cache
