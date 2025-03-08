@@ -38,7 +38,6 @@ function(setup_windows_platform_common target_name)
 endfunction()
 
 function(setup_windows_platform)    
-    setup_windows_platform_webview(${PROJECT_NAME})
     target_sources(${PROJECT_NAME} PRIVATE 
         ${COMMON_WINDOWS_APPLICATION_SOURCES}
         ${WINDOWS_APPLICATION_SOURCES}

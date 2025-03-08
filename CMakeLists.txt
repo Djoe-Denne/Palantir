@@ -4,6 +4,7 @@ option(BUILD_TESTS "Build tests" OFF)
 # Option to control automatic installation
 option(AUTO_INSTALL_MISSING_TOOLS "Automatically try to install missing clang tools via package managers" ON)
 option(MAGIC_DEPS_INSTALL "Try to install missing dependencies via package managers" ON)
+option(QUALITY_ONLY "Build only quality tools" OFF)
 
 # Set policies if needed
 if(POLICY CMP0091)

@@ -4,6 +4,9 @@ if(WIN32)
         ${WINDOWS_SOURCES}
         ${PROJECT_ROOT}/application/src/main.cpp
     )
+    if(NOT QUALITY_ONLY)
+        setup_windows_platform_webview(${PROJECT_NAME})
+    endif()
     setup_windows_platform()
 elseif(APPLE)
     add_executable(${PROJECT_NAME} MACOSX_BUNDLE 
