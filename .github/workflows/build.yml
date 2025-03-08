@@ -86,6 +86,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: |
+        # Show "lib" directory
+        Get-ChildItem -Path ${{ env.CMAKE_BUILD_DIR }}\lib
         cmake --build ${{ env.CMAKE_BUILD_DIR }} --config Release
 
     # Restore CMake configuration from cache
