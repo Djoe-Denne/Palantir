@@ -21,7 +21,7 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-            core.setOutput('ref', pr.ref);
+            core.setOutput('sha', pr.head.sha);
 
       - name: Cleanup
         run: |
@@ -39,4 +39,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          BRANCH: ${{ steps.pr.outputs.ref }}
+          BRANCH: ${{ steps.pr.outputs.sha }}
