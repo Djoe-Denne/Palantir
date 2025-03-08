@@ -28,7 +28,6 @@ env:
   TERM: xterm-256color  # Terminal type for better formatting
   CMAKE_BUILD_DIR: ${{ github.workspace }}/build
   CACHE_KEY_PREFIX: v1  # Increment this to invalidate all caches
-
 jobs:
   setup:
     name: Setup
@@ -39,7 +38,7 @@ jobs:
         uses: ./.github/workflows/actions/setup-cmake
         with:
           github-token: ${{ secrets.PALANTIR_GHA }}
-          cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
 
   # Build the project on both platforms
@@ -69,7 +68,7 @@ jobs:
         uses: ./.github/workflows/actions/build
         with:
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
-          cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}
 
   tests:
     needs: [build]
@@ -80,7 +79,7 @@ jobs:
         uses: ./.github/workflows/actions/tests
         with:
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
-          cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}
 
   clear-run-caches:
     name: Clear Run Caches
@@ -93,4 +92,4 @@ jobs:
         uses: ./.github/workflows/actions/clear-run-caches
         with:
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
-          cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}

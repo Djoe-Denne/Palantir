@@ -31,5 +31,5 @@ jobs:
       - uses: ./.github/workflows/actions/quality
         with:
           github-token: ${{ secrets.PALANTIR_GHA }}
-          cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}
           build-dir: ${{ env.CMAKE_BUILD_DIR }}

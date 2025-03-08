@@ -5,7 +5,7 @@ inputs:
   github-token:
     description: 'GitHub token for authentication'
     required: true
-  cache-prefix:
+  cache-key:
     description: 'Prefix for cache keys'
     required: true
   build-dir:
@@ -29,7 +29,7 @@ runs:
           ${{ inputs.build-dir }}/CMakeCache.txt
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+        key: ${{ inputs.cache-key }}
 
     - name: Configure CMake
       shell: pwsh
@@ -47,4 +47,4 @@ runs:
           ${{ inputs.build-dir }}/CMakeCache.txt
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }} 
+        key: ${{ inputs.cache-key }}-${{ github.run_id }} 

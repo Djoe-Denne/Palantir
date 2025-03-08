@@ -62,7 +62,7 @@ jobs:
         id: quality
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
 
       - name: Read lint report

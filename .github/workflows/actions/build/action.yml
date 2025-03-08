@@ -5,7 +5,7 @@ inputs:
   build-dir:
     description: 'CMake build directory'
     required: true
-  cache-prefix:
+  cache-key:
     description: 'Cache prefix'
     required: true
 
@@ -24,7 +24,7 @@ runs:
           ${{ inputs.build-dir }}/CMakeCache.txt
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }} 
+        key: ${{ inputs.cache-key }}-${{ github.run_id }} 
     
     # Step 3: Build the project
     - name: Build
@@ -50,4 +50,4 @@ runs:
           ${{ inputs.build-dir }}/CMakeCache.txt
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }} 
+        key: ${{ inputs.cache-key }}-${{ github.run_id }} 
