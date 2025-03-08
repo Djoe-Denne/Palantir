@@ -90,7 +90,11 @@ jobs:
         cmake --build ${{ env.CMAKE_BUILD_DIR }} --config Release --verbose
         Get-ChildItem -Path ${{ env.CMAKE_BUILD_DIR }}/bin -Recurse | ForEach-Object {
           if (-not $_.PSIsContainer) {
-            Move-Item -Path $_.FullName -Destination ${{ env.CMAKE_BUILD_DIR }}/bin/Release/
+            try {
+              Move-Item -Path $_.FullName -Destination ${{ env.CMAKE_BUILD_DIR }}/bin/Release/
+            } catch {
+              Write-Host "Error moving $($_.FullName): $_"
+            }
           }
         }
 
