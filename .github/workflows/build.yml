@@ -86,7 +86,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: |
-        cmake --build ${{ env.CMAKE_BUILD_DIR }} --config Release --target all
+        cmake --build ${{ env.CMAKE_BUILD_DIR }} --config Release
 
     # Restore CMake configuration from cache
     - name: Restore CMake cache
