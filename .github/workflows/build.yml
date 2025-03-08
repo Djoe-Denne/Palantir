@@ -1,5 +1,5 @@
 # Main workflow for building and checking code quality
-name: Build and Test
+name: Build
 
 # Trigger the workflow on push and pull request events for the master branch
 on:
@@ -67,28 +67,42 @@ jobs:
     # Step 1: Check out the repository code
     - uses: actions/checkout@v4
     
-    # Step 2: Build the project using our new build action
-    - name: Build Project
-      uses: ./.github/workflows/actions/build
+    # Restore CMake configuration from cache
+    - name: Restore CMake cache
+      uses: actions/cache/restore@v3
       with:
-        github-token: ${{ secrets.PALANTIR_GHA }}
-        build-dir: ${{ env.CMAKE_BUILD_DIR }}
-        cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
-
-  # Run tests and report results
-  test:
-    name: Run Tests
-    needs: [build]
-    runs-on: windows-latest
-    steps:
-    # Step 1: Check out the repository code
-    - uses: actions/checkout@v4
+        path: |
+          ${{ env.CMAKE_BUILD_DIR }}
+          ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
+          ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
+          ${{ env.CMAKE_BUILD_DIR }}/_deps
+        key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }} 
+        restore-keys: |
+          ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-
     
-    # Step 3: Run tests and report results
+    # Step 3: Build the project
+    - name: Build
+      shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
+      run: |
+        cmake --build ${{ env.CMAKE_BUILD_DIR }} --config Release --target all
+
+    # Restore CMake configuration from cache
+    - name: Restore CMake cache
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          ${{ env.CMAKE_BUILD_DIR }}
+          ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
+          ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
+          ${{ env.CMAKE_BUILD_DIR }}/_deps
+        key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }} 
+
+    # Step 4: Run tests
     - name: Run Tests
       uses: ./.github/workflows/actions/tests
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
         build-dir: ${{ env.CMAKE_BUILD_DIR }}
         cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
-        
+

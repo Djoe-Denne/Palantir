@@ -2,9 +2,6 @@ name: 'Run Tests'
 description: 'Runs test executables and reports results'
 
 inputs:
-  github-token:
-    description: 'GitHub token for authentication'
-    required: true
   build-dir:
     description: 'CMake build directory'
     required: true
