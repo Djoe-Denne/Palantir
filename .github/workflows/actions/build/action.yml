@@ -52,4 +52,4 @@ runs:
           ${{ inputs.build-dir }}/CMakeCache.txt
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }} 
+        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
