@@ -88,12 +88,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: |
         cmake --build ${{ env.CMAKE_BUILD_DIR }} --config Release --verbose
-        Write-Host "Searching for GTest files..."
-        Get-ChildItem -Path ${{ env.CMAKE_BUILD_DIR }} -Recurse -Include "gtest.lib","libgtest*" | ForEach-Object {
-            Write-Host "Found: $($_.FullName)"
+        Get-ChildItem -Path ${{ env.CMAKE_BUILD_DIR }}/bin -Recurse -Include "*-tests.exe" | ForEach-Object {
+          Move-Item -Path $_.FullName -Destination ${{ env.CMAKE_BUILD_DIR }}/bin/Release/
         }
-        Write-Host "CMake build directory contents:"
-        Get-ChildItem -Path ${{ env.CMAKE_BUILD_DIR }} -Recurse | Select-Object FullName
 
     # Restore CMake configuration from cache
     - name: Restore CMake cache
