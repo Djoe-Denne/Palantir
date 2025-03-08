@@ -1,28 +1,13 @@
 name: cleanup caches by a branch
 on:
-  pull_request:
-    types:
-      - closed
   issue_comment:
     types: [created]
 
 jobs:
   cleanup:
-    if: (github.event_name == 'pull_request') || (github.event_name == 'issue_comment' && github.event.comment.body == 'clear caches')
+    if: (github.event_name == 'issue_comment' && github.event.comment.body == 'clear caches')
     runs-on: ubuntu-latest
     steps:
-      - name: Get PR data
-        id: pr
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { data: pr } = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number
-            });
-            core.setOutput('sha', pr.head.sha);
-
       - name: Cleanup
         run: |
           echo "Fetching list of cache key"
@@ -39,4 +24,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          BRANCH: ${{ steps.pr.outputs.sha }}
+          BRANCH: refs/pull/${{ github.event.issue.number }}/merge
