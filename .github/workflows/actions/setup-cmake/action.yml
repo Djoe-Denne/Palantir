@@ -37,6 +37,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
         cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ inputs.github-token }} -DBUILD_TESTS=ON
+        Get-ChildItem -Path ${{ inputs.build-dir }}\_deps\googletest-src -Recurse -Include CMakeLists.txt, *.cmake
 
     - name: Save CMake cache
       uses: actions/cache/save@v3
