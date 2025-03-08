@@ -39,7 +39,7 @@ public:
     KeyRegister(KeyRegister&&) = delete;
     auto operator=(KeyRegister&&) -> KeyRegister& = delete;
     static auto getInstance() -> std::shared_ptr<KeyRegister>;
-    static auto setInstance(std::shared_ptr<KeyRegister> instance) -> void;
+    static auto setInstance(const std::shared_ptr<KeyRegister>& instance) -> void;
     
     virtual auto registerKey(const std::string& key, int value) -> void;
     [[nodiscard]] virtual auto get(const std::string& key) const -> int;

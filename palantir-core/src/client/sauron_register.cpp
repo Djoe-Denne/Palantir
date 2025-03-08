@@ -16,6 +16,11 @@ public:
             "sk-proj-******", sauron::dto::AIProvider::OPENAI));  // put that outside the constructor
     }
 
+    Impl(const Impl& other) = delete;
+    auto operator=(const Impl& other) -> Impl& = delete;
+    Impl(Impl&& other) = delete;
+    auto operator=(Impl&& other) -> Impl& = delete;
+
     explicit Impl(const std::shared_ptr<sauron::client::SauronClient>& sauronClient) : sauronClient(sauronClient) {}
 
     std::shared_ptr<sauron::client::SauronClient> sauronClient;
