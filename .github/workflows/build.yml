@@ -8,8 +8,6 @@ on:
   pull_request:
     branches:
       - '**'
-  issue_comment:
-    types: [created]
 
 # Add required permissions
 permissions:
@@ -29,23 +27,9 @@ env:
   CMAKE_BUILD_DIR: ${{ github.workspace }}/build
   CACHE_KEY_PREFIX: v1  # Increment this to invalidate all caches
 jobs:
-  setup:
-    name: Setup
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - id: cmake-setup
-        uses: ./.github/workflows/actions/setup-cmake
-        with:
-          github-token: ${{ secrets.PALANTIR_GHA }}
-          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}
-          build-dir: ${{ env.CMAKE_BUILD_DIR }}
-
   # Build the project on both platforms
   build:
     name: Build-${{ matrix.os }}
-    needs: [setup]
-    if: github.event_name != 'issue_comment'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false  # Don't cancel other platforms if one fails

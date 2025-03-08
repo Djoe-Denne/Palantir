@@ -15,18 +15,25 @@ runs:
     # Step 1: Check out the repository code
     - uses: actions/checkout@v4
     
-    # Restore CMake configuration from cache
     - name: Restore CMake cache
       uses: actions/cache/restore@v3
+      continue-on-error: true  # Prevent the workflow from failing if cache save fails
       with:
         path: |
           ${{ inputs.build-dir }}
           ${{ inputs.build-dir }}/CMakeCache.txt
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-key }}-setup
-    
-    # Step 3: Build the project
+        key: ${{ inputs.cache-key }}
+
+    - name: Configure CMake
+      shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: |
+        cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ inputs.github-token }} -DBUILD_TESTS=ON
+
+    # Build the project
     - name: Build
       shell: pwsh
       run: |

@@ -30,7 +30,8 @@ runs:
         gh cache list --ref ${{ github.ref }} --limit 10 --json id --jq '.[].id' | ForEach-Object {
           gh cache delete $_
         }
-
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     # Step 3: Save build cache
     - name: Save Build Cache

@@ -28,7 +28,6 @@ runs:
       id: run-tests
       shell: pwsh
       run: |
-        Get-ChildItem -Path ${{ inputs.build-dir }}/bin -Recurse
         cd ${{ inputs.build-dir }}\bin\Release
         Get-ChildItem -Path . -Filter *_tests.exe | ForEach-Object {
           $testPath = $_.FullName
