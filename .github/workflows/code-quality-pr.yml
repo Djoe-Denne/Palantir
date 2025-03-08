@@ -69,22 +69,25 @@ jobs:
         id: lint_report
         shell: bash
         run: |
-          echo 'REPORT<<EOF' >> $GITHUB_ENV
-          cat ${{ env.CMAKE_BUILD_DIR }}/lint-reports/github-report.txt >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+          REPORT_CONTENT=$(cat ${{ env.CMAKE_BUILD_DIR }}/lint-reports/github-report.txt)
+          echo "report<<EOF" >> $GITHUB_OUTPUT
+          echo "$REPORT_CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
       
       - name: Comment lint report
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const report = process.env.REPORT;
-            github.rest.issues.createComment({
+            const report = process.env.REPORT_CONTENT;
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `${report}`
+              body: report
             });
+        env:
+          REPORT_CONTENT: ${{ steps.lint_report.outputs.report }}
         
 
       - name: Update check status
