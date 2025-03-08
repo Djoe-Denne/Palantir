@@ -1,25 +1,21 @@
-name: 'Setup CMake'
-description: 'Sets up CMake build environment and caching'
+name: 'Build Project'
+description: 'Builds the project using CMake'
 
 inputs:
   github-token:
     description: 'GitHub token for authentication'
     required: true
-  cache-prefix:
-    description: 'Prefix for cache keys'
-    required: true
   build-dir:
     description: 'CMake build directory'
+    required: true
+  cache-prefix:
+    description: 'Prefix for cache keys'
     required: true
 
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        ref: ${{ github.event.pull_request.head.sha }}
-    
+    # Restore CMake configuration from cache
     - name: Restore CMake cache
       uses: actions/cache/restore@v3
       with:
@@ -28,20 +24,22 @@ runs:
           ${{ inputs.build-dir }}/CMakeCache.txt
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }} 
         restore-keys: |
           ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-
-
-    - name: Configure CMake
+    
+    # Build the project
+    - name: Build
       shell: pwsh
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
-        cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ inputs.github-token }} -DBUILD_TESTS=ON
+        cmake --build ${{ inputs.build-dir }} --config Release --target all
 
+    # Save CMake configuration to cache
     - name: Save CMake cache
       uses: actions/cache/save@v3
-      continue-on-error: true  # Prevent the workflow from failing if cache save fails
+      continue-on-error: true
       with:
         path: |
           ${{ inputs.build-dir }}

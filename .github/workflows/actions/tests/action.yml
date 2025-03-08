@@ -1,0 +1,37 @@
+name: 'Run Tests'
+description: 'Runs test executables and reports results'
+
+inputs:
+  github-token:
+    description: 'GitHub token for authentication'
+    required: true
+  build-dir:
+    description: 'CMake build directory'
+    required: true
+  cache-prefix:
+    description: 'Prefix for cache keys'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    # Step 1: Restore build cache
+    - name: Restore Build Cache
+      uses: actions/cache/restore@v3
+      with:
+        path: ${{ inputs.build-dir }}
+        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }}
+        restore-keys: |
+          ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-
+
+    # Step 2: Run tests
+    - name: Run Tests
+      id: run-tests
+      shell: pwsh
+      run: |
+        cd ${{ inputs.build-dir }}\bin
+        Get-ChildItem -Path . -Filter *_tests.exe | ForEach-Object {
+          $testPath = $_.FullName
+          Write-Host "Running $testPath"
+          & $testPath
+        }
