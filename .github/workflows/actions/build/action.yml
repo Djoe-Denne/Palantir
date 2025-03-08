@@ -24,7 +24,7 @@ runs:
           ${{ inputs.build-dir }}/CMakeCache.txt
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-key }}-${{ github.run_id }} 
+        key: ${{ inputs.cache-key }}-setup
     
     # Step 3: Build the project
     - name: Build
@@ -50,4 +50,4 @@ runs:
           ${{ inputs.build-dir }}/CMakeCache.txt
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-key }}-${{ github.run_id }} 
+        key: ${{ inputs.cache-key }}-build

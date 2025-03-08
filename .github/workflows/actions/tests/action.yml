@@ -16,8 +16,12 @@ runs:
     - name: Restore Build Cache
       uses: actions/cache/restore@v3
       with:
-        path: ${{ inputs.build-dir }}
-        key: ${{ inputs.cache-key }}-${{ github.run_id }}
+        path: |
+          ${{ inputs.build-dir }}
+          ${{ inputs.build-dir }}/CMakeCache.txt
+          ${{ inputs.build-dir }}/CMakeFiles
+          ${{ inputs.build-dir }}/_deps
+        key: ${{ inputs.cache-key }}-build
 
     # Step 2: Run tests
     - name: Run Tests
@@ -31,3 +35,14 @@ runs:
           Write-Host "Running $testPath"
           & $testPath
         }
+
+    # Step 3: Save build cache
+    - name: Save Build Cache
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          ${{ inputs.build-dir }}
+          ${{ inputs.build-dir }}/CMakeCache.txt
+          ${{ inputs.build-dir }}/CMakeFiles
+          ${{ inputs.build-dir }}/_deps
+        key: ${{ inputs.cache-key }}-tests
