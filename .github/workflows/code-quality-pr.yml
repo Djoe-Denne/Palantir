@@ -89,8 +89,7 @@ jobs:
               body: report
             });
         env:
-          REPORT_CONTENT: ${{ steps.lint_report.outputs.report }}
-        
+          REPORT_CONTENT: ${{ steps.lint_report.outputs.report }}        
 
       - name: Update check status
         if: always()

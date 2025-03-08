@@ -15,7 +15,6 @@ outputs:
   lint-report:
     description: 'Lint report'
 
-
 runs:
   using: composite
   steps:  
@@ -38,6 +37,11 @@ runs:
       run: |
         cat ${{ inputs.build-dir }}/lint-reports/report.txt
         cmake --build ${{ inputs.build-dir }} --target lint-analyze
+
+    - name: Read lint report
+      shell: bash
+      run: |
+        cat ${{ inputs.build-dir }}/lint-reports/github-report.txt
 
     - name: Set output
       shell: bash
