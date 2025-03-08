@@ -50,6 +50,6 @@ if(WARNING_COUNT GREATER 0)
 
     set(REPORT_TEMPLATE "⚠️ Clang-Tidy Warnings Report:\n${WARNING_LINES}\n")
 else()
-    message(STATUS " 🟢 No lint warnings found")
+    set(REPORT_TEMPLATE " 🟢 No lint warnings found")
 endif()
 file(WRITE "${CMAKE_BINARY_DIR}/build/lint-reports/github-report.txt" "${REPORT_TEMPLATE}")
