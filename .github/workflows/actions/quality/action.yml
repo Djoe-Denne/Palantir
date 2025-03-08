@@ -23,7 +23,6 @@ runs:
 
     - name: Check Format
       shell: bash
-      continue-on-error: true
       run: cmake --build ${{ inputs.build-dir }} --target format-check
     
     - name: Run Lint Check
