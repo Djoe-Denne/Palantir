@@ -43,11 +43,11 @@ endif()
 
 message(STATUS "Lint analysis passed: warnings within threshold") 
 
-if(WARNING_COUNT GREATER 0)
-    if(EXISTS "${CMAKE_BINARY_DIR}/build/lint-reports/github-report.txt")
-        file(REMOVE "${CMAKE_BINARY_DIR}/build/lint-reports/github-report.txt")
-    endif()
+if(EXISTS "${CMAKE_BINARY_DIR}/build/lint-reports/github-report.txt")
+    file(REMOVE "${CMAKE_BINARY_DIR}/build/lint-reports/github-report.txt")
+endif()
 
+if(WARNING_COUNT GREATER 0)
     set(REPORT_TEMPLATE "⚠️ Clang-Tidy Warnings Report:\n${WARNING_LINES}\n")
 else()
     set(REPORT_TEMPLATE " 🟢 No lint warnings found")
