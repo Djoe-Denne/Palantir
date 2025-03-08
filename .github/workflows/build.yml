@@ -82,3 +82,12 @@ jobs:
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
           cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
 
+  clear-run-caches:
+    name: Clear Run Caches
+    needs: [tests]
+    if: always()
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clear Run Caches
+        uses: ./.github/workflows/actions/clear-run-caches

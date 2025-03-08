@@ -18,8 +18,6 @@ runs:
       with:
         path: ${{ inputs.build-dir }}
         key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }}
-        restore-keys: |
-          ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-
 
     # Step 2: Run tests
     - name: Run Tests

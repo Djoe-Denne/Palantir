@@ -1,0 +1,36 @@
+name: 'Clear Run Caches'
+description: 'Clears run caches'
+
+inputs:
+  build-dir:
+    description: 'CMake build directory'
+    required: true
+  cache-prefix:
+    description: 'Prefix for cache keys'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    # Step 1: Restore build cache
+    - name: Restore Build Cache
+      uses: actions/cache/restore@v3
+      with:
+        path: ${{ inputs.build-dir }}
+        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }}
+
+    # Step 2: Clear previous run caches using gh cli
+    - name: Clear Previous Run Caches
+      shell: pwsh
+      run: |
+        gh cache list --ref ${{ github.ref }} --limit 10 --json id --jq '.[].id' | ForEach-Object {
+          gh cache delete $_
+        }
+
+
+    # Step 3: Save build cache
+    - name: Save Build Cache
+      uses: actions/cache/save@v3
+      with:
+        path: ${{ inputs.build-dir }}
+        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
