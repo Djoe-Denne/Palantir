@@ -7,6 +7,12 @@ This document describes how we use CMake in our project for building and develop
 - `Release` - Optimized build for distribution
 - `Debug` - Build with debug symbols and minimal optimization
 
+## Build Options
+
+- `BUILD_TESTS` - Build tests (default: OFF)
+- `QUALITY_ONLY` - Build only quality tools, skipping dependencies (default: OFF)
+- `MAGIC_DEPS_INSTALL` - Try to install missing dependencies via package managers (default: ON)
+
 ## Common Commands
 
 ### Basic Build
@@ -27,7 +33,13 @@ cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 cmake --build build --config Debug
 
 # Selective linting of specific files
-cmake -B build -DLINT_FILES="path/to/file1.cpp;path/to/file2.hpp"
+cmake -B build -DFILES_TO_LINT="path/to/file1.cpp;path/to/file2.hpp"
+
+# Build with tests
+cmake -B build -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON
+
+# Quality-only build (for linting/formatting)
+cmake -B build -DQUALITY_ONLY=ON
 ```
 
 ## Custom Targets
@@ -175,26 +187,50 @@ add_subdirectory(plugins/commands)
 
 ### 3. Dependencies Management
 
-The project uses FetchContent to manage dependencies:
+The project uses pre-built artifacts and FetchContent to manage dependencies:
 
 ```cmake
-include(FetchContent)
-
-# Sauron SDK
-FetchContent_Declare(
-    SAURON_SDK
-    GIT_REPOSITORY https://github.com/Djoe-Denne/Sauron-sdk.git
-    GIT_BRANCH master
-)
-FetchContent_MakeAvailable(SAURON_SDK)
+# Sauron SDK - Using pre-built artifacts
+function(install_sauron_sdk)
+    set(GITHUB_OWNER "Djoe-Denne")
+    set(GITHUB_REPO "Sauron-sdk")
+    set(GITHUB_TAG "sauron-sdk-curl-latest")
+    
+    set(ARTIFACT_NAME "sauron-sdk-curl-bin-${CMAKE_SYSTEM_NAME}-latest.zip")
+    set(SOURCE_ARCHIVE "source.code.zip")
+    
+    set(ARTIFACT_URL "https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/download/${GITHUB_TAG}/${ARTIFACT_NAME}")
+    set(SOURCE_URL "https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/download/${GITHUB_TAG}/${SOURCE_ARCHIVE}")
+    
+    # Download and extract the pre-built binaries and source
+    download_and_extract(${ARTIFACT_URL} ${ARTIFACT_NAME} ${BIN_DIR})
+    download_and_extract(${SOURCE_URL} ${SOURCE_ARCHIVE} ${DEPS_DIR})
+    
+    # Set up the imported target
+    add_library(sauron_sdk::curl UNKNOWN IMPORTED)
+    set_target_properties(sauron_sdk::curl PROPERTIES
+        IMPORTED_LOCATION "${SAURON_SDK_CURL_LIBRARY}"
+        INTERFACE_INCLUDE_DIRECTORIES "${SAURON_SDK_INCLUDE_DIRS}")
+endfunction()
 
 # nlohmann_json
-FetchContent_Declare(
-    nlohmann_json
-    GIT_REPOSITORY https://github.com/nlohmann/json.git
-    GIT_TAG v3.11.2
-)
-FetchContent_MakeAvailable(nlohmann_json)
+function(install_nlohmann_json)
+    find_package(nlohmann_json QUIET)
+    
+    if(NOT nlohmann_json_SOURCE_DIR)
+        FetchContent_Declare(
+            nlohmann_json
+            GIT_REPOSITORY https://github.com/nlohmann/json.git
+            GIT_TAG v3.11.2
+        )
+        FetchContent_MakeAvailable(nlohmann_json)
+    else()
+        # Force nlohmann_json::nlohmann_json target
+        add_library(nlohmann_json::nlohmann_json INTERFACE IMPORTED)
+        set_target_properties(nlohmann_json::nlohmann_json PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${nlohmann_json_SOURCE_DIR}/include")
+    endif()
+endfunction()
 ```
 
 ### 4. Plugin System
@@ -357,22 +393,59 @@ cmake --build build --config Release
 
 ## Testing
 
-The project includes a testing framework:
+The project includes a testing framework that can be enabled with the `BUILD_TESTS` option:
 
 ```cmake
-# Enable testing
-enable_testing()
-
-# Add test subdirectory
-add_subdirectory(tests)
+# Enable testing (only if BUILD_TESTS is ON)
+if(BUILD_TESTS)
+    enable_testing()
+    
+    # Add test subdirectory
+    add_subdirectory(tests)
+endif()
 ```
 
 Tests can be run using:
 
 ```bash
+# Configure with tests enabled
+cmake -B build -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON
+
+# Build tests
+cmake --build build --config Debug
+
 # Run all tests
 ctest -C Debug
 
 # Run specific tests
 ctest -C Debug -R "command_tests"
+```
+
+## Optimized Build Workflows
+
+### Quality-Only Builds
+
+For code quality checks (formatting and linting), you can use the `QUALITY_ONLY` option to skip dependency fetching and building:
+
+```bash
+# Configure for quality checks only
+cmake -B build -DQUALITY_ONLY=ON
+
+# Run format check
+cmake --build build --target format-check
+
+# Run lint check
+cmake --build build --target lint-check
+```
+
+### Using Pre-built Dependencies
+
+The project now uses pre-built artifacts for the Sauron SDK instead of building from source, which significantly reduces build time:
+
+```bash
+# The Sauron SDK is automatically downloaded as a pre-built binary
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+# If you need to build from source (not recommended)
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DUSE_PREBUILT_SAURON=OFF
 ``` 

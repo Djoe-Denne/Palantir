@@ -1,3 +1,0 @@
-Clang-Tidy Warnings Report:
-C:\Users\djden\source\repos\interview-cheater\application\src\platform\windows\window\component\webview\webview.cpp:7:10: warning: 'WebView2.h' file not found [clang-diagnostic-error]
-
