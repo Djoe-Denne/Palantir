@@ -7,7 +7,7 @@ function(find_program_or_warn VAR NAME)
 endfunction()
 
 # Option to specify files to lint (empty means all files)
-set(LINT_FILES "" CACHE STRING "Semicolon-separated list of files to lint. If empty, all files will be linted.")
+set(FILES_TO_LINT "" CACHE STRING "Semicolon-separated list of files to lint. If empty, all files will be linted.")
 
 # Check if clang-format and clang-tidy exist
 find_program_or_warn(CLANG_FORMAT_EXEC clang-format)
@@ -17,24 +17,14 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
     message(STATUS "✅ Clang tools found: ${CLANG_FORMAT_EXEC}, ${CLANG_TIDY_EXEC}")
 
     if (ALL_SOURCES)
-        # Determine which files to lint
-        if (LINT_FILES)
-            # Filter out test files from specified LINT_FILES
-            foreach(SOURCE ${LINT_FILES})
-                if(NOT SOURCE MATCHES ".*/tests/.*")
-                    list(APPEND FILES_TO_LINT ${SOURCE})
-                endif()
-            endforeach()
-            message(STATUS "🔍 Linting specific non-test files: ${FILES_TO_LINT}")
-        else()
-            # Filter out test files from ALL_SOURCES
-            foreach(SOURCE ${ALL_SOURCES})
-                if(NOT SOURCE MATCHES ".*/tests/.*")
-                    list(APPEND FILES_TO_LINT ${SOURCE})
-                endif()
-            endforeach()
-            message(STATUS "🔍 Linting all non-test files")
-        endif()
+        # Filter out test files from ALL_SOURCES
+        foreach(SOURCE ${ALL_SOURCES})
+            if(NOT SOURCE MATCHES ".*/tests/.*")
+                list(APPEND FILES_TO_LINT ${SOURCE})
+            endif()
+        endforeach()
+        message(STATUS "🔍 Linting all non-test files: ${FILES_TO_LINT}")
+        
 
         # Add format target
         add_custom_target(format
