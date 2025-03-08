@@ -20,6 +20,17 @@ runs:
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
 
+    - name: Save CMake cache
+      uses: actions/cache/save@v3
+      continue-on-error: true  # Prevent the workflow from failing if cache save fails
+      with:
+        path: |
+          ${{ inputs.build-dir }}
+          ${{ inputs.build-dir }}/CMakeCache.txt
+          ${{ inputs.build-dir }}/CMakeFiles
+          ${{ inputs.build-dir }}/_deps
+        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+
     - name: Configure CMake
       shell: pwsh
       env:

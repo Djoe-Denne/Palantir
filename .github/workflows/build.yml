@@ -64,55 +64,19 @@ jobs:
             #use_quality_build: true
     
     steps:
-    # Step 1: Check out the repository code
-    - uses: actions/checkout@v4
-    
-    # Restore CMake configuration from cache
-    - name: Restore CMake cache
-      uses: actions/cache/restore@v3
-      with:
-        path: |
-          ${{ env.CMAKE_BUILD_DIR }}
-          ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
-          ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
-          ${{ env.CMAKE_BUILD_DIR }}/_deps
-        key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }} 
-        restore-keys: |
-          ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-
-    
-    # Step 3: Build the project
-    - name: Build
-      shell: pwsh
-      continue-on-error: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
-      run: |
-        cmake --build ${{ env.CMAKE_BUILD_DIR }} --config Release --verbose
-        Get-ChildItem -Path ${{ env.CMAKE_BUILD_DIR }}/bin -Recurse | ForEach-Object {
-          if (-not $_.PSIsContainer) {
-            try {
-              Move-Item -Path $_.FullName -Destination ${{ env.CMAKE_BUILD_DIR }}/bin/Release/
-            } catch {
-              Write-Host "Error moving $($_.FullName): $_"
-            }
-          }
-        }
+      - name: Build
+        uses: ./.github/workflows/actions/build
+        with:
+          build-dir: ${{ env.CMAKE_BUILD_DIR }}
+          cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
 
-    # Restore CMake configuration from cache
-    - name: Restore CMake cache
-      uses: actions/cache/save@v3
-      with:
-        path: |
-          ${{ env.CMAKE_BUILD_DIR }}
-          ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
-          ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
-          ${{ env.CMAKE_BUILD_DIR }}/_deps
-        key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }} 
-
-    # Step 4: Run tests
-    - name: Run Tests
-      uses: ./.github/workflows/actions/tests
-      with:
-        build-dir: ${{ env.CMAKE_BUILD_DIR }}
-        cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
+  tests:
+    needs: [build]
+    runs-on: windows-latest
+    steps:
+      - name: Run Tests
+        uses: ./.github/workflows/actions/tests
+        with:
+          build-dir: ${{ env.CMAKE_BUILD_DIR }}
+          cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
 

@@ -3,15 +3,18 @@ on:
   pull_request:
     types:
       - closed
+  issue_comment:
+    types: [created]
 
 jobs:
   cleanup:
+    if: (github.event_name == 'pull_request') || (github.event_name == 'issue_comment' && github.event.comment.body == 'clear caches')
     runs-on: ubuntu-latest
     steps:
       - name: Cleanup
         run: |
           echo "Fetching list of cache key"
-          cacheKeysForPR=$(gh cache list --ref $BRANCH --limit 100 --json id --jq '.[].id')
+          cacheKeysForPR=$(gh cache list --ref $BRANCH --limit 1000 --json id --jq '.[].id')
 
           ## Setting this to not fail the workflow while deleting cache keys.
           set +e
@@ -25,3 +28,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           BRANCH: refs/pull/${{ github.event.pull_request.number }}/merge
+          
