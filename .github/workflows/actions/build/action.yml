@@ -38,6 +38,7 @@ runs:
       shell: pwsh
       run: |
         cmake --build ${{ inputs.build-dir }} --config Release --verbose
+        Get-ChildItem -Path ${{ inputs.build-dir }}/bin -Recurse
         Get-ChildItem -Path ${{ inputs.build-dir }}/bin -Recurse | ForEach-Object {
           if (-not $_.PSIsContainer) {
             try {
