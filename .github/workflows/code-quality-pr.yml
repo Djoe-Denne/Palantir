@@ -65,22 +65,27 @@ jobs:
           cache-prefix: ${{ env.CACHE_KEY_PREFIX }}
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
 
+      - name: Read lint report
+        id: lint_report
+        shell: bash
+        run: |
+          echo 'REPORT<<EOF' >> $GITHUB_ENV
+          cat ${{ env.CMAKE_BUILD_DIR }}/lint-reports/github-report.txt >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+      
       - name: Comment lint report
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const report = process.env.REPORT;
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `
-                ${process.env.LINT_REPORT}
-              `
-            })
-        env:
-          LINT_REPORT: ${{ steps.quality.outputs.lint-report }}
-
+              body: `${report}`
+            });
+        
 
       - name: Update check status
         if: always()
