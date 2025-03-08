@@ -31,8 +31,6 @@ runs:
     # Step 3: Build the project
     - name: Build
       shell: pwsh
-      env:
-        GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: |
         cmake --build ${{ inputs.build-dir }} --config Release --verbose
         Get-ChildItem -Path ${{ inputs.build-dir }}/bin -Recurse | ForEach-Object {
