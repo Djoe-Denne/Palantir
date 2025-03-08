@@ -11,6 +11,10 @@ inputs:
   build-dir:
     description: 'CMake build directory'
     required: true
+outputs:
+  lint-report:
+    description: 'Lint report'
+    required: false
 
 
 runs:
@@ -35,4 +39,7 @@ runs:
       run: |
         cat ${{ inputs.build-dir }}/lint-reports/report.txt
         cmake --build ${{ inputs.build-dir }} --target lint-analyze
-        
+
+    - name: Set output
+      shell: bash
+      run: echo "lint-report=$(cat ${{ inputs.build-dir }}/lint-reports/github-report.txt)" >> $GITHUB_OUTPUT

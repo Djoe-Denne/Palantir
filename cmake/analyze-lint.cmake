@@ -2,6 +2,7 @@
 # Parameters:
 # - REPORT_FILE: Path to the lint report file
 # - WARNING_THRESHOLD: Maximum allowed number of warnings (default: 5)
+# - GITHUB_REPORT: Path to the GitHub report file (optional)
 
 if(NOT DEFINED REPORT_FILE)
     message(FATAL_ERROR "REPORT_FILE not defined")
@@ -24,6 +25,11 @@ string(REGEX REPLACE "[^\n]*googletest[^\n]*\n" "" FILTERED_CONTENT "${FILTERED_
 string(REGEX REPLACE "[^\n]*gtest[^\n]*\n" "" FILTERED_CONTENT "${FILTERED_CONTENT}")
 string(REGEX REPLACE "[^\n]*gmock[^\n]*\n" "" FILTERED_CONTENT "${FILTERED_CONTENT}")
 
+# Extract only warning lines for GitHub report
+string(REGEX MATCHALL "[^\n]*warning:[^\n]*\n" WARNING_LINES "${FILTERED_CONTENT}")
+string(REPLACE ";" "" WARNING_LINES "${WARNING_LINES}")
+
+
 # Count warnings using string operations on filtered content
 string(REGEX MATCHALL "warning:" WARNINGS "${FILTERED_CONTENT}")
 list(LENGTH WARNINGS WARNING_COUNT)
@@ -36,3 +42,14 @@ if(WARNING_COUNT GREATER ${WARNING_THRESHOLD})
 endif()
 
 message(STATUS "Lint analysis passed: warnings within threshold") 
+
+if(WARNING_COUNT GREATER 0)
+    if(EXISTS "${CMAKE_BINARY_DIR}/build/lint-reports/github-report.txt")
+        file(REMOVE "${CMAKE_BINARY_DIR}/build/lint-reports/github-report.txt")
+    endif()
+
+    set(REPORT_TEMPLATE "⚠️ Clang-Tidy Warnings Report:\n${WARNING_LINES}\n")
+else()
+    message(STATUS " 🟢 No lint warnings found")
+endif()
+file(WRITE "${CMAKE_BINARY_DIR}/build/lint-reports/github-report.txt" "${REPORT_TEMPLATE}")
