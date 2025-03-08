@@ -32,7 +32,8 @@ public:
             auto command = command::CommandFactory::getInstance()->getCommand(commandName);
             if (command) {
                 auto input = input::InputFactory::getInstance()->createInput(commandName);
-                signals.push_back(std::make_unique<Signal>(std::move(input), std::move(command), command->useDebounce()));
+                signals.push_back(
+                    std::make_unique<Signal>(std::move(input), std::move(command), command->useDebounce()));
             } else {
                 DEBUG_LOG("Unknown command in configuration: {}", commandName);
                 throw std::runtime_error("Unknown command in configuration: " + commandName);
@@ -54,9 +55,7 @@ auto SignalFactory::getInstance() -> std::shared_ptr<SignalFactory> {
     return instance_;
 }
 
-auto SignalFactory::setInstance(const std::shared_ptr<SignalFactory>& instance) -> void {
-    instance_ = instance;
-}
+auto SignalFactory::setInstance(const std::shared_ptr<SignalFactory>& instance) -> void { instance_ = instance; }
 
 auto SignalFactory::createSignals(const std::shared_ptr<Application>& app) -> std::vector<std::unique_ptr<ISignal>> {
     return pimpl_->createSignals(app);

@@ -47,35 +47,36 @@ public:
      * @throws std::runtime_error if the file cannot be created or written to.
      */
     auto createDefaultConfig(const std::string& configPath) -> void {
-        
         std::ofstream configFile(configPath);
         if (!configFile) {
             throw std::runtime_error("Failed to create default config file: " + configPath);
         }
 
         // Write default configuration
-        configFile << "; Default keyboard shortcuts configuration\n"
-                << "; Format: command = modifier+key\n"
-                << "; Available modifiers: Ctrl, Alt, Shift, Win (Windows) / Cmd (macOS)\n"
-                << "\n"
-                << "[commands]\n"
+        configFile
+            << "; Default keyboard shortcuts configuration\n"
+            << "; Format: command = modifier+key\n"
+            << "; Available modifiers: Ctrl, Alt, Shift, Win (Windows) / Cmd (macOS)\n"
+            << "\n"
+            << "[commands]\n"
 #ifdef _WIN32
-                << "toggle = Ctrl+Num 1    ; Toggle window visibility\n"
-                << "stop = Win+/        ; Stop application\n"
-                << "window-screenshot = Ctrl+Num 2    ; Take screenshot of current window\n"
-                << "toggle-transparency = Ctrl+Num 3    ; Toggle window transparency\n"
-                //<< "toggle-window-anonymity = Ctrl+Num 4    ; Toggle window anonymity\n"
-                << "send-sauron-implement-request = Ctrl+Num 4    ; Send request to Sauron to implement\n"
-                << "send-sauron-fix-errors-request = Ctrl+Num 5    ; Send request to Sauron to fix errors\n"
-                << "send-sauron-validate-with-tests-request = Ctrl+Num 6    ; Send request to Sauron to validate with tests\n"
-                << "send-sauron-fix-test-failures-request = Ctrl+Num 7    ; Send request to Sauron to fix test failures\n"
-                << "send-sauron-handle-todos-request = Ctrl+Num 8    ; Send request to Sauron to handle todos\n"
-                << "clear-screenshot = Ctrl+Num 9    ; Clear screenshot folder\n"
+            << "toggle = Ctrl+Num 1    ; Toggle window visibility\n"
+            << "stop = Win+/        ; Stop application\n"
+            << "window-screenshot = Ctrl+Num 2    ; Take screenshot of current window\n"
+            << "toggle-transparency = Ctrl+Num 3    ; Toggle window transparency\n"
+            //<< "toggle-window-anonymity = Ctrl+Num 4    ; Toggle window anonymity\n"
+            << "send-sauron-implement-request = Ctrl+Num 4    ; Send request to Sauron to implement\n"
+            << "send-sauron-fix-errors-request = Ctrl+Num 5    ; Send request to Sauron to fix errors\n"
+            << "send-sauron-validate-with-tests-request = Ctrl+Num 6    ; Send request to Sauron to validate with "
+               "tests\n"
+            << "send-sauron-fix-test-failures-request = Ctrl+Num 7    ; Send request to Sauron to fix test failures\n"
+            << "send-sauron-handle-todos-request = Ctrl+Num 8    ; Send request to Sauron to handle todos\n"
+            << "clear-screenshot = Ctrl+Num 9    ; Clear screenshot folder\n"
 #else
-                << "toggle = Ctrl+F1    ; Toggle window visibility\n"
-                << "stop = Cmd+/        ; Stop application\n"
+            << "toggle = Ctrl+F1    ; Toggle window visibility\n"
+            << "stop = Cmd+/        ; Stop application\n"
 #endif
-                << "\n";
+            << "\n";
 
         if (!configFile) {
             throw std::runtime_error("Failed to write default configuration to: " + configPath);
@@ -107,7 +108,7 @@ public:
             throw std::runtime_error("InputFactory not initialized. Call initialize() first.");
         }
         return keyConfig_->getConfiguredCommands();
-}
+    }
 
 private:
     std::unique_ptr<KeyConfig> keyConfig_;
@@ -123,13 +124,9 @@ auto InputFactory::getInstance() -> std::shared_ptr<InputFactory> {
     return instance_;
 }
 
-auto InputFactory::setInstance(const std::shared_ptr<InputFactory>& instance) -> void {
-    instance_ = instance;
-}
+auto InputFactory::setInstance(const std::shared_ptr<InputFactory>& instance) -> void { instance_ = instance; }
 
-auto InputFactory::initialize(const std::string& configPath) -> void {
-    pimpl_->initialize(configPath);
-}
+auto InputFactory::initialize(const std::string& configPath) -> void { pimpl_->initialize(configPath); }
 
 /**
  * @brief Create a new input object from configuration.
@@ -148,8 +145,6 @@ auto InputFactory::hasShortcut(const std::string& commandName) const -> bool {
     return pimpl_->hasShortcut(commandName);
 }
 
-auto InputFactory::getConfiguredCommands() const -> std::vector<std::string> {
-    return pimpl_->getConfiguredCommands();
-}
+auto InputFactory::getConfiguredCommands() const -> std::vector<std::string> { return pimpl_->getConfiguredCommands(); }
 
 }  // namespace palantir::input
