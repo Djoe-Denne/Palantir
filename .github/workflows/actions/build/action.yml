@@ -1,0 +1,57 @@
+name: 'Build'
+description: 'Builds the project'
+
+inputs:
+  build-dir:
+    description: 'CMake build directory'
+    required: true
+  cache-prefix:
+    description: 'Cache prefix'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    # Step 1: Check out the repository code
+    - uses: actions/checkout@v4
+    
+    # Restore CMake configuration from cache
+    - name: Restore CMake cache
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          ${{ inputs.build-dir }}
+          ${{ inputs.build-dir }}/CMakeCache.txt
+          ${{ inputs.build-dir }}/CMakeFiles
+          ${{ inputs.build-dir }}/_deps
+        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }} 
+        restore-keys: |
+          ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-
+    
+    # Step 3: Build the project
+    - name: Build
+      shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
+      run: |
+        cmake --build ${{ inputs.build-dir }} --config Release --verbose
+        Get-ChildItem -Path ${{ inputs.build-dir }}/bin -Recurse | ForEach-Object {
+          if (-not $_.PSIsContainer) {
+            try {
+              Move-Item -Path $_.FullName -Destination ${{ inputs.build-dir }}/bin/Release/
+            } catch {
+              Write-Host "Error moving $($_.FullName): $_"
+            }
+          }
+        }
+
+    # Restore CMake configuration from cache
+    - name: Restore CMake cache
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          ${{ inputs.build-dir }}
+          ${{ inputs.build-dir }}/CMakeCache.txt
+          ${{ inputs.build-dir }}/CMakeFiles
+          ${{ inputs.build-dir }}/_deps
+        key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }} 

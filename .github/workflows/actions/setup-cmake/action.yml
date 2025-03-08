@@ -19,9 +19,10 @@ runs:
       with:
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
-    
-    - name: Restore CMake cache
-      uses: actions/cache/restore@v3
+
+    - name: Save CMake cache
+      uses: actions/cache/save@v3
+      continue-on-error: true  # Prevent the workflow from failing if cache save fails
       with:
         path: |
           ${{ inputs.build-dir }}
@@ -29,15 +30,13 @@ runs:
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
         key: ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
-        restore-keys: |
-          ${{ inputs.cache-prefix }}-${{ runner.os }}-cmake-
 
     - name: Configure CMake
       shell: pwsh
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
-        cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ inputs.github-token }}
+        cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ inputs.github-token }} -DBUILD_TESTS=ON
 
     - name: Save CMake cache
       uses: actions/cache/save@v3
