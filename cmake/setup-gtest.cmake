@@ -15,6 +15,7 @@ if(NOT GTEST_FOUND AND MAGIC_DEPS_INSTALL)
     )
     
     # Windows-specific settings
+    message(STATUS "CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
     if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
         message(STATUS "Setting up GTest for Windows")
         set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
