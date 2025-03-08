@@ -25,4 +25,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          BRANCH: ${{ github.event.pull_request.number }}
+          BRANCH: refs/pull/${{ github.event.pull_request.number }}/merge
