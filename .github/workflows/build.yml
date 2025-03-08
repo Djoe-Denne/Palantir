@@ -64,6 +64,7 @@ jobs:
             #use_quality_build: true
     
     steps:
+      - uses: actions/checkout@v4
       - name: Build
         uses: ./.github/workflows/actions/build
         with:
@@ -74,6 +75,7 @@ jobs:
     needs: [build]
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Run Tests
         uses: ./.github/workflows/actions/tests
         with:
