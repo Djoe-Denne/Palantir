@@ -15,7 +15,8 @@ if(NOT GTEST_FOUND AND MAGIC_DEPS_INSTALL)
     )
     
     # Windows-specific settings
-    if(WIN32)
+    if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        message(STATUS "Setting up GTest for Windows")
         set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
         # Ensure DLL compatibility
         set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
