@@ -45,9 +45,7 @@ auto CommandFactory::getInstance() -> std::shared_ptr<CommandFactory> {
     return instance_;
 }
 
-auto CommandFactory::setInstance(const std::shared_ptr<CommandFactory>& instance) -> void {
-    instance_ = instance;
-}
+auto CommandFactory::setInstance(const std::shared_ptr<CommandFactory>& instance) -> void { instance_ = instance; }
 
 auto CommandFactory::registerCommand(const std::string& commandName, CommandCreator creator) -> void {
     pimpl_->registerCommand(commandName, creator);

@@ -40,9 +40,7 @@ auto KeyRegister::getInstance() -> std::shared_ptr<KeyRegister> {
     return instance_;
 }
 
-auto KeyRegister::setInstance(std::shared_ptr<KeyRegister> instance) -> void {
-    instance_ = instance;
-}
+auto KeyRegister::setInstance(std::shared_ptr<KeyRegister> instance) -> void { instance_ = instance; }
 
 // Public interface implementation
 void KeyRegister::registerKey(const std::string& key, int value) { pimpl_->registerKey(key, value); }

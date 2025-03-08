@@ -1,6 +1,6 @@
 # GitHub Actions Workflow
 
-This document describes how our GitHub Actions CI/CD pipeline works.
+This document describes our GitHub Actions CI/CD pipeline.
 
 ## Workflow Triggers
 
@@ -13,126 +13,97 @@ The workflows run on:
 
 We have multiple workflows to optimize CI/CD performance:
 
-1. **Build Workflow** - Builds the project on multiple platforms
-2. **Code Quality Master** - Runs code quality checks on the master branch
-3. **Code Quality PR** - Runs code quality checks on PRs when requested
+1. **Build Workflow** (`build.yml`)
+   - Builds the project (currently Windows only)
+   - Runs tests after successful build
+   - Cleans up caches after completion
+
+2. **Code Quality Master** (`code-quality-master.yml`)
+   - Runs code quality checks on the master branch
+   - Triggered on pushes to master
+
+3. **Code Quality PR** (`code-quality-pr.yml`)
+   - Runs code quality checks on PRs when requested via comment
+   - Creates and updates check runs for visibility
+   - Posts lint reports as PR comments
+
+4. **Cache Management** (`clear-caches-master.yml`, `clear-caches-pr.yml`)
+   - Manages workflow caches for both master and PR builds
+   - Helps maintain clean state and prevent cache bloat
 
 ## Jobs
 
-### 1. Setup (`setup`)
+### 1. Build (`build`)
 
-Prepares the build environment and caches dependencies.
+Runs on Windows platform (macOS support is commented out for cost reasons).
 
 Steps:
 1. Check out repository
-2. Configure CMake in Release mode
-3. Cache CMake configuration for later use
+2. Build using custom build action
+3. Run tests after successful build
+4. Clear run caches after completion
 
 ### 2. Code Quality (`code-quality`)
 
 Runs on Ubuntu to ensure consistent code quality checks.
 
 Steps:
-1. Check out repository with full history (for PR comparisons)
-2. Configure CMake with `QUALITY_ONLY=ON` to skip dependency fetching
-3. Check code formatting (`format-check`)
-4. Run static analysis (`lint-check`)
-5. Analyze lint results (`lint-analyze`)
-   - Fails if more than 5 warnings are found
-6. For PRs, post results as a comment
+1. For PRs:
+   - Triggered by "run code quality" comment
+   - Creates in-progress check status
+   - Checks out PR code with full history
+   - Runs quality checks
+   - Posts lint report as comment
+   - Updates check status with results
 
-### 3. Build (`build`)
-
-Runs after setup on both Windows and macOS platforms.
-
-Steps:
-1. Restore CMake cache from setup job
-2. Build the project
-3. Save updated CMake cache
+2. For master:
+   - Runs automatically on push
+   - Performs quality checks
+   - Uses same quality action as PR workflow
 
 ## Job Dependencies
 
-- `build` job depends on `setup`
-- Code quality jobs run independently
+- Test job depends on successful build
+- Cache clearing runs after tests complete
 - PR code quality checks only run when requested with a comment
-
-## Caching Strategy
-
-The workflow implements caching to speed up builds:
-
-1. **CMake Configuration Cache**:
-   ```yaml
-   - name: Restore CMake cache
-     uses: actions/cache/restore@v3
-     with:
-       path: |
-         ${{ env.CMAKE_BUILD_DIR }}
-         ${{ env.CMAKE_BUILD_DIR }}/CMakeCache.txt
-         ${{ env.CMAKE_BUILD_DIR }}/CMakeFiles
-         ${{ env.CMAKE_BUILD_DIR }}/_deps
-       key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.run_id }}
-       restore-keys: |
-         ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-
-   ```
-
-2. **Cache Invalidation**:
-   - Cache keys include a prefix that can be incremented to invalidate all caches
-   - File hashes ensure caches are updated when CMake files change
-
-## Artifacts
-
-Each successful build produces platform-specific artifacts:
-- Windows: `Palantir.exe`
-- macOS: `Palantir.app`
-
-## Concurrency
-
-- Only one workflow runs at a time per branch/PR
-- New workflows cancel in-progress workflows on the same ref
 
 ## Environment Settings
 
-Global environment variables:
+Global environment variables used across workflows:
 - `FORCE_COLOR=1` - Enables colored output
 - `TERM=xterm-256color` - Better formatting support
 - `CMAKE_BUILD_DIR` - Standard build directory path
-- `CACHE_KEY_PREFIX` - Version for cache invalidation
+- `CACHE_KEY_PREFIX` - Version for cache invalidation (currently v1)
 
-## Selective Linting
+## Permissions
 
-The workflow implements selective linting for pull requests:
+Workflows use these GitHub permissions:
+- `contents: read` - For repository access
+- `pull-requests: write` - For commenting on PRs
+- `issues: write` - For issue interactions
+- `checks: write` - For check run status updates (PR quality checks)
 
-1. **File Detection**:
-   ```bash
-   CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(cpp|hpp|h|cc)$')
-   ```
+## Concurrency
 
-2. **CMake Integration**:
-   ```bash
-   cmake -B build -DFILES_TO_LINT="${CHANGED_FILES}" -DQUALITY_ONLY=ON
-   ```
+- Build workflow cancels in-progress runs on same ref
+- Code quality master workflow prevents concurrent runs but doesn't cancel in-progress ones
+- PR-based workflows handle one PR at a time
 
-3. **Behavior**:
-   - Pull Requests: Only lint changed C++ files
-   - Direct Pushes: Lint all files
-   - Empty Changes: Falls back to full linting
+## Custom Actions
 
-## Optimized Build Process
+Workflows use several custom actions located in `.github/workflows/actions/`:
+- `build` - Handles build process
+- `tests` - Runs test suite
+- `quality` - Performs code quality checks
+- `clear-run-caches` - Manages workflow caches
 
-The workflow includes several optimizations to reduce build time:
+## Cache Management
 
-1. **Pre-built Dependencies**:
-   - Uses release artifacts for Sauron SDK instead of building from source
-   - Significantly reduces build time
-
-2. **Quality-Only Mode**:
-   - Code quality jobs use `QUALITY_ONLY=ON` to skip dependency fetching
-   - Speeds up linting and formatting checks
-
-3. **Optional Tests**:
-   - Tests are not built by default (`BUILD_TESTS=OFF`)
-   - Can be enabled when needed for test-focused workflows
-
-4. **Caching**:
-   - CMake configuration is cached between runs
-   - Dependencies are cached to avoid repeated downloads 
+The workflow implements sophisticated cache management:
+1. Each job type maintains its own cache
+2. Caches are keyed by:
+   - Cache version prefix (v1)
+   - Runner OS
+   - CMake configuration hash
+   - Git ref
+3. Dedicated jobs clean caches after workflow completion 
