@@ -8,6 +8,9 @@ inputs:
   cache-key:
     description: 'Prefix for cache keys'
     required: true
+  github-token:
+    description: 'GitHub token for authentication'
+    required: true
 
 runs:
   using: "composite"
@@ -31,7 +34,7 @@ runs:
           gh cache delete $_
         }
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ inputs.github-token }}
 
     # Step 3: Save build cache
     - name: Save Build Cache

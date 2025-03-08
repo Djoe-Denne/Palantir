@@ -75,5 +75,6 @@ jobs:
       - name: Clear Run Caches
         uses: ./.github/workflows/actions/clear-run-caches
         with:
+          github-token: ${{ secrets.PALANTIR_GHA }}
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
           cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}
