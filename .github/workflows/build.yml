@@ -88,8 +88,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PALANTIR_GHA }}
       run: |
         cmake --build ${{ env.CMAKE_BUILD_DIR }} --config Release --verbose
-        Get-ChildItem -Path ${{ env.CMAKE_BUILD_DIR }}/bin -Recurse -Include "*-tests.exe" | ForEach-Object {
-          Move-Item -Path $_.FullName -Destination ${{ env.CMAKE_BUILD_DIR }}/bin/Release/
+        Get-ChildItem -Path ${{ env.CMAKE_BUILD_DIR }}/bin -Recurse | ForEach-Object {
+          if (-not $_.PSIsContainer) {
+            Move-Item -Path $_.FullName -Destination ${{ env.CMAKE_BUILD_DIR }}/bin/Release/
+          }
         }
 
     # Restore CMake configuration from cache
