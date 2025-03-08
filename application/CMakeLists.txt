@@ -1,5 +1,5 @@
 # Create the executable with basic sources
-if(WIN32)
+if(WIN32 OR QUALITY_ONLY)
     add_executable(${PROJECT_NAME} WIN32 
         ${WINDOWS_SOURCES}
         ${PROJECT_ROOT}/application/src/main.cpp
