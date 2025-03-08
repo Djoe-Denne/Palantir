@@ -21,12 +21,12 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-            core.setOutput('ref', pr.ref);
+            core.setOutput('sha', pr.head.sha);
 
       - name: Cleanup
         run: |
           echo "Fetching list of cache key"
-          cacheKeysForPR=$(gh cache list --ref $BRANCH --limit 1000 --json id --jq '.[].id')
+          cacheKeysForPR=$(gh cache list --ref $BRANCH --json id --jq '.[].id')
 
           ## Setting this to not fail the workflow while deleting cache keys.
           set +e
@@ -39,4 +39,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          BRANCH: ${{ steps.pr.outputs.ref }}
+          BRANCH: ${{ steps.pr.outputs.sha }}
