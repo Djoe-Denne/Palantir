@@ -2,6 +2,7 @@
 
 #include <dwmapi.h>
 #include <windows.h>
+#include <algorithm> // For std::max
 
 #include "utils/logger.hpp"
 #include "window/component/content_manager.hpp"
@@ -22,7 +23,9 @@ OverlayWindow::Impl::Impl()  // NOLINT
     : contentManager_(new component::ContentManager<component::webview::WebView>()) {}
 
 OverlayWindow::Impl::~Impl() {
+    // Make sure we unregister as observer first
     if (contentManager_) {
+        contentManager_->removeContentSizeObserver(this);
         contentManager_->destroy();
     }
     if (hwnd_ != nullptr) {
@@ -58,15 +61,34 @@ LRESULT OverlayWindow::Impl::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, 
             if (contentManager_) {
                 RECT bounds;
                 GetClientRect(hwnd, &bounds);
-                DEBUG_LOG("Resizing WebView2 to %ldx%ld", bounds.right - bounds.left, bounds.bottom - bounds.top);
-                contentManager_->resize(bounds.right - bounds.left, bounds.bottom - bounds.top);
+                //DEBUG_LOG("Resizing WebView2 to %ldx%ld", bounds.right - bounds.left, bounds.bottom - bounds.top);
+                //contentManager_->resize(bounds.right - bounds.left, bounds.bottom - bounds.top);
             }
             return 0;
         case WM_ERASEBKGND:
             return 1;  // Prevent background erasing to avoid flicker
+        // Add handlers for frameless window dragging
+        case WM_NCHITTEST: {
+            // Let the default procedure handle resizing areas
+            LRESULT result = DefWindowProcW(hwnd, uMsg, wParam, lParam);
+            if (result == HTCLIENT) {
+                // If in client area, treat it as caption for dragging
+                return HTCAPTION;
+            }
+            return result;
+        }
+        case WM_NCCALCSIZE: {
+            // Eliminating the non-client area
+            if (wParam == TRUE) {
+                // Return 0 to use the client area for the entire window
+                return 0;
+            }
+            break;
+        }
         default:
             return DefWindowProcW(hwnd, uMsg, wParam, lParam);
     }
+    return DefWindowProcW(hwnd, uMsg, wParam, lParam);
 }
 
 auto OverlayWindow::Impl::create() -> void {
@@ -86,9 +108,15 @@ auto OverlayWindow::Impl::create() -> void {
         throw std::runtime_error("Failed to register window class");
     }
 
-    hwnd_ =
-        CreateWindowExW(WS_EX_TOPMOST, L"PalantirClass", L"Palantir", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-                        WINDOW_WIDTH, WINDOW_HEIGHT, nullptr, nullptr, GetModuleHandleW(nullptr), this);
+    // Create window with WS_POPUP style instead of WS_OVERLAPPEDWINDOW for frameless window
+    hwnd_ = CreateWindowExW(WS_EX_LAYERED, 
+                            L"PalantirClass", 
+                            L"Palantir", 
+                            WS_POPUP | WS_VISIBLE | WS_SYSMENU, 
+                            CW_USEDEFAULT, CW_USEDEFAULT,
+                            WINDOW_WIDTH, WINDOW_HEIGHT, 
+                            nullptr, nullptr, 
+                            GetModuleHandleW(nullptr), this);
 
     if (hwnd_ == nullptr) {
         DWORD error = GetLastError();
@@ -98,70 +126,149 @@ auto OverlayWindow::Impl::create() -> void {
 
     DEBUG_LOG("Window created successfully with handle: %p", hwnd_);
 
-    try {
-        // Show window immediately
-        ShowWindow(hwnd_, SW_SHOW);
-        UpdateWindow(hwnd_);
-        DEBUG_LOG("Window shown successfully");
+    // Make the window frameless with a semi-transparent background
+    makeWindowFrameless();
 
-        // Initialize WebView2
-        if (!contentManager_) {
-            DEBUG_LOG("WebView2 instance is null");
-            throw std::runtime_error("WebView2 instance is null");
-        }
+    // Set window transparency
+    SetLayeredWindowAttributes(hwnd_, 0, WINDOW_ALPHA, LWA_ALPHA);
 
-        DEBUG_LOG("Initializing WebView2");
+    // Set up Webview
+    contentManager_->initialize(hwnd_);
+    
+    // Register as observer for content size changes
+    contentManager_->addContentSizeObserver(this);
 
-        // Initialize WebView2 with completion callback
-        contentManager_->initialize(hwnd_);
+    // Make sure the window is always on top
+    SetWindowPos(hwnd_, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
-        // After WebView2 is initialized, set the window styles
-        LONG_PTR exStyle = GetWindowLongPtrW(hwnd_, GWL_EXSTYLE);
-        SetWindowLongPtrW(hwnd_, GWL_EXSTYLE, exStyle | WS_EX_LAYERED | WS_EX_TOOLWINDOW);  // NOLINT
-        setTransparency(WINDOW_ALPHA);
+    // Position the window in the center of the screen
+    RECT windowRect;
+    GetWindowRect(hwnd_, &windowRect);
+    int windowWidth = windowRect.right - windowRect.left;
+    int windowHeight = windowRect.bottom - windowRect.top;
 
-        toggleWindowAnonymity();
-        running_ = true;
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-        // Force a redraw of the window
-        InvalidateRect(hwnd_, nullptr, TRUE);
-        UpdateWindow(hwnd_);
+    int x = (screenWidth - windowWidth) / 2;
+    int y = (screenHeight - windowHeight) / 2;
 
-        DEBUG_LOG("Window initialization completed successfully");
-    } catch (const std::exception& e) {
-        DEBUG_LOG("Exception during window initialization: %s", e.what());
-        if (hwnd_ != nullptr) {
-            DestroyWindow(hwnd_);
-            hwnd_ = nullptr;
-        }
-        throw;
-    }
+    SetWindowPos(hwnd_, nullptr, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+
+    // Update the running state
+    running_ = true;
 }
 
-auto OverlayWindow::Impl::show() -> void {
+auto OverlayWindow::Impl::makeWindowFrameless() -> void {
     if (hwnd_ == nullptr) {
         return;
     }
 
-    if (IsWindowVisible(hwnd_) == TRUE) {
-        ShowWindow(hwnd_, SW_HIDE);
-    } else {
-        ShowWindow(hwnd_, SW_SHOW);
-        SetForegroundWindow(hwnd_);
-        UpdateWindow(hwnd_);
+    // Enable DWM shadows
+    MARGINS margins = {0, 0, 0, 1}; // Slight bottom margin for shadow
+    DwmExtendFrameIntoClientArea(hwnd_, &margins);
+
+    // Enable DWM blur behind (Windows 10 only)
+    HMODULE hUser32 = GetModuleHandleW(L"user32.dll");
+    if (hUser32) {
+        typedef BOOL (WINAPI *SetWindowCompositionAttribute)(HWND, void*);
+        auto pSetWindowCompositionAttribute = 
+            reinterpret_cast<SetWindowCompositionAttribute>(
+                GetProcAddress(hUser32, "SetWindowCompositionAttribute"));
+        
+        if (pSetWindowCompositionAttribute) {
+            // Define the necessary structures
+            struct WindowCompositionAttributeData {
+                DWORD Attrib;
+                PVOID pvData;
+                SIZE_T cbData;
+            };
+            
+            struct AccentPolicy {
+                DWORD AccentState;
+                DWORD AccentFlags;
+                DWORD GradientColor;
+                DWORD AnimationId;
+            };
+            
+            // Set the accent policy
+            AccentPolicy policy = {};
+            policy.AccentState = 3; // ACCENT_ENABLE_BLURBEHIND
+            policy.GradientColor = 0x00FFFFFF; // Transparent
+            
+            WindowCompositionAttributeData data = {};
+            data.Attrib = 19; // WCA_ACCENT_POLICY
+            data.pvData = &policy;
+            data.cbData = sizeof(policy);
+            
+            pSetWindowCompositionAttribute(hwnd_, &data);
+        }
+    }
+}
+
+void OverlayWindow::Impl::onContentSizeChanged(int width, int height) {
+    DEBUG_LOG("Content size changed notification received: %dx%d", width, height);
+    if (hwnd_ != nullptr && width > 0 && height > 0) {
+        updateWindowSize(width, height);
+    }
+}
+
+auto OverlayWindow::Impl::updateWindowSize(int contentWidth, int contentHeight) -> void {
+    if (hwnd_ == nullptr) {
+        return;
+    }
+
+    // Calculate the new window size (content + padding)
+    int newWidth = contentWidth + (BORDER_PADDING * 2);
+    int newHeight = contentHeight + (BORDER_PADDING * 2);
+
+    // Only resize if the size has actually changed
+    if (newWidth != currentWidth_ || newHeight != currentHeight_) {
+        DEBUG_LOG("Resizing window to %dx%d", newWidth, newHeight);
+        
+        // Get current window position to maintain the same center point
+        RECT windowRect;
+        GetWindowRect(hwnd_, &windowRect);
+        int oldWidth = windowRect.right - windowRect.left;
+        int oldHeight = windowRect.bottom - windowRect.top;
+        
+        // Calculate new position to keep window centered
+        int x = windowRect.left - ((newWidth - oldWidth) / 2);
+        int y = windowRect.top - ((newHeight - oldHeight) / 2);
+        
+        // If window is too small, enforce minimum size
+        newWidth = std::max(newWidth, 200);
+        newHeight = std::max(newHeight, 150);
+        
+        // Resize and reposition the window
+        SetWindowPos(hwnd_, nullptr, x, y, newWidth, newHeight, SWP_NOZORDER);
+        
+        // Update current size
+        currentWidth_ = newWidth;
+        currentHeight_ = newHeight;
+    }
+}
+
+auto OverlayWindow::Impl::show() -> void {
+    if (hwnd_ != nullptr) {
+        if (IsWindowVisible(hwnd_)) {
+            ShowWindow(hwnd_, SW_HIDE);
+        } else {
+            ShowWindow(hwnd_, SW_SHOW);
+            SetForegroundWindow(hwnd_);
+        }
     }
 }
 
 auto OverlayWindow::Impl::update() -> void {
-    MSG msg;
-    while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE) == TRUE) {
-        TranslateMessage(&msg);
-        DispatchMessageW(&msg);
+    if (hwnd_ != nullptr) {
+        // TODO: Implement update, content size change ?
     }
 }
 
 auto OverlayWindow::Impl::close() -> void {
     if (contentManager_) {
+        contentManager_->removeContentSizeObserver(this);
         contentManager_->destroy();
     }
     if (hwnd_ != nullptr) {
@@ -200,19 +307,15 @@ auto OverlayWindow::Impl::toggleWindowAnonymity() -> void {
 }
 
 auto OverlayWindow::Impl::toggleWindowTool(bool isToolWindow) -> void {
-    if (hwnd_ != nullptr) {
-        LONG_PTR exStyle = GetWindowLongPtrW(hwnd_, GWL_EXSTYLE);
-        if (exStyle & WS_EX_TOOLWINDOW &&  // NOLINT
-            !isToolWindow) {               // If the window is a tool window, remove the tool window flag
-            DEBUG_LOG("Removing tool window flag");
-            exStyle &= ~WS_EX_TOOLWINDOW;            // NOLINT
-        } else if (!(exStyle & WS_EX_TOOLWINDOW) &&  // NOLINT
-                   isToolWindow) {                   // If the window is not a tool window, add the tool window flag
-            DEBUG_LOG("Adding tool window flag");
-            exStyle |= WS_EX_TOOLWINDOW;  // NOLINT
-        }
-        DEBUG_LOG("Setting window extended style to:", exStyle);
-        SetWindowLongPtrW(hwnd_, GWL_EXSTYLE, exStyle);
+    if (hwnd_ == nullptr) {
+        return;
+    }
+
+    LONG_PTR style = GetWindowLongPtr(hwnd_, GWL_EXSTYLE);
+    if (isToolWindow) {
+        SetWindowLongPtr(hwnd_, GWL_EXSTYLE, style | WS_EX_TOOLWINDOW);
+    } else {
+        SetWindowLongPtr(hwnd_, GWL_EXSTYLE, style & ~WS_EX_TOOLWINDOW);
     }
 }
 
@@ -225,4 +328,5 @@ auto OverlayWindow::Impl::setRunning(bool state) -> void { running_ = state; }
 auto OverlayWindow::Impl::getContentManager() const -> std::shared_ptr<component::IContentManager> {
     return contentManager_;
 }
+
 }  // namespace palantir::window

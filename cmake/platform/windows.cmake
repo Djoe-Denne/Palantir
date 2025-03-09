@@ -1,8 +1,8 @@
 set(WINDOWS_APPLICATION_SOURCES
     ${PROJECT_ROOT}/application/src/platform/windows/platform_application.cpp
-    ${PROJECT_ROOT}/application/src/platform/windows/window/overlay_window.cpp
     ${PROJECT_ROOT}/application/src/platform/windows/window/overlay_window_impl.cpp
     ${PROJECT_ROOT}/application/src/platform/windows/window/component/webview/webview.cpp
+    ${PROJECT_ROOT}/application/src/platform/windows/window/component/webview/webview_callbacks.cpp
 )
 
 file(GLOB_RECURSE WINDOWS_APPLICATION_HEADERS

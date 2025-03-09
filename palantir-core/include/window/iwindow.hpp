@@ -16,6 +16,11 @@
 
 namespace palantir::window {
 
+enum class PALANTIR_CORE_API WindowType {
+    MAIN,
+    POPUP
+};
+
 /**
  * @class IWindow
  * @brief Interface for window management.
@@ -122,6 +127,8 @@ public:
      * @return A string representing the window's content.
      */
     [[nodiscard]] virtual auto getContentManager() const -> std::shared_ptr<component::IContentManager> = 0;
+
+    [[nodiscard]] virtual auto getWindowType() const -> const WindowType& = 0;
 protected:
     /** @brief Protected default constructor to prevent direct instantiation. */
     IWindow() = default;

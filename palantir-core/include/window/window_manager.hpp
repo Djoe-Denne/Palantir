@@ -84,7 +84,7 @@ public:
      * Returns a pointer to the first window in the collection. This is
      * typically used when the application only manages a single window.
      */
-    [[nodiscard]] virtual auto getFirstWindow() const -> std::shared_ptr<IWindow>;
+    [[nodiscard]] virtual auto getMainWindow() const -> std::shared_ptr<IWindow>;
 
     /**
      * @brief Check if any windows are currently running.

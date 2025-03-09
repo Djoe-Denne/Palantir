@@ -23,8 +23,13 @@ public:
         }
     }
 
-    [[nodiscard]] auto getFirstWindow() const -> std::shared_ptr<IWindow> {
-        return windows_.empty() ? nullptr : windows_.front();
+    [[nodiscard]] auto getMainWindow() const -> std::shared_ptr<IWindow> {
+        return getWindowByType(WindowType::MAIN);
+    }
+
+    [[nodiscard]] auto getWindowByType(WindowType type) const -> std::shared_ptr<IWindow> {
+        auto it = std::find_if(windows_.begin(), windows_.end(), [type](const auto& window) { return window->getWindowType() == type; });
+        return (it != windows_.end()) ? *it : nullptr;
     }
 
     [[nodiscard]] auto hasRunningWindows() const -> bool {
@@ -63,7 +68,7 @@ auto WindowManager::addWindow(const std::shared_ptr<IWindow>& window) -> void { 
 
 auto WindowManager::removeWindow(const IWindow* window) -> void { pimpl_->removeWindow(window); }
 
-auto WindowManager::getFirstWindow() const -> std::shared_ptr<IWindow> { return pimpl_->getFirstWindow(); }
+auto WindowManager::getMainWindow() const -> std::shared_ptr<IWindow> { return pimpl_->getMainWindow(); }
 
 auto WindowManager::hasRunningWindows() const -> bool { return pimpl_->hasRunningWindows(); }
 

@@ -10,7 +10,7 @@ public:
     MockWindowManager() : WindowManager() {}
     ~MockWindowManager() override = default;
 
-    MOCK_METHOD(std::shared_ptr<window::IWindow>, getFirstWindow, (), (const, override));
+    MOCK_METHOD(std::shared_ptr<window::IWindow>, getMainWindow, (), (const, override));
     MOCK_METHOD(void, addWindow, (const std::shared_ptr<window::IWindow>&), (override));
     MOCK_METHOD(void, removeWindow, (const window::IWindow*), (override));
     MOCK_METHOD(bool, hasRunningWindows, (), (const, override));

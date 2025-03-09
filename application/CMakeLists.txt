@@ -1,7 +1,7 @@
 # Create the executable with basic sources
 if(WIN32 OR QUALITY_ONLY)
     add_executable(${PROJECT_NAME} WIN32 
-        ${WINDOWS_SOURCES}
+        ${ALL_APPLICATION_SOURCES}
         ${PROJECT_ROOT}/application/src/main.cpp
     )
     if(NOT QUALITY_ONLY)
@@ -10,8 +10,7 @@ if(WIN32 OR QUALITY_ONLY)
     setup_windows_platform()
 elseif(APPLE)
     add_executable(${PROJECT_NAME} MACOSX_BUNDLE 
-        ${MACOS_SOURCES}
-        ${MACOS_HEADERS}
+        ${ALL_APPLICATION_SOURCES}
         ${PROJECT_ROOT}/application/src/main.cpp
     )
     setup_macos_platform()

@@ -4,7 +4,8 @@
 
 namespace palantir::window {
 
-OverlayWindow::OverlayWindow() : pImpl_(std::make_unique<Impl>()) {}  // NOLINT
+OverlayWindow::OverlayWindow() : pImpl_(std::make_unique<Impl>()), type_(WindowType::MAIN) {}  // NOLINT
+OverlayWindow::OverlayWindow(const WindowType& type) : pImpl_(std::make_unique<Impl>()), type_(type) {}  // NOLINT
 OverlayWindow::~OverlayWindow() = default;
 
 auto OverlayWindow::create() -> void { pImpl_->create(); }
@@ -19,4 +20,5 @@ auto OverlayWindow::setRunning(bool runningState) -> void { pImpl_->setRunning(r
 auto OverlayWindow::getContentManager() const -> std::shared_ptr<component::IContentManager> {
     return pImpl_->getContentManager();
 }
+auto OverlayWindow::getWindowType() const -> const WindowType& { return type_; }
 }  // namespace palantir::window

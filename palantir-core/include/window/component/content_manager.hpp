@@ -102,6 +102,69 @@ public:
         pimpl_->resize(width, height);
     }
 
+    /**
+     * @brief Add an observer to be notified of content size changes.
+     * 
+     * @param observer The observer to add.
+     */
+    auto addContentSizeObserver(IContentSizeObserver* observer) -> void override {
+        pimpl_->addContentSizeObserver(observer);
+    }
+
+    /**
+     * @brief Remove an observer from the notification list.
+     * 
+     * @param observer The observer to remove.
+     */
+    auto removeContentSizeObserver(IContentSizeObserver* observer) -> void override {
+        pimpl_->removeContentSizeObserver(observer);
+    }
+
+    /**
+     * @brief Detect and notify observers of content size changes.
+     * 
+     * This method should be called periodically to check content size and
+     * notify observers if the size has changed.
+     */
+    auto detectContentSizeChange() -> void override {
+        pimpl_->detectContentSizeChange();
+    }
+
+    /**
+     * @brief Get the current content width.
+     * 
+     * @return int The current content width.
+     */
+    auto getContentWidth() const -> int override {
+        return pimpl_->getContentWidth();
+    }
+
+    /**
+     * @brief Get the current content height.
+     * 
+     * @return int The current content height.
+     */
+    auto getContentHeight() const -> int override {
+        return pimpl_->getContentHeight();
+    }
+
+    /**
+     * @brief Register a message strategy.
+     * 
+     * @param strategy The strategy to register.
+     */
+    auto registerMessageStrategy(std::unique_ptr<message::MessageStrategy> strategy) -> void override {
+        pimpl_->registerMessageStrategy(std::move(strategy));
+    }
+
+    /**
+     * @brief Handle a message.
+     * 
+     * @param message The message to handle.
+     */ 
+    auto handleMessage(const std::string& message) -> void override {
+        pimpl_->handleMessage(message);
+    }
 private:
     class ContentManagerImpl;
     #pragma warning(push)

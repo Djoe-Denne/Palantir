@@ -74,7 +74,7 @@ TEST_F(SendSauronRequestCommandTest, ExecuteSetsContentWhenWindowExists) {
     const std::string testPrompt = "Test prompt";
     const std::string expectedResponse = R"({"response": "Test response"})";
     
-    EXPECT_CALL(*mockWindowManager, getFirstWindow())
+    EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(mockWindow));
         
     EXPECT_CALL(*mockApp, getWindowManager())
@@ -105,7 +105,7 @@ TEST_F(SendSauronRequestCommandTest, ExecuteSendPrompt) {
     // Arrange
     const std::string testPrompt = "Test prompt";
 
-    EXPECT_CALL(*mockWindowManager, getFirstWindow())
+    EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(mockWindow));
         
     EXPECT_CALL(*mockApp, getWindowManager())
@@ -144,7 +144,7 @@ TEST_F(SendSauronRequestCommandTest, ExecuteReadScreenshotImage) {
     screenshotFile.close();
 
 
-    EXPECT_CALL(*mockWindowManager, getFirstWindow())
+    EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(mockWindow));
         
     EXPECT_CALL(*mockApp, getWindowManager())
@@ -177,7 +177,7 @@ TEST_F(SendSauronRequestCommandTest, ExecuteSendAIProvider) {
     // Arrange
     const std::string testPrompt = "Test prompt";
  
-    EXPECT_CALL(*mockWindowManager, getFirstWindow())
+    EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(mockWindow));
         
     EXPECT_CALL(*mockApp, getWindowManager())
@@ -210,7 +210,7 @@ TEST_F(SendSauronRequestCommandTest, ExecuteSendAIModel) {
     // Arrange
     const std::string testPrompt = "Test prompt";
  
-    EXPECT_CALL(*mockWindowManager, getFirstWindow())
+    EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(mockWindow));
         
     EXPECT_CALL(*mockApp, getWindowManager())
@@ -254,7 +254,7 @@ TEST_F(SendSauronRequestCommandTest, ExecuteThrowsWhenNoWindow) {
     // Arrange
     const std::string testPrompt = "Test prompt";
     
-    EXPECT_CALL(*mockWindowManager, getFirstWindow())
+    EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(nullptr));
     
     sauron::dto::AIAlgorithmResponse mockResponse;
@@ -276,7 +276,7 @@ TEST_F(SendSauronRequestCommandTest, ExecuteThrowsWhenNoContentManager) {
     // Arrange
     const std::string testPrompt = "Test prompt";
     
-    EXPECT_CALL(*mockWindowManager, getFirstWindow())
+    EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(mockWindow));
     
     EXPECT_CALL(*mockWindow, getContentManager())

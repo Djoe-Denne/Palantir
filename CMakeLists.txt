@@ -41,8 +41,12 @@ setup_help_target()
 include(setup-clang-tools)
 setup_clang_tools()
 
-include(platform/windows)
-include(platform/macos)
+if(WIN32)
+    include(platform/windows)
+endif()
+if(APPLE)
+    include(platform/macos)
+endif()
 
 # Setup Google Test
 include(setup-gtest)

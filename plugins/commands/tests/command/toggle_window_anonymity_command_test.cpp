@@ -41,7 +41,7 @@ protected:
 
 TEST_F(ToggleWindowAnonymityCommandTest, ExecuteTogglesAnonymityWhenWindowExists) {
     // Arrange
-    EXPECT_CALL(*mockWindowManager, getFirstWindow())
+    EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(mockWindow));
     
     EXPECT_CALL(*mockWindow, toggleWindowAnonymity())
@@ -55,7 +55,7 @@ TEST_F(ToggleWindowAnonymityCommandTest, ExecuteTogglesAnonymityWhenWindowExists
 
 TEST_F(ToggleWindowAnonymityCommandTest, ExecuteThrowsWhenNoWindow) {
     // Arrange
-    EXPECT_CALL(*mockWindowManager, getFirstWindow())
+    EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(nullptr));
 
     ToggleWindowAnonymityCommand command;

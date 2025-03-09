@@ -2,6 +2,7 @@
 
 #include "sauron/client/SauronClient.hpp"
 #include "sauron/client/http_client_curl.hpp"
+#include "utils/logger.hpp"
 
 namespace palantir::client {
 
@@ -9,11 +10,16 @@ std::shared_ptr<SauronRegister> SauronRegister::instance_;
 // Implementation class (PIMPL)
 class SauronRegister::Impl {
 public:
-    Impl()  // NOLINT
-        : sauronClient(std::make_shared<sauron::client::SauronClient>(
-              std::make_unique<sauron::client::HttpClientCurl>("http://localhost:3000"))) {
-        sauronClient->login(sauron::dto::LoginRequest(
-            "sk-proj-******", sauron::dto::AIProvider::OPENAI));  // put that outside the constructor
+    Impl() {
+        auto* hc = new sauron::client::HttpClientCurl("localhost:3000");
+        auto httpClient = std::unique_ptr<sauron::client::HttpClientCurl>(hc);
+        sauronClient = std::make_shared<sauron::client::SauronClient>(std::move(httpClient));
+        try {
+            sauronClient->login(sauron::dto::LoginRequest(
+                "sk-proj-*****", sauron::dto::AIProvider::OPENAI));  // put that outside the constructor
+        } catch (const std::exception& e) {
+            DEBUG_LOG("Failed to login to Sauron: {}", e.what());
+        }
     }
 
     Impl(const Impl& other) = delete;
@@ -39,7 +45,7 @@ auto SauronRegister::getInstance() -> std::shared_ptr<SauronRegister> {
 auto SauronRegister::setInstance(const std::shared_ptr<SauronRegister>& instance) -> void { instance_ = instance; }
 
 // Constructor
-SauronRegister::SauronRegister() = default;
+SauronRegister::SauronRegister() : pImpl_(std::make_unique<Impl>()) {} // NOLINT
 
 SauronRegister::SauronRegister(const std::shared_ptr<sauron::client::SauronClient>& sauronClient)
     : pImpl_(std::make_unique<Impl>(sauronClient)) {}

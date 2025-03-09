@@ -7,14 +7,15 @@
 
 #include "window/component/content_manager.hpp"
 #include "window/component/webview/webview.hpp"
+#include "window/component/icontent_size_observer.hpp"
 #include "window/overlay_window.hpp"
 
 namespace palantir::window {
 
-class OverlayWindow::Impl {
+class OverlayWindow::Impl : public component::IContentSizeObserver {
 public:
     Impl();
-    ~Impl();
+    ~Impl() override;
 
     Impl(const Impl&) = delete;
     auto operator=(const Impl&) -> Impl& = delete;
@@ -34,16 +35,24 @@ public:
     auto setRunning(bool state) -> void;
     [[nodiscard]] auto getContentManager() const -> std::shared_ptr<component::IContentManager>;
 
+    // IContentSizeObserver implementation
+    void onContentSizeChanged(int width, int height) override;
+
 private:
     static constexpr int WINDOW_WIDTH = 800;
     static constexpr int WINDOW_HEIGHT = 600;
     static constexpr BYTE WINDOW_ALPHA = 240;
+    static constexpr int BORDER_PADDING = 10; // Padding around content
 
     auto toggleWindowTool(bool isToolWindow) -> void;
+    auto updateWindowSize(int contentWidth, int contentHeight) -> void;
+    auto makeWindowFrameless() -> void;
 
     HWND hwnd_{nullptr};
     bool running_{false};
     std::shared_ptr<component::ContentManager<component::webview::WebView>> contentManager_;
+    int currentWidth_{WINDOW_WIDTH};
+    int currentHeight_{WINDOW_HEIGHT};
 };
 
 }  // namespace palantir::window

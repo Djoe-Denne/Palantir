@@ -18,7 +18,7 @@ protected:
         mock_window_manager_ = std::make_shared<MockWindowManager>();
         
         // Set up expectations for window manager
-        EXPECT_CALL(*mock_window_manager_, getFirstWindow())
+        EXPECT_CALL(*mock_window_manager_, getMainWindow())
             .WillRepeatedly(Return(mock_window_));
         EXPECT_CALL(*mock_app_, getWindowManager())
             .WillRepeatedly(Return(mock_window_manager_));

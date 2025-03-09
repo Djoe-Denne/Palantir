@@ -12,6 +12,7 @@ namespace palantir::window {
 class PALANTIR_CORE_API OverlayWindow : public IWindow {
 public:
     OverlayWindow();
+    OverlayWindow(const WindowType& type);
     ~OverlayWindow() override;
 
     // Delete copy operations
@@ -34,6 +35,7 @@ public:
     auto setRunning(bool runningState) -> void override;
 
     [[nodiscard]] auto getContentManager() const -> std::shared_ptr<component::IContentManager> override;
+    [[nodiscard]] auto getWindowType() const -> const WindowType& override;
 
 private:
     class Impl;
@@ -42,6 +44,7 @@ private:
     std::unique_ptr<Impl> pImpl_;
     #pragma warning(pop)
     bool running_ = false;
+    WindowType type_;
 };
 
 }  // namespace palantir::window
