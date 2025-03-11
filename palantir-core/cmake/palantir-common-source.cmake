@@ -23,6 +23,10 @@ set(SIGNAL_PALANTIR_SOURCES
     ${PROJECT_ROOT}/palantir-core/src/signal/signal_factory.cpp
 )
 
+set(UTILS_PALANTIR_SOURCES
+    ${PROJECT_ROOT}/palantir-core/src/utils/resource_utils.cpp
+)
+
 set(WINDOW_PALANTIR_SOURCES
     ${PROJECT_ROOT}/palantir-core/src/window/window_manager.cpp
     ${PROJECT_ROOT}/palantir-core/src/window/component/message_handler.cpp  
@@ -72,6 +76,7 @@ set(ALL_PALANTIR_SOURCES
     ${WINDOW_PALANTIR_SOURCES}
     ${INPUT_PALANTIR_SOURCES}
     ${APPLICATION_PALANTIR_SOURCES}
+    ${UTILS_PALANTIR_SOURCES}
 ) 
 
 set(ALL_SOURCES

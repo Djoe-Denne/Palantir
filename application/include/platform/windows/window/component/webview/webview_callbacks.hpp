@@ -21,27 +21,26 @@ public:
     WebViewCallbacks();
     ~WebViewCallbacks() = default;
 
+    WebViewCallbacks(const WebViewCallbacks& other) = delete;
+    auto operator=(const WebViewCallbacks& other) -> WebViewCallbacks& = delete;
+    WebViewCallbacks(WebViewCallbacks&& other) = delete;
+    auto operator=(WebViewCallbacks&& other) -> WebViewCallbacks& = delete;
+
     // Callback registration methods
     void setInitCallback(std::function<void()> callback);
 
     // Event handler getters
-    Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler> 
-    getEnvironmentCompletedHandler(class WebView* webview);
+    auto getEnvironmentCompletedHandler(class WebView* webview) -> Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>;
 
-    Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>
-    getControllerCompletedHandler(class WebView* webview);
+    auto getControllerCompletedHandler(class WebView* webview) -> Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>;
 
-    Microsoft::WRL::ComPtr<ICoreWebView2WebMessageReceivedEventHandler>
-    getWebMessageReceivedHandler(class WebView* webview);
+    auto getWebMessageReceivedHandler(class WebView* webview) -> Microsoft::WRL::ComPtr<ICoreWebView2WebMessageReceivedEventHandler>;
 
-    Microsoft::WRL::ComPtr<ICoreWebView2NavigationCompletedEventHandler>
-    getNavigationCompletedHandler(class WebView* webview);
+    auto getNavigationCompletedHandler(class WebView* webview) -> Microsoft::WRL::ComPtr<ICoreWebView2NavigationCompletedEventHandler>;
 
-    Microsoft::WRL::ComPtr<ICoreWebView2SourceChangedEventHandler>
-    getSourceChangedHandler();
+    auto getSourceChangedHandler() -> Microsoft::WRL::ComPtr<ICoreWebView2SourceChangedEventHandler>;
 
-    Microsoft::WRL::ComPtr<ICoreWebView2ExecuteScriptCompletedHandler>
-    getExecuteScriptCompletedHandler();
+    auto getExecuteScriptCompletedHandler() -> Microsoft::WRL::ComPtr<ICoreWebView2ExecuteScriptCompletedHandler>;
 
 private:
     std::function<void()> initCallback_;

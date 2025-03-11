@@ -65,3 +65,8 @@ add_subdirectory(application)
 
 # Include format-lint after the target is created
 include(format-lint)
+
+# Install resource directory
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/resource
+        DESTINATION .
+        COMPONENT resources)
