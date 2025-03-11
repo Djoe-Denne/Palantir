@@ -13,6 +13,17 @@ This document describes how we use CMake in our project for building and develop
 - `QUALITY_ONLY` - Build only quality tools, skipping dependencies (default: OFF)
 - `MAGIC_DEPS_INSTALL` - Try to install missing dependencies via package managers (default: ON)
 
+## C++ Standard
+
+The project requires a C++20 compatible compiler. This is configured in the main CMakeLists.txt:
+
+```cmake
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+```
+
+For more details on C++20 features used in the project, see [C++20 Features and Message Strategy Pattern](cpp20_message_strategy.md).
+
 ## Common Commands
 
 ### Basic Build
