@@ -38,6 +38,8 @@ For development-related information, refer to:
 - [Clang Tools](technical/clang-tools.md)
 - [GitHub Actions](technical/github-actions.md)
 
+The project requires a C++20 compatible compiler.
+
 ## Architecture
 
 The application follows a plugin-based architecture with these key components:

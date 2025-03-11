@@ -74,7 +74,7 @@ public:
     auto initialize(void* nativeWindowHandle) -> void {
         if(view_) {
             // Set up message handler to log WebView2 events
-            registerMessageStrategy(std::make_unique<message::LoggerStrategy>("*"));
+            registerMessageStrategy(message::makeStrategy(std::make_unique<message::LoggerStrategy>("*")));
 
             // Initialize WebView2 with completion callback
             view_->initialize(nativeWindowHandle, [this]() {
@@ -233,7 +233,7 @@ public:
      *
      * @param handler A function to handle messages from JavaScript.
      */
-    auto registerMessageStrategy(std::unique_ptr<message::MessageStrategy> strategy) -> void {
+    auto registerMessageStrategy(std::unique_ptr<message::MessageStrategyBase> strategy) -> void {
         if (view_) {
             view_->registerMessageStrategy(std::move(strategy));
         }

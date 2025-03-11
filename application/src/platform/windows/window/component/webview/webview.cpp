@@ -322,7 +322,7 @@ auto WebView::resize(int width, int height) -> void {
 
 auto WebView::destroy() -> void { pimpl_->destroy(); }
 
-auto WebView::registerMessageStrategy(std::unique_ptr<message::MessageStrategy> strategy) -> void {
+auto WebView::registerMessageStrategy(std::unique_ptr<message::MessageStrategyBase> strategy) -> void {
     if (pimpl_->messageHandler_) {
         pimpl_->messageHandler_->registerStrategy(std::move(strategy));
     }

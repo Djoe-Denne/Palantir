@@ -1,6 +1,7 @@
 #include "window/component/webview/webview_callbacks.hpp"
 #include "window/component/webview/webview.hpp"
 #include "utils/resource_utils.hpp"
+#include "utils/string_utils.hpp"
 
 namespace palantir::window::component::webview {
 
@@ -79,7 +80,7 @@ WebViewCallbacks::getWebMessageReceivedHandler(WebView* webview) {
             if (message) {
                 std::wstring wmessage(message);
                 std::string messageStr(wmessage.begin(), wmessage.end());
-                DEBUG_LOG("Received WebView2 message: ", message);
+                DEBUG_LOG("Received WebView2 message: ", messageStr);
                 
                 try {
                     // Try to handle the message with the new MessageHandler first
@@ -111,7 +112,8 @@ WebViewCallbacks::getNavigationCompletedHandler(WebView* webview) {
 
                 LPWSTR uri;
                 sender->get_Source(&uri);
-                DEBUG_LOG("Failed navigation URL: ", uri ? uri : L"<null>");
+                std::string uriStr = palantir::utils::StringUtils::wToStr(uri);
+                DEBUG_LOG("Failed navigation URL: ", uriStr);
                 CoTaskMemFree(uri);
             } else {
                 DEBUG_LOG("Navigation completed successfully");
@@ -141,7 +143,8 @@ WebViewCallbacks::getSourceChangedHandler() {
         [](ICoreWebView2* sender, ICoreWebView2SourceChangedEventArgs* args) -> HRESULT {
             LPWSTR uri;
             sender->get_Source(&uri);
-            DEBUG_LOG("WebView2 source changed to: ", uri ? uri : L"<null>");
+            std::string uriStr = palantir::utils::StringUtils::wToStr(uri);
+            DEBUG_LOG("WebView2 source changed to: ", uriStr);
             CoTaskMemFree(uri);
             return S_OK;
         });
@@ -154,7 +157,8 @@ WebViewCallbacks::getExecuteScriptCompletedHandler() {
             if (FAILED(error)) {
                 DEBUG_LOG("Failed to execute script: ", error);
             } else {
-                DEBUG_LOG("Script executed successfully, result: ", result ? result : L"<null>");
+                std::string resultStr = palantir::utils::StringUtils::wToStr(result);
+                DEBUG_LOG("Script executed successfully, result: ", resultStr);
             }
             return S_OK;
         });

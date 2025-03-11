@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <vector>
 #include <array>
+#include <cwchar>
 #include "core_export.hpp"
 
 namespace palantir::utils {
@@ -26,6 +27,13 @@ public:
      */
     static auto toUpper(std::string str) -> std::string {
         std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+        return str;
+    }
+
+    static auto wToStr(const std::wstring& wstr) -> std::string {
+        size_t len = std::wcstombs(nullptr, wstr.c_str(), 0); // Get required size
+        std::string str(len, 0);
+        std::wcstombs(str.data(), wstr.c_str(), len + 1);
         return str;
     }
     

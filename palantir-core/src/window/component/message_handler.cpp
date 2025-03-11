@@ -6,7 +6,7 @@
 
 namespace palantir::window::component::message {
 
-auto MessageHandler::registerStrategy(std::unique_ptr<MessageStrategy> strategy) -> void {
+auto MessageHandler::registerStrategy(std::unique_ptr<MessageStrategyBase> strategy) -> void {
     if (!strategy) {
         DEBUG_LOG("Attempted to register a null strategy");
         return;
@@ -31,7 +31,8 @@ auto MessageHandler::handleMessage(const std::string& message) -> void {
         
         for (const auto& strategy : strategies_) {
             if (strategy->getEventType() == "*" || strategy->getEventType() == eventType) {
-                strategy->execute(jsonMessage);
+                // Call the type-erased executeJson method which will convert and forward to the typed execute
+                strategy->executeJson(jsonMessage["event"]);
             }
         }
         

@@ -35,6 +35,7 @@ palantir
 
 ## Prerequisites
 - CMake 3.10 or higher
+- C++20 compatible compiler
 - Clang tools (automatically installed via Homebrew on macOS)
 - Xcode Command Line Tools (for macOS)
 - Visual Studio 2019 or higher with C++ workload (for Windows)

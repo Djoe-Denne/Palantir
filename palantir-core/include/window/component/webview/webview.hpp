@@ -137,7 +137,7 @@ public:
      *
      * @param strategy The message strategy to register.
      */
-    virtual auto registerMessageStrategy(std::unique_ptr<message::MessageStrategy> strategy) -> void;
+    virtual auto registerMessageStrategy(std::unique_ptr<message::MessageStrategyBase> strategy) -> void;
 
     /**
      * @brief Handles a message from the web view.

@@ -7,9 +7,8 @@ LoggerStrategy::LoggerStrategy(const std::string& eventType)
     : eventType_(eventType) {
 }
 
-auto LoggerStrategy::execute(const nlohmann::json& json) -> void {
-    DEBUG_LOG("LoggerStrategy handling event: ", eventType_);
-    DEBUG_LOG("Message content: ", json.dump(2));  // Pretty print with 2-space indentation
+auto LoggerStrategy::execute(const LogMessageVO& logMessage) -> void {
+    DEBUG_LOG("LoggerStrategy handling event: ", eventType_, " with message: ", logMessage.message);
 }
 
 auto LoggerStrategy::getEventType() const -> const std::string& {

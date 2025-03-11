@@ -5,7 +5,7 @@
 #include <vector>
 #include "core_export.hpp"
 #include "window/component/icontent_size_observer.hpp"
-#include "window/component/message/message_strategy.hpp"
+#include "window/component/message/message_strategy_concept.hpp"
 
 namespace palantir::window::component {
 class PALANTIR_CORE_API IContentManager {
@@ -124,7 +124,7 @@ public:
      * 
      * @param strategy The strategy to register.
      */
-    virtual auto registerMessageStrategy(std::unique_ptr<message::MessageStrategy> strategy) -> void = 0;
+    virtual auto registerMessageStrategy(std::unique_ptr<message::MessageStrategyBase> strategy) -> void = 0;
 
     /**
      * @brief Handle a message.

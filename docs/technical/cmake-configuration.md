@@ -175,6 +175,10 @@ set(COMMAND_SOURCES
 The main CMakeLists.txt includes platform configurations and then adds the core library and plugins:
 
 ```cmake
+# C++ Standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 include(platform/windows)
 include(platform/macos)
 

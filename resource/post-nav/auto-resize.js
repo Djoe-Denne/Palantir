@@ -26,8 +26,10 @@
             previousHeight = height;
             window.chrome.webview.postMessage({
                 type: 'contentSize',
-                width: width,
-                height: height
+                event: {
+                    width: width,
+                    height: height
+                }
             });
         }
     }

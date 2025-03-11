@@ -153,7 +153,7 @@ public:
      * 
      * @param strategy The strategy to register.
      */
-    auto registerMessageStrategy(std::unique_ptr<message::MessageStrategy> strategy) -> void override {
+    auto registerMessageStrategy(std::unique_ptr<message::MessageStrategyBase> strategy) -> void override {
         pimpl_->registerMessageStrategy(std::move(strategy));
     }
 

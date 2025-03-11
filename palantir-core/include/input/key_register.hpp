@@ -23,9 +23,9 @@ protected:
 #pragma warning(push)
 #pragma warning(disable: 4251)
     std::unique_ptr<KeyRegisterImpl> pimpl_;
-#pragma warning(pop)
 
     static std::shared_ptr<KeyRegister> instance_;
+#pragma warning(pop)
 
     // Private constructor for singleton
     KeyRegister();
