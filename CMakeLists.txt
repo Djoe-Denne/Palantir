@@ -41,7 +41,7 @@ setup_help_target()
 include(setup-clang-tools)
 setup_clang_tools()
 
-if(WIN32)
+if(WIN32 OR QUALITY_ONLY)
     include(platform/windows)
 endif()
 if(APPLE)
