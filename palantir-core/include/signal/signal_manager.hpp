@@ -11,8 +11,8 @@
 #define SIGNAL_MANAGER_HPP
 
 #include <any>
-#include <memory>
 #include <core_export.hpp>
+#include <memory>
 
 namespace palantir::signal {
 // Forward declaration for ISignal
@@ -79,13 +79,13 @@ public:
 protected:
     // Private constructor for singleton
     SignalManager();
-private:
 
+private:
     // Forward declaration of platform-specific implementation
     class Impl;
     // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
 #pragma warning(push)
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
     std::unique_ptr<Impl> pImpl_;  ///< Platform-specific implementation details
     static std::shared_ptr<SignalManager> instance_;
 #pragma warning(pop)

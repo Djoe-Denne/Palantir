@@ -10,13 +10,13 @@
 #define PALANTIR_CORE_EXPORT_HPP
 
 #ifdef _WIN32
-    #ifdef PALANTIR_CORE_EXPORTS
-        #define PALANTIR_CORE_API __declspec(dllexport)
-    #else
-        #define PALANTIR_CORE_API __declspec(dllimport)
-    #endif
+#ifdef PALANTIR_CORE_EXPORTS
+#define PALANTIR_CORE_API __declspec(dllexport)
 #else
-    #define PALANTIR_CORE_API 
+#define PALANTIR_CORE_API __declspec(dllimport)
+#endif
+#else
+#define PALANTIR_CORE_API
 #endif
 
-#endif  // PALANTIR_CORE_EXPORT_HPP 
+#endif  // PALANTIR_CORE_EXPORT_HPP

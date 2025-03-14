@@ -1,8 +1,9 @@
 #ifndef PALANTIR_WINDOW_COMPONENT_WEBVIEW_IWEBVIEW_HPP
 #define PALANTIR_WINDOW_COMPONENT_WEBVIEW_IWEBVIEW_HPP
 #include <functional>
-#include <string>
 #include <memory>
+#include <string>
+
 #include "core_export.hpp"
 #include "window/component/icontent_manager.hpp"
 
@@ -145,13 +146,13 @@ public:
      * @param message The message to handle.
      */
     virtual auto handleMessage(const std::string& message) -> void;
+
 private:
     class WebViewImpl;
 #pragma warning(push)
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
     std::shared_ptr<WebViewImpl> pimpl_;
 #pragma warning(pop)
-
 };
 }  // namespace palantir::window::component::webview
 

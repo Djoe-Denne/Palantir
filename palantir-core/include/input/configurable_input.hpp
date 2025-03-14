@@ -11,6 +11,7 @@
 #define CONFIGURABLE_INPUT_HPP
 
 #include <memory>
+
 #include "core_export.hpp"
 #include "input/iinput.hpp"
 
@@ -88,7 +89,7 @@ private:
     class Impl;
     // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
 #pragma warning(push)
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
     std::unique_ptr<Impl> pImpl_;
 #pragma warning(pop)
 };

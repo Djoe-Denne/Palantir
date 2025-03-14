@@ -11,6 +11,7 @@
 #define IINPUT_HPP
 
 #include <any>
+
 #include "core_export.hpp"
 
 namespace palantir::input {

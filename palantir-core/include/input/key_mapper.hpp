@@ -12,6 +12,7 @@
 
 #include <cstdint>
 #include <string>
+
 #include "core_export.hpp"
 
 namespace palantir::input {

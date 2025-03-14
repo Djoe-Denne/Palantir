@@ -13,6 +13,7 @@
 #define ICOMMAND_HPP
 
 #include <string>
+
 #include "core_export.hpp"
 
 namespace palantir::command {

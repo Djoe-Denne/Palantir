@@ -1,11 +1,12 @@
 #pragma once
 
-#include <string>
-#include <vector>
 #include <filesystem>
 #include <fstream>
-#include <stdexcept>
 #include <memory>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
 #include "core_export.hpp"
 
 namespace palantir::utils {
@@ -13,7 +14,7 @@ namespace palantir::utils {
 /**
  * @class ResourceUtils
  * @brief Utility class for loading and managing resources
- * 
+ *
  * This class provides functionality for loading resources (such as JavaScript files)
  * from the resource directory, ensuring they can be accessed by the application.
  */
@@ -31,7 +32,6 @@ public:
      */
     static auto getInstance() -> std::shared_ptr<ResourceUtils>;
 
-
     static auto setInstance(const std::shared_ptr<ResourceUtils>& instance) -> void;
 
     /**
@@ -47,7 +47,8 @@ public:
      * @param subdirectory The subdirectory within the resource directory
      * @return Vector of pairs containing filename and file content
      */
-    [[nodiscard]] auto loadAllJavaScriptsFromDirectory(const std::string& subdirectory) const -> std::vector<std::pair<std::string, std::string>>;
+    [[nodiscard]] auto loadAllJavaScriptsFromDirectory(const std::string& subdirectory) const
+        -> std::vector<std::pair<std::string, std::string>>;
 
     /**
      * @brief Get the full path to the resource directory
@@ -58,16 +59,16 @@ public:
 private:
     ResourceUtils();
 #pragma warning(push)
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
     static std::shared_ptr<ResourceUtils> instance_;
     std::filesystem::path resourceDirectory_;
 #pragma warning(pop)
-    
+
     /**
      * @brief Initialize the resource directory path
      */
     void initializeResourceDirectory();
-    
+
     /**
      * @brief Read a file and return its content as a string
      * @param filepath Path to the file
@@ -80,7 +81,9 @@ private:
      * @param directory Path to the directory
      * @return Vector of pairs containing filename and file content
      */
-    [[nodiscard]] auto readAllFilesFromDirectory(const std::filesystem::path& directory, const std::string& extension) const -> std::vector<std::pair<std::string, std::string>>;
+    [[nodiscard]] auto readAllFilesFromDirectory(const std::filesystem::path& directory,
+                                                 const std::string& extension) const
+        -> std::vector<std::pair<std::string, std::string>>;
 };
 
-} // namespace palantir::utils 
+}  // namespace palantir::utils

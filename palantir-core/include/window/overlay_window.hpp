@@ -2,15 +2,16 @@
 #define OVERLAY_WINDOW_HPP
 
 #include <memory>
-#include "window/iwindow.hpp"
+
+#include "core_export.hpp"
 #include "window/component/content_manager.hpp"
 #include "window/component/content_manager_impl.hpp"
 #include "window/component/icontent_size_observer.hpp"
-#include "core_export.hpp"
+#include "window/iwindow.hpp"
 
 namespace palantir::window {
 
-class PALANTIR_CORE_API OverlayWindow : public IWindow, public component::IContentSizeObserver  {
+class PALANTIR_CORE_API OverlayWindow : public IWindow, public component::IContentSizeObserver {
 public:
     OverlayWindow();
     explicit OverlayWindow(const WindowType& type);
@@ -48,10 +49,10 @@ public:
 
 private:
     class Impl;
-    #pragma warning(push)
-    #pragma warning(disable: 4251)
+#pragma warning(push)
+#pragma warning(disable : 4251)
     std::unique_ptr<Impl> pImpl_;
-    #pragma warning(pop)
+#pragma warning(pop)
     bool running_ = false;
     WindowType type_;
 };

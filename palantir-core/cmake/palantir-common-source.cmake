@@ -1,13 +1,6 @@
-set(PROJECT_PALANTIR_HEADERS PROJECT_PALANTIR_HEADERS    
-    ${PROJECT_ROOT}/palantir-core/include/Application.hpp
-    ${PROJECT_ROOT}/palantir-core/include/window/window_manager.hpp
-    ${PROJECT_ROOT}/palantir-core/include/window/component/webview/webview.hpp
-    ${PROJECT_ROOT}/palantir-core/include/window/component/content_manager.hpp
-    ${PROJECT_ROOT}/palantir-core/include/command/icommand.hpp
-    ${PROJECT_ROOT}/palantir-core/include/command/command_factory.hpp
-    ${PROJECT_ROOT}/palantir-core/include/mode/debug/utils/logger.hpp
-    ${PROJECT_ROOT}/palantir-core/include/input/key_register.hpp
-    ${PROJECT_ROOT}/palantir-core/include/client/sauron_register.hpp
+file(GLOB_RECURSE PROJECT_PALANTIR_HEADERS
+    "${PROJECT_ROOT}/palantir-core/include/*.hpp"
+    "${PROJECT_ROOT}/palantir-core/include/*.h"
 )
 
 set(COMMAND_PALANTIR_SOURCES
@@ -82,5 +75,7 @@ set(ALL_PALANTIR_SOURCES
 
 set(ALL_SOURCES
     ${ALL_SOURCES}
-    ${ALL_PALANTIR_SOURCES} PARENT_SCOPE
+    ${ALL_PALANTIR_SOURCES} 
+    ${PROJECT_PALANTIR_HEADERS}
+    PARENT_SCOPE
 )

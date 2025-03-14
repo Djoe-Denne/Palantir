@@ -1,8 +1,9 @@
 #pragma once
 
-#include "window/component/message/resize/resize_message_vo.hpp"
-#include "core_export.hpp"
 #include <nlohmann/json.hpp>
+
+#include "core_export.hpp"
+#include "window/component/message/resize/resize_message_vo.hpp"
 
 namespace palantir::window::component::message::resize {
 
@@ -16,5 +17,4 @@ public:
     }
 };
 
-} // namespace palantir::window::component::message::resize
-
+}  // namespace palantir::window::component::message::resize

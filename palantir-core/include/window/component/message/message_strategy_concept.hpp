@@ -1,8 +1,9 @@
 #pragma once
 
 #include <concepts>
-#include <string>
 #include <nlohmann/json.hpp>
+#include <string>
+
 #include "core_export.hpp"
 
 namespace palantir::window::component::message {
@@ -45,15 +46,12 @@ public:
  * in a common container while preserving type safety
  */
 template <typename ConcreteStrategy>
-requires MessageStrategyConcept<ConcreteStrategy>
+    requires MessageStrategyConcept<ConcreteStrategy>
 class TypeErasedStrategy : public MessageStrategyBase {
 public:
-    explicit TypeErasedStrategy(std::unique_ptr<ConcreteStrategy> strategy) 
-        : strategy_(std::move(strategy)) {}
+    explicit TypeErasedStrategy(std::unique_ptr<ConcreteStrategy> strategy) : strategy_(std::move(strategy)) {}
 
-    [[nodiscard]] auto getEventType() const -> const std::string& override {
-        return strategy_->getEventType();
-    }
+    [[nodiscard]] auto getEventType() const -> const std::string& override { return strategy_->getEventType(); }
 
     auto executeJson(const nlohmann::json& json) -> void override {
         // Convert JSON to the specific parameter type and call the concrete strategy
@@ -71,4 +69,4 @@ auto makeStrategy(std::unique_ptr<ConcreteStrategy> strategy) {
     return std::make_unique<TypeErasedStrategy<ConcreteStrategy>>(std::move(strategy));
 }
 
-} // namespace palantir::window::component::message 
+}  // namespace palantir::window::component::message

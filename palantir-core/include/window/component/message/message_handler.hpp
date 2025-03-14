@@ -1,10 +1,11 @@
 #pragma once
 
-#include <vector>
 #include <memory>
 #include <string>
-#include "window/component/message/message_strategy_concept.hpp"
+#include <vector>
+
 #include "core_export.hpp"
+#include "window/component/message/message_strategy_concept.hpp"
 
 namespace palantir::window::component::message {
 
@@ -24,7 +25,7 @@ public:
 
     /**
      * Register a new message strategy.
-     * 
+     *
      * @param strategy Shared pointer to a MessageStrategyBase implementation.
      */
     auto registerStrategy(std::unique_ptr<MessageStrategyBase> strategy) -> void;
@@ -32,18 +33,17 @@ public:
     /**
      * Handle a message by routing it to the appropriate strategy.
      * If no strategy is found for the message type, the message is ignored.
-     * 
+     *
      * @param message The JSON message to handle as a string.
      */
     auto handleMessage(const std::string& message) -> void;
 
 private:
 #pragma warning(push)
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
     // Collection of strategies with different parameter types
     std::vector<std::unique_ptr<MessageStrategyBase>> strategies_;
 #pragma warning(pop)
-
 };
 
-} // namespace palantir::window::component::message 
+}  // namespace palantir::window::component::message

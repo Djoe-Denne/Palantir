@@ -12,4 +12,4 @@ struct PALANTIR_CORE_API ResizeMessageVO {
     int height;
 };
 
-} // namespace palantir::window::component::message::resize 
+}  // namespace palantir::window::component::message::resize

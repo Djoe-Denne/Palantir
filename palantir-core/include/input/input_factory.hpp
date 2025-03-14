@@ -14,13 +14,12 @@
 #include <string>
 #include <vector>
 
+#include "core_export.hpp"
+#include "input/configurable_input.hpp"
 #include "input/key_config.hpp"
 #include "input/key_mapper.hpp"
-#include "input/configurable_input.hpp"
-#include "core_export.hpp"
 
 namespace palantir::input {
-
 
 /**
  * @class InputFactory
@@ -55,7 +54,7 @@ public:
      * Returns the singleton instance of the InputFactory.
      */
     [[nodiscard]] static auto getInstance() -> std::shared_ptr<InputFactory>;
-    
+
     /**
      * @brief Set the singleton instance of the InputFactory.
      * @param instance A shared pointer to the InputFactory instance.
@@ -112,7 +111,7 @@ protected:
 private:
     class InputFactoryImpl;
 #pragma warning(push)
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
     std::unique_ptr<InputFactoryImpl> pimpl_;
     static std::shared_ptr<InputFactory> instance_;
 #pragma warning(pop)

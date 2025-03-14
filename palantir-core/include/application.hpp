@@ -11,12 +11,12 @@
 #define PALANTIR_PLATFORM_APPLICATION_HPP
 
 #include <memory>
-#include <string>
 #include <stdexcept>
+#include <string>
 
+#include "core_export.hpp"
 #include "signal/signal_manager.hpp"
 #include "window/window_manager.hpp"
-#include "core_export.hpp"
 
 namespace palantir {
 
@@ -125,14 +125,14 @@ protected:
      * the application with the specified configuration path.
      */
     explicit Application(const std::string& configPath);
-    Application(); // for testing and mocking
+    Application();  // for testing and mocking
 
 private:
     // PIMPL implementation
     class ApplicationImpl;
     // Suppress C4251 warning for this specific line as Impl class is never accessed by client
 #pragma warning(push)
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
     std::unique_ptr<ApplicationImpl> pImpl_;
     /**
      * @brief The singleton instance.

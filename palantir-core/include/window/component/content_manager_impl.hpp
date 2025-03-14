@@ -1,16 +1,16 @@
-#include <nlohmann/json.hpp>
-#include <memory>
-#include <vector>
 #include <algorithm>
+#include <memory>
+#include <nlohmann/json.hpp>
+#include <vector>
 
-#include "window/component/message/message_handler.hpp"
-#include "window/component/message/logger_strategy.hpp"
 #include "utils/logger.hpp"
 #include "window/component/icontent_size_observer.hpp"
+#include "window/component/message/logger_strategy.hpp"
+#include "window/component/message/message_handler.hpp"
 
 namespace palantir::window::component {
 
-template<typename T>
+template <typename T>
 class ContentManager<T>::ContentManagerImpl {
 private:
     std::shared_ptr<T> view_;
@@ -22,48 +22,42 @@ private:
     void updateWebView() {
         if (view_) {
             // Don't recreate the message handler since it's already initialized in the constructor
-            nlohmann::json message = {
-                {"type", "setContent"},
-                {"content", content_}
-            };
-            view_->executeJavaScript("window.dispatchEvent(new MessageEvent('message', { data: " + message.dump() + " }));");
+            nlohmann::json message = {{"type", "setContent"}, {"content", content_}};
+            view_->executeJavaScript("window.dispatchEvent(new MessageEvent('message', { data: " + message.dump() +
+                                     " }));");
         }
     }
 
     void notifyObservers() {
         for (auto observer : observers_) {
             if (observer) {
-                DEBUG_LOG("Notifying observer of content size change: ", currentContentWidth_, "x", currentContentHeight_);
+                DEBUG_LOG("Notifying observer of content size change: ", currentContentWidth_, "x",
+                          currentContentHeight_);
                 observer->onContentSizeChanged(currentContentWidth_, currentContentHeight_);
             }
         }
     }
 
 public:
-    ContentManagerImpl() : view_(new T()), content_({
-              {"explanation", ""},
-              {"response", ""},
-              {"complexity", {
-                  {"time", {{"value", ""}, {"explanation", ""}}},
-                  {"space", {{"value", ""}, {"explanation", ""}}}
-              }}
-          })
-    {
+    ContentManagerImpl()
+        : view_(new T()),
+          content_(
+              {{"explanation", ""},
+               {"response", ""},
+               {"complexity",
+                {{"time", {{"value", ""}, {"explanation", ""}}}, {"space", {{"value", ""}, {"explanation", ""}}}}}}) {
         DEBUG_LOG("ContentManagerImpl default constructor");
     }
 
-    explicit ContentManagerImpl(std::shared_ptr<T> view) 
-        : view_(view), 
-          content_({
-              {"explanation", ""},
-              {"response", ""},
-              {"complexity", {
-                  {"time", {{"value", ""}, {"explanation", ""}}},
-                  {"space", {{"value", ""}, {"explanation", ""}}}
-              }}
-          }) {
-            DEBUG_LOG("ContentManagerImpl constructor with view");
-          }
+    explicit ContentManagerImpl(std::shared_ptr<T> view)
+        : view_(view),
+          content_(
+              {{"explanation", ""},
+               {"response", ""},
+               {"complexity",
+                {{"time", {{"value", ""}, {"explanation", ""}}}, {"space", {{"value", ""}, {"explanation", ""}}}}}}) {
+        DEBUG_LOG("ContentManagerImpl constructor with view");
+    }
 
     ~ContentManagerImpl() = default;
 
@@ -73,7 +67,7 @@ public:
     auto operator=(ContentManagerImpl&&) noexcept -> ContentManagerImpl& = delete;
 
     auto initialize(void* nativeWindowHandle) -> void {
-        if(view_) {
+        if (view_) {
             // Initialize WebView2 with completion callback
             view_->initialize(nativeWindowHandle, [this]() {
                 DEBUG_LOG("WebView2 initialization callback - loading URL");
@@ -99,7 +93,7 @@ public:
                 content_[elementId] = content;
             } else if (elementId.find("complexity.") == 0) {
                 auto parts = split(elementId.substr(11), ".");  // Remove "complexity." prefix
-                if (parts.size() == 2) {  // e.g., "time.value" or "time.explanation"
+                if (parts.size() == 2) {                        // e.g., "time.value" or "time.explanation"
                     content_["complexity"][parts[0]][parts[1]] = content;
                 }
             }
@@ -127,22 +121,17 @@ public:
 
     auto toggleContentVisibility(const std::string& elementId) -> void {
         if (view_) {
-            nlohmann::json message = {
-                {"type", "toggleVisibility"},
-                {"elementId", elementId}
-            };
-            view_->executeJavaScript("window.dispatchEvent(new MessageEvent('message', { data: " + message.dump() + " }));");
+            nlohmann::json message = {{"type", "toggleVisibility"}, {"elementId", elementId}};
+            view_->executeJavaScript("window.dispatchEvent(new MessageEvent('message', { data: " + message.dump() +
+                                     " }));");
         }
     }
 
     auto setContentVisibility(const std::string& elementId, bool visible) -> void {
         if (view_) {
-            nlohmann::json message = {
-                {"type", "setVisibility"},
-                {"elementId", elementId},
-                {"visible", visible}
-            };
-            view_->executeJavaScript("window.dispatchEvent(new MessageEvent('message', { data: " + message.dump() + " }));");
+            nlohmann::json message = {{"type", "setVisibility"}, {"elementId", elementId}, {"visible", visible}};
+            view_->executeJavaScript("window.dispatchEvent(new MessageEvent('message', { data: " + message.dump() +
+                                     " }));");
         }
     }
 
@@ -153,13 +142,13 @@ public:
     }
 
     auto destroy() -> void {
-        if(view_) {
+        if (view_) {
             view_->destroy();
         }
     }
 
     auto resize(int width, int height) -> void {
-        if(view_) {
+        if (view_) {
             currentContentHeight_ = height;
             currentContentWidth_ = width;
             view_->resize(width, height);
@@ -170,7 +159,7 @@ public:
     auto addContentSizeObserver(IContentSizeObserver* observer) -> void {
         if (observer && std::find(observers_.begin(), observers_.end(), observer) == observers_.end()) {
             observers_.push_back(observer);
-            
+
             // Notify new observer of current size immediately if we have a size
             if (currentContentWidth_ > 0 && currentContentHeight_ > 0) {
                 observer->onContentSizeChanged(currentContentWidth_, currentContentHeight_);
@@ -218,13 +207,9 @@ public:
         }
     }
 
-    [[nodiscard]] auto getContentWidth() const -> int {
-        return currentContentWidth_;
-    }
+    [[nodiscard]] auto getContentWidth() const -> int { return currentContentWidth_; }
 
-    [[nodiscard]] auto getContentHeight() const -> int {
-        return currentContentHeight_;
-    }
+    [[nodiscard]] auto getContentHeight() const -> int { return currentContentHeight_; }
 
     /**
      * @brief Sets a handler for messages received from the JavaScript context.
@@ -256,7 +241,6 @@ private:
         tokens.push_back(str.substr(start));
         return tokens;
     }
-
 };
 
-} // namespace palantir::window::component
+}  // namespace palantir::window::component

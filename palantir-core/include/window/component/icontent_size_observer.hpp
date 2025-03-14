@@ -8,7 +8,7 @@ namespace palantir::window::component {
 /**
  * @class IContentSizeObserver
  * @brief Interface for objects that need to observe content size changes
- * 
+ *
  * This interface defines the contract for objects that want to be notified
  * when the size of content changes, such as a window that needs to adjust
  * its size to match the content.
@@ -23,7 +23,7 @@ public:
 
     /**
      * @brief Notification of content size change
-     * 
+     *
      * @param width The new content width
      * @param height The new content height
      */
@@ -33,6 +33,6 @@ protected:
     IContentSizeObserver() = default;
 };
 
-} // namespace palantir::window::component
+}  // namespace palantir::window::component
 
-#endif // ICONTENT_SIZE_OBSERVER_HPP 
+#endif  // ICONTENT_SIZE_OBSERVER_HPP

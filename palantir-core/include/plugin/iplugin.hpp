@@ -3,16 +3,16 @@
 #include <string>
 
 #ifdef _WIN32
-    #ifdef PALANTIR_CORE_EXPORTS
-        #define PALANTIR_CORE_API __declspec(dllexport)
-    #else
-        #define PALANTIR_CORE_API __declspec(dllimport)
-    #endif
-
-    #define PLUGIN_API __declspec(dllexport)
+#ifdef PALANTIR_CORE_EXPORTS
+#define PALANTIR_CORE_API __declspec(dllexport)
 #else
-    #define PALANTIR_CORE_API __attribute__((visibility("default")))
-    #define PLUGIN_API __attribute__((visibility("default")))
+#define PALANTIR_CORE_API __declspec(dllimport)
+#endif
+
+#define PLUGIN_API __declspec(dllexport)
+#else
+#define PALANTIR_CORE_API __attribute__((visibility("default")))
+#define PLUGIN_API __attribute__((visibility("default")))
 #endif
 
 namespace palantir::plugin {
@@ -58,15 +58,11 @@ public:
 using CreatePluginFunc = PLUGIN_API IPlugin* (*)();
 using DestroyPluginFunc = PLUGIN_API void (*)(IPlugin*);
 
-} // namespace palantir::plugin
+}  // namespace palantir::plugin
 
 // Macros to help with plugin implementation
-#define IMPLEMENT_PLUGIN(PluginClass) \
-    extern "C" { \
-        PLUGIN_API auto createPlugin() -> palantir::plugin::IPlugin* { \
-            return new PluginClass(); \
-        } \
-        PLUGIN_API auto destroyPlugin(palantir::plugin::IPlugin* plugin) -> void { \
-            delete plugin; \
-        } \
-    } 
+#define IMPLEMENT_PLUGIN(PluginClass)                                                           \
+    extern "C" {                                                                                \
+    PLUGIN_API auto createPlugin() -> palantir::plugin::IPlugin* { return new PluginClass(); }  \
+    PLUGIN_API auto destroyPlugin(palantir::plugin::IPlugin* plugin) -> void { delete plugin; } \
+    }

@@ -1,11 +1,12 @@
 #pragma once
 
-#include "core_export.hpp"
-#include "window/component/message/resize/resize_message_vo.hpp"
-#include "window/component/message/resize/resize_message_mapper.hpp"
-#include "window/component/icontent_manager.hpp"
-#include <string>
 #include <memory>
+#include <string>
+
+#include "core_export.hpp"
+#include "window/component/icontent_manager.hpp"
+#include "window/component/message/resize/resize_message_mapper.hpp"
+#include "window/component/message/resize/resize_message_vo.hpp"
 
 namespace palantir::window::component::message::resize {
 
@@ -27,32 +28,31 @@ public:
 
     /**
      * Constructor with the event type this strategy handles.
-     * 
+     *
      * @param eventType The event type string.
      */
     explicit ResizeStrategy(std::string eventType, const std::shared_ptr<IContentManager>& contentManager);
-    
+
     /**
      * Execute the strategy using the strongly typed value object
-     * 
+     *
      * @param logMessage The typed log message value object
      */
     auto execute(const ResizeMessageVO& resizeMessage) -> void;
-    
+
     /**
      * Get the event type this strategy handles.
-     * 
+     *
      * @return The event type string.
      */
     [[nodiscard]] auto getEventType() const -> const std::string&;
-    
+
 private:
 #pragma warning(push)
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
     std::string eventType_;
     std::shared_ptr<IContentManager> contentManager_;
 #pragma warning(pop)
 };
 
-} // namespace palantir::window::component::message::resize
-
+}  // namespace palantir::window::component::message::resize
