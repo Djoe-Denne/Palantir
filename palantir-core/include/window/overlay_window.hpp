@@ -5,11 +5,12 @@
 #include "window/iwindow.hpp"
 #include "window/component/content_manager.hpp"
 #include "window/component/content_manager_impl.hpp"
+#include "window/component/icontent_size_observer.hpp"
 #include "core_export.hpp"
 
 namespace palantir::window {
 
-class PALANTIR_CORE_API OverlayWindow : public IWindow {
+class PALANTIR_CORE_API OverlayWindow : public IWindow, public component::IContentSizeObserver  {
 public:
     OverlayWindow();
     OverlayWindow(const WindowType& type);
@@ -36,6 +37,14 @@ public:
 
     [[nodiscard]] auto getContentManager() const -> std::shared_ptr<component::IContentManager> override;
     [[nodiscard]] auto getWindowType() const -> const WindowType& override;
+
+    // IContentSizeObserver implementation
+    auto onContentSizeChanged(int width, int height) -> void override;
+
+    auto toggleWindowTool(bool isToolWindow) -> void;
+    auto updateWindowSize(int contentWidth, int contentHeight) -> void;
+    auto getCurrentScreenResolution() -> std::pair<int, int>;
+    auto makeWindowFrameless() -> void;
 
 private:
     class Impl;

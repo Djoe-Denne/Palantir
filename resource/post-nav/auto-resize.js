@@ -1,6 +1,8 @@
 (function() {
-    previousHeight = 0;
-    previousWidth = 0;
+    let previousHeight = 0;
+    let previousWidth = 0;
+    let resizeTimeout = null;
+    
     // Function to measure and report content size
     function reportContentSize() {
         const width = Math.max(
@@ -24,13 +26,23 @@
         if (width !== previousWidth || height !== previousHeight) {
             previousWidth = width;
             previousHeight = height;
-            window.chrome.webview.postMessage({
-                type: 'contentSize',
-                event: {
-                    width: width,
-                    height: height
-                }
-            });
+            
+            // Clear any existing timeout
+            if (resizeTimeout) {
+                clearTimeout(resizeTimeout);
+            }
+            
+            // Set a new timeout to send the message after 500ms
+            resizeTimeout = setTimeout(() => {
+                window.chrome.webview.postMessage({
+                    type: 'contentSize',
+                    event: {
+                        width: width,
+                        height: height
+                    }
+                });
+                resizeTimeout = null;
+            }, 50);
         }
     }
     
@@ -39,8 +51,8 @@
     
     // Set up a MutationObserver to detect DOM changes
     const observer = new MutationObserver(function(mutations) {
-        // Wait a bit for any animations or transitions to complete
-        setTimeout(reportContentSize, 500);
+        // Call reportContentSize directly, it will handle the debouncing
+        reportContentSize();
     });
     
     // Start observing the document with configured parameters

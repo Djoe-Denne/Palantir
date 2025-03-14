@@ -12,10 +12,10 @@
 
 namespace palantir::window {
 
-class OverlayWindow::Impl : public component::IContentSizeObserver {
+class OverlayWindow::Impl {
 public:
     Impl();
-    ~Impl() override;
+    ~Impl();
 
     Impl(const Impl&) = delete;
     auto operator=(const Impl&) -> Impl& = delete;
@@ -35,18 +35,17 @@ public:
     auto setRunning(bool state) -> void;
     [[nodiscard]] auto getContentManager() const -> std::shared_ptr<component::IContentManager>;
 
-    // IContentSizeObserver implementation
-    void onContentSizeChanged(int width, int height) override;
-
+    auto toggleWindowTool(bool isToolWindow) -> void;
+    auto updateWindowSize(int contentWidth, int contentHeight) -> void;
+    auto getCurrentScreenResolution() -> std::pair<int, int>;
+    auto makeWindowFrameless() -> void;
 private:
     static constexpr int WINDOW_WIDTH = 800;
     static constexpr int WINDOW_HEIGHT = 600;
     static constexpr BYTE WINDOW_ALPHA = 240;
-    static constexpr int BORDER_PADDING = 10; // Padding around content
+    static constexpr int BORDER_PADDING = 0; // Padding around content
+    static constexpr int RIGHT_FRAME_WIDTH = 0; // Width of the right frame
 
-    auto toggleWindowTool(bool isToolWindow) -> void;
-    auto updateWindowSize(int contentWidth, int contentHeight) -> void;
-    auto makeWindowFrameless() -> void;
 
     HWND hwnd_{nullptr};
     bool running_{false};

@@ -1,14 +1,17 @@
 #pragma once
 
 #include "window/component/icontent_manager.hpp"
+#include "window/component/message/logger/logger_strategy.hpp"
+#include "window/component/message/resize/resize_strategy.hpp"
 #include <memory>
 #include <string>
 #include "core_export.hpp"
 
 namespace palantir::window::component {
 template<typename T>
-class PALANTIR_CORE_API ContentManager : public IContentManager {
+class PALANTIR_CORE_API ContentManager : public IContentManager, public std::enable_shared_from_this<ContentManager<T>> {
 public:
+    using std::enable_shared_from_this<ContentManager<T>>::shared_from_this;
     ContentManager() : pimpl_(std::make_unique<ContentManagerImpl>()) {}  // NOLINT
     explicit ContentManager(std::unique_ptr<T> view) : pimpl_(std::make_unique<ContentManagerImpl>(view)) {}
     ~ContentManager() override = default;
@@ -24,6 +27,8 @@ public:
      * @param nativeWindowHandle The native window handle.
      */
     auto initialize(void* nativeWindowHandle) -> void override {
+        registerMessageStrategy(message::makeStrategy(std::make_unique<message::logger::LoggerStrategy>("*")));
+        registerMessageStrategy(message::makeStrategy(std::make_unique<message::resize::ResizeStrategy>("contentSize", std::static_pointer_cast<IContentManager>(shared_from_this()))));
         pimpl_->initialize(nativeWindowHandle);
     }
 

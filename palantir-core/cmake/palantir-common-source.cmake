@@ -29,8 +29,9 @@ set(UTILS_PALANTIR_SOURCES
 
 set(WINDOW_PALANTIR_SOURCES
     ${PROJECT_ROOT}/palantir-core/src/window/window_manager.cpp
-    ${PROJECT_ROOT}/palantir-core/src/window/component/message_handler.cpp  
-    ${PROJECT_ROOT}/palantir-core/src/window/component/logger_strategy.cpp
+    ${PROJECT_ROOT}/palantir-core/src/window/component/message/message_handler.cpp  
+    ${PROJECT_ROOT}/palantir-core/src/window/component/message/logger/logger_strategy.cpp
+    ${PROJECT_ROOT}/palantir-core/src/window/component/message/resize/resize_strategy.cpp
 )
 
 set(INPUT_PALANTIR_SOURCES

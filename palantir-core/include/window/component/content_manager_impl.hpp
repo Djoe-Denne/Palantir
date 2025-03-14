@@ -33,6 +33,7 @@ private:
     void notifyObservers() {
         for (auto observer : observers_) {
             if (observer) {
+                DEBUG_LOG("Notifying observer of content size change: ", currentContentWidth_, "x", currentContentHeight_);
                 observer->onContentSizeChanged(currentContentWidth_, currentContentHeight_);
             }
         }
@@ -73,9 +74,6 @@ public:
 
     auto initialize(void* nativeWindowHandle) -> void {
         if(view_) {
-            // Set up message handler to log WebView2 events
-            registerMessageStrategy(message::makeStrategy(std::make_unique<message::LoggerStrategy>("*")));
-
             // Initialize WebView2 with completion callback
             view_->initialize(nativeWindowHandle, [this]() {
                 DEBUG_LOG("WebView2 initialization callback - loading URL");
