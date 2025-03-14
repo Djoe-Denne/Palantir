@@ -2,6 +2,7 @@
 
 #include "mock/palantir_mock.hpp"
 #include "window/component/icontent_manager.hpp"
+#include "window/component/icontent_size_observer.hpp"
 
 namespace palantir::test {
 
@@ -19,6 +20,13 @@ public:
     MOCK_METHOD(bool, getContentVisibility, (const std::string& elementId), (override));
     MOCK_METHOD(void, destroy, (), (override));
     MOCK_METHOD(void, resize, (int width, int height), (override));
+    MOCK_METHOD(void, addContentSizeObserver, (window::component::IContentSizeObserver* observer), (override));
+    MOCK_METHOD(void, removeContentSizeObserver, (window::component::IContentSizeObserver* observer), (override));
+    MOCK_METHOD(void, detectContentSizeChange, (), (override));
+    MOCK_METHOD(int, getContentWidth, (), (const, override));
+    MOCK_METHOD(int, getContentHeight, (), (const, override));
+    MOCK_METHOD(void, registerMessageStrategy, (std::unique_ptr<window::component::message::MessageStrategyBase> strategy), (override));
+    MOCK_METHOD(void, handleMessage, (const std::string& message), (override));
 };
 
 } // namespace palantir::test 
