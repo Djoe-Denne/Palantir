@@ -1,7 +1,8 @@
 #include "window/component/webview/webview.hpp"
-#include "window/component/webview/webview_callbacks.hpp"
-#include "window/component/message/message_handler.hpp"
+
 #include "window/component/message/logger_strategy.hpp"
+#include "window/component/message/message_handler.hpp"
+#include "window/component/webview/webview_callbacks.hpp"
 
 // clang-format off
 // order of includes is important
@@ -23,7 +24,7 @@ namespace palantir::window::component::webview {
 
 class WebView::WebViewImpl {
 public:
-    WebViewImpl() 
+    WebViewImpl()
         : callbacks_(std::make_unique<WebViewCallbacks>()),
           messageHandler_(std::make_unique<message::MessageHandler>()) {}
     ~WebViewImpl() { destroy(); }
@@ -57,8 +58,7 @@ public:
     }
 };
 
-WebView::WebView() 
-    : pimpl_(std::make_unique<WebViewImpl>()) {}
+WebView::WebView() : pimpl_(std::make_unique<WebViewImpl>()) {}
 
 WebView::~WebView() = default;
 
@@ -82,8 +82,7 @@ auto WebView::initialize(void* nativeWindowHandle, std::function<void()> initCal
     HRESULT hResult = CreateCoreWebView2EnvironmentWithOptions(
         nullptr,  // Use default browser installation
         nullptr,  // Use default user data folder
-        options.Get(),
-        pimpl_->callbacks_->getEnvironmentCompletedHandler(this).Get());
+        options.Get(), pimpl_->callbacks_->getEnvironmentCompletedHandler(this).Get());
 
     if (FAILED(hResult)) {
         throw std::runtime_error("Failed to create WebView2 environment");
@@ -118,27 +117,24 @@ auto WebView::initializeController(void* controller) -> intptr_t {
     }
 
     // Add event handlers
-    hResult = pimpl_->webView_->add_SourceChanged(
-        pimpl_->callbacks_->getSourceChangedHandler().Get(),
-        &pimpl_->sourceToken_);
+    hResult =
+        pimpl_->webView_->add_SourceChanged(pimpl_->callbacks_->getSourceChangedHandler().Get(), &pimpl_->sourceToken_);
 
     if (FAILED(hResult)) {
         DEBUG_LOG("Failed to add source changed handler: 0x%08x", hResult);
         return hResult;
     }
 
-    hResult = pimpl_->webView_->add_NavigationCompleted(
-        pimpl_->callbacks_->getNavigationCompletedHandler(this).Get(),
-        &pimpl_->navigationToken_);
+    hResult = pimpl_->webView_->add_NavigationCompleted(pimpl_->callbacks_->getNavigationCompletedHandler(this).Get(),
+                                                        &pimpl_->navigationToken_);
 
     if (FAILED(hResult)) {
         DEBUG_LOG("Failed to add navigation completed handler: 0x%08x", hResult);
         return hResult;
     }
 
-    hResult = pimpl_->webView_->add_WebMessageReceived(
-        pimpl_->callbacks_->getWebMessageReceivedHandler(this).Get(),
-        &pimpl_->messageToken_);
+    hResult = pimpl_->webView_->add_WebMessageReceived(pimpl_->callbacks_->getWebMessageReceivedHandler(this).Get(),
+                                                       &pimpl_->messageToken_);
 
     if (FAILED(hResult)) {
         DEBUG_LOG("Failed to add message received handler: 0x%08x", hResult);
@@ -148,17 +144,15 @@ auto WebView::initializeController(void* controller) -> intptr_t {
     // todo: size must be set by content and not the reverse
     RECT bounds;
     GetClientRect(pimpl_->hwnd_, &bounds);
-    DEBUG_LOG("Setting WebView2 bounds to: left=%ld, top=%ld, right=%ld, bottom=%ld",
-                bounds.left, bounds.top, bounds.right, bounds.bottom);
+    DEBUG_LOG("Setting WebView2 bounds to: left=%ld, top=%ld, right=%ld, bottom=%ld", bounds.left, bounds.top,
+              bounds.right, bounds.bottom);
     pimpl_->controller_->put_Bounds(bounds);
     pimpl_->controller_->put_IsVisible(TRUE);
 
     return hResult;
 }
 
-auto WebView::getNativeHandle() -> void* {
-    return pimpl_->hwnd_;
-}
+auto WebView::getNativeHandle() -> void* { return pimpl_->hwnd_; }
 
 auto WebView::loadURL(const std::string& url) -> void {
     if (!pimpl_->webView_) {
@@ -210,7 +204,7 @@ auto WebView::reload() -> void {
 auto WebView::goBack() -> void {
     if (!pimpl_->webView_) {
         return;
-    }   
+    }
 
     HRESULT hResult = pimpl_->webView_->GoBack();
     if (FAILED(hResult)) {
@@ -221,7 +215,7 @@ auto WebView::goBack() -> void {
 auto WebView::goForward() -> void {
     if (!pimpl_->webView_) {
         return;
-    }   
+    }
 
     HRESULT hResult = pimpl_->webView_->GoForward();
     if (FAILED(hResult)) {
@@ -285,7 +279,6 @@ auto WebView::enableCookies(bool enable) -> void {
     }
 }
 
-
 auto WebView::clearCookies() -> void {
     if (pimpl_->webView_) {
         return;
@@ -295,12 +288,13 @@ auto WebView::clearCookies() -> void {
     if (SUCCEEDED(dynamic_cast<ICoreWebView2_13*>(pimpl_->webView_.Get())->get_Profile(&profile))) {
         ComPtr<ICoreWebView2Profile2> profile2;
         if (SUCCEEDED(profile.As(&profile2))) {
-            profile2->ClearBrowsingData(COREWEBVIEW2_BROWSING_DATA_KINDS_COOKIES,
-                                        Microsoft::WRL::Callback<ICoreWebView2ClearBrowsingDataCompletedHandler>(
-                                            [](HRESULT error) -> HRESULT { return S_OK; })
-                                            .Get());
+            profile2->ClearBrowsingData(
+                COREWEBVIEW2_BROWSING_DATA_KINDS_COOKIES,
+                Microsoft::WRL::Callback<ICoreWebView2ClearBrowsingDataCompletedHandler>([](HRESULT error) -> HRESULT {
+                    return S_OK;
+                }).Get());
         }
-    }    
+    }
 }
 
 auto WebView::resize(int width, int height) -> void {
@@ -333,6 +327,5 @@ auto WebView::handleMessage(const std::string& message) -> void {
         pimpl_->messageHandler_->handleMessage(message);
     }
 }
-
 
 }  // namespace palantir::window::component::webview

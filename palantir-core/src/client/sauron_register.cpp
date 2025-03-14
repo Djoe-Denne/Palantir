@@ -45,7 +45,7 @@ auto SauronRegister::getInstance() -> std::shared_ptr<SauronRegister> {
 auto SauronRegister::setInstance(const std::shared_ptr<SauronRegister>& instance) -> void { instance_ = instance; }
 
 // Constructor
-SauronRegister::SauronRegister() : pImpl_(std::make_unique<Impl>()) {} // NOLINT
+SauronRegister::SauronRegister() : pImpl_(std::make_unique<Impl>()) {}  // NOLINT
 
 SauronRegister::SauronRegister(const std::shared_ptr<sauron::client::SauronClient>& sauronClient)
     : pImpl_(std::make_unique<Impl>(sauronClient)) {}

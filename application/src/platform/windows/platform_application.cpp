@@ -142,9 +142,8 @@ public:
                 // Process the message
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
-            }
-            else {
-                // No messages, update our window 
+            } else {
+                // No messages, update our window
                 if (mainWindow->isRunning()) {
                     mainWindow->update();
                 }

@@ -1,17 +1,14 @@
 #include "window/component/webview/webview_callbacks.hpp"
-#include "window/component/webview/webview.hpp"
+
 #include "utils/resource_utils.hpp"
 #include "utils/string_utils.hpp"
+#include "window/component/webview/webview.hpp"
 
 namespace palantir::window::component::webview {
 
-WebViewCallbacks::WebViewCallbacks() 
-    : initCallback_(nullptr) {
-}
+WebViewCallbacks::WebViewCallbacks() : initCallback_(nullptr) {}
 
-void WebViewCallbacks::setInitCallback(std::function<void()> callback) {
-    initCallback_ = std::move(callback);
-}
+void WebViewCallbacks::setInitCallback(std::function<void()> callback) { initCallback_ = std::move(callback); }
 
 Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>
 WebViewCallbacks::getEnvironmentCompletedHandler(WebView* webview) {
@@ -28,9 +25,7 @@ WebViewCallbacks::getEnvironmentCompletedHandler(WebView* webview) {
 
             DEBUG_LOG("WebView2 environment created successfully");
             auto nativeHandle = static_cast<HWND>(webview->getNativeHandle());
-            return env->CreateCoreWebView2Controller(
-                nativeHandle,
-                this->getControllerCompletedHandler(webview).Get());
+            return env->CreateCoreWebView2Controller(nativeHandle, this->getControllerCompletedHandler(webview).Get());
         });
 }
 
@@ -57,12 +52,11 @@ WebViewCallbacks::getControllerCompletedHandler(WebView* webview) {
                 this->initCallback_();
             }
             return S_OK;
-            
         });
 }
 
-Microsoft::WRL::ComPtr<ICoreWebView2WebMessageReceivedEventHandler>
-WebViewCallbacks::getWebMessageReceivedHandler(WebView* webview) {
+Microsoft::WRL::ComPtr<ICoreWebView2WebMessageReceivedEventHandler> WebViewCallbacks::getWebMessageReceivedHandler(
+    WebView* webview) {
     return Microsoft::WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(
         [webview, this](ICoreWebView2* sender, ICoreWebView2WebMessageReceivedEventArgs* args) -> HRESULT {
             LPWSTR message = nullptr;
@@ -76,12 +70,12 @@ WebViewCallbacks::getWebMessageReceivedHandler(WebView* webview) {
                     return S_OK;
                 }
             }
-            
+
             if (message) {
                 std::wstring wmessage(message);
                 std::string messageStr(wmessage.begin(), wmessage.end());
                 DEBUG_LOG("Received WebView2 message: ", messageStr);
-                
+
                 try {
                     // Try to handle the message with the new MessageHandler first
                     webview->handleMessage(messageStr);
@@ -90,16 +84,16 @@ WebViewCallbacks::getWebMessageReceivedHandler(WebView* webview) {
                 } catch (...) {
                     DEBUG_LOG("Unknown exception in message handler");
                 }
-                
+
                 CoTaskMemFree(message);
             }
-            
+
             return S_OK;
         });
 }
 
-Microsoft::WRL::ComPtr<ICoreWebView2NavigationCompletedEventHandler>
-WebViewCallbacks::getNavigationCompletedHandler(WebView* webview) {
+Microsoft::WRL::ComPtr<ICoreWebView2NavigationCompletedEventHandler> WebViewCallbacks::getNavigationCompletedHandler(
+    WebView* webview) {
     return Microsoft::WRL::Callback<ICoreWebView2NavigationCompletedEventHandler>(
         [webview](ICoreWebView2* sender, ICoreWebView2NavigationCompletedEventArgs* args) -> HRESULT {
             DEBUG_LOG("Navigation completed callback triggered");
@@ -122,10 +116,10 @@ WebViewCallbacks::getNavigationCompletedHandler(WebView* webview) {
                 try {
                     auto resourceUtils = palantir::utils::ResourceUtils::getInstance();
                     auto scripts = resourceUtils->loadAllJavaScriptsFromDirectory("post-nav");
-                    
+
                     for (const auto& [filename, script] : scripts) {
                         DEBUG_LOG("Executing post-navigation script: ", filename);
-                        
+
                         std::wstring wScript(script.begin(), script.end());
                         sender->ExecuteScript(wScript.c_str(), nullptr);
                     }
@@ -137,8 +131,7 @@ WebViewCallbacks::getNavigationCompletedHandler(WebView* webview) {
         });
 }
 
-Microsoft::WRL::ComPtr<ICoreWebView2SourceChangedEventHandler>
-WebViewCallbacks::getSourceChangedHandler() {
+Microsoft::WRL::ComPtr<ICoreWebView2SourceChangedEventHandler> WebViewCallbacks::getSourceChangedHandler() {
     return Microsoft::WRL::Callback<ICoreWebView2SourceChangedEventHandler>(
         [](ICoreWebView2* sender, ICoreWebView2SourceChangedEventArgs* args) -> HRESULT {
             LPWSTR uri;
@@ -164,4 +157,4 @@ WebViewCallbacks::getExecuteScriptCompletedHandler() {
         });
 }
 
-} // namespace palantir::window::component::webview 
+}  // namespace palantir::window::component::webview

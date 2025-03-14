@@ -11,7 +11,7 @@ auto MessageHandler::registerStrategy(std::unique_ptr<MessageStrategyBase> strat
         DEBUG_LOG("Attempted to register a null strategy");
         return;
     }
-    
+
     std::string eventType = strategy->getEventType();
     strategies_.push_back(std::move(strategy));
     DEBUG_LOG("Registered strategy for event type: ", eventType);
@@ -20,33 +20,29 @@ auto MessageHandler::registerStrategy(std::unique_ptr<MessageStrategyBase> strat
 auto MessageHandler::handleMessage(const std::string& message) -> void {
     try {
         nlohmann::json jsonMessage = nlohmann::json::parse(message);
-        
+
         // Check if the message has a type field
         if (!jsonMessage.contains("type") || !jsonMessage["type"].is_string()) {
             DEBUG_LOG("Message is missing type field or type is not a string: ", message);
             return;
         }
-        
+
         std::string eventType = jsonMessage["type"];
-        
+
         for (const auto& strategy : strategies_) {
             if (strategy->getEventType() == "*" || strategy->getEventType() == eventType) {
                 // Call the type-erased executeJson method which will convert and forward to the typed execute
                 strategy->executeJson(jsonMessage["event"]);
             }
         }
-        
-    } 
-    catch (const nlohmann::json::parse_error& e) {
+
+    } catch (const nlohmann::json::parse_error& e) {
         DEBUG_LOG("Failed to parse message as JSON: ", e.what(), " Message: ", message);
-    }
-    catch (const std::exception& e) {
+    } catch (const std::exception& e) {
         DEBUG_LOG("Exception in handleMessage: ", e.what());
-    }
-    catch (...) {
+    } catch (...) {
         DEBUG_LOG("Unknown exception in handleMessage");
     }
-    
 }
 
-} // namespace palantir::window::component::message 
+}  // namespace palantir::window::component::message

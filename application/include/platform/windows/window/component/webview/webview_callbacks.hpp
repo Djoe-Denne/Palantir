@@ -9,8 +9,8 @@
 #include <wrl.h>
 // clang-format on
 #include <functional>
-#include <string>
 #include <memory>
+#include <string>
 
 #include "utils/logger.hpp"
 
@@ -30,13 +30,17 @@ public:
     void setInitCallback(std::function<void()> callback);
 
     // Event handler getters
-    auto getEnvironmentCompletedHandler(class WebView* webview) -> Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>;
+    auto getEnvironmentCompletedHandler(class WebView* webview)
+        -> Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>;
 
-    auto getControllerCompletedHandler(class WebView* webview) -> Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>;
+    auto getControllerCompletedHandler(class WebView* webview)
+        -> Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>;
 
-    auto getWebMessageReceivedHandler(class WebView* webview) -> Microsoft::WRL::ComPtr<ICoreWebView2WebMessageReceivedEventHandler>;
+    auto getWebMessageReceivedHandler(class WebView* webview)
+        -> Microsoft::WRL::ComPtr<ICoreWebView2WebMessageReceivedEventHandler>;
 
-    auto getNavigationCompletedHandler(class WebView* webview) -> Microsoft::WRL::ComPtr<ICoreWebView2NavigationCompletedEventHandler>;
+    auto getNavigationCompletedHandler(class WebView* webview)
+        -> Microsoft::WRL::ComPtr<ICoreWebView2NavigationCompletedEventHandler>;
 
     auto getSourceChangedHandler() -> Microsoft::WRL::ComPtr<ICoreWebView2SourceChangedEventHandler>;
 
@@ -44,7 +48,6 @@ public:
 
 private:
     std::function<void()> initCallback_;
-    
 };
 
-} // namespace palantir::window::component::webview 
+}  // namespace palantir::window::component::webview

@@ -23,12 +23,11 @@ public:
         }
     }
 
-    [[nodiscard]] auto getMainWindow() const -> std::shared_ptr<IWindow> {
-        return getWindowByType(WindowType::MAIN);
-    }
+    [[nodiscard]] auto getMainWindow() const -> std::shared_ptr<IWindow> { return getWindowByType(WindowType::MAIN); }
 
     [[nodiscard]] auto getWindowByType(WindowType type) const -> std::shared_ptr<IWindow> {
-        auto it = std::find_if(windows_.begin(), windows_.end(), [type](const auto& window) { return window->getWindowType() == type; });
+        auto it = std::find_if(windows_.begin(), windows_.end(),
+                               [type](const auto& window) { return window->getWindowType() == type; });
         return (it != windows_.end()) ? *it : nullptr;
     }
 
