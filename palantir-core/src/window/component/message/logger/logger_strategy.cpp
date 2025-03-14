@@ -4,7 +4,7 @@
 
 namespace palantir::window::component::message::logger {
 
-LoggerStrategy::LoggerStrategy(const std::string& eventType) : eventType_(eventType) {}
+LoggerStrategy::LoggerStrategy(std::string eventType) : eventType_(std::move(eventType)) {}
 
 auto LoggerStrategy::execute(const LogMessageVO& logMessage) -> void {
     DEBUG_LOG("LoggerStrategy handling event: ", eventType_, " with message: ", logMessage.message);

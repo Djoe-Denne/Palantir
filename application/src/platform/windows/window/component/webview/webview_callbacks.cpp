@@ -6,12 +6,12 @@
 
 namespace palantir::window::component::webview {
 
-WebViewCallbacks::WebViewCallbacks() : initCallback_(nullptr) {}
+WebViewCallbacks::WebViewCallbacks() = default;
 
 void WebViewCallbacks::setInitCallback(std::function<void()> callback) { initCallback_ = std::move(callback); }
 
-Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>
-WebViewCallbacks::getEnvironmentCompletedHandler(WebView* webview) {
+auto WebViewCallbacks::getEnvironmentCompletedHandler(WebView* webview)
+    -> Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler> {
     return Microsoft::WRL::Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(
         [webview, this](HRESULT result, ICoreWebView2Environment* env) -> HRESULT {
             if (FAILED(result)) {
@@ -29,8 +29,8 @@ WebViewCallbacks::getEnvironmentCompletedHandler(WebView* webview) {
         });
 }
 
-Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>
-WebViewCallbacks::getControllerCompletedHandler(WebView* webview) {
+auto WebViewCallbacks::getControllerCompletedHandler(WebView* webview)
+    -> Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler> {
     return Microsoft::WRL::Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
         [webview, this](HRESULT result, ICoreWebView2Controller* controller) -> HRESULT {
             if (FAILED(result)) {
@@ -55,8 +55,8 @@ WebViewCallbacks::getControllerCompletedHandler(WebView* webview) {
         });
 }
 
-Microsoft::WRL::ComPtr<ICoreWebView2WebMessageReceivedEventHandler> WebViewCallbacks::getWebMessageReceivedHandler(
-    WebView* webview) {
+auto WebViewCallbacks::getWebMessageReceivedHandler(WebView* webview)
+    -> Microsoft::WRL::ComPtr<ICoreWebView2WebMessageReceivedEventHandler> {
     return Microsoft::WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(
         [webview, this](ICoreWebView2* sender, ICoreWebView2WebMessageReceivedEventArgs* args) -> HRESULT {
             LPWSTR message = nullptr;
@@ -92,8 +92,8 @@ Microsoft::WRL::ComPtr<ICoreWebView2WebMessageReceivedEventHandler> WebViewCallb
         });
 }
 
-Microsoft::WRL::ComPtr<ICoreWebView2NavigationCompletedEventHandler> WebViewCallbacks::getNavigationCompletedHandler(
-    WebView* webview) {
+auto WebViewCallbacks::getNavigationCompletedHandler(WebView* webview)
+    -> Microsoft::WRL::ComPtr<ICoreWebView2NavigationCompletedEventHandler> {
     return Microsoft::WRL::Callback<ICoreWebView2NavigationCompletedEventHandler>(
         [webview](ICoreWebView2* sender, ICoreWebView2NavigationCompletedEventArgs* args) -> HRESULT {
             DEBUG_LOG("Navigation completed callback triggered");
@@ -131,7 +131,7 @@ Microsoft::WRL::ComPtr<ICoreWebView2NavigationCompletedEventHandler> WebViewCall
         });
 }
 
-Microsoft::WRL::ComPtr<ICoreWebView2SourceChangedEventHandler> WebViewCallbacks::getSourceChangedHandler() {
+auto WebViewCallbacks::getSourceChangedHandler() -> Microsoft::WRL::ComPtr<ICoreWebView2SourceChangedEventHandler> {
     return Microsoft::WRL::Callback<ICoreWebView2SourceChangedEventHandler>(
         [](ICoreWebView2* sender, ICoreWebView2SourceChangedEventArgs* args) -> HRESULT {
             LPWSTR uri;
@@ -143,8 +143,8 @@ Microsoft::WRL::ComPtr<ICoreWebView2SourceChangedEventHandler> WebViewCallbacks:
         });
 }
 
-Microsoft::WRL::ComPtr<ICoreWebView2ExecuteScriptCompletedHandler>
-WebViewCallbacks::getExecuteScriptCompletedHandler() {
+auto WebViewCallbacks::getExecuteScriptCompletedHandler()
+    -> Microsoft::WRL::ComPtr<ICoreWebView2ExecuteScriptCompletedHandler> {
     return Microsoft::WRL::Callback<ICoreWebView2ExecuteScriptCompletedHandler>(
         [](HRESULT error, LPCWSTR result) -> HRESULT {
             if (FAILED(error)) {

@@ -4,8 +4,8 @@
 
 namespace palantir::window::component::message::resize {
 
-ResizeStrategy::ResizeStrategy(const std::string& eventType, std::shared_ptr<IContentManager> contentManager)
-    : eventType_(eventType), contentManager_(contentManager) {}
+ResizeStrategy::ResizeStrategy(std::string eventType, const std::shared_ptr<IContentManager>& contentManager)
+    : eventType_(std::move(eventType)), contentManager_(contentManager) {}
 
 auto ResizeStrategy::execute(const ResizeMessageVO& resizeMessage) -> void {
     DEBUG_LOG("ResizeStrategy handling event: ", eventType_, " with message: ", resizeMessage.width, "x",

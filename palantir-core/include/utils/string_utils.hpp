@@ -6,6 +6,8 @@
 #include <vector>
 #include <array>
 #include <cwchar>
+#include <locale>
+#include <codecvt>
 #include "core_export.hpp"
 
 namespace palantir::utils {
@@ -31,10 +33,8 @@ public:
     }
 
     static auto wToStr(const std::wstring& wstr) -> std::string {
-        size_t len = std::wcstombs(nullptr, wstr.c_str(), 0); // Get required size
-        std::string str(len, 0);
-        std::wcstombs(str.data(), wstr.c_str(), len + 1);
-        return str;
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+        return converter.to_bytes(wstr);
     }
     
     // Named constants for bitwise operations

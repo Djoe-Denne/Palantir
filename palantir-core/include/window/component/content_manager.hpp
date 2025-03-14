@@ -140,7 +140,7 @@ public:
      * 
      * @return int The current content width.
      */
-    auto getContentWidth() const -> int override {
+    [[nodiscard]] auto getContentWidth() const -> int override {
         return pimpl_->getContentWidth();
     }
 
@@ -149,7 +149,7 @@ public:
      * 
      * @return int The current content height.
      */
-    auto getContentHeight() const -> int override {
+    [[nodiscard]] auto getContentHeight() const -> int override {
         return pimpl_->getContentHeight();
     }
 

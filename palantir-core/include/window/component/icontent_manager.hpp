@@ -110,14 +110,14 @@ public:
      * 
      * @return int The current content width.
      */
-    virtual auto getContentWidth() const -> int = 0;
+    [[nodiscard]] virtual auto getContentWidth() const -> int = 0;
 
     /**
      * @brief Get the current content height.
      * 
      * @return int The current content height.
      */
-    virtual auto getContentHeight() const -> int = 0;
+    [[nodiscard]] virtual auto getContentHeight() const -> int = 0;
 
     /**
      * @brief Register a message strategy.

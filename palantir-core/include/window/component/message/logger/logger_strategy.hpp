@@ -27,7 +27,7 @@ public:
      * 
      * @param eventType The event type string.
      */
-    explicit LoggerStrategy(const std::string& eventType);
+    explicit LoggerStrategy(std::string eventType);
     
     /**
      * Execute the strategy using the strongly typed value object
@@ -41,7 +41,7 @@ public:
      * 
      * @return The event type string.
      */
-    auto getEventType() const -> const std::string&;
+    [[nodiscard]] auto getEventType() const -> const std::string&;
     
 private:
 #pragma warning(push)

@@ -18,7 +18,7 @@ auto ResourceUtils::getInstance() -> std::shared_ptr<ResourceUtils> {
     return instance_;
 }
 
-auto ResourceUtils::setInstance(std::shared_ptr<ResourceUtils> instance) -> void { instance_ = instance; }
+auto ResourceUtils::setInstance(const std::shared_ptr<ResourceUtils>& instance) -> void { instance_ = instance; }
 
 /**
  * @brief Load a JavaScript file from the resource directory
@@ -48,9 +48,10 @@ void ResourceUtils::initializeResourceDirectory() {
     char* envResourceDir = nullptr;
     size_t len = 0;
     _dupenv_s(&envResourceDir, &len, "PALANTIR_RESOURCE_DIR");
-    if (envResourceDir && std::filesystem::exists(envResourceDir)) {
-        resourceDirectory_ = std::filesystem::path(envResourceDir);
-        free(envResourceDir);
+    auto envGuard = std::unique_ptr<char, decltype(&free)>(envResourceDir, free);
+
+    if (envGuard && std::filesystem::exists(envGuard.get())) {
+        resourceDirectory_ = std::filesystem::path(envGuard.get());
     } else {
         resourceDirectory_ = std::filesystem::path("../../resource");
     }

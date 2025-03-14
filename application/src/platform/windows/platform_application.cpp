@@ -128,7 +128,7 @@ public:
         mainWindow->show();
 
         // For periodic updates (roughly 60 times per second)
-        UINT_PTR timerId = SetTimer(nullptr, 0, 16, nullptr);  // ~60 FPS
+        UINT_PTR timerId = SetTimer(nullptr, 0, 16, nullptr);  // ~60 FPS NOLINT
 
         // Main message loop
         while (true) {

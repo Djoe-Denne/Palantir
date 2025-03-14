@@ -11,8 +11,8 @@ std::shared_ptr<SauronRegister> SauronRegister::instance_;
 class SauronRegister::Impl {
 public:
     Impl() {
-        auto* hc = new sauron::client::HttpClientCurl("localhost:3000");
-        auto httpClient = std::unique_ptr<sauron::client::HttpClientCurl>(hc);
+        auto* curlClient = new sauron::client::HttpClientCurl("localhost:3000");
+        auto httpClient = std::unique_ptr<sauron::client::HttpClientCurl>(curlClient);
         sauronClient = std::make_shared<sauron::client::SauronClient>(std::move(httpClient));
         try {
             sauronClient->login(sauron::dto::LoginRequest(

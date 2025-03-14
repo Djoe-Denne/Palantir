@@ -26,9 +26,9 @@ public:
     [[nodiscard]] auto getMainWindow() const -> std::shared_ptr<IWindow> { return getWindowByType(WindowType::MAIN); }
 
     [[nodiscard]] auto getWindowByType(WindowType type) const -> std::shared_ptr<IWindow> {
-        auto it = std::find_if(windows_.begin(), windows_.end(),
-                               [type](const auto& window) { return window->getWindowType() == type; });
-        return (it != windows_.end()) ? *it : nullptr;
+        auto iterator = std::find_if(windows_.begin(), windows_.end(),
+                                     [type](const auto& window) { return window->getWindowType() == type; });
+        return (iterator != windows_.end()) ? *iterator : nullptr;
     }
 
     [[nodiscard]] auto hasRunningWindows() const -> bool {
@@ -57,7 +57,7 @@ auto WindowManager::getInstance() -> std::shared_ptr<WindowManager> {
 auto WindowManager::setInstance(const std::shared_ptr<WindowManager>& instance) -> void { instance_ = instance; }
 
 // Constructor
-WindowManager::WindowManager() : pimpl_(std::make_unique<WindowManagerImpl>()) {}
+WindowManager::WindowManager() : pimpl_(std::make_unique<WindowManagerImpl>()) {}  // NOLINT
 
 // Destructor
 WindowManager::~WindowManager() = default;

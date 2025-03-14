@@ -33,7 +33,7 @@ public:
     auto operator=(MessageStrategyBase&&) -> MessageStrategyBase& = delete;
 
     // All strategies must provide a way to identify their event type
-    virtual auto getEventType() const -> const std::string& = 0;
+    [[nodiscard]] virtual auto getEventType() const -> const std::string& = 0;
 
     // Common execute method that accepts JSON - will be implemented by the wrapper
     virtual auto executeJson(const nlohmann::json& json) -> void = 0;
@@ -51,7 +51,7 @@ public:
     explicit TypeErasedStrategy(std::unique_ptr<ConcreteStrategy> strategy) 
         : strategy_(std::move(strategy)) {}
 
-    auto getEventType() const -> const std::string& override {
+    [[nodiscard]] auto getEventType() const -> const std::string& override {
         return strategy_->getEventType();
     }
 

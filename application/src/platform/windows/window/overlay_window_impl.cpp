@@ -71,23 +71,23 @@ LRESULT OverlayWindow::Impl::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, 
         // Add handlers for frameless window dragging
         case WM_NCHITTEST: {
             // Get cursor position
-            POINT pt;
-            pt.x = GET_X_LPARAM(lParam);
-            pt.y = GET_Y_LPARAM(lParam);
+            POINT point;
+            point.x = GET_X_LPARAM(lParam);
+            point.y = GET_Y_LPARAM(lParam);
 
             // Get window rect
             RECT rcWindow;
             GetWindowRect(hwnd, &rcWindow);
 
             // Check if cursor is in the right frame area
-            if (pt.x >= rcWindow.right - RIGHT_FRAME_WIDTH && pt.x <= rcWindow.right) {
+            if (point.x >= rcWindow.right - RIGHT_FRAME_WIDTH && point.x <= rcWindow.right) {
                 // If in the right frame area, allow dragging
                 int windowHeight = rcWindow.bottom - rcWindow.top;
                 int frameHeight = std::min(RIGHT_FRAME_WIDTH, windowHeight);
 
                 // If in the vertical center of the right frame (limited to frameHeight)
                 int verticalCenter = (rcWindow.top + rcWindow.bottom) / 2;
-                if (pt.y >= verticalCenter - frameHeight / 2 && pt.y <= verticalCenter + frameHeight / 2) {
+                if (point.y >= verticalCenter - frameHeight / 2 && point.y <= verticalCenter + frameHeight / 2) {
                     return HTCAPTION;  // Allow dragging from this area
                 }
 
@@ -105,7 +105,7 @@ LRESULT OverlayWindow::Impl::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, 
         case WM_NCCALCSIZE: {
             // Handling non-client area calculations
             if (wParam == TRUE) {
-                auto* params = reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam);
+                auto* params = reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam);  // NOLINT
 
                 // Save the original right edge position
                 LONG originalRight = params->rgrc[0].right;
@@ -180,10 +180,10 @@ auto OverlayWindow::Impl::create() -> void {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-    int x = (screenWidth - windowWidth) / 2;
-    int y = (screenHeight - windowHeight) / 2;
+    int posX = (screenWidth - windowWidth) / 2;
+    int posY = (screenHeight - windowHeight) / 2;
 
-    SetWindowPos(hwnd_, nullptr, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+    SetWindowPos(hwnd_, nullptr, posX, posY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 
     // Update the running state
     running_ = true;
@@ -202,12 +202,12 @@ auto OverlayWindow::Impl::makeWindowFrameless() -> void {
 
     // Enable DWM blur behind (Windows 10 only)
     HMODULE hUser32 = GetModuleHandleW(L"user32.dll");
-    if (hUser32) {
+    if (hUser32 != nullptr) {
         typedef BOOL(WINAPI * SetWindowCompositionAttribute)(HWND, void*);
         auto pSetWindowCompositionAttribute =
             reinterpret_cast<SetWindowCompositionAttribute>(GetProcAddress(hUser32, "SetWindowCompositionAttribute"));
 
-        if (pSetWindowCompositionAttribute) {
+        if (pSetWindowCompositionAttribute != nullptr) {
             // Define the necessary structures
             struct WindowCompositionAttributeData {
                 DWORD Attrib;
@@ -224,11 +224,11 @@ auto OverlayWindow::Impl::makeWindowFrameless() -> void {
 
             // Set the accent policy
             AccentPolicy policy = {};
-            policy.AccentState = 3;             // ACCENT_ENABLE_BLURBEHIND
-            policy.GradientColor = 0x00FFFFFF;  // Transparent
+            policy.AccentState = 3;                    // ACCENT_ENABLE_BLURBEHIND
+            policy.GradientColor = TRANSPARENT_COLOR;  // Transparent
 
             WindowCompositionAttributeData data = {};
-            data.Attrib = 19;  // WCA_ACCENT_POLICY
+            data.Attrib = 19;  // WCA_ACCENT_POLICY // NOLINT
             data.pvData = &policy;
             data.cbData = sizeof(policy);
 
@@ -257,15 +257,15 @@ auto OverlayWindow::Impl::updateWindowSize(int contentWidth, int contentHeight) 
         int oldHeight = windowRect.bottom - windowRect.top;
 
         // Calculate new position to keep window centered
-        int x = windowRect.left - ((newWidth - oldWidth) / 2);
-        int y = windowRect.top - ((newHeight - oldHeight) / 2);
+        int posX = windowRect.left - ((newWidth - oldWidth) / 2);
+        int posY = windowRect.top - ((newHeight - oldHeight) / 2);
 
         // If window is too small, enforce minimum size
         newWidth = std::max(newWidth, 200);
         newHeight = std::max(newHeight, 150);
 
         // Resize and reposition the window
-        SetWindowPos(hwnd_, nullptr, x, y, newWidth, newHeight, SWP_NOZORDER);
+        SetWindowPos(hwnd_, nullptr, posX, posY, newWidth, newHeight, SWP_NOZORDER);
 
         // Update current size
         currentWidth_ = newWidth;
@@ -297,7 +297,7 @@ auto OverlayWindow::Impl::getCurrentScreenResolution() -> std::pair<int, int> {
 
 auto OverlayWindow::Impl::show() -> void {
     if (hwnd_ != nullptr) {
-        if (IsWindowVisible(hwnd_)) {
+        if (IsWindowVisible(hwnd_) == TRUE) {
             ShowWindow(hwnd_, SW_HIDE);
         } else {
             ShowWindow(hwnd_, SW_SHOW);
@@ -308,7 +308,7 @@ auto OverlayWindow::Impl::show() -> void {
 
 auto OverlayWindow::Impl::update() -> void {
     if (hwnd_ != nullptr) {
-        // TODO: Implement update, content size change ?
+        return;
     }
 }
 
@@ -356,11 +356,11 @@ auto OverlayWindow::Impl::toggleWindowTool(bool isToolWindow) -> void {
         return;
     }
 
-    LONG_PTR style = GetWindowLongPtr(hwnd_, GWL_EXSTYLE);
+    uintptr_t style = GetWindowLongPtr(hwnd_, GWL_EXSTYLE);
     if (isToolWindow) {
         SetWindowLongPtr(hwnd_, GWL_EXSTYLE, style | WS_EX_TOOLWINDOW);
     } else {
-        SetWindowLongPtr(hwnd_, GWL_EXSTYLE, style & ~WS_EX_TOOLWINDOW);
+        SetWindowLongPtr(hwnd_, GWL_EXSTYLE, style & ~WS_EX_TOOLWINDOW);  // NOLINT
     }
 }
 

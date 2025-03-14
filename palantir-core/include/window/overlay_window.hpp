@@ -13,7 +13,7 @@ namespace palantir::window {
 class PALANTIR_CORE_API OverlayWindow : public IWindow, public component::IContentSizeObserver  {
 public:
     OverlayWindow();
-    OverlayWindow(const WindowType& type);
+    explicit OverlayWindow(const WindowType& type);
     ~OverlayWindow() override;
 
     // Delete copy operations

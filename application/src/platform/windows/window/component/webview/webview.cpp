@@ -24,7 +24,7 @@ namespace palantir::window::component::webview {
 
 class WebView::WebViewImpl {
 public:
-    WebViewImpl()
+    WebViewImpl()  // NOLINT
         : callbacks_(std::make_unique<WebViewCallbacks>()),
           messageHandler_(std::make_unique<message::MessageHandler>()) {}
     ~WebViewImpl() { destroy(); }
@@ -58,7 +58,7 @@ public:
     }
 };
 
-WebView::WebView() : pimpl_(std::make_unique<WebViewImpl>()) {}
+WebView::WebView() : pimpl_(std::make_unique<WebViewImpl>()) {}  // NOLINT
 
 WebView::~WebView() = default;
 
@@ -90,7 +90,7 @@ auto WebView::initialize(void* nativeWindowHandle, std::function<void()> initCal
 }
 
 auto WebView::initializeController(void* controller) -> intptr_t {
-    if (!controller) {
+    if (controller == nullptr) {
         throw std::runtime_error("Invalid controller pointer");
     }
 

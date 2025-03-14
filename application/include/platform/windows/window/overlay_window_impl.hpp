@@ -44,8 +44,9 @@ private:
     static constexpr int WINDOW_WIDTH = 800;
     static constexpr int WINDOW_HEIGHT = 600;
     static constexpr BYTE WINDOW_ALPHA = 240;
-    static constexpr int BORDER_PADDING = 0;     // Padding around content
-    static constexpr int RIGHT_FRAME_WIDTH = 0;  // Width of the right frame
+    static constexpr COLORREF TRANSPARENT_COLOR = 0x00FFFFFF;  // Transparent
+    static constexpr int BORDER_PADDING = 0;                   // Padding around content
+    static constexpr int RIGHT_FRAME_WIDTH = 0;                // Width of the right frame
 
     HWND hwnd_{nullptr};
     bool running_{false};

@@ -41,7 +41,7 @@ public:
      * 
      * @return The event type string.
      */
-    auto getEventType() const -> const std::string&;
+    [[nodiscard]] auto getEventType() const -> const std::string&;
     
 private:
 #pragma warning(push)

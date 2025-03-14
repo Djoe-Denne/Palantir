@@ -20,6 +20,11 @@ namespace palantir::utils {
 class PALANTIR_CORE_API ResourceUtils {
 public:
     ~ResourceUtils() = default;
+    ResourceUtils(const ResourceUtils&) = delete;
+    ResourceUtils(ResourceUtils&&) = delete;
+    auto operator=(const ResourceUtils&) -> ResourceUtils& = delete;
+    auto operator=(ResourceUtils&&) -> ResourceUtils& = delete;
+
     /**
      * @brief Get the singleton instance of ResourceUtils
      * @return Reference to the singleton instance
@@ -27,7 +32,7 @@ public:
     static auto getInstance() -> std::shared_ptr<ResourceUtils>;
 
 
-    static auto setInstance(std::shared_ptr<ResourceUtils> instance) -> void;
+    static auto setInstance(const std::shared_ptr<ResourceUtils>& instance) -> void;
 
     /**
      * @brief Load a JavaScript file from the resource directory
@@ -35,28 +40,23 @@ public:
      * @return String containing the file content
      * @throws std::runtime_error if the file cannot be loaded
      */
-    auto loadJavaScript(const std::string& filename) const -> std::string;
+    [[nodiscard]] auto loadJavaScript(const std::string& filename) const -> std::string;
 
     /**
      * @brief Load all JavaScript files from a specific subdirectory
      * @param subdirectory The subdirectory within the resource directory
      * @return Vector of pairs containing filename and file content
      */
-    auto loadAllJavaScriptsFromDirectory(const std::string& subdirectory) const -> std::vector<std::pair<std::string, std::string>>;
+    [[nodiscard]] auto loadAllJavaScriptsFromDirectory(const std::string& subdirectory) const -> std::vector<std::pair<std::string, std::string>>;
 
     /**
      * @brief Get the full path to the resource directory
      * @return Path to the resource directory
      */
-    auto getResourceDirectory() const -> std::filesystem::path;
+    [[nodiscard]] auto getResourceDirectory() const -> std::filesystem::path;
 
 private:
     ResourceUtils();
-    ResourceUtils(const ResourceUtils&) = delete;
-    ResourceUtils(ResourceUtils&&) = delete;
-    auto operator=(const ResourceUtils&) -> ResourceUtils& = delete;
-    auto operator=(ResourceUtils&&) -> ResourceUtils& = delete;
-
 #pragma warning(push)
 #pragma warning(disable: 4251)
     static std::shared_ptr<ResourceUtils> instance_;
@@ -73,14 +73,14 @@ private:
      * @param filepath Path to the file
      * @return String containing the file content
      */
-    auto readFile(const std::filesystem::path& filepath) const -> std::string;
+    [[nodiscard]] auto readFile(const std::filesystem::path& filepath) const -> std::string;
 
     /**
      * @brief Read all files from a directory and return their content as a vector of pairs
      * @param directory Path to the directory
      * @return Vector of pairs containing filename and file content
      */
-    auto readAllFilesFromDirectory(const std::filesystem::path& directory, const std::string& extension) const -> std::vector<std::pair<std::string, std::string>>;
+    [[nodiscard]] auto readAllFilesFromDirectory(const std::filesystem::path& directory, const std::string& extension) const -> std::vector<std::pair<std::string, std::string>>;
 };
 
 } // namespace palantir::utils 

@@ -218,11 +218,11 @@ public:
         }
     }
 
-    auto getContentWidth() const -> int {
+    [[nodiscard]] auto getContentWidth() const -> int {
         return currentContentWidth_;
     }
 
-    auto getContentHeight() const -> int {
+    [[nodiscard]] auto getContentHeight() const -> int {
         return currentContentHeight_;
     }
 
@@ -244,7 +244,7 @@ public:
     }
 
 private:
-    auto split(const std::string& str, const std::string& delimiter) -> std::vector<std::string> {
+    [[nodiscard]] auto split(const std::string& str, const std::string& delimiter) -> std::vector<std::string> {
         std::vector<std::string> tokens;
         size_t start = 0;
         size_t end = str.find(delimiter);

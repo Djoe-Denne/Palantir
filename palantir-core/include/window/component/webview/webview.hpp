@@ -38,14 +38,14 @@ public:
      *
      * @param controller A pointer to the web view controller.
      */
-    virtual intptr_t initializeController(void* controller);
+    [[nodiscard]] virtual auto initializeController(void* controller) -> intptr_t;
 
     /**
      * @brief Returns the native window handle of the web view.
      *
      * @return A pointer to the native window handle.
      */
-    virtual void* getNativeHandle();
+    [[nodiscard]] virtual auto getNativeHandle() -> void*;
 
     /**
      * @brief Loads a URL in the web view.

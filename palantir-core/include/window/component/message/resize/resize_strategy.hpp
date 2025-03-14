@@ -30,7 +30,7 @@ public:
      * 
      * @param eventType The event type string.
      */
-    explicit ResizeStrategy(const std::string& eventType, std::shared_ptr<IContentManager> contentManager);
+    explicit ResizeStrategy(std::string eventType, const std::shared_ptr<IContentManager>& contentManager);
     
     /**
      * Execute the strategy using the strongly typed value object
@@ -44,7 +44,7 @@ public:
      * 
      * @return The event type string.
      */
-    auto getEventType() const -> const std::string&;
+    [[nodiscard]] auto getEventType() const -> const std::string&;
     
 private:
 #pragma warning(push)
@@ -54,5 +54,5 @@ private:
 #pragma warning(pop)
 };
 
-}
+} // namespace palantir::window::component::message::resize
 

@@ -15,6 +15,10 @@ namespace palantir::window::component {
  */
 class PALANTIR_CORE_API IContentSizeObserver {
 public:
+    IContentSizeObserver(const IContentSizeObserver&) = delete;
+    IContentSizeObserver(IContentSizeObserver&&) = delete;
+    auto operator=(const IContentSizeObserver&) -> IContentSizeObserver& = delete;
+    auto operator=(IContentSizeObserver&&) -> IContentSizeObserver& = delete;
     virtual ~IContentSizeObserver() = default;
 
     /**
