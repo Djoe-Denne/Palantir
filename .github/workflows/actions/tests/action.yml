@@ -28,9 +28,7 @@ runs:
       id: download-opencppcoverage
       shell: pwsh
       run: |
-        Invoke-WebRequest -Uri "https://github.com/OpenCppCoverage/OpenCppCoverage/releases/download/0.9.9.0/OpenCppCoverage-0.9.9.0-win64.zip" -OutFile "OpenCppCoverage.zip"
-        Expand-Archive -Path OpenCppCoverage.zip -DestinationPath OpenCppCoverage
-        echo "$(Get-Location)\OpenCppCoverage" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        choco install opencppcoverage -y
 
     # Step 3: Create coverage directory
     - name: Create Coverage Directory
