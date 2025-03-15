@@ -17,10 +17,9 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
     message(STATUS "✅ Clang tools found: ${CLANG_FORMAT_EXEC}, ${CLANG_TIDY_EXEC}")
 
     if (ALL_SOURCES)
-        # Filter out test files and resource_utils.hpp from ALL_SOURCES
+        # Filter out test files from ALL_SOURCES
         foreach(SOURCE ${ALL_SOURCES})
-            if(NOT SOURCE MATCHES ".*/tests/.*"
-                AND NOT SOURCE MATCHES ".*/palantir-core/include/utils/resource_utils.hpp")
+            if(NOT SOURCE MATCHES ".*/tests/.*")
                 list(APPEND FILES_TO_LINT ${SOURCE})
             endif()
         endforeach()
