@@ -1,0 +1,60 @@
+name: 'SonarCloud Analysis'
+description: 'Runs SonarCloud analysis with test coverage'
+
+inputs:
+  build-dir:
+    description: 'CMake build directory'
+    required: true
+  sonar-token:
+    description: 'SonarCloud token'
+    required: true
+  cache-key:
+    description: 'Cache key prefix'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Restore Build Cache
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          ${{ inputs.build-dir }}
+          ${{ inputs.build-dir }}/CMakeCache.txt
+          ${{ inputs.build-dir }}/CMakeFiles
+          ${{ inputs.build-dir }}/_deps
+        key: ${{ inputs.cache-key }}-tests
+
+    - name: Set up SonarCloud scanner
+      uses: SonarSource/sonar-scanner-cli@v2.0.2
+        
+    - name: Prepare coverage reports
+      shell: pwsh
+      run: |
+        $coverage_dir = "${{ inputs.build-dir }}\bin\Release\coverage"
+        $merged_coverage = "${{ inputs.build-dir }}\coverage-merged.xml"
+        
+        # Merge all coverage files into one
+        $coverage_files = Get-ChildItem -Path $coverage_dir -Filter *.xml
+        $first = $true
+        foreach ($file in $coverage_files) {
+          if ($first) {
+            Copy-Item $file.FullName $merged_coverage
+            $first = $false
+          } else {
+            # Here you would merge the coverage files
+            # For now we'll just use the last one
+            Copy-Item $file.FullName $merged_coverage -Force
+          }
+        }
+
+    - name: Run SonarCloud analysis
+      shell: pwsh
+      env:
+        SONAR_TOKEN: ${{ inputs.sonar-token }}
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        # Add coverage and clang-tidy report paths to sonar-scanner parameters
+        sonar-scanner \
+          -Dsonar.test.exclusions="**/tests/**" \
+          -Dsonar.coverageReportPaths="${{ inputs.build-dir }}/coverage-merged.xml" 

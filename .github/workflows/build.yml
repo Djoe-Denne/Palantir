@@ -65,9 +65,34 @@ jobs:
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
           cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}
 
+  tests-coverage:
+    needs: [tests]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Tests Coverage
+        uses: ./.github/workflows/actions/tests-coverage
+        with:
+          build-dir: ${{ env.CMAKE_BUILD_DIR }}
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}
+
+  sonar-analysis:
+    needs: [tests-coverage]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Important for Sonar analysis
+      - name: Run Sonar Analysis
+        uses: ./.github/workflows/actions/sonar
+        with:
+          build-dir: ${{ env.CMAKE_BUILD_DIR }}
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}
+
   clear-run-caches:
     name: Clear Run Caches
-    needs: [tests]
+    needs: [sonar-analysis]  # Changed to run after sonar analysis
     if: always()
     runs-on: windows-latest
     steps:
