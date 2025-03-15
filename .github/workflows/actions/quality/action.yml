@@ -2,12 +2,6 @@ name: 'Setup CMake'
 description: 'Sets up CMake build environment and caching'
 
 inputs:
-  github-token:
-    description: 'GitHub token for authentication'
-    required: true
-  cache-key:
-    description: 'Prefix for cache keys'
-    required: true
   build-dir:
     description: 'CMake build directory'
     required: true
@@ -19,21 +13,24 @@ runs:
   using: composite
   steps:  
     - name: Configure CMake
-      shell: bash
+      shell: pwsh
       run: |
-        cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ inputs.github-token }} -DQUALITY_ONLY=ON
+        if (-not (Test-Path -Path ${{ inputs.build-dir }})) {
+            New-Item -ItemType Directory -Path ${{ inputs.build-dir }} -Force
+        }
+        cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DQUALITY_ONLY=ON
 
     - name: Check Format
-      shell: bash
+      shell: pwsh
       run: cmake --build ${{ inputs.build-dir }} --target format-check
     
     - name: Run Lint Check
-      shell: bash
+      shell: pwsh
       continue-on-error: true
       run: cmake --build ${{ inputs.build-dir }} --target lint-check
 
     - name: Analyze Lint Results
-      shell: bash
+      shell: pwsh
       run: |
         cat ${{ inputs.build-dir }}/lint-reports/report.txt
         cmake --build ${{ inputs.build-dir }} --target lint-analyze
