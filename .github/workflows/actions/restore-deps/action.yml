@@ -13,7 +13,7 @@ runs:
       uses: actions/cache/restore@v3
       with:
         path: |
-          C:\ProgramData\chocolatey\lib\ninja
+          C:\ProgramData\chocolatey\lib\ninja\tools
           C:\Program Files\OpenCppCoverage
         key: ${{ inputs.cache-key }}-${{ hashFiles('.github/workflows/actions/deps/action.yml') }}
         restore-keys: |
