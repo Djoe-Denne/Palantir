@@ -25,6 +25,11 @@ runs:
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
         key: ${{ inputs.cache-key }}
+    
+    
+    - name: Install Ninja
+      run: |
+        choco install ninja
 
     - name: Configure CMake
       shell: pwsh
