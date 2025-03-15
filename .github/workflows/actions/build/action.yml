@@ -28,6 +28,7 @@ runs:
     
     
     - name: Install Ninja
+      shell: pwsh
       run: |
         choco install ninja
 
