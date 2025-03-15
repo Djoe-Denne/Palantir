@@ -15,7 +15,7 @@ runs:
         path: |
           C:\ProgramData\chocolatey\lib\ninja
           C:\Program Files\OpenCppCoverage
-        key: ${{ inputs.cache-key }}-${{ hashFiles('.github/workflows/actions/restore-deps/action.yml') }}
+        key: ${{ inputs.cache-key }}-${{ hashFiles('.github/workflows/actions/deps/action.yml') }}
         restore-keys: |
           ${{ inputs.cache-key }}-
         enableCrossOsArchive: true
