@@ -27,6 +27,13 @@ env:
   CMAKE_BUILD_DIR: ${{ github.workspace }}/build
   CACHE_KEY_PREFIX: v1  # Increment this to invalidate all caches
 jobs:
+  install-deps:
+    runs-on: windows-latest
+    steps:
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/deps
+        with:
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-deps-${{ hashFiles('.github/workflows/actions/deps/action.yml') }}
   # Build the project on both platforms
   build:
     name: Build-${{ matrix.os }}
@@ -48,6 +55,10 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
+      - name: Restore dependencies
+        uses: ./.github/workflows/actions/restore-deps
+        with:
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-deps-${{ hashFiles('.github/workflows/actions/deps/action.yml') }}
       - name: Build
         uses: ./.github/workflows/actions/build
         with:
@@ -59,6 +70,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Restore dependencies
+        uses: ./.github/workflows/actions/restore-deps
+        with:
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-deps-${{ hashFiles('.github/workflows/actions/deps/action.yml') }}
       - name: Run Tests
         uses: ./.github/workflows/actions/tests
         with:

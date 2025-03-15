@@ -1,0 +1,43 @@
+name: 'Build'
+description: 'Builds the project'
+
+inputs:
+  cache-key:
+    description: 'Cache prefix'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check cache
+      id: check-cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          C:\ProgramData\chocolatey\lib\ninja\tools
+          C:\Program Files\OpenCppCoverage
+        key: ${{ inputs.cache-key }}
+        lookup-only: true 
+
+    - name: Install Ninja
+      if: steps.check-cache.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        choco install ninja
+    
+    # Step 2: Download OpenCppCoverage
+    - name: Download OpenCppCoverage
+      id: download-opencppcoverage
+      if: steps.check-cache.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        choco install opencppcoverage
+
+    - name: Save cache
+      if: steps.check-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          C:\ProgramData\chocolatey\lib\ninja\tools
+          C:\Program Files\OpenCppCoverage
+        key: ${{ inputs.cache-key }}

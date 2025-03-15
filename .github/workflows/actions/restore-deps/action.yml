@@ -1,0 +1,25 @@
+name: 'Restore Dependencies'
+description: 'Restores cached build dependencies'
+
+inputs:
+  cache-key:
+    description: 'Cache prefix'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Restore Chocolatey packages
+      uses: actions/cache@v3
+      with:
+        path: |
+          C:\ProgramData\chocolatey\lib\ninja
+          C:\Program Files\OpenCppCoverage
+        key: ${{ inputs.cache-key }}-choco-${{ hashFiles('.github/workflows/actions/deps/action.yml') }}
+        restore-keys: |
+          ${{ inputs.cache-key }}-choco- 
+
+    - name: Set path
+      shell: pwsh
+      run: |
+        $env:PATH = "$env:PATH;C:\ProgramData\chocolatey\lib\ninja\tools;C:\Program Files\OpenCppCoverage"
