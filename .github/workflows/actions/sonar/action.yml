@@ -31,19 +31,26 @@ runs:
       run: |
         $coverage_dir = "${{ inputs.build-dir }}\bin\Release\coverage"
         $merged_coverage = "${{ inputs.build-dir }}\coverage-merged.xml"
-        
-        # Merge all coverage files into one
-        $coverage_files = Get-ChildItem -Path $coverage_dir -Filter *.xml
-        $first = $true
-        foreach ($file in $coverage_files) {
-          if ($first) {
-            Copy-Item $file.FullName $merged_coverage
-            $first = $false
-          } else {
-            # Here you would merge the coverage files
-            # For now we'll just use the last one
-            Copy-Item $file.FullName $merged_coverage -Force
-          }
+        if (Test-Path $coverage_dir) {
+            # Merge all coverage files into one
+            $coverage_files = Get-ChildItem -Path $coverage_dir -Filter *.xml
+            $first = $true
+            foreach ($file in $coverage_files) {
+            if ($first) {
+                Copy-Item $file.FullName $merged_coverage
+                $first = $false
+            } else {
+                # Here you would merge the coverage files
+                # For now we'll just use the last one
+                Copy-Item $file.FullName $merged_coverage -Force
+            }
+            }
+        }
+
+        if (Test-Path $merged_coverage) {
+            Write-Host "Coverage report found at $merged_coverage"
+        } else {
+            Write-Host "No coverage report found"
         }
 
     - name: Run SonarCloud analysis
