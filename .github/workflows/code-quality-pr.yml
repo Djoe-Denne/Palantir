@@ -17,8 +17,7 @@ permissions:
 env:
   FORCE_COLOR: 1  # Enable colored output in logs
   TERM: xterm-256color  # Terminal type for better formatting
-  CMAKE_BUILD_DIR: ${{ github.workspace }}/build
-  CACHE_KEY_PREFIX: v1  # Increment this to invalidate all caches
+  CMAKE_BUILD_DIR: ${{ github.workspace }}\build
 
 jobs:
   code-quality:
@@ -61,8 +60,6 @@ jobs:
       - uses: ./.github/workflows/actions/quality
         id: quality
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          cache-key: ${{ env.CACHE_KEY_PREFIX }}
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
 
       - name: Read lint report
@@ -70,7 +67,7 @@ jobs:
         shell: bash
         continue-on-error: true
         run: |
-          REPORT_CONTENT=$(cat ${{ env.CMAKE_BUILD_DIR }}/lint-reports/github-report.txt)
+          REPORT_CONTENT=$(cat ${{ env.CMAKE_BUILD_DIR }}\lint-reports\github-report.txt)
           echo "report<<EOF" >> $GITHUB_OUTPUT
           echo "$REPORT_CONTENT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT

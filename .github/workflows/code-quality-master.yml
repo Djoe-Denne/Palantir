@@ -20,8 +20,7 @@ concurrency:
 env:
   FORCE_COLOR: 1  # Enable colored output in logs
   TERM: xterm-256color  # Terminal type for better formatting
-  CMAKE_BUILD_DIR: ${{ github.workspace }}/build
-  CACHE_KEY_PREFIX: v1  # Increment this to invalidate all caches
+  CMAKE_BUILD_DIR: ${{ github.workspace }}\build
 
 jobs:
   code-quality:
@@ -30,6 +29,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/quality
         with:
-          github-token: ${{ secrets.PALANTIR_GHA }}
-          cache-key: ${{ env.CACHE_KEY_PREFIX }}
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
