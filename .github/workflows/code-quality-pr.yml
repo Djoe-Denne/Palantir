@@ -26,33 +26,16 @@ jobs:
     steps:
       - name: Get PR data
         id: pr
-        uses: actions/github-script@v7
+        uses: ./.github/workflows/actions/get-pr-data
         with:
-          script: |
-            const { data: pr } = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number
-            });
-            core.setOutput('sha', pr.head.sha);
-            const files = pr.files.filter(file => file.filename.endsWith('.hpp') || file.filename.endsWith('.cpp'));
-            core.setOutput('files', files.map(file => file.filename).join(';'));
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create in-progress check
-        uses: actions/github-script@v7
+        uses: ./.github/workflows/actions/check-run
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.rest.checks.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'Code Quality Check',
-              head_sha: process.env.PR_SHA,
-              status: 'in_progress',
-              started_at: new Date()
-            })
-        env:
-          PR_SHA: ${{ steps.pr.outputs.sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ steps.pr.outputs.sha }}
+          status: 'in_progress'
 
       - uses: actions/checkout@v4
         with:
@@ -76,35 +59,17 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
       
       - name: Comment lint report
-        uses: actions/github-script@v7
+        uses: ./.github/workflows/actions/comment-report
         continue-on-error: true
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const report = process.env.REPORT_CONTENT;
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: report
-            });
-        env:
-          REPORT_CONTENT: ${{ steps.lint_report.outputs.report }}        
+          token: ${{ secrets.GITHUB_TOKEN }}
+          report: ${{ steps.lint_report.outputs.report }}
 
       - name: Update check status
         if: always()
-        uses: actions/github-script@v7
+        uses: ./.github/workflows/actions/check-run
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.rest.checks.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'Code Quality Check',
-              head_sha: process.env.PR_SHA,
-              status: 'completed',
-              conclusion: '${{ steps.quality.outcome }}' === 'success' ? 'success' : 'failure',
-              completed_at: new Date()
-            })
-        env:
-          PR_SHA: ${{ steps.pr.outputs.sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ steps.pr.outputs.sha }}
+          status: 'completed'
+          conclusion: ${{ steps.quality.outcome }}

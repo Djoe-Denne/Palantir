@@ -1,0 +1,42 @@
+name: 'Manage Check Run'
+description: 'Creates or updates a check run'
+
+inputs:
+  token:
+    description: 'GitHub token'
+    required: true
+  sha:
+    description: 'Commit SHA'
+    required: true
+  status:
+    description: 'Check run status (in_progress/completed)'
+    required: true
+  conclusion:
+    description: 'Check run conclusion (success/failure)'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Manage check run
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.token }}
+        script: |
+          const params = {
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            name: 'Code Quality Check',
+            head_sha: '${{ inputs.sha }}',
+            status: '${{ inputs.status }}'
+          };
+
+          if ('${{ inputs.status }}' === 'completed') {
+            params.conclusion = '${{ inputs.conclusion }}';
+            params.completed_at = new Date().toISOString();
+          } else {
+            params.started_at = new Date().toISOString();
+          }
+
+          await github.rest.checks.create(params); 

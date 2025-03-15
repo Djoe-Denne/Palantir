@@ -1,0 +1,25 @@
+name: 'Comment Lint Report'
+description: 'Posts lint report as a PR comment'
+
+inputs:
+  token:
+    description: 'GitHub token'
+    required: true
+  report:
+    description: 'Lint report content'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Comment lint report
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.token }}
+        script: |
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            body: '${{ inputs.report }}'
+          }); 
