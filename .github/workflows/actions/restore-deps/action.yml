@@ -20,8 +20,7 @@ runs:
           ${{ inputs.cache-key }}-
         enableCrossOsArchive: true
 
-        
+
     - name: Set path
       shell: pwsh
-      run: |
-        $env:PATH = "$env:PATH;C:\ProgramData\chocolatey\lib\ninja\tools;C:\Program Files\OpenCppCoverage"
+      run: echo "C:\ProgramData\chocolatey\lib\ninja\tools" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8
