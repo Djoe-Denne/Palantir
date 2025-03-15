@@ -12,7 +12,7 @@ namespace palantir {
 
 // Initialize static instance
 std::shared_ptr<Application> Application::instance_ = nullptr;
-
+// useless commment to test CI code quality
 // Implementation class definition
 class Application::ApplicationImpl {
 public:

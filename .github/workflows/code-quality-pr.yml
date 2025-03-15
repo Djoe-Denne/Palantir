@@ -24,6 +24,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.issue.pull_request && github.event.comment.body == 'run code quality'
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.issue.number }}/head
+          fetch-depth: 0
+          
       - name: Get PR data
         id: pr
         uses: ./.github/workflows/actions/get-pr-data
@@ -37,10 +42,6 @@ jobs:
           sha: ${{ steps.pr.outputs.sha }}
           status: 'in_progress'
 
-      - uses: actions/checkout@v4
-        with:
-          ref: refs/pull/${{ github.event.issue.number }}/head
-          fetch-depth: 0
 
       - uses: ./.github/workflows/actions/quality
         id: quality
