@@ -28,19 +28,6 @@ runs:
     - name: Set up SonarCloud scanner
       uses: SonarSource/sonar-scanner-cli@v2.0.2
         
-    - name: Download Sonar Report
-      uses: actions/download-artifact@v3
-      with:
-        name: sonar-report
-        path: ${{ inputs.build-dir }}/lint-reports/
-
-    - name: Verify Sonar Report
-      shell: pwsh
-      run: |
-        $reportPath = "${{ inputs.build-dir }}/lint-reports/sonar-report.json"
-        Write-Host "Sonar Report Content:"
-        Get-Content $reportPath
-        
     - name: Prepare coverage reports
       shell: pwsh
       run: |
@@ -71,4 +58,3 @@ runs:
         sonar-scanner \
           -Dsonar.test.exclusions="**/tests/**" \
           -Dsonar.coverageReportPaths="${{ inputs.build-dir }}/coverage-merged.xml" 
-          #-Dsonar.externalIssuesReportPaths="${{ inputs.build-dir }}/lint-reports/sonar-report.json" 
