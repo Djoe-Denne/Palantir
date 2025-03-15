@@ -53,6 +53,12 @@ runs:
             Write-Host "No coverage report found"
         }
 
+    - name: Find compile commands
+      shell: pwsh
+      run: |
+        $compile_commands = Get-ChildItem -Path ${{ inputs.build-dir }} -Filter compile_commands.json
+        Write-Host "Compile commands found at $compile_commands"
+
     - name: Run SonarCloud analysis
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
