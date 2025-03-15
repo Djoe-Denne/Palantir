@@ -75,7 +75,7 @@ private:
      * @return String containing the file content
      */
     [[nodiscard]] auto readFile(const std::filesystem::path& filepath) const -> std::string;
-
+    // clang-format off
     /**
      * @brief Read all files from a directory and return their content as a vector of pairs
      * @param directory Path to the directory
@@ -84,6 +84,7 @@ private:
     [[nodiscard]] auto readAllFilesFromDirectory(const std::filesystem::path& directory,
                                                  const std::string& extension) const
         -> std::vector<std::pair<std::string, std::string>>;
+    // clang-format on
 };
 
 }  // namespace palantir::utils
