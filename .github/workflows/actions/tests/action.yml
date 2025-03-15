@@ -42,7 +42,7 @@ runs:
       id: run-tests-palantir-core
       shell: pwsh
       run: |
-        OpenCppCoverage --export_type=cobertura:${{ inputs.build-dir }}\bin\Release\coverage\palantir-core.xml --cover_children --sources="palantir-core\src" --sources="palantir-core\include" \
+        C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe --export_type=cobertura:${{ inputs.build-dir }}\bin\Release\coverage\palantir-core.xml --cover_children --sources="palantir-core\src" --sources="palantir-core\include" \
         ${{ inputs.build-dir }}\bin\Release\palantir_core_tests.exe
 
     # Step 5: Run tests
@@ -50,7 +50,7 @@ runs:
       id: run-tests-commands-plugin
       shell: pwsh
       run: |
-        OpenCppCoverage --export_type=cobertura:${{ inputs.build-dir }}\bin\Release\coverage\commands-plugin.xml --cover_children --sources="plugins\commands\src" --sources="plugins\commands\include" \
+        C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe --export_type=cobertura:${{ inputs.build-dir }}\bin\Release\coverage\commands-plugin.xml --cover_children --sources="plugins\commands\src" --sources="plugins\commands\include" \
         ${{ inputs.build-dir }}\bin\Release\commands_plugin_tests.exe
 
     # Step 3: Save build cache
