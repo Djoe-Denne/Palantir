@@ -25,7 +25,7 @@ env:
   FORCE_COLOR: 1  # Enable colored output in logs
   TERM: xterm-256color  # Terminal type for better formatting
   CMAKE_BUILD_DIR: ${{ github.workspace }}/build
-  CACHE_KEY_PREFIX: v1  # Increment this to invalidate all caches
+  CACHE_KEY_PREFIX: v2  # Increment this to invalidate all caches
 jobs:
   install-deps:
     runs-on: windows-latest
