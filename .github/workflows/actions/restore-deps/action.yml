@@ -15,7 +15,9 @@ runs:
         path: |
           C:\ProgramData\chocolatey\lib\ninja
           C:\Program Files\OpenCppCoverage
-        key: ${{ inputs.cache-key }}
+        key: ${{ inputs.cache-key }}-${{ hashFiles('.github/workflows/actions/restore-deps/action.yml') }}
+        restore-keys: |
+          ${{ inputs.cache-key }}-
 
     - name: Set path
       shell: pwsh

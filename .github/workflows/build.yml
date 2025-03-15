@@ -34,7 +34,7 @@ jobs:
       - name: Install dependencies
         uses: ./.github/workflows/actions/deps
         with:
-          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-deps-${{ hashFiles('.github/workflows/actions/deps/action.yml') }}
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-deps
   # Build the project on both platforms
   build:
     needs: [install-deps]
@@ -60,7 +60,7 @@ jobs:
       - name: Restore dependencies
         uses: ./.github/workflows/actions/restore-deps
         with:
-          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-deps-${{ hashFiles('.github/workflows/actions/deps/action.yml') }}
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-deps
       - name: Build
         uses: ./.github/workflows/actions/build
         with:
@@ -75,7 +75,7 @@ jobs:
       - name: Restore dependencies
         uses: ./.github/workflows/actions/restore-deps
         with:
-          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-deps-${{ hashFiles('.github/workflows/actions/deps/action.yml') }}
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-deps
       - name: Run Tests
         uses: ./.github/workflows/actions/tests
         with:
