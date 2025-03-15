@@ -5,6 +5,9 @@ inputs:
   build-dir:
     description: 'CMake build directory'
     required: true
+  files-list:
+    description: 'Files list to format/lint check'
+    required: false
 outputs:
   lint-report:
     description: 'Lint report'
@@ -13,24 +16,36 @@ runs:
   using: composite
   steps:  
     - name: Configure CMake
-      shell: pwsh
+      if: inputs.files-list != ''
+      shell: bash
       run: |
-        if (-not (Test-Path -Path ${{ inputs.build-dir }})) {
-            New-Item -ItemType Directory -Path ${{ inputs.build-dir }} -Force
-        }
+        if [ ! -d ${{ inputs.build-dir }} ]; then
+            mkdir -p ${{ inputs.build-dir }}
+        fi
+        cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DQUALITY_ONLY=ON -DFILES_TO_LINT=${{ inputs.files-list }}
+
+    - name: Configure CMake
+      if: inputs.files-list == ''
+      shell: bash
+      run: |
+        if [ ! -d ${{ inputs.build-dir }} ]; then
+            mkdir -p ${{ inputs.build-dir }}
+        fi
         cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DQUALITY_ONLY=ON
 
+    - name: Format Files
+
     - name: Check Format
-      shell: pwsh
+      shell: bash
       run: cmake --build ${{ inputs.build-dir }} --target format-check
     
     - name: Run Lint Check
-      shell: pwsh
+      shell: bash
       continue-on-error: true
       run: cmake --build ${{ inputs.build-dir }} --target lint-check
 
     - name: Analyze Lint Results
-      shell: pwsh
+      shell: bash
       run: |
         cat ${{ inputs.build-dir }}/lint-reports/report.txt
         cmake --build ${{ inputs.build-dir }} --target lint-analyze

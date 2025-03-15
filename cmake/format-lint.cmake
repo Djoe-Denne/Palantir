@@ -7,7 +7,7 @@ function(find_program_or_warn VAR NAME)
 endfunction()
 
 # Option to specify files to lint (empty means all files)
-set(FILES_TO_LINT "" CACHE STRING "Semicolon-separated list of files to lint. If empty, all files will be linted.")
+set(FILES "" CACHE STRING "Semicolon-separated list of files to lint. If empty, all files will be linted.")
 
 # Check if clang-format and clang-tidy exist
 find_program_or_warn(CLANG_FORMAT_EXEC clang-format)
@@ -16,20 +16,24 @@ find_program_or_warn(CLANG_TIDY_EXEC clang-tidy)
 if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
     message(STATUS "✅ Clang tools found: ${CLANG_FORMAT_EXEC}, ${CLANG_TIDY_EXEC}")
 
-    if (ALL_SOURCES)
+    if (ALL_SOURCES OR FILES_TO_LINT)
+        if (FILES_TO_LINT)
+            set(ALL_SOURCES ${FILES_TO_LINT})
+        endif()
+
         # Filter out test files from ALL_SOURCES
         foreach(SOURCE ${ALL_SOURCES})
             if(NOT SOURCE MATCHES ".*/tests/.*")
-                list(APPEND FILES_TO_LINT ${SOURCE})
+                list(APPEND FILES ${SOURCE})
             endif()
         endforeach()
-        message(STATUS "🔍 Linting all non-test files: ${FILES_TO_LINT}")
+        message(STATUS "🔍 Linting all non-test files: ${FILES}")
         
 
         # Add format target
         add_custom_target(format
             COMMAND ${CMAKE_COMMAND} -E echo "Running clang-format..."
-            COMMAND ${CLANG_FORMAT_EXEC} -style=file -i ${FILES_TO_LINT}
+            COMMAND ${CLANG_FORMAT_EXEC} -style=file -i ${FILES}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "Formatting source files"
             VERBATIM
@@ -41,7 +45,7 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/format-reports
         )
 
-        foreach(FILE ${FILES_TO_LINT})
+        foreach(FILE ${FILES})
             add_custom_command(
                 TARGET format-check
                 COMMAND ${CMAKE_COMMAND} -E echo "Checking ${FILE}" >> ${CMAKE_BINARY_DIR}/format-reports/format-check.xml
@@ -79,7 +83,7 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         add_custom_target(lint
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/lint-reports
             COMMAND ${CLANG_TIDY_EXEC} 
-                ${FILES_TO_LINT} 
+                ${FILES} 
                 -p=${CMAKE_BINARY_DIR} 
                 --quiet
                 --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
@@ -96,7 +100,7 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         add_custom_target(lint-check
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/lint-reports
             COMMAND ${CLANG_TIDY_EXEC} 
-                ${FILES_TO_LINT} 
+                ${FILES} 
                 -p=${CMAKE_BINARY_DIR} 
                 --quiet
                 --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
