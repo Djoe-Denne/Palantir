@@ -87,7 +87,7 @@ runs:
         cat ${{ inputs.build-dir }}/lint-reports/sonar-report.json
 
     - name: Upload Sonar Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: sonar-report
         path: ${{ inputs.build-dir }}/lint-reports/sonar-report.json
