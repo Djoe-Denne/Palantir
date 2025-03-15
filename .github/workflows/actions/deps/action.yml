@@ -28,7 +28,6 @@ runs:
       run: |
         choco install ninja
     
-    # Step 2: Download OpenCppCoverage
     - name: Download OpenCppCoverage
       id: download-opencppcoverage
       if: steps.check-cache.outputs.cache-hit != 'true'
