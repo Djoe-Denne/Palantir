@@ -48,7 +48,7 @@ runs:
         }
 
         if (Test-Path $merged_coverage) {
-            Write-Host "Coverage report found at $merged_coverage"
+            Write-Host "Coverage report found at $merged_coverage with content: $(Get-Content $merged_coverage)"
         } else {
             Write-Host "No coverage report found"
         }
