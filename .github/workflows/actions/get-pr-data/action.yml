@@ -37,9 +37,11 @@ runs:
           });
 
           // Filter only .hpp and .cpp files
-          const filteredFiles = files
-            .map(file => file.filename)
-            .filter(filename => filename.endsWith('.hpp') || filename.endsWith('.cpp'));
+            const workspace = process.env.GITHUB_WORKSPACE;
+            const filteredFiles = files
+              .map(file => file.filename)
+              .filter(filename => filename.endsWith('.hpp') || filename.endsWith('.cpp'))
+              .map(filename => `${workspace}/${filename}`);
 
           console.log("Filtered files:", filteredFiles);
 
