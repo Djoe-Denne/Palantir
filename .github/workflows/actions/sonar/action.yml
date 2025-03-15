@@ -26,7 +26,7 @@ runs:
         key: ${{ inputs.cache-key }}-tests
 
     - name: Set up SonarCloud scanner
-      uses: SonarSource/sonar-scanner-cli@v2.0.2
+      uses: SonarSource/sonar-scanner-cli@v7.0.2.4839
         
     - name: Prepare coverage reports
       shell: pwsh
