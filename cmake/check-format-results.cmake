@@ -5,7 +5,7 @@ file(READ "${CMAKE_BINARY_DIR}/build/format-reports/format-check.xml" FORMAT_RES
 string(FIND "${FORMAT_RESULTS}" "<replacement " HAS_REPLACEMENTS)
 
 if(NOT HAS_REPLACEMENTS EQUAL -1)
-    message(STATUS "${FORMAT_RESULTS}")
+    message(STATUS "${HAS_REPLACEMENTS}")
     message(FATAL_ERROR "❌ Formatting check failed - some files need formatting. Please run 'cmake --build . --target format' to fix.")
 else()
     message(STATUS "✅ All files are properly formatted.")
