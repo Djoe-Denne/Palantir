@@ -43,7 +43,7 @@ auto SendSauronRequestCommand::execute() -> void {
     }
 
     auto windowManager = app_->getWindowManager();
-    if (auto window = windowManager->getFirstWindow()) {
+    if (auto window = windowManager->getMainWindow()) {
         auto contentManager = window->getContentManager();
         if (contentManager) {
             contentManager->setRootContent(responseStr);

@@ -11,10 +11,13 @@
 #define IWINDOW_HPP
 
 #include <memory>
+
 #include "core_export.hpp"
 #include "window/component/icontent_manager.hpp"
 
 namespace palantir::window {
+
+enum class PALANTIR_CORE_API WindowType { MAIN, POPUP };
 
 /**
  * @class IWindow
@@ -82,7 +85,7 @@ public:
      * @brief Set the window's transparency.
      * @param transparency The transparency value to set (0-100).
      */
-    virtual auto setTransparency(int transparency) -> void = 0; 
+    virtual auto setTransparency(int transparency) -> void = 0;
 
     /**
      * @brief Toggle the window's anonymity. Preventing any capture or screen sharing.
@@ -122,6 +125,9 @@ public:
      * @return A string representing the window's content.
      */
     [[nodiscard]] virtual auto getContentManager() const -> std::shared_ptr<component::IContentManager> = 0;
+
+    [[nodiscard]] virtual auto getWindowType() const -> const WindowType& = 0;
+
 protected:
     /** @brief Protected default constructor to prevent direct instantiation. */
     IWindow() = default;

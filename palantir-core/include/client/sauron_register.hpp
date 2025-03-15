@@ -1,8 +1,9 @@
 #pragma once
 
-#include "sauron/client/SauronClient.hpp"
-#include "core_export.hpp"
 #include <memory>
+
+#include "core_export.hpp"
+#include "sauron/client/SauronClient.hpp"
 
 namespace palantir::client {
 
@@ -18,10 +19,10 @@ public:
     [[nodiscard]] static auto getInstance() -> std::shared_ptr<SauronRegister>;
 
     static auto setInstance(const std::shared_ptr<SauronRegister>& instance) -> void;
-    
+
     // Client accessor
     [[nodiscard]] virtual auto getSauronClient() const -> std::shared_ptr<sauron::client::SauronClient>;
-    
+
     // Destructor
     virtual ~SauronRegister();
 
@@ -29,14 +30,15 @@ protected:
     // Protected constructor for testing
     SauronRegister();
     explicit SauronRegister(const std::shared_ptr<sauron::client::SauronClient>& sauronClient);
+
 private:
 #pragma warning(push)
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
     // PIMPL
     class Impl;
-    std::unique_ptr<Impl> pImpl_;    
+    std::unique_ptr<Impl> pImpl_;
     static std::shared_ptr<SauronRegister> instance_;
 #pragma warning(pop)
 };
 
-} // namespace palantir::client
+}  // namespace palantir::client

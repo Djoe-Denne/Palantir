@@ -64,7 +64,7 @@ public:
             << "stop = Win+/        ; Stop application\n"
             << "window-screenshot = Ctrl+Num 2    ; Take screenshot of current window\n"
             << "toggle-transparency = Ctrl+Num 3    ; Toggle window transparency\n"
-            //<< "toggle-window-anonymity = Ctrl+Num 4    ; Toggle window anonymity\n"
+            << "toggle-window-anonymity = Ctrl+Num 4    ; Toggle window anonymity\n"
             << "send-sauron-implement-request = Ctrl+Num 4    ; Send request to Sauron to implement\n"
             << "send-sauron-fix-errors-request = Ctrl+Num 5    ; Send request to Sauron to fix errors\n"
             << "send-sauron-validate-with-tests-request = Ctrl+Num 6    ; Send request to Sauron to validate with "

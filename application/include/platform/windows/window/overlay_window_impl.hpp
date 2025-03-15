@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "window/component/content_manager.hpp"
+#include "window/component/icontent_size_observer.hpp"
 #include "window/component/webview/webview.hpp"
 #include "window/overlay_window.hpp"
 
@@ -34,16 +35,24 @@ public:
     auto setRunning(bool state) -> void;
     [[nodiscard]] auto getContentManager() const -> std::shared_ptr<component::IContentManager>;
 
+    auto toggleWindowTool(bool isToolWindow) -> void;
+    auto updateWindowSize(int contentWidth, int contentHeight) -> void;
+    auto getCurrentScreenResolution() -> std::pair<int, int>;
+    auto makeWindowFrameless() -> void;
+
 private:
     static constexpr int WINDOW_WIDTH = 800;
     static constexpr int WINDOW_HEIGHT = 600;
     static constexpr BYTE WINDOW_ALPHA = 240;
-
-    auto toggleWindowTool(bool isToolWindow) -> void;
+    static constexpr COLORREF TRANSPARENT_COLOR = 0x00FFFFFF;  // Transparent
+    static constexpr int BORDER_PADDING = 0;                   // Padding around content
+    static constexpr int RIGHT_FRAME_WIDTH = 0;                // Width of the right frame
 
     HWND hwnd_{nullptr};
     bool running_{false};
     std::shared_ptr<component::ContentManager<component::webview::WebView>> contentManager_;
+    int currentWidth_{WINDOW_WIDTH};
+    int currentHeight_{WINDOW_HEIGHT};
 };
 
 }  // namespace palantir::window

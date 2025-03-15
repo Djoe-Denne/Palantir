@@ -37,6 +37,9 @@ For development-related information, refer to:
 - [CMake Configuration](technical/cmake-configuration.md)
 - [Clang Tools](technical/clang-tools.md)
 - [GitHub Actions](technical/github-actions.md)
+- [C++20 Features and Message Strategy Pattern](technical/cpp20_message_strategy.md)
+
+The project requires a C++20 compatible compiler.
 
 ## Architecture
 

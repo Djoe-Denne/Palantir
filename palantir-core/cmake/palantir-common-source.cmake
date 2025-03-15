@@ -1,13 +1,6 @@
-set(PROJECT_PALANTIR_HEADERS PROJECT_PALANTIR_HEADERS    
-    ${PROJECT_ROOT}/palantir-core/include/Application.hpp
-    ${PROJECT_ROOT}/palantir-core/include/window/window_manager.hpp
-    ${PROJECT_ROOT}/palantir-core/include/window/component/webview/webview.hpp
-    ${PROJECT_ROOT}/palantir-core/include/window/component/content_manager.hpp
-    ${PROJECT_ROOT}/palantir-core/include/command/icommand.hpp
-    ${PROJECT_ROOT}/palantir-core/include/command/command_factory.hpp
-    ${PROJECT_ROOT}/palantir-core/include/mode/debug/utils/logger.hpp
-    ${PROJECT_ROOT}/palantir-core/include/input/key_register.hpp
-    ${PROJECT_ROOT}/palantir-core/include/client/sauron_register.hpp
+file(GLOB_RECURSE PROJECT_PALANTIR_HEADERS
+    "${PROJECT_ROOT}/palantir-core/include/*.hpp"
+    "${PROJECT_ROOT}/palantir-core/include/*.h"
 )
 
 set(COMMAND_PALANTIR_SOURCES
@@ -23,8 +16,15 @@ set(SIGNAL_PALANTIR_SOURCES
     ${PROJECT_ROOT}/palantir-core/src/signal/signal_factory.cpp
 )
 
+set(UTILS_PALANTIR_SOURCES
+    ${PROJECT_ROOT}/palantir-core/src/utils/resource_utils.cpp
+)
+
 set(WINDOW_PALANTIR_SOURCES
     ${PROJECT_ROOT}/palantir-core/src/window/window_manager.cpp
+    ${PROJECT_ROOT}/palantir-core/src/window/component/message/message_handler.cpp  
+    ${PROJECT_ROOT}/palantir-core/src/window/component/message/logger/logger_strategy.cpp
+    ${PROJECT_ROOT}/palantir-core/src/window/component/message/resize/resize_strategy.cpp
 )
 
 set(INPUT_PALANTIR_SOURCES
@@ -70,9 +70,12 @@ set(ALL_PALANTIR_SOURCES
     ${WINDOW_PALANTIR_SOURCES}
     ${INPUT_PALANTIR_SOURCES}
     ${APPLICATION_PALANTIR_SOURCES}
+    ${UTILS_PALANTIR_SOURCES}
 ) 
 
 set(ALL_SOURCES
     ${ALL_SOURCES}
-    ${ALL_PALANTIR_SOURCES} PARENT_SCOPE
+    ${ALL_PALANTIR_SOURCES} 
+    ${PROJECT_PALANTIR_HEADERS}
+    PARENT_SCOPE
 )

@@ -18,6 +18,7 @@ public:
     MOCK_METHOD(void, setRunning, (bool), (override));
     MOCK_METHOD(void*, getNativeHandle, (), (const, override));
     MOCK_METHOD(std::shared_ptr<window::component::IContentManager>, getContentManager, (), (const, override));
+    MOCK_METHOD(const window::WindowType&, getWindowType, (), (const, override));
 };
 
 } // namespace palantir::test 

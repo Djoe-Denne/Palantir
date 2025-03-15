@@ -13,10 +13,10 @@
 #include <memory>
 #include <vector>
 
-#include "signal/isignal.hpp"
 #include "application.hpp"
-#include "window/window_manager.hpp"
 #include "core_export.hpp"
+#include "signal/isignal.hpp"
+#include "window/window_manager.hpp"
 
 namespace palantir::signal {
 
@@ -45,7 +45,7 @@ public:
     /** @brief Deleted move assignment to prevent instantiation. */
     auto operator=(SignalFactory&&) -> SignalFactory& = delete;
 
-    /** 
+    /**
      * @brief Get the singleton instance of the SignalFactory.
      * @return A shared pointer to the SignalFactory instance.
      *
@@ -53,7 +53,7 @@ public:
      */
     [[nodiscard]] static auto getInstance() -> std::shared_ptr<SignalFactory>;
 
-    /** 
+    /**
      * @brief Set the singleton instance of the SignalFactory.
      * @param instance A shared pointer to the SignalFactory instance.
      *
@@ -70,7 +70,8 @@ public:
      * This includes both toggle and stop signals, configured according
      * to the application's settings.
      */
-    [[nodiscard]] virtual auto createSignals(const std::shared_ptr<Application>& app) -> std::vector<std::unique_ptr<ISignal>>;
+    [[nodiscard]] virtual auto createSignals(const std::shared_ptr<Application>& app)
+        -> std::vector<std::unique_ptr<ISignal>>;
 
 protected:
     SignalFactory();
@@ -78,7 +79,7 @@ protected:
 private:
     class SignalFactoryImpl;
 #pragma warning(push)
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
     std::unique_ptr<SignalFactoryImpl> pimpl_;
     static std::shared_ptr<SignalFactory> instance_;
 #pragma warning(pop)

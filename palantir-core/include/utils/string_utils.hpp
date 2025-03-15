@@ -1,19 +1,23 @@
 #ifndef STRING_UTILS_HPP
 #define STRING_UTILS_HPP
 
-#include <string>
 #include <algorithm>
-#include <vector>
 #include <array>
+#include <codecvt>
+#include <cwchar>
+#include <locale>
+#include <string>
+#include <vector>
+
 #include "core_export.hpp"
 
 namespace palantir::utils {
 
 class PALANTIR_CORE_API StringUtils {
 public:
-    #pragma warning(push)
-    #pragma warning(disable: 4251)
-    static inline const std::string base64_chars = 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+    static inline const std::string base64_chars =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz"
         "0123456789+/";
@@ -28,7 +32,12 @@ public:
         std::transform(str.begin(), str.end(), str.begin(), ::toupper);
         return str;
     }
-    
+
+    static auto wToStr(const std::wstring& wstr) -> std::string {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+        return converter.to_bytes(wstr);
+    }
+
     // Named constants for bitwise operations
     static constexpr unsigned char MASK_FC = 0xfcU;
     static constexpr unsigned char MASK_03 = 0x03U;
@@ -49,15 +58,17 @@ public:
         std::array<unsigned char, ARRAY_SIZE_3> char_array_3{};
         std::array<unsigned char, ARRAY_SIZE_4> char_array_4{};
         size_t data_len = data.size();
-        
+
         while (data_len > 0) {
             char_array_3[index++] = data[jndex++];
             data_len--;
-            
+
             if (index == ARRAY_SIZE_3) {
-                char_array_4[0] = (char_array_3[0] & MASK_FC) >> SHIFT_2; // NOLINT
-                char_array_4[1] = ((char_array_3[0] & MASK_03) << SHIFT_4) | ((char_array_3[1] & MASK_F0) >> SHIFT_4); // NOLINT    
-                char_array_4[2] = ((char_array_3[1] & MASK_0F) << SHIFT_2) | ((char_array_3[2] & MASK_C0) >> SHIFT_6); // NOLINT
+                char_array_4[0] = (char_array_3[0] & MASK_FC) >> SHIFT_2;  // NOLINT
+                char_array_4[1] =
+                    ((char_array_3[0] & MASK_03) << SHIFT_4) | ((char_array_3[1] & MASK_F0) >> SHIFT_4);  // NOLINT
+                char_array_4[2] =
+                    ((char_array_3[1] & MASK_0F) << SHIFT_2) | ((char_array_3[2] & MASK_C0) >> SHIFT_6);  // NOLINT
                 char_array_4[3] = char_array_3[2] & MASK_3F;
 
                 for (size_t idx = 0; idx < ARRAY_SIZE_4; idx++) {
@@ -72,9 +83,11 @@ public:
                 char_array_3[jdx] = '\0';
             }
 
-            char_array_4[0] = (char_array_3[0] & MASK_FC) >> SHIFT_2; // NOLINT
-            char_array_4[1] = ((char_array_3[0] & MASK_03) << SHIFT_4) | ((char_array_3[1] & MASK_F0) >> SHIFT_4); // NOLINT    
-            char_array_4[2] = ((char_array_3[1] & MASK_0F) << SHIFT_2) | ((char_array_3[2] & MASK_C0) >> SHIFT_6); // NOLINT
+            char_array_4[0] = (char_array_3[0] & MASK_FC) >> SHIFT_2;  // NOLINT
+            char_array_4[1] =
+                ((char_array_3[0] & MASK_03) << SHIFT_4) | ((char_array_3[1] & MASK_F0) >> SHIFT_4);  // NOLINT
+            char_array_4[2] =
+                ((char_array_3[1] & MASK_0F) << SHIFT_2) | ((char_array_3[2] & MASK_C0) >> SHIFT_6);  // NOLINT
             char_array_4[3] = char_array_3[2] & MASK_3F;
 
             for (size_t jdx = 0; jdx < index + 1; jdx++) {
@@ -89,7 +102,7 @@ public:
         return ret;
     }
 
-    #pragma warning(pop)
+#pragma warning(pop)
 };
 
 }  // namespace palantir::utils

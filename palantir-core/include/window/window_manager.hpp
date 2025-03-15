@@ -11,6 +11,7 @@
 #define WINDOW_MANAGER_HPP
 
 #include <memory>
+
 #include "core_export.hpp"
 #include "window/iwindow.hpp"
 
@@ -84,7 +85,7 @@ public:
      * Returns a pointer to the first window in the collection. This is
      * typically used when the application only manages a single window.
      */
-    [[nodiscard]] virtual auto getFirstWindow() const -> std::shared_ptr<IWindow>;
+    [[nodiscard]] virtual auto getMainWindow() const -> std::shared_ptr<IWindow>;
 
     /**
      * @brief Check if any windows are currently running.
@@ -114,11 +115,10 @@ private:
     class WindowManagerImpl;
     // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
 #pragma warning(push)
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
     std::unique_ptr<WindowManagerImpl> pimpl_;
     static std::shared_ptr<WindowManager> instance_;
 #pragma warning(pop)
-
 };
 }  // namespace window
 }  // namespace palantir

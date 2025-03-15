@@ -13,4 +13,4 @@ inline auto safe_localtime(const std::time_t* time, std::tm* tm_buf) -> void {
 #endif
 }
 
-} // namespace palantir::utils 
+}  // namespace palantir::utils

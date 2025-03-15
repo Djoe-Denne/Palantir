@@ -8,7 +8,7 @@ ToggleWindowAnonymityCommand::ToggleWindowAnonymityCommand() : app_(Application:
 
 auto ToggleWindowAnonymityCommand::execute() -> void {
     auto windowManager = app_->getWindowManager();
-    if (auto window = windowManager->getFirstWindow()) {
+    if (auto window = windowManager->getMainWindow()) {
         window->toggleWindowAnonymity();
     } else {
         throw std::runtime_error("No window found");

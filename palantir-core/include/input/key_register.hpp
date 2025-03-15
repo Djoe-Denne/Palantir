@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+
 #include "core_export.hpp"
 
 namespace palantir::input {
@@ -21,18 +22,18 @@ class PALANTIR_CORE_API KeyRegister {
 protected:
     // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
 #pragma warning(push)
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
     std::unique_ptr<KeyRegisterImpl> pimpl_;
-#pragma warning(pop)
 
     static std::shared_ptr<KeyRegister> instance_;
+#pragma warning(pop)
 
     // Private constructor for singleton
     KeyRegister();
 
 public:
     virtual ~KeyRegister();
-    
+
     // Delete copy and move operations
     KeyRegister(const KeyRegister&) = delete;
     auto operator=(const KeyRegister&) -> KeyRegister& = delete;
@@ -40,12 +41,12 @@ public:
     auto operator=(KeyRegister&&) -> KeyRegister& = delete;
     static auto getInstance() -> std::shared_ptr<KeyRegister>;
     static auto setInstance(const std::shared_ptr<KeyRegister>& instance) -> void;
-    
+
     virtual auto registerKey(const std::string& key, int value) -> void;
     [[nodiscard]] virtual auto get(const std::string& key) const -> int;
     [[nodiscard]] virtual auto hasKey(const std::string& key) const -> bool;
 };
 
-} // namespace palantir::input
+}  // namespace palantir::input
 
-#endif // KEY_REGISTER_HPP
+#endif  // KEY_REGISTER_HPP

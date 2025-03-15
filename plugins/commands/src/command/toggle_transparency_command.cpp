@@ -8,7 +8,7 @@ ToggleTransparencyCommand::ToggleTransparencyCommand() : app_(Application::getIn
 
 auto ToggleTransparencyCommand::execute() -> void {
     auto windowManager = app_->getWindowManager();
-    if (auto window = windowManager->getFirstWindow()) {
+    if (auto window = windowManager->getMainWindow()) {
         int transparency = getTransparency();
         if (transparency == 100) {
             window->setTransparency(255);

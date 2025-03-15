@@ -26,7 +26,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 
 # All CMake variables defined in one place
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -41,8 +41,12 @@ setup_help_target()
 include(setup-clang-tools)
 setup_clang_tools()
 
-include(platform/windows)
-include(platform/macos)
+if(WIN32 OR QUALITY_ONLY)
+    include(platform/windows)
+endif()
+if(APPLE)
+    include(platform/macos)
+endif()
 
 # Setup Google Test
 include(setup-gtest)
@@ -61,3 +65,8 @@ add_subdirectory(application)
 
 # Include format-lint after the target is created
 include(format-lint)
+
+# Install resource directory
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/resource
+        DESTINATION .
+        COMPONENT resources)

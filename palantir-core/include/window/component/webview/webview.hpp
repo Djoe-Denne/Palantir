@@ -1,9 +1,11 @@
 #ifndef PALANTIR_WINDOW_COMPONENT_WEBVIEW_IWEBVIEW_HPP
 #define PALANTIR_WINDOW_COMPONENT_WEBVIEW_IWEBVIEW_HPP
 #include <functional>
-#include <string>
 #include <memory>
+#include <string>
+
 #include "core_export.hpp"
+#include "window/component/icontent_manager.hpp"
 
 namespace palantir::window::component::webview {
 /**
@@ -33,6 +35,20 @@ public:
     virtual void initialize(void* nativeWindowHandle, std::function<void()> initCallback);
 
     /**
+     * @brief Initializes the web view controller.
+     *
+     * @param controller A pointer to the web view controller.
+     */
+    [[nodiscard]] virtual auto initializeController(void* controller) -> intptr_t;
+
+    /**
+     * @brief Returns the native window handle of the web view.
+     *
+     * @return A pointer to the native window handle.
+     */
+    [[nodiscard]] virtual auto getNativeHandle() -> void*;
+
+    /**
      * @brief Loads a URL in the web view.
      *
      * @param url The URL to load.
@@ -52,13 +68,6 @@ public:
      * @param message The message to send.
      */
     virtual void sendMessageToJS(const std::string& message);
-
-    /**
-     * @brief Sets a handler for messages received from the JavaScript context.
-     *
-     * @param handler A function to handle messages from JavaScript.
-     */
-    virtual void setMessageHandler(std::function<void(const std::string&)> handler);
 
     /**
      * @brief Reloads the current page in the web view.
@@ -124,13 +133,26 @@ public:
      */
     virtual void destroy();
 
+    /**
+     * @brief Registers a message strategy for the web view.
+     *
+     * @param strategy The message strategy to register.
+     */
+    virtual auto registerMessageStrategy(std::unique_ptr<message::MessageStrategyBase> strategy) -> void;
+
+    /**
+     * @brief Handles a message from the web view.
+     *
+     * @param message The message to handle.
+     */
+    virtual auto handleMessage(const std::string& message) -> void;
+
 private:
     class WebViewImpl;
 #pragma warning(push)
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
     std::shared_ptr<WebViewImpl> pimpl_;
 #pragma warning(pop)
-
 };
 }  // namespace palantir::window::component::webview
 

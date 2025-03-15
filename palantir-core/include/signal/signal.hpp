@@ -14,10 +14,10 @@
 #include <chrono>
 #include <memory>
 
-#include "signal/isignal.hpp"
-#include "input/iinput.hpp"
 #include "command/icommand.hpp"
 #include "core_export.hpp"
+#include "input/iinput.hpp"
+#include "signal/isignal.hpp"
 
 namespace palantir::signal {
 

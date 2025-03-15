@@ -44,7 +44,7 @@ public:
     }
 };
 
-SignalFactory::SignalFactory() : pimpl_(std::make_unique<SignalFactoryImpl>()) {}
+SignalFactory::SignalFactory() : pimpl_(std::make_unique<SignalFactoryImpl>()) {}  // NOLINT
 
 SignalFactory::~SignalFactory() = default;
 

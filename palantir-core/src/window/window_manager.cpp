@@ -23,8 +23,12 @@ public:
         }
     }
 
-    [[nodiscard]] auto getFirstWindow() const -> std::shared_ptr<IWindow> {
-        return windows_.empty() ? nullptr : windows_.front();
+    [[nodiscard]] auto getMainWindow() const -> std::shared_ptr<IWindow> { return getWindowByType(WindowType::MAIN); }
+
+    [[nodiscard]] auto getWindowByType(WindowType type) const -> std::shared_ptr<IWindow> {
+        auto iterator = std::find_if(windows_.begin(), windows_.end(),
+                                     [type](const auto& window) { return window->getWindowType() == type; });
+        return (iterator != windows_.end()) ? *iterator : nullptr;
     }
 
     [[nodiscard]] auto hasRunningWindows() const -> bool {
@@ -53,7 +57,7 @@ auto WindowManager::getInstance() -> std::shared_ptr<WindowManager> {
 auto WindowManager::setInstance(const std::shared_ptr<WindowManager>& instance) -> void { instance_ = instance; }
 
 // Constructor
-WindowManager::WindowManager() : pimpl_(std::make_unique<WindowManagerImpl>()) {}
+WindowManager::WindowManager() : pimpl_(std::make_unique<WindowManagerImpl>()) {}  // NOLINT
 
 // Destructor
 WindowManager::~WindowManager() = default;
@@ -63,7 +67,7 @@ auto WindowManager::addWindow(const std::shared_ptr<IWindow>& window) -> void { 
 
 auto WindowManager::removeWindow(const IWindow* window) -> void { pimpl_->removeWindow(window); }
 
-auto WindowManager::getFirstWindow() const -> std::shared_ptr<IWindow> { return pimpl_->getFirstWindow(); }
+auto WindowManager::getMainWindow() const -> std::shared_ptr<IWindow> { return pimpl_->getMainWindow(); }
 
 auto WindowManager::hasRunningWindows() const -> bool { return pimpl_->hasRunningWindows(); }
 

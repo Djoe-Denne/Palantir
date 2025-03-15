@@ -37,26 +37,33 @@ TEST_F(WindowManagerTest, GetInstance_ReturnsSameInstance) {
 
 TEST_F(WindowManagerTest, AddWindow_WindowAdded_CanBeRetrieved) {
     windowManager->addWindow(mockWindow);
-    EXPECT_EQ(windowManager->getFirstWindow(), mockWindow);
+    auto windowType = WindowType::MAIN;
+    EXPECT_CALL(*mockWindow, getWindowType())
+        .WillOnce(ReturnRef(windowType));
+
+    EXPECT_EQ(windowManager->getMainWindow(), mockWindow);
 }
 
 TEST_F(WindowManagerTest, RemoveWindow_WindowRemoved_CannotBeRetrieved) {
     windowManager->addWindow(mockWindow);
     windowManager->removeWindow(mockWindow.get());
-    EXPECT_EQ(windowManager->getFirstWindow(), nullptr);
+    EXPECT_EQ(windowManager->getMainWindow(), nullptr);
 }
 
 TEST_F(WindowManagerTest, GetFirstWindow_NoWindows_ReturnsNullptr) {
-    EXPECT_EQ(windowManager->getFirstWindow(), nullptr);
+    EXPECT_EQ(windowManager->getMainWindow(), nullptr);
 }
 
 TEST_F(WindowManagerTest, GetFirstWindow_MultipleWindows_ReturnsFirstAdded) {
     auto mockWindow2 = std::make_shared<MockWindow>();
-    
+    auto windowType = WindowType::MAIN;
+    EXPECT_CALL(*mockWindow, getWindowType())
+        .WillOnce(ReturnRef(windowType));
+
     windowManager->addWindow(mockWindow);
     windowManager->addWindow(mockWindow2);
     
-    EXPECT_EQ(windowManager->getFirstWindow(), mockWindow);
+    EXPECT_EQ(windowManager->getMainWindow(), mockWindow);
 }
 
 TEST_F(WindowManagerTest, HasRunningWindows_NoWindows_ReturnsFalse) {

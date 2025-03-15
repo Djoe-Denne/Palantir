@@ -117,16 +117,53 @@ public:
         MSG msg;
         BOOL result;
 
+        // Get the main window for regular updates
+        auto mainWindow = windowManager_->getMainWindow();
+        if (!mainWindow) {
+            DEBUG_LOG("No main window available");
+            return 1;
+        }
+
+        // Show the main window
+        mainWindow->show();
+
+        // For periodic updates (roughly 60 times per second)
+        UINT_PTR timerId = SetTimer(nullptr, 0, 16, nullptr);  // ~60 FPS NOLINT
+
         // Main message loop
-        while ((result = GetMessage(&msg, nullptr, 0, 0)) != 0) {
-            if (result == -1) {
-                DWORD error = GetLastError();
-                DEBUG_LOG("GetMessage failed: error=%lu", error);
-                return 1;
+        while (true) {
+            // Check if there are messages in the queue
+            if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+                // If we get a quit message, break out of the loop
+                if (msg.message == WM_QUIT) {
+                    break;
+                }
+
+                // Process the message
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            } else {
+                // No messages, update our window
+                if (mainWindow->isRunning()) {
+                    mainWindow->update();
+                }
+
+                // Don't consume 100% CPU, yield to other threads briefly
+                Sleep(1);
             }
 
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            // Process any timer messages
+            if (msg.message == WM_TIMER && msg.wParam == timerId) {
+                // Timer-based update
+                if (mainWindow->isRunning()) {
+                    mainWindow->update();
+                }
+            }
+        }
+
+        // Clean up the timer
+        if (timerId != 0) {
+            KillTimer(nullptr, timerId);
         }
 
         DEBUG_LOG("Message loop ended with exit code %d", static_cast<int>(msg.wParam));

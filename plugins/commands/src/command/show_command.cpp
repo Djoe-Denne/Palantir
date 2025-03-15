@@ -8,7 +8,7 @@ ShowCommand::ShowCommand() : app_(Application::getInstance()) {}  // NOLINT
 
 auto ShowCommand::execute() -> void {
     auto windowManager = app_->getWindowManager();
-    if (auto window = windowManager->getFirstWindow()) {
+    if (auto window = windowManager->getMainWindow()) {
         window->show();
     } else {
         throw std::runtime_error("No window found");

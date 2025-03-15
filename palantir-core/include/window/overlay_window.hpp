@@ -2,16 +2,19 @@
 #define OVERLAY_WINDOW_HPP
 
 #include <memory>
-#include "window/iwindow.hpp"
+
+#include "core_export.hpp"
 #include "window/component/content_manager.hpp"
 #include "window/component/content_manager_impl.hpp"
-#include "core_export.hpp"
+#include "window/component/icontent_size_observer.hpp"
+#include "window/iwindow.hpp"
 
 namespace palantir::window {
 
-class PALANTIR_CORE_API OverlayWindow : public IWindow {
+class PALANTIR_CORE_API OverlayWindow : public IWindow, public component::IContentSizeObserver {
 public:
     OverlayWindow();
+    explicit OverlayWindow(const WindowType& type);
     ~OverlayWindow() override;
 
     // Delete copy operations
@@ -34,14 +37,24 @@ public:
     auto setRunning(bool runningState) -> void override;
 
     [[nodiscard]] auto getContentManager() const -> std::shared_ptr<component::IContentManager> override;
+    [[nodiscard]] auto getWindowType() const -> const WindowType& override;
+
+    // IContentSizeObserver implementation
+    auto onContentSizeChanged(int width, int height) -> void override;
+
+    auto toggleWindowTool(bool isToolWindow) -> void;
+    auto updateWindowSize(int contentWidth, int contentHeight) -> void;
+    auto getCurrentScreenResolution() -> std::pair<int, int>;
+    auto makeWindowFrameless() -> void;
 
 private:
     class Impl;
-    #pragma warning(push)
-    #pragma warning(disable: 4251)
+#pragma warning(push)
+#pragma warning(disable : 4251)
     std::unique_ptr<Impl> pImpl_;
-    #pragma warning(pop)
+#pragma warning(pop)
     bool running_ = false;
+    WindowType type_;
 };
 
 }  // namespace palantir::window

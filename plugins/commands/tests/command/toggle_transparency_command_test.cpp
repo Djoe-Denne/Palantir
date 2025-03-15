@@ -41,7 +41,7 @@ protected:
 
 TEST_F(ToggleTransparencyCommandTest, ExecuteTogglesTransparencyWhenWindowExists) {
     // Arrange
-    EXPECT_CALL(*mockWindowManager, getFirstWindow())
+    EXPECT_CALL(*mockWindowManager, getMainWindow())
         .Times(2)
         .WillRepeatedly(Return(mockWindow));
 
@@ -60,7 +60,7 @@ TEST_F(ToggleTransparencyCommandTest, ExecuteTogglesTransparencyWhenWindowExists
 
 TEST_F(ToggleTransparencyCommandTest, ExecuteThrowsWhenNoWindow) {
     // Arrange
-    EXPECT_CALL(*mockWindowManager, getFirstWindow())
+    EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(nullptr));
 
     ToggleTransparencyCommand command;

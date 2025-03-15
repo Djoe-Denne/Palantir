@@ -45,10 +45,7 @@ auto Application::setInstance(const std::shared_ptr<Application>& instance) -> v
 // Constructor and destructor
 Application::Application(const std::string& configPath) : pImpl_(std::make_unique<ApplicationImpl>(configPath)) {}
 
-Application::Application() : pImpl_(nullptr) {
-    // We can't use shared_from_this() in constructor as the object isn't fully constructed yet
-    // The instance will be set by setInstance() when getInstance is called
-}
+Application::Application() = default;
 
 Application::~Application() = default;
 

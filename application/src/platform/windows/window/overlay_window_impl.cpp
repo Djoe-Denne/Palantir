@@ -2,6 +2,9 @@
 
 #include <dwmapi.h>
 #include <windows.h>
+#include <windowsx.h>  // For GET_X_LPARAM and GET_Y_LPARAM
+
+#include <algorithm>  // For std::max
 
 #include "utils/logger.hpp"
 #include "window/component/content_manager.hpp"
@@ -22,6 +25,7 @@ OverlayWindow::Impl::Impl()  // NOLINT
     : contentManager_(new component::ContentManager<component::webview::WebView>()) {}
 
 OverlayWindow::Impl::~Impl() {
+    // Make sure we unregister as observer first
     if (contentManager_) {
         contentManager_->destroy();
     }
@@ -58,15 +62,71 @@ LRESULT OverlayWindow::Impl::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, 
             if (contentManager_) {
                 RECT bounds;
                 GetClientRect(hwnd, &bounds);
-                DEBUG_LOG("Resizing WebView2 to %ldx%ld", bounds.right - bounds.left, bounds.bottom - bounds.top);
-                contentManager_->resize(bounds.right - bounds.left, bounds.bottom - bounds.top);
+                // DEBUG_LOG("Resizing WebView2 to %ldx%ld", bounds.right - bounds.left, bounds.bottom - bounds.top);
+                // contentManager_->resize(bounds.right - bounds.left, bounds.bottom - bounds.top);
             }
             return 0;
         case WM_ERASEBKGND:
             return 1;  // Prevent background erasing to avoid flicker
+        // Add handlers for frameless window dragging
+        case WM_NCHITTEST: {
+            // Get cursor position
+            POINT point;
+            point.x = GET_X_LPARAM(lParam);
+            point.y = GET_Y_LPARAM(lParam);
+
+            // Get window rect
+            RECT rcWindow;
+            GetWindowRect(hwnd, &rcWindow);
+
+            // Check if cursor is in the right frame area
+            if (point.x >= rcWindow.right - RIGHT_FRAME_WIDTH && point.x <= rcWindow.right) {
+                // If in the right frame area, allow dragging
+                int windowHeight = rcWindow.bottom - rcWindow.top;
+                int frameHeight = std::min(RIGHT_FRAME_WIDTH, windowHeight);
+
+                // If in the vertical center of the right frame (limited to frameHeight)
+                int verticalCenter = (rcWindow.top + rcWindow.bottom) / 2;
+                if (point.y >= verticalCenter - frameHeight / 2 && point.y <= verticalCenter + frameHeight / 2) {
+                    return HTCAPTION;  // Allow dragging from this area
+                }
+
+                return HTRIGHT;  // Allow resizing from right edge
+            }
+
+            // Let the default procedure handle resizing areas
+            LRESULT result = DefWindowProcW(hwnd, uMsg, wParam, lParam);
+            if (result == HTCLIENT) {
+                // If in client area, treat it as caption for dragging
+                return HTCAPTION;
+            }
+            return result;
+        }
+        case WM_NCCALCSIZE: {
+            // Handling non-client area calculations
+            if (wParam == TRUE) {
+                auto* params = reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam);  // NOLINT
+
+                // Save the original right edge position
+                LONG originalRight = params->rgrc[0].right;
+
+                // Let Windows handle the calculation first
+                LRESULT result = DefWindowProcW(hwnd, uMsg, wParam, lParam);
+
+                // Restore the right edge to keep our frame
+                params->rgrc[0].right = originalRight;
+
+                // Adjust the client area to exclude the right frame
+                params->rgrc[0].right -= RIGHT_FRAME_WIDTH;
+
+                return result;
+            }
+            break;
+        }
         default:
             return DefWindowProcW(hwnd, uMsg, wParam, lParam);
     }
+    return DefWindowProcW(hwnd, uMsg, wParam, lParam);
 }
 
 auto OverlayWindow::Impl::create() -> void {
@@ -86,9 +146,10 @@ auto OverlayWindow::Impl::create() -> void {
         throw std::runtime_error("Failed to register window class");
     }
 
-    hwnd_ =
-        CreateWindowExW(WS_EX_TOPMOST, L"PalantirClass", L"Palantir", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-                        WINDOW_WIDTH, WINDOW_HEIGHT, nullptr, nullptr, GetModuleHandleW(nullptr), this);
+    // Create window with WS_POPUP style and WS_THICKFRAME to allow resizing
+    hwnd_ = CreateWindowExW(WS_EX_LAYERED, L"PalantirClass", L"Palantir",
+                            WS_POPUP | WS_VISIBLE | WS_SYSMENU | WS_THICKFRAME, CW_USEDEFAULT, CW_USEDEFAULT,
+                            WINDOW_WIDTH, WINDOW_HEIGHT, nullptr, nullptr, GetModuleHandleW(nullptr), this);
 
     if (hwnd_ == nullptr) {
         DWORD error = GetLastError();
@@ -98,65 +159,156 @@ auto OverlayWindow::Impl::create() -> void {
 
     DEBUG_LOG("Window created successfully with handle: %p", hwnd_);
 
-    try {
-        // Show window immediately
-        ShowWindow(hwnd_, SW_SHOW);
-        UpdateWindow(hwnd_);
-        DEBUG_LOG("Window shown successfully");
+    // Make the window frameless with a semi-transparent background, but keep right frame
+    makeWindowFrameless();
 
-        // Initialize WebView2
-        if (!contentManager_) {
-            DEBUG_LOG("WebView2 instance is null");
-            throw std::runtime_error("WebView2 instance is null");
-        }
+    // Set window transparency
+    SetLayeredWindowAttributes(hwnd_, 0, WINDOW_ALPHA, LWA_ALPHA);
 
-        DEBUG_LOG("Initializing WebView2");
+    // Set up Webview
+    contentManager_->initialize(hwnd_);
 
-        // Initialize WebView2 with completion callback
-        contentManager_->initialize(hwnd_);
+    // Make sure the window is always on top
+    SetWindowPos(hwnd_, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
-        // After WebView2 is initialized, set the window styles
-        LONG_PTR exStyle = GetWindowLongPtrW(hwnd_, GWL_EXSTYLE);
-        SetWindowLongPtrW(hwnd_, GWL_EXSTYLE, exStyle | WS_EX_LAYERED | WS_EX_TOOLWINDOW);  // NOLINT
-        setTransparency(WINDOW_ALPHA);
+    // Position the window in the center of the screen
+    RECT windowRect;
+    GetWindowRect(hwnd_, &windowRect);
+    int windowWidth = windowRect.right - windowRect.left;
+    int windowHeight = windowRect.bottom - windowRect.top;
 
-        toggleWindowAnonymity();
-        running_ = true;
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-        // Force a redraw of the window
-        InvalidateRect(hwnd_, nullptr, TRUE);
-        UpdateWindow(hwnd_);
+    int posX = (screenWidth - windowWidth) / 2;
+    int posY = (screenHeight - windowHeight) / 2;
 
-        DEBUG_LOG("Window initialization completed successfully");
-    } catch (const std::exception& e) {
-        DEBUG_LOG("Exception during window initialization: %s", e.what());
-        if (hwnd_ != nullptr) {
-            DestroyWindow(hwnd_);
-            hwnd_ = nullptr;
-        }
-        throw;
-    }
+    SetWindowPos(hwnd_, nullptr, posX, posY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+
+    // Update the running state
+    running_ = true;
 }
 
-auto OverlayWindow::Impl::show() -> void {
+auto OverlayWindow::Impl::makeWindowFrameless() -> void {
     if (hwnd_ == nullptr) {
         return;
     }
 
-    if (IsWindowVisible(hwnd_) == TRUE) {
-        ShowWindow(hwnd_, SW_HIDE);
-    } else {
-        ShowWindow(hwnd_, SW_SHOW);
-        SetForegroundWindow(hwnd_);
-        UpdateWindow(hwnd_);
+    // Enable DWM shadows but keep a small frame on the right side
+    // Left, Top, Right, Bottom
+    MARGINS margins = {0, 0, -RIGHT_FRAME_WIDTH,
+                       1};  // Negative right margin to keep frame, slight bottom margin for shadow
+    DwmExtendFrameIntoClientArea(hwnd_, &margins);
+
+    // Enable DWM blur behind (Windows 10 only)
+    HMODULE hUser32 = GetModuleHandleW(L"user32.dll");
+    if (hUser32 != nullptr) {
+        typedef BOOL(WINAPI * SetWindowCompositionAttribute)(HWND, void*);
+        auto pSetWindowCompositionAttribute =
+            reinterpret_cast<SetWindowCompositionAttribute>(GetProcAddress(hUser32, "SetWindowCompositionAttribute"));
+
+        if (pSetWindowCompositionAttribute != nullptr) {
+            // Define the necessary structures
+            struct WindowCompositionAttributeData {
+                DWORD Attrib;
+                PVOID pvData;
+                SIZE_T cbData;
+            };
+
+            struct AccentPolicy {
+                DWORD AccentState;
+                DWORD AccentFlags;
+                DWORD GradientColor;
+                DWORD AnimationId;
+            };
+
+            // Set the accent policy
+            AccentPolicy policy = {};
+            policy.AccentState = 3;                    // ACCENT_ENABLE_BLURBEHIND
+            policy.GradientColor = TRANSPARENT_COLOR;  // Transparent
+
+            WindowCompositionAttributeData data = {};
+            data.Attrib = 19;  // WCA_ACCENT_POLICY // NOLINT
+            data.pvData = &policy;
+            data.cbData = sizeof(policy);
+
+            pSetWindowCompositionAttribute(hwnd_, &data);
+        }
+    }
+}
+
+auto OverlayWindow::Impl::updateWindowSize(int contentWidth, int contentHeight) -> void {
+    if (hwnd_ == nullptr) {
+        return;
+    }
+
+    // Calculate the new window size (content + padding + right frame)
+    int newWidth = contentWidth + (BORDER_PADDING * 2) + RIGHT_FRAME_WIDTH;
+    int newHeight = contentHeight + (BORDER_PADDING * 2);
+
+    // Only resize if the size has actually changed
+    if (newWidth != currentWidth_ || newHeight != currentHeight_) {
+        DEBUG_LOG("Resizing window to %dx%d", newWidth, newHeight);
+
+        // Get current window position to maintain the same center point
+        RECT windowRect;
+        GetWindowRect(hwnd_, &windowRect);
+        int oldWidth = windowRect.right - windowRect.left;
+        int oldHeight = windowRect.bottom - windowRect.top;
+
+        // Calculate new position to keep window centered
+        int posX = windowRect.left - ((newWidth - oldWidth) / 2);
+        int posY = windowRect.top - ((newHeight - oldHeight) / 2);
+
+        // If window is too small, enforce minimum size
+        newWidth = std::max(newWidth, 200);
+        newHeight = std::max(newHeight, 150);
+
+        // Resize and reposition the window
+        SetWindowPos(hwnd_, nullptr, posX, posY, newWidth, newHeight, SWP_NOZORDER);
+
+        // Update current size
+        currentWidth_ = newWidth;
+        currentHeight_ = newHeight;
+    }
+}
+
+auto OverlayWindow::Impl::getCurrentScreenResolution() -> std::pair<int, int> {
+    if (hwnd_ == nullptr) {
+        return {0, 0};  // Return invalid resolution if no window handle exists
+    }
+
+    // Get the monitor where the window is currently displayed
+    HMONITOR monitor = MonitorFromWindow(hwnd_, MONITOR_DEFAULTTONEAREST);
+    if (monitor == nullptr) {
+        return {0, 0};  // Return invalid resolution if monitor not found
+    }
+
+    // Get monitor info
+    MONITORINFO monitorInfo = {sizeof(MONITORINFO)};
+    if (GetMonitorInfo(monitor, &monitorInfo)) {
+        int width = monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left;
+        int height = monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top;
+        return {width, height};
+    }
+
+    return {0, 0};  // Return invalid resolution if something goes wrong
+}
+
+auto OverlayWindow::Impl::show() -> void {
+    if (hwnd_ != nullptr) {
+        if (IsWindowVisible(hwnd_) == TRUE) {
+            ShowWindow(hwnd_, SW_HIDE);
+        } else {
+            ShowWindow(hwnd_, SW_SHOW);
+            SetForegroundWindow(hwnd_);
+        }
     }
 }
 
 auto OverlayWindow::Impl::update() -> void {
-    MSG msg;
-    while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE) == TRUE) {
-        TranslateMessage(&msg);
-        DispatchMessageW(&msg);
+    if (hwnd_ != nullptr) {
+        return;
     }
 }
 
@@ -200,19 +352,15 @@ auto OverlayWindow::Impl::toggleWindowAnonymity() -> void {
 }
 
 auto OverlayWindow::Impl::toggleWindowTool(bool isToolWindow) -> void {
-    if (hwnd_ != nullptr) {
-        LONG_PTR exStyle = GetWindowLongPtrW(hwnd_, GWL_EXSTYLE);
-        if (exStyle & WS_EX_TOOLWINDOW &&  // NOLINT
-            !isToolWindow) {               // If the window is a tool window, remove the tool window flag
-            DEBUG_LOG("Removing tool window flag");
-            exStyle &= ~WS_EX_TOOLWINDOW;            // NOLINT
-        } else if (!(exStyle & WS_EX_TOOLWINDOW) &&  // NOLINT
-                   isToolWindow) {                   // If the window is not a tool window, add the tool window flag
-            DEBUG_LOG("Adding tool window flag");
-            exStyle |= WS_EX_TOOLWINDOW;  // NOLINT
-        }
-        DEBUG_LOG("Setting window extended style to:", exStyle);
-        SetWindowLongPtrW(hwnd_, GWL_EXSTYLE, exStyle);
+    if (hwnd_ == nullptr) {
+        return;
+    }
+
+    uintptr_t style = GetWindowLongPtr(hwnd_, GWL_EXSTYLE);
+    if (isToolWindow) {
+        SetWindowLongPtr(hwnd_, GWL_EXSTYLE, style | WS_EX_TOOLWINDOW);
+    } else {
+        SetWindowLongPtr(hwnd_, GWL_EXSTYLE, style & ~WS_EX_TOOLWINDOW);  // NOLINT
     }
 }
 
@@ -225,4 +373,5 @@ auto OverlayWindow::Impl::setRunning(bool state) -> void { running_ = state; }
 auto OverlayWindow::Impl::getContentManager() const -> std::shared_ptr<component::IContentManager> {
     return contentManager_;
 }
+
 }  // namespace palantir::window

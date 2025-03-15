@@ -14,6 +14,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+
 #include "core_export.hpp"
 
 namespace palantir::input {
@@ -98,7 +99,7 @@ public:
 
 private:
 #pragma warning(push)
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
     /** @brief Map of command names to their shortcut configurations. */
     std::unordered_map<std::string, ShortcutConfig> shortcuts_;
 #pragma warning(pop)
