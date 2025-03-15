@@ -33,8 +33,6 @@ runs:
         fi
         cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DQUALITY_ONLY=ON
 
-    - name: Format Files
-
     - name: Check Format
       shell: bash
       run: cmake --build ${{ inputs.build-dir }} --target format-check
