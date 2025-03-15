@@ -25,6 +25,8 @@ runs:
 
     # Step 2: Download OpenCppCoverage
     - name: Download OpenCppCoverage
+      id: download-opencppcoverage
+      shell: pwsh
       run: |
         Invoke-WebRequest -Uri "https://github.com/OpenCppCoverage/OpenCppCoverage/releases/download/0.9.9.0/OpenCppCoverage-0.9.9.0-win64.zip" -OutFile "OpenCppCoverage.zip"
         Expand-Archive -Path OpenCppCoverage.zip -DestinationPath OpenCppCoverage
@@ -39,7 +41,7 @@ runs:
 
     # Step 4: Run tests
     - name: Run Tests Palantir-Core
-      id: run-tests
+      id: run-tests-palantir-core
       shell: pwsh
       run: |
         OpenCppCoverage --export_type=cobertura:${{ inputs.build-dir }}\bin\Release\coverage\palantir-core.xml --cover_children --sources="palantir-core\src" --sources="palantir-core\include" \
@@ -47,12 +49,12 @@ runs:
 
     # Step 5: Run tests
     - name: Run Tests Commands Plugin
-      id: run-tests
+      id: run-tests-commands-plugin
       shell: pwsh
       run: |
         OpenCppCoverage --export_type=cobertura:${{ inputs.build-dir }}\bin\Release\coverage\commands-plugin.xml --cover_children --sources="plugins\commands\src" --sources="plugins\commands\include" \
         ${{ inputs.build-dir }}\bin\Release\commands_plugin_tests.exe
-        
+
     # Step 3: Save build cache
     - name: Save Build Cache
       uses: actions/cache/save@v3
