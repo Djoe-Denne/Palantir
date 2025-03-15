@@ -56,4 +56,4 @@ runs:
     - name: Run SonarCloud analysis
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
-      uses: sonarsource/sonarcloud-github-action@v5.0.0
+      uses: SonarSource/sonarqube-scan-action@v5
