@@ -1,0 +1,46 @@
+name: 'Get PR Data'
+description: 'Retrieves PR information and filtered files'
+
+inputs:
+  token:
+    description: 'GitHub token'
+    required: true
+
+outputs:
+  sha:
+    description: 'PR head SHA'
+    value: ${{ steps.get_pr_data.outputs.sha }}
+  files:
+    description: 'Filtered files list'
+    value: ${{ steps.get_pr_data.outputs.files }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Get PR data
+      id: get_pr_data
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.token }}
+        script: |
+          const { data: pr } = await github.rest.pulls.get({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number
+          });
+          core.setOutput('sha', pr.head.sha);
+
+          const { data: files } = await github.rest.pulls.listFiles({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number
+          });
+
+          // Filter only .hpp and .cpp files
+          const filteredFiles = files
+            .map(file => file.filename)
+            .filter(filename => filename.endsWith('.hpp') || filename.endsWith('.cpp'));
+
+          console.log("Filtered files:", filteredFiles);
+
+          core.setOutput("files", filteredFiles.join(";")); 
