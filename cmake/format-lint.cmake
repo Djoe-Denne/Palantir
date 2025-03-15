@@ -44,7 +44,7 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
         foreach(FILE ${FILES_TO_LINT})
             add_custom_command(
                 TARGET format-check
-                COMMAND ${CMAKE_COMMAND} -E echo "Checking ${FILE}\n" >> ${CMAKE_BINARY_DIR}/format-reports/format-check.xml
+                COMMAND ${CMAKE_COMMAND} -E echo "Checking ${FILE}" >> ${CMAKE_BINARY_DIR}/format-reports/format-check.xml
                 COMMAND ${CLANG_FORMAT_EXEC} -style=file ${FILE} -output-replacements-xml >> ${CMAKE_BINARY_DIR}/format-reports/format-check.xml
             )
         endforeach()
