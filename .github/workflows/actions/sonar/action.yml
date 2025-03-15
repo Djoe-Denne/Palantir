@@ -23,7 +23,7 @@ runs:
           ${{ inputs.build-dir }}/CMakeCache.txt
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-key }}-tests
+        key: ${{ inputs.cache-key }}
 
     - name: Set up SonarCloud scanner
       uses: SonarSource/sonar-scanner-cli@v7.0.2.4839
