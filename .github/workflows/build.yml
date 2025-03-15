@@ -65,19 +65,8 @@ jobs:
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
           cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}
 
-  tests-coverage:
-    needs: [tests]
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run Tests Coverage
-        uses: ./.github/workflows/actions/tests-coverage
-        with:
-          build-dir: ${{ env.CMAKE_BUILD_DIR }}
-          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}
-
   sonar-analysis:
-    needs: [tests-coverage]
+    needs: [tests]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4

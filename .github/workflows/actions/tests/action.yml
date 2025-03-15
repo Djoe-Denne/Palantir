@@ -1,0 +1,65 @@
+name: 'Run Tests'
+description: 'Runs test executables and reports results'
+
+inputs:
+  build-dir:
+    description: 'CMake build directory'
+    required: true
+  cache-key:
+    description: 'Prefix for cache keys'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    # Step 1: Restore build cache
+    - name: Restore Build Cache
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          ${{ inputs.build-dir }}
+          ${{ inputs.build-dir }}/CMakeCache.txt
+          ${{ inputs.build-dir }}/CMakeFiles
+          ${{ inputs.build-dir }}/_deps
+        key: ${{ inputs.cache-key }}-build
+
+    # Step 2: Download OpenCppCoverage
+    - name: Download OpenCppCoverage
+      run: |
+        Invoke-WebRequest -Uri "https://github.com/OpenCppCoverage/OpenCppCoverage/releases/download/0.9.9.0/OpenCppCoverage-0.9.9.0-win64.zip" -OutFile "OpenCppCoverage.zip"
+        Expand-Archive -Path OpenCppCoverage.zip -DestinationPath OpenCppCoverage
+        echo "$(Get-Location)\OpenCppCoverage" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+    # Step 3: Create coverage directory
+    - name: Create Coverage Directory
+      id: create-coverage-dir
+      shell: pwsh
+      run: |
+        mkdir -p ${{ inputs.build-dir }}\bin\Release\coverage
+
+    # Step 4: Run tests
+    - name: Run Tests Palantir-Core
+      id: run-tests
+      shell: pwsh
+      run: |
+        OpenCppCoverage --export_type=cobertura:${{ inputs.build-dir }}\bin\Release\coverage\palantir-core.xml --cover_children --sources="palantir-core\src" --sources="palantir-core\include" \
+        ${{ inputs.build-dir }}\bin\Release\palantir_core_tests.exe
+
+    # Step 5: Run tests
+    - name: Run Tests Commands Plugin
+      id: run-tests
+      shell: pwsh
+      run: |
+        OpenCppCoverage --export_type=cobertura:${{ inputs.build-dir }}\bin\Release\coverage\commands-plugin.xml --cover_children --sources="plugins\commands\src" --sources="plugins\commands\include" \
+        ${{ inputs.build-dir }}\bin\Release\commands_plugin_tests.exe
+        
+    # Step 3: Save build cache
+    - name: Save Build Cache
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          ${{ inputs.build-dir }}
+          ${{ inputs.build-dir }}/CMakeCache.txt
+          ${{ inputs.build-dir }}/CMakeFiles
+          ${{ inputs.build-dir }}/_deps
+        key: ${{ inputs.cache-key }}-tests
