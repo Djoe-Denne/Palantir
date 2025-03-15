@@ -31,7 +31,7 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
-        cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DGITHUB_TOKEN=${{ inputs.github-token }} -DBUILD_TESTS=ON -G Ninja
+        cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE -DGITHUB_TOKEN=${{ inputs.github-token }} -DBUILD_TESTS=ON
 
     # Build the project
     - name: Build
