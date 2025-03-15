@@ -22,7 +22,6 @@ public:
     MOCK_METHOD(void, resize, (int width, int height), (override));
     MOCK_METHOD(void, addContentSizeObserver, (window::component::IContentSizeObserver* observer), (override));
     MOCK_METHOD(void, removeContentSizeObserver, (window::component::IContentSizeObserver* observer), (override));
-    MOCK_METHOD(void, detectContentSizeChange, (), (override));
     MOCK_METHOD(int, getContentWidth, (), (const, override));
     MOCK_METHOD(int, getContentHeight, (), (const, override));
     MOCK_METHOD(void, registerMessageStrategy, (std::unique_ptr<window::component::message::MessageStrategyBase> strategy), (override));

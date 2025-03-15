@@ -20,11 +20,11 @@ concurrency:
 env:
   FORCE_COLOR: 1  # Enable colored output in logs
   TERM: xterm-256color  # Terminal type for better formatting
-  CMAKE_BUILD_DIR: ${{ github.workspace }}\build
+  CMAKE_BUILD_DIR: ${{ github.workspace }}/build
 
 jobs:
   code-quality:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/actions/quality

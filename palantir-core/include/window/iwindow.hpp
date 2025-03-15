@@ -17,7 +17,7 @@
 
 namespace palantir::window {
 
-enum class PALANTIR_CORE_API WindowType { MAIN, POPUP };
+enum class PALANTIR_CORE_API WindowType { MAIN, POPUP };  // NOLINT
 
 /**
  * @class IWindow
