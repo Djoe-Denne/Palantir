@@ -62,7 +62,7 @@ if (CLANG_FORMAT_EXEC AND CLANG_TIDY_EXEC)
 
         # Create a list of include directories and compiler flags
         set(COMPILER_FLAGS
-            -std=c++17
+            -std=c++20
             # Main include directories
             -I${CMAKE_SOURCE_DIR}/palantir-core/include
             -I${CMAKE_SOURCE_DIR}/palantir-core/include/mode/debug
