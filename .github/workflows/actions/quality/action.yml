@@ -22,6 +22,7 @@ runs:
         if [ ! -d ${{ inputs.build-dir }} ]; then
             mkdir -p ${{ inputs.build-dir }}
         fi
+        echo "Files to lint: ${{ inputs.files-list }}"
         cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DQUALITY_ONLY=ON -DFILES_TO_LINT=${{ inputs.files-list }}
 
     - name: Configure CMake
@@ -31,6 +32,7 @@ runs:
         if [ ! -d ${{ inputs.build-dir }} ]; then
             mkdir -p ${{ inputs.build-dir }}
         fi
+        echo "No files to lint, linting everything"
         cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DQUALITY_ONLY=ON
 
     - name: Check Format
