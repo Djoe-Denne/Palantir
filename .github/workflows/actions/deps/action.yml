@@ -20,6 +20,7 @@ runs:
         lookup-only: true 
         restore-keys: |
           ${{ inputs.cache-key }}-
+        enableCrossOsArchive: true
 
     - name: Install Ninja
       if: steps.check-cache.outputs.cache-hit != 'true'
@@ -43,3 +44,4 @@ runs:
           C:\ProgramData\chocolatey\lib\ninja\tools
           C:\Program Files\OpenCppCoverage
         key: ${{ inputs.cache-key }}-${{ hashFiles('.github/workflows/actions/deps/action.yml') }}
+        enableCrossOsArchive: true

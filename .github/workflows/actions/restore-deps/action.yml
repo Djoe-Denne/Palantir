@@ -18,6 +18,7 @@ runs:
         key: ${{ inputs.cache-key }}-${{ hashFiles('.github/workflows/actions/restore-deps/action.yml') }}
         restore-keys: |
           ${{ inputs.cache-key }}-
+        enableCrossOsArchive: true
 
     - name: Set path
       shell: pwsh
