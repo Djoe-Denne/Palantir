@@ -30,12 +30,14 @@ jobs:
   install-deps:
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Install dependencies
         uses: ./.github/workflows/actions/deps
         with:
           cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-deps-${{ hashFiles('.github/workflows/actions/deps/action.yml') }}
   # Build the project on both platforms
   build:
+    needs: [install-deps]
     name: Build-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
