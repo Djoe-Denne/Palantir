@@ -3,7 +3,7 @@ description: 'Builds the project'
 
 inputs:
   cache-key:
-    description: 'Cache prefix'
+    description: 'Cache key'
     required: true
 
 runs:
