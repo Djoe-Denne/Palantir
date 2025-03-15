@@ -99,14 +99,6 @@ public:
     virtual auto removeContentSizeObserver(IContentSizeObserver* observer) -> void = 0;
 
     /**
-     * @brief Detect and notify observers of content size changes.
-     *
-     * This method should be called periodically to check content size and
-     * notify observers if the size has changed.
-     */
-    virtual auto detectContentSizeChange() -> void = 0;
-
-    /**
      * @brief Get the current content width.
      *
      * @return int The current content width.

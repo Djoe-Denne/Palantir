@@ -9,7 +9,7 @@ namespace palantir::window::component::message::resize {
 
 class PALANTIR_CORE_API ResizeMessageMapper {
 public:
-    inline static auto fromJson(const nlohmann::json& json) -> ResizeMessageVO {
+    static auto fromJson(const nlohmann::json& json) -> ResizeMessageVO {
         if (json.contains("width") && json.contains("height")) {
             return ResizeMessageVO{json["width"].get<int>(), json["height"].get<int>()};
         }

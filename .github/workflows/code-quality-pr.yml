@@ -17,11 +17,11 @@ permissions:
 env:
   FORCE_COLOR: 1  # Enable colored output in logs
   TERM: xterm-256color  # Terminal type for better formatting
-  CMAKE_BUILD_DIR: ${{ github.workspace }}\build
+  CMAKE_BUILD_DIR: ${{ github.workspace }}/build
 
 jobs:
   code-quality:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     if: github.event.issue.pull_request && github.event.comment.body == 'run code quality'
     steps:
       - name: Get PR data
@@ -35,6 +35,8 @@ jobs:
               pull_number: context.issue.number
             });
             core.setOutput('sha', pr.head.sha);
+            const files = pr.files.filter(file => file.filename.endsWith('.hpp') || file.filename.endsWith('.cpp'));
+            core.setOutput('files', files.map(file => file.filename).join(';'));
 
       - name: Create in-progress check
         uses: actions/github-script@v7
@@ -61,13 +63,14 @@ jobs:
         id: quality
         with:
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
+          files: ${{ steps.pr.outputs.files }}
 
       - name: Read lint report
         id: lint_report
         shell: bash
         continue-on-error: true
         run: |
-          REPORT_CONTENT=$(cat ${{ env.CMAKE_BUILD_DIR }}\lint-reports\github-report.txt)
+          REPORT_CONTENT=$(cat ${{ env.CMAKE_BUILD_DIR }}/lint-reports/github-report.txt)
           echo "report<<EOF" >> $GITHUB_OUTPUT
           echo "$REPORT_CONTENT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT

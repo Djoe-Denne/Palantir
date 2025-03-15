@@ -5,7 +5,7 @@
 
 #include "utils/logger.hpp"
 #include "window/component/icontent_size_observer.hpp"
-#include "window/component/message/logger_strategy.hpp"
+#include "window/component/message/logger/logger_strategy.hpp"
 #include "window/component/message/message_handler.hpp"
 
 namespace palantir::window::component {
@@ -168,42 +168,9 @@ public:
     }
 
     auto removeContentSizeObserver(IContentSizeObserver* observer) -> void {
-        auto it = std::find(observers_.begin(), observers_.end(), observer);
-        if (it != observers_.end()) {
-            observers_.erase(it);
-        }
-    }
-
-    auto detectContentSizeChange() -> void {
-        if (view_) {
-            // Request current content size from JavaScript
-            view_->executeJavaScript(R"(
-                (function() {
-                    const width = Math.max(
-                        document.body.scrollWidth, 
-                        document.documentElement.scrollWidth,
-                        document.body.offsetWidth, 
-                        document.documentElement.offsetWidth,
-                        document.body.clientWidth, 
-                        document.documentElement.clientWidth
-                    );
-                    
-                    const height = Math.max(
-                        document.body.scrollHeight, 
-                        document.documentElement.scrollHeight,
-                        document.body.offsetHeight, 
-                        document.documentElement.offsetHeight,
-                        document.body.clientHeight, 
-                        document.documentElement.clientHeight
-                    );
-                    
-                    window.chrome.webview.postMessage({
-                        type: 'contentSize',
-                        width: width,
-                        height: height
-                    });
-                })();
-            )");
+        auto iterator = std::find(observers_.begin(), observers_.end(), observer);
+        if (iterator != observers_.end()) {
+            observers_.erase(iterator);
         }
     }
 

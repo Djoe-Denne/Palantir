@@ -68,6 +68,7 @@ auto ResourceUtils::readFile(const std::filesystem::path& filepath) const -> std
     return {std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
 }
 
+// clang-format off
 auto ResourceUtils::readAllFilesFromDirectory(const std::filesystem::path& directory,
                                               const std::string& extension) const
     -> std::vector<std::pair<std::string, std::string>> {
@@ -84,5 +85,6 @@ auto ResourceUtils::readAllFilesFromDirectory(const std::filesystem::path& direc
     }
     return files;
 }
+// clang-format on
 
 }  // namespace palantir::utils

@@ -1,6 +1,6 @@
 #include "window/component/webview/webview.hpp"
 
-#include "window/component/message/logger_strategy.hpp"
+#include "window/component/message/logger/logger_strategy.hpp"
 #include "window/component/message/message_handler.hpp"
 #include "window/component/webview/webview_callbacks.hpp"
 
