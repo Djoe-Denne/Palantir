@@ -25,8 +25,6 @@ runs:
           ${{ inputs.build-dir }}/_deps
         key: ${{ inputs.cache-key }}
 
-    - name: Set up SonarCloud scanner
-      uses: SonarSource/sonar-scanner-cli@v7.0.2.4839
         
     - name: Prepare coverage reports
       shell: pwsh
@@ -49,12 +47,6 @@ runs:
         }
 
     - name: Run SonarCloud analysis
-      shell: pwsh
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
-        GITHUB_TOKEN: ${{ github.token }}
-      run: |
-        # Add coverage and clang-tidy report paths to sonar-scanner parameters
-        sonar-scanner \
-          -Dsonar.test.exclusions="**/tests/**" \
-          -Dsonar.coverageReportPaths="${{ inputs.build-dir }}/coverage-merged.xml" 
+      uses: sonarsource/sonarcloud-github-action@v5.0.0
