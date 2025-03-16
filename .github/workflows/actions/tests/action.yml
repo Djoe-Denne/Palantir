@@ -28,6 +28,7 @@ runs:
       id: create-coverage-dir
       shell: pwsh
       run: |
+        Remove-Item -Recurse -Force ${{ inputs.build-dir }}\bin\coverage
         mkdir -p ${{ inputs.build-dir }}\bin\coverage
 
     # Step 4: Run tests
