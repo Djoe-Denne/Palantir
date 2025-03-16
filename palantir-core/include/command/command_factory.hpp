@@ -28,7 +28,7 @@ public:
     static auto setInstance(const std::shared_ptr<CommandFactory>& instance) -> void;
 
     /** @brief Destructor. */
-    ~CommandFactory();
+    virtual ~CommandFactory();
 
     // Delete copy operations
     CommandFactory(const CommandFactory&) = delete;

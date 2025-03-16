@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "utils/string_utils.hpp"
 #include "core_export.hpp"
 
 namespace palantir::input {
@@ -59,7 +60,7 @@ public:
     /**
      * @brief Destructor for KeyConfig.
      */
-    ~KeyConfig() = default;
+    virtual ~KeyConfig() = default;
 
     // Delete copy operations
     KeyConfig(const KeyConfig&) = delete;
@@ -101,7 +102,7 @@ private:
 #pragma warning(push)
 #pragma warning(disable : 4251)
     /** @brief Map of command names to their shortcut configurations. */
-    std::unordered_map<std::string, ShortcutConfig> shortcuts_;
+    std::unordered_map<std::string, ShortcutConfig, utils::StringUtils::StringHash, std::equal_to<>> shortcuts_;
 #pragma warning(pop)
 
     /**

@@ -6,7 +6,7 @@ namespace palantir::window {
 
 OverlayWindow::OverlayWindow() : pImpl_(std::make_unique<Impl>()), type_(WindowType::MAIN) {}            // NOLINT
 OverlayWindow::OverlayWindow(const WindowType& type) : pImpl_(std::make_unique<Impl>()), type_(type) {}  // NOLINT
-OverlayWindow::~OverlayWindow() { getContentManager()->removeContentSizeObserver(this); }                // NOLINT
+OverlayWindow::~OverlayWindow() { OverlayWindow::getContentManager()->removeContentSizeObserver(this); }                // NOLINT
 
 auto OverlayWindow::create() -> void {
     pImpl_->create();

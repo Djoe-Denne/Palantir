@@ -23,14 +23,14 @@ public:
     auto operator=(Impl&&) noexcept -> Impl& = delete;
 
     static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);  // NOLINT
-    LRESULT HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);               // NOLINT
+    auto HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) const -> LRESULT;  // NOLINT
     auto create() -> void;
     auto show() -> void;
     auto update() -> void;
     auto close() -> void;
     auto setTransparency(int transparency) -> void;
     auto toggleWindowAnonymity() -> void;
-    [[nodiscard]] auto getNativeHandle() const -> void*;
+    [[nodiscard]] auto getNativeHandle() const -> HWND;
     [[nodiscard]] auto isRunning() const -> bool;
     auto setRunning(bool state) -> void;
     [[nodiscard]] auto getContentManager() const -> std::shared_ptr<component::IContentManager>;

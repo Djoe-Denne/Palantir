@@ -22,7 +22,7 @@ constexpr COLORREF SQUARE_COLOR = RGB(255, 0, 0);
 }  // namespace
 
 OverlayWindow::Impl::Impl()  // NOLINT
-    : contentManager_(new component::ContentManager<component::webview::WebView>()) {}
+    : contentManager_(std::make_shared<component::ContentManager<component::webview::WebView>>()) {}
 
 OverlayWindow::Impl::~Impl() {
     // Make sure we unregister as observer first
@@ -53,7 +53,7 @@ LRESULT CALLBACK OverlayWindow::Impl::WindowProc(HWND hwnd, UINT uMsg, WPARAM wP
     return DefWindowProcW(hwnd, uMsg, wParam, lParam);
 }
 
-LRESULT OverlayWindow::Impl::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {  // NOLINT
+auto OverlayWindow::Impl::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) const -> LRESULT {  // NOLINT
     switch (uMsg) {
         case WM_DESTROY:
             PostQuitMessage(0);
@@ -62,8 +62,6 @@ LRESULT OverlayWindow::Impl::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, 
             if (contentManager_) {
                 RECT bounds;
                 GetClientRect(hwnd, &bounds);
-                // DEBUG_LOG("Resizing WebView2 to %ldx%ld", bounds.right - bounds.left, bounds.bottom - bounds.top);
-                // contentManager_->resize(bounds.right - bounds.left, bounds.bottom - bounds.top);
             }
             return 0;
         case WM_ERASEBKGND:
@@ -86,8 +84,7 @@ LRESULT OverlayWindow::Impl::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, 
                 int frameHeight = std::min(RIGHT_FRAME_WIDTH, windowHeight);
 
                 // If in the vertical center of the right frame (limited to frameHeight)
-                int verticalCenter = (rcWindow.top + rcWindow.bottom) / 2;
-                if (point.y >= verticalCenter - frameHeight / 2 && point.y <= verticalCenter + frameHeight / 2) {
+                if (int verticalCenter = (rcWindow.top + rcWindow.bottom) / 2; point.y >= verticalCenter - frameHeight / 2 && point.y <= verticalCenter + frameHeight / 2) {
                     return HTCAPTION;  // Allow dragging from this area
                 }
 
@@ -285,8 +282,7 @@ auto OverlayWindow::Impl::getCurrentScreenResolution() -> std::pair<int, int> {
     }
 
     // Get monitor info
-    MONITORINFO monitorInfo = {sizeof(MONITORINFO)};
-    if (GetMonitorInfo(monitor, &monitorInfo)) {
+    if (MONITORINFO monitorInfo{sizeof(MONITORINFO)}; GetMonitorInfo(monitor, &monitorInfo)) {
         int width = monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left;
         int height = monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top;
         return {width, height};
@@ -331,8 +327,7 @@ auto OverlayWindow::Impl::setTransparency(int transparency) -> void {
 
 auto OverlayWindow::Impl::toggleWindowAnonymity() -> void {
     if (hwnd_ != nullptr) {
-        DWORD affinity = WDA_NONE;
-        if (GetWindowDisplayAffinity(hwnd_, &affinity) ==
+        if (DWORD affinity{WDA_NONE}; GetWindowDisplayAffinity(hwnd_, &affinity) ==
             TRUE) {  // If the window is displayable, set the display affinity
             DEBUG_LOG("Window display affinity:", affinity);
             if (affinity ==
@@ -364,7 +359,7 @@ auto OverlayWindow::Impl::toggleWindowTool(bool isToolWindow) -> void {
     }
 }
 
-auto OverlayWindow::Impl::getNativeHandle() const -> void* { return hwnd_; }
+auto OverlayWindow::Impl::getNativeHandle() const -> HWND { return hwnd_; }
 
 auto OverlayWindow::Impl::isRunning() const -> bool { return running_; }
 
