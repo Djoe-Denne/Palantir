@@ -7,7 +7,7 @@
 // clang-format off
 // order of includes is important
 #include <objbase.h>
-#include <windows.h>
+#include <Windows.h>
 #include <WebView2.h>
 #include <WebView2EnvironmentOptions.h>
 #include <wrl.h>
@@ -24,9 +24,7 @@ namespace palantir::window::component::webview {
 
 class WebView::WebViewImpl {
 public:
-    WebViewImpl()  // NOLINT
-        : callbacks_(std::make_unique<WebViewCallbacks>()),
-          messageHandler_(std::make_unique<message::MessageHandler>()) {}
+    WebViewImpl() = default;
     ~WebViewImpl() { destroy(); }
 
     WebViewImpl(const WebViewImpl&) = delete;
@@ -37,11 +35,11 @@ public:
     HWND hwnd_{nullptr};
     ComPtr<ICoreWebView2> webView_;
     ComPtr<ICoreWebView2Controller> controller_;
-    std::unique_ptr<WebViewCallbacks> callbacks_;
+    std::unique_ptr<WebViewCallbacks> callbacks_{std::make_unique<WebViewCallbacks>()};
     EventRegistrationToken messageToken_;
     EventRegistrationToken navigationToken_;
     EventRegistrationToken sourceToken_;
-    std::unique_ptr<message::MessageHandler> messageHandler_;
+    std::unique_ptr<message::MessageHandler> messageHandler_{std::make_unique<message::MessageHandler>()};
 
     auto destroy() -> void {
         if (webView_) {
@@ -59,11 +57,10 @@ public:
 };
 
 WebView::WebView() : pimpl_(std::make_unique<WebViewImpl>()) {}  // NOLINT
-
 WebView::~WebView() = default;
 
-auto WebView::initialize(void* nativeWindowHandle, std::function<void()> initCallback) -> void {
-    pimpl_->hwnd_ = static_cast<HWND>(nativeWindowHandle);
+auto WebView::initialize(uintptr_t nativeWindowHandle, std::function<void()> initCallback) -> void {
+    pimpl_->hwnd_ = reinterpret_cast<HWND>(nativeWindowHandle);
     if (!pimpl_->hwnd_) {
         throw std::runtime_error("Invalid window handle");
     }
@@ -89,12 +86,12 @@ auto WebView::initialize(void* nativeWindowHandle, std::function<void()> initCal
     }
 }
 
-auto WebView::initializeController(void* controller) -> intptr_t {
-    if (controller == nullptr) {
+auto WebView::initializeController(uintptr_t controller) -> intptr_t {
+    if (controller == 0) {
         throw std::runtime_error("Invalid controller pointer");
     }
 
-    pimpl_->controller_ = static_cast<ICoreWebView2Controller*>(controller);
+    pimpl_->controller_ = reinterpret_cast<ICoreWebView2Controller*>(controller);
 
     HRESULT hResult = pimpl_->controller_->get_CoreWebView2(&pimpl_->webView_);
     if (FAILED(hResult) || !pimpl_->webView_) {
@@ -141,7 +138,6 @@ auto WebView::initializeController(void* controller) -> intptr_t {
         return hResult;
     }
 
-    // todo: size must be set by content and not the reverse
     RECT bounds;
     GetClientRect(pimpl_->hwnd_, &bounds);
     DEBUG_LOG("Setting WebView2 bounds to: left=%ld, top=%ld, right=%ld, bottom=%ld", bounds.left, bounds.top,
@@ -152,7 +148,7 @@ auto WebView::initializeController(void* controller) -> intptr_t {
     return hResult;
 }
 
-auto WebView::getNativeHandle() -> void* { return pimpl_->hwnd_; }
+auto WebView::getNativeHandle() -> uintptr_t { return reinterpret_cast<uintptr_t>(pimpl_->hwnd_); }
 
 auto WebView::loadURL(const std::string& url) -> void {
     if (!pimpl_->webView_) {
@@ -288,11 +284,10 @@ auto WebView::clearCookies() -> void {
     if (SUCCEEDED(dynamic_cast<ICoreWebView2_13*>(pimpl_->webView_.Get())->get_Profile(&profile))) {
         ComPtr<ICoreWebView2Profile2> profile2;
         if (SUCCEEDED(profile.As(&profile2))) {
-            profile2->ClearBrowsingData(
-                COREWEBVIEW2_BROWSING_DATA_KINDS_COOKIES,
-                Microsoft::WRL::Callback<ICoreWebView2ClearBrowsingDataCompletedHandler>([](HRESULT error) -> HRESULT {
-                    return S_OK;
-                }).Get());
+            profile2->ClearBrowsingData(COREWEBVIEW2_BROWSING_DATA_KINDS_COOKIES,
+                                        Microsoft::WRL::Callback<ICoreWebView2ClearBrowsingDataCompletedHandler>(
+                                            []([[maybe_unused]] HRESULT error) { return S_OK; })
+                                            .Get());
         }
     }
 }

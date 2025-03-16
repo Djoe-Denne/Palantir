@@ -1,7 +1,7 @@
 #ifndef OVERLAY_WINDOW_IMPL_HPP
 #define OVERLAY_WINDOW_IMPL_HPP
 
-#include <windows.h>
+#include <Windows.h>
 
 #include <memory>
 

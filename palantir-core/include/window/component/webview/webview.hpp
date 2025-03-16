@@ -32,21 +32,21 @@ public:
      * @param nativeWindowHandle A pointer to the native window handle.
      * @param initCallback A callback function to be called when the web view is initialized.
      */
-    virtual void initialize(void* nativeWindowHandle, std::function<void()> initCallback);
+    virtual void initialize(uintptr_t nativeWindowHandle, std::function<void()> initCallback);
 
     /**
      * @brief Initializes the web view controller.
      *
      * @param controller A pointer to the web view controller.
      */
-    [[nodiscard]] virtual auto initializeController(void* controller) -> intptr_t;
+    [[nodiscard]] virtual auto initializeController(uintptr_t controller) -> intptr_t;
 
     /**
      * @brief Returns the native window handle of the web view.
      *
      * @return A pointer to the native window handle.
      */
-    [[nodiscard]] virtual auto getNativeHandle() -> void*;
+    [[nodiscard]] virtual auto getNativeHandle() -> uintptr_t;
 
     /**
      * @brief Loads a URL in the web view.

@@ -1,7 +1,7 @@
 #include "window/overlay_window_impl.hpp"
 
 #include <dwmapi.h>
-#include <windows.h>
+#include <Windows.h>
 #include <windowsx.h>  // For GET_X_LPARAM and GET_Y_LPARAM
 
 #include <algorithm>  // For std::max
