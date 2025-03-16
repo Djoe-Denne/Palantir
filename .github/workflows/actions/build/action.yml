@@ -31,7 +31,7 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
       run: | # TODO(houssem): Add a macos compatible compiler
-        cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE -DGITHUB_TOKEN=${{ inputs.github-token }} -DBUILD_TESTS=ON -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -T host=x64 -G Ninja
+        cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE -DGITHUB_TOKEN=${{ inputs.github-token }} -DBUILD_TESTS=ON -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja
 
     # Build the project
     - name: Build
