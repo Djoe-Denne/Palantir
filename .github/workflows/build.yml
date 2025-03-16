@@ -25,10 +25,19 @@ env:
   FORCE_COLOR: 1  # Enable colored output in logs
   TERM: xterm-256color  # Terminal type for better formatting
   CMAKE_BUILD_DIR: ${{ github.workspace }}/build
-  CACHE_KEY_PREFIX: v1  # Increment this to invalidate all caches
+  CACHE_KEY_PREFIX: v2  # Increment this to invalidate all caches
 jobs:
+  install-deps:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/deps
+        with:
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-deps
   # Build the project on both platforms
   build:
+    needs: [install-deps]
     name: Build-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -48,6 +57,10 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
+      - name: Restore dependencies
+        uses: ./.github/workflows/actions/restore-deps
+        with:
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-deps
       - name: Build
         uses: ./.github/workflows/actions/build
         with:
@@ -59,25 +72,18 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Restore dependencies
+        uses: ./.github/workflows/actions/restore-deps
+        with:
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-deps
       - name: Run Tests
         uses: ./.github/workflows/actions/tests
         with:
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
           cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}
 
-  tests-coverage:
-    needs: [tests]
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run Tests Coverage
-        uses: ./.github/workflows/actions/tests-coverage
-        with:
-          build-dir: ${{ env.CMAKE_BUILD_DIR }}
-          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}
-
   sonar-analysis:
-    needs: [tests-coverage]
+    needs: [tests]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4

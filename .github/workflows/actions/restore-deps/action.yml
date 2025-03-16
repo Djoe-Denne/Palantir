@@ -1,0 +1,26 @@
+name: 'Restore Dependencies'
+description: 'Restores cached build dependencies'
+
+inputs:
+  cache-key:
+    description: 'Cache prefix'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Restore Chocolatey packages
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          C:\ProgramData\chocolatey\lib\ninja\tools
+          C:\Program Files\OpenCppCoverage
+        key: ${{ inputs.cache-key }}-${{ hashFiles('.github/workflows/actions/deps/action.yml') }}
+        restore-keys: |
+          ${{ inputs.cache-key }}-
+        enableCrossOsArchive: true
+
+
+    - name: Set path
+      shell: pwsh
+      run: echo "C:\ProgramData\chocolatey\lib\ninja\tools" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8

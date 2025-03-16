@@ -25,36 +25,41 @@ runs:
           ${{ inputs.build-dir }}/_deps
         key: ${{ inputs.cache-key }}-tests
 
-    - name: Set up SonarCloud scanner
-      uses: SonarSource/sonar-scanner-cli@v2.0.2
         
     - name: Prepare coverage reports
       shell: pwsh
       run: |
         $coverage_dir = "${{ inputs.build-dir }}\bin\Release\coverage"
         $merged_coverage = "${{ inputs.build-dir }}\coverage-merged.xml"
-        
-        # Merge all coverage files into one
-        $coverage_files = Get-ChildItem -Path $coverage_dir -Filter *.xml
-        $first = $true
-        foreach ($file in $coverage_files) {
-          if ($first) {
-            Copy-Item $file.FullName $merged_coverage
-            $first = $false
-          } else {
-            # Here you would merge the coverage files
-            # For now we'll just use the last one
-            Copy-Item $file.FullName $merged_coverage -Force
-          }
+        if (Test-Path $coverage_dir) {
+            # Merge all coverage files into one
+            $coverage_files = Get-ChildItem -Path $coverage_dir -Filter *.xml
+            $first = $true
+            foreach ($file in $coverage_files) {
+            if ($first) {
+                Copy-Item $file.FullName $merged_coverage
+                $first = $false
+            } else {
+                # Here you would merge the coverage files
+                # For now we'll just use the last one
+                Copy-Item $file.FullName $merged_coverage -Force
+            }
+            }
         }
 
-    - name: Run SonarCloud analysis
+        if (Test-Path $merged_coverage) {
+            Write-Host "Coverage report found at $merged_coverage with content: $(Get-Content $merged_coverage)"
+        } else {
+            Write-Host "No coverage report found"
+        }
+
+    - name: Find compile commands
       shell: pwsh
+      run: |
+        $compile_commands = Get-ChildItem -Path ${{ inputs.build-dir }} -Filter compile_commands.json
+        Write-Host "Compile commands found at $compile_commands"
+
+    - name: Run SonarCloud analysis
       env:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
-        GITHUB_TOKEN: ${{ github.token }}
-      run: |
-        # Add coverage and clang-tidy report paths to sonar-scanner parameters
-        sonar-scanner \
-          -Dsonar.test.exclusions="**/tests/**" \
-          -Dsonar.coverageReportPaths="${{ inputs.build-dir }}/coverage-merged.xml" 
+      uses: SonarSource/sonarqube-scan-action@v5

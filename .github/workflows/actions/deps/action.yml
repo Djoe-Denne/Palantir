@@ -1,0 +1,46 @@
+name: 'Install Dependencies'
+description: 'Installs dependencies'
+
+inputs:
+  cache-key:
+    description: 'Cache key'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check cache
+      id: check-cache
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          C:\ProgramData\chocolatey\lib\ninja\tools
+          C:\Program Files\OpenCppCoverage
+        key: ${{ inputs.cache-key }}-${{ hashFiles('.github/workflows/actions/deps/action.yml') }}
+        restore-keys: |
+          ${{ inputs.cache-key }}-
+        enableCrossOsArchive: true
+        lookup-only: true 
+
+    - name: Install Ninja
+      if: steps.check-cache.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        choco install ninja
+    
+    - name: Download OpenCppCoverage
+      id: download-opencppcoverage
+      if: steps.check-cache.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        choco install opencppcoverage
+
+    - name: Save cache
+      if: steps.check-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          C:\ProgramData\chocolatey\lib\ninja\tools
+          C:\Program Files\OpenCppCoverage
+        key: ${{ inputs.cache-key }}-${{ hashFiles('.github/workflows/actions/deps/action.yml') }}
+        enableCrossOsArchive: true

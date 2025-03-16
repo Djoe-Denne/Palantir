@@ -17,8 +17,10 @@ jobs:
           set +e
           echo "Deleting caches..."
           for cacheKey in $cacheKeysForPR
-          do
+          do  
+            if [[ $cacheKey != *"deps"* ]]; then
               gh cache delete $cacheKey
+            fi
           done
           echo "Done"
         env:
