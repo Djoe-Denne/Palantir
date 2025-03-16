@@ -67,7 +67,7 @@ auto WebView::initialize(uintptr_t nativeWindowHandle, std::function<void()> ini
 
     pimpl_->callbacks_->setInitCallback(std::move(initCallback));
 
-    DEBUG_LOG("Starting WebView2 initialization");
+    DebugLog("Starting WebView2 initialization");
 
     auto options = Microsoft::WRL::Make<CoreWebView2EnvironmentOptions>();
     if (!options) {
@@ -95,11 +95,11 @@ auto WebView::initializeController(uintptr_t controller) -> intptr_t {
 
     HRESULT hResult = pimpl_->controller_->get_CoreWebView2(&pimpl_->webView_);
     if (FAILED(hResult) || !pimpl_->webView_) {
-        DEBUG_LOG("Failed to get CoreWebView2 from controller: 0x%08x", hResult);
+        DebugLog("Failed to get CoreWebView2 from controller: 0x%08x", hResult);
         return hResult;
     }
 
-    DEBUG_LOG("CoreWebView2 obtained successfully");
+    DebugLog("CoreWebView2 obtained successfully");
 
     // Configure WebView2 settings
     ComPtr<ICoreWebView2Settings> settings;
@@ -110,7 +110,7 @@ auto WebView::initializeController(uintptr_t controller) -> intptr_t {
         settings->put_IsWebMessageEnabled(TRUE);
         settings->put_IsStatusBarEnabled(FALSE);
         settings->put_AreDevToolsEnabled(TRUE);
-        DEBUG_LOG("WebView2 settings configured successfully");
+        DebugLog("WebView2 settings configured successfully");
     }
 
     // Add event handlers
@@ -118,7 +118,7 @@ auto WebView::initializeController(uintptr_t controller) -> intptr_t {
         pimpl_->webView_->add_SourceChanged(pimpl_->callbacks_->getSourceChangedHandler().Get(), &pimpl_->sourceToken_);
 
     if (FAILED(hResult)) {
-        DEBUG_LOG("Failed to add source changed handler: 0x%08x", hResult);
+        DebugLog("Failed to add source changed handler: 0x%08x", hResult);
         return hResult;
     }
 
@@ -126,7 +126,7 @@ auto WebView::initializeController(uintptr_t controller) -> intptr_t {
                                                         &pimpl_->navigationToken_);
 
     if (FAILED(hResult)) {
-        DEBUG_LOG("Failed to add navigation completed handler: 0x%08x", hResult);
+        DebugLog("Failed to add navigation completed handler: 0x%08x", hResult);
         return hResult;
     }
 
@@ -134,14 +134,14 @@ auto WebView::initializeController(uintptr_t controller) -> intptr_t {
                                                        &pimpl_->messageToken_);
 
     if (FAILED(hResult)) {
-        DEBUG_LOG("Failed to add message received handler: 0x%08x", hResult);
+        DebugLog("Failed to add message received handler: 0x%08x", hResult);
         return hResult;
     }
 
     RECT bounds;
     GetClientRect(pimpl_->hwnd_, &bounds);
-    DEBUG_LOG("Setting WebView2 bounds to: left=%ld, top=%ld, right=%ld, bottom=%ld", bounds.left, bounds.top,
-              bounds.right, bounds.bottom);
+    DebugLog("Setting WebView2 bounds to: left=%ld, top=%ld, right=%ld, bottom=%ld", bounds.left, bounds.top,
+             bounds.right, bounds.bottom);
     pimpl_->controller_->put_Bounds(bounds);
     pimpl_->controller_->put_IsVisible(TRUE);
 

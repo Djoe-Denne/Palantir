@@ -13,7 +13,7 @@ auto ClearScreenshotCommand::getScreenshotFolder() const -> std::string {
 auto ClearScreenshotCommand::clearFolder() -> void {
     std::string folderPath = getScreenshotFolder();
     if (!fs::exists(folderPath)) {
-        DEBUG_LOG("Screenshot folder does not exist: ", folderPath);
+        DebugLog("Screenshot folder does not exist: ", folderPath);
         return;
     }
 
@@ -25,9 +25,9 @@ auto ClearScreenshotCommand::clearFolder() -> void {
                 deletedFiles++;
             }
         }
-        DEBUG_LOG("Cleared ", deletedFiles, " screenshots from ", folderPath);
+        DebugLog("Cleared ", deletedFiles, " screenshots from ", folderPath);
     } catch (const std::exception& e) {
-        DEBUG_LOG("Error clearing screenshot folder: ", e.what());
+        DebugLog("Error clearing screenshot folder: ", e.what());
     }
 }
 

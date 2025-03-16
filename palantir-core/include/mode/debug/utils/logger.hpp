@@ -1,10 +1,10 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
+#include <source_location>
 #include <sstream>
 #include <string>
 #include <string_view>
-#include <source_location>
 
 #include "core_export.hpp"
 

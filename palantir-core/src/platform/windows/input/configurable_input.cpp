@@ -32,7 +32,7 @@ public:
      * These codes are used to check the state of keyboard inputs.
      */
     Impl(int keyCode, int modifierCode) : keyCode_(keyCode), modifierCode_(modifierCode) {
-        DEBUG_LOG("Initializing configurable input: key=0x{:x}, modifier=0x{:x}", keyCode, modifierCode);
+        DebugLog("Initializing configurable input: key=0x{:x}, modifier=0x{:x}", keyCode, modifierCode);
     }
 
     /**
@@ -46,7 +46,7 @@ public:
         bool pressed = (static_cast<uint16_t>(GetAsyncKeyState(keyCode_)) &
                         static_cast<uint16_t>(KeyRegister::getInstance()->get("KEY_PRESSED_MASK"))) != 0;
         if (pressed) {
-            DEBUG_LOG("Key 0x{:x} is pressed", keyCode_);
+            DebugLog("Key 0x{:x} is pressed", keyCode_);
         }
         return pressed;
     }
@@ -62,7 +62,7 @@ public:
         bool active = (static_cast<uint16_t>(GetAsyncKeyState(modifierCode_)) &
                        static_cast<uint16_t>(KeyRegister::getInstance()->get("KEY_PRESSED_MASK"))) != 0;
         if (active) {
-            DEBUG_LOG("Modifier 0x{:x} is active", modifierCode_);
+            DebugLog("Modifier 0x{:x} is active", modifierCode_);
         }
         return active;
     }
@@ -83,7 +83,7 @@ public:
      *
      * Currently a no-op as the implementation doesn't own any resources.
      */
-    ~Impl() { DEBUG_LOG("Destroying configurable input"); }
+    ~Impl() { DebugLog("Destroying configurable input"); }
 
 private:
     int keyCode_;       ///< Virtual key code for the input key
@@ -95,7 +95,7 @@ ConfigurableInput::~ConfigurableInput() = default;
 // Public interface implementation
 ConfigurableInput::ConfigurableInput(int keyCode, int modifierCode)
     : pImpl_(std::make_unique<Impl>(keyCode, modifierCode)) {
-    DEBUG_LOG("Creating configurable input");
+    DebugLog("Creating configurable input");
 }
 
 auto ConfigurableInput::isKeyPressed(const std::any& event) const -> bool {

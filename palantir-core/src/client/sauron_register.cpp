@@ -11,14 +11,13 @@ std::shared_ptr<SauronRegister> SauronRegister::instance_;
 class SauronRegister::Impl {
 public:
     Impl() {
-        auto* curlClient = new sauron::client::HttpClientCurl("localhost:3000");
-        auto httpClient = std::unique_ptr<sauron::client::HttpClientCurl>(curlClient);
+        auto httpClient = std::make_unique<sauron::client::HttpClientCurl>("localhost:3000");
         sauronClient = std::make_shared<sauron::client::SauronClient>(std::move(httpClient));
         try {
             sauronClient->login(sauron::dto::LoginRequest(
                 "sk-proj-*****", sauron::dto::AIProvider::OPENAI));  // put that outside the constructor
         } catch (const std::exception& e) {
-            DEBUG_LOG("Failed to login to Sauron: {}", e.what());
+            DebugLog("Failed to login to Sauron: {}", e.what());
         }
     }
 

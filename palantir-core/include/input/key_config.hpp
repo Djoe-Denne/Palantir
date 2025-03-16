@@ -15,8 +15,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "utils/string_utils.hpp"
 #include "core_export.hpp"
+#include "utils/string_utils.hpp"
 
 namespace palantir::input {
 

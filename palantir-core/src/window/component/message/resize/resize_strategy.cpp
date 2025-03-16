@@ -8,8 +8,8 @@ ResizeStrategy::ResizeStrategy(std::string eventType, const std::shared_ptr<ICon
     : eventType_(std::move(eventType)), contentManager_(contentManager) {}
 
 auto ResizeStrategy::execute(const ResizeMessageVO& resizeMessage) -> void {
-    DEBUG_LOG("ResizeStrategy handling event: ", eventType_, " with message: ", resizeMessage.width, "x",
-              resizeMessage.height);
+    DebugLog("ResizeStrategy handling event: ", eventType_, " with message: ", resizeMessage.width, "x",
+             resizeMessage.height);
     contentManager_->resize(resizeMessage.width, resizeMessage.height);
 }
 

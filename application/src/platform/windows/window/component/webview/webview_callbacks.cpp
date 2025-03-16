@@ -10,32 +10,34 @@ WebViewCallbacks::WebViewCallbacks() = default;
 
 void WebViewCallbacks::setInitCallback(std::function<void()> callback) { initCallback_ = std::move(callback); }
 
-auto WebViewCallbacks::handleEnvironmentCompleted(HRESULT result, ICoreWebView2Environment* env, WebView* webview) -> HRESULT {
+auto WebViewCallbacks::handleEnvironmentCompleted(HRESULT result, ICoreWebView2Environment* env, WebView* webview)
+    -> HRESULT {
     if (FAILED(result)) {
-        DEBUG_LOG("Failed to create WebView2 environment: ", result);
+        DebugLog("Failed to create WebView2 environment: ", result);
         return result;
     }
     if (!env) {
-        DEBUG_LOG("WebView2 environment is null");
+        DebugLog("WebView2 environment is null");
         return E_POINTER;
     }
 
-    DEBUG_LOG("WebView2 environment created successfully");
+    DebugLog("WebView2 environment created successfully");
     auto nativeHandle = reinterpret_cast<HWND>(webview->getNativeHandle());
     return env->CreateCoreWebView2Controller(nativeHandle, this->getControllerCompletedHandler(webview).Get());
 }
 
-auto WebViewCallbacks::handleControllerCompleted(HRESULT result, ICoreWebView2Controller* controller, WebView* webview) const -> HRESULT {
+auto WebViewCallbacks::handleControllerCompleted(HRESULT result, ICoreWebView2Controller* controller,
+                                                 WebView* webview) const -> HRESULT {
     if (FAILED(result)) {
-        DEBUG_LOG("Failed to create WebView2 controller: ", result);
+        DebugLog("Failed to create WebView2 controller: ", result);
         return result;
     }
     if (!controller) {
-        DEBUG_LOG("WebView2 controller is null");
+        DebugLog("WebView2 controller is null");
         return E_POINTER;
     }
 
-    DEBUG_LOG("WebView2 controller created successfully");
+    DebugLog("WebView2 controller created successfully");
     HRESULT hResult = webview->initializeController(reinterpret_cast<uintptr_t>(controller));  // NOLINT
     if (FAILED(hResult)) {
         return hResult;
@@ -47,73 +49,77 @@ auto WebViewCallbacks::handleControllerCompleted(HRESULT result, ICoreWebView2Co
     return S_OK;
 }
 
-auto WebViewCallbacks::handleWebMessageReceived([[maybe_unused]] const ICoreWebView2* sender, 
-    ICoreWebView2WebMessageReceivedEventArgs* args, WebView* webview) const -> HRESULT {
+auto WebViewCallbacks::handleWebMessageReceived([[maybe_unused]] const ICoreWebView2* sender,
+                                                ICoreWebView2WebMessageReceivedEventArgs* args, WebView* webview) const
+    -> HRESULT {
     LPWSTR message = nullptr;
-    if (args->TryGetWebMessageAsString(&message) == E_INVALIDARG || args->get_WebMessageAsJson(&message) == E_INVALIDARG) {
-        DEBUG_LOG("Failed to get web message as String or JSON");
+    if (args->TryGetWebMessageAsString(&message) == E_INVALIDARG ||
+        args->get_WebMessageAsJson(&message) == E_INVALIDARG) {
+        DebugLog("Failed to get web message as String or JSON");
         return S_OK;
     }
 
     if (message) {
         std::wstring wmessage(message);
         std::string messageStr(wmessage.begin(), wmessage.end());
-        DEBUG_LOG("Received WebView2 message: ", messageStr);
+        DebugLog("Received WebView2 message: ", messageStr);
 
         try {
             webview->handleMessage(messageStr);
         } catch (const std::exception& e) {
-            DEBUG_LOG("Exception in message handler: ", e.what());
+            DebugLog("Exception in message handler: ", e.what());
         }
         CoTaskMemFree(message);
     }
     return S_OK;
 }
 
-auto WebViewCallbacks::handleNavigationCompleted(ICoreWebView2* sender, ICoreWebView2NavigationCompletedEventArgs* args) const -> HRESULT {
-    DEBUG_LOG("Navigation completed callback triggered");
+auto WebViewCallbacks::handleNavigationCompleted(ICoreWebView2* sender,
+                                                 ICoreWebView2NavigationCompletedEventArgs* args) const -> HRESULT {
+    DebugLog("Navigation completed callback triggered");
     BOOL success;
     args->get_IsSuccess(&success);
     if (!success) {
         COREWEBVIEW2_WEB_ERROR_STATUS status;
         args->get_WebErrorStatus(&status);
-        DEBUG_LOG("Navigation failed with error status: ", status);
+        DebugLog("Navigation failed with error status: ", status);
         CoTaskMemFree(nullptr);
     } else {
-        DEBUG_LOG("Navigation completed successfully");
+        DebugLog("Navigation completed successfully");
         try {
             auto resourceUtils = palantir::utils::ResourceUtils::getInstance();
             auto scripts = resourceUtils->loadAllJavaScriptsFromDirectory("post-nav");
 
             for (const auto& [filename, script] : scripts) {
-                DEBUG_LOG("Executing post-navigation script: ", filename);
+                DebugLog("Executing post-navigation script: ", filename);
 
                 std::wstring wScript(script.begin(), script.end());
                 sender->ExecuteScript(wScript.c_str(), nullptr);
             }
         } catch (const std::exception& e) {
-            DEBUG_LOG("Failed to load and execute post-navigation scripts: ", e.what());
+            DebugLog("Failed to load and execute post-navigation scripts: ", e.what());
         }
     }
     return S_OK;
 }
 
-auto WebViewCallbacks::handleSourceChanged(ICoreWebView2* sender, 
-    [[maybe_unused]] const ICoreWebView2SourceChangedEventArgs* args) const -> HRESULT {
+auto WebViewCallbacks::handleSourceChanged(ICoreWebView2* sender,
+                                           [[maybe_unused]] const ICoreWebView2SourceChangedEventArgs* args) const
+    -> HRESULT {
     LPWSTR uri;
     sender->get_Source(&uri);
     std::string uriStr = palantir::utils::StringUtils::wToStr(uri);
-    DEBUG_LOG("WebView2 source changed to: ", uriStr);
+    DebugLog("WebView2 source changed to: ", uriStr);
     CoTaskMemFree(uri);
     return S_OK;
 }
 
 auto WebViewCallbacks::handleExecuteScriptCompleted(HRESULT error, LPCWSTR result) const -> HRESULT {
     if (FAILED(error)) {
-        DEBUG_LOG("Failed to execute script: ", error);
+        DebugLog("Failed to execute script: ", error);
     } else {
         std::string resultStr = palantir::utils::StringUtils::wToStr(result);
-        DEBUG_LOG("Script executed successfully, result: ", resultStr);
+        DebugLog("Script executed successfully, result: ", resultStr);
     }
     return S_OK;
 }
@@ -160,9 +166,7 @@ auto WebViewCallbacks::getSourceChangedHandler() -> Microsoft::WRL::ComPtr<ICore
 auto WebViewCallbacks::getExecuteScriptCompletedHandler()
     -> Microsoft::WRL::ComPtr<ICoreWebView2ExecuteScriptCompletedHandler> {
     return Microsoft::WRL::Callback<ICoreWebView2ExecuteScriptCompletedHandler>(
-        [this](HRESULT error, LPCWSTR result) {
-            return this->handleExecuteScriptCompleted(error, result);
-        });
+        [this](HRESULT error, LPCWSTR result) { return this->handleExecuteScriptCompleted(error, result); });
 }
 
 }  // namespace palantir::window::component::webview

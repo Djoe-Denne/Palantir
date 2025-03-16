@@ -47,7 +47,7 @@ TEST_F(ToggleTransparencyCommandTest, ExecuteTogglesTransparencyWhenWindowExists
 
     EXPECT_CALL(*mockWindow, getNativeHandle())
         .Times(1)
-        .WillOnce(Return(nullptr)); // TODO(@Djoe-Denne) create a mockable wrapper for window update function
+        .WillOnce(Return(0)); // TODO(@Djoe-Denne) create a mockable wrapper for window update function
 
     EXPECT_CALL(*mockWindow, setTransparency(100))
         .Times(1);

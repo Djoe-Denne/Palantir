@@ -11,7 +11,7 @@ namespace palantir::input {
 class ConfigurableInput::Impl {
    public:
     explicit Impl(const int keyCode, const int modifierCode) : keyCode_(keyCode), modifierCode_(modifierCode) {
-        DEBUG_LOG("Initializing configurable input: key=0x{:x}, modifier=0x{:x}", keyCode, modifierCode);
+        DebugLog("Initializing configurable input: key=0x{:x}, modifier=0x{:x}", keyCode, modifierCode);
     }
 
     Impl(const Impl&) = delete;
@@ -23,20 +23,20 @@ class ConfigurableInput::Impl {
         try {
             const auto* const nsEvent = std::any_cast<NSEvent*>(event);
             if (nsEvent == nullptr) {
-                DEBUG_LOG("Null event received");
+                DebugLog("Null event received");
                 return false;
             }
 
             if (nsEvent.type == NSEventTypeKeyDown || nsEvent.type == NSEventTypeKeyUp) {
                 const bool pressed = (nsEvent.keyCode == keyCode_);
                 if (pressed) {
-                    DEBUG_LOG("Key 0x{:x} is {}", keyCode_,
+                    DebugLog("Key 0x{:x} is {}", keyCode_,
                               (nsEvent.type == NSEventTypeKeyDown) ? "pressed" : "released");
                 }
                 return pressed && (nsEvent.type == NSEventTypeKeyDown);
             }
         } catch (const std::bad_any_cast& e) {
-            DEBUG_LOG("Invalid event type in isKeyPressed: {}", e.what());
+            DebugLog("Invalid event type in isKeyPressed: {}", e.what());
         }
         return false;
     }
@@ -45,17 +45,17 @@ class ConfigurableInput::Impl {
         try {
             const auto* const nsEvent = std::any_cast<NSEvent*>(event);
             if (nsEvent == nullptr) {
-                DEBUG_LOG("Null event received");
+                DebugLog("Null event received");
                 return false;
             }
 
             const bool active = (nsEvent.modifierFlags & static_cast<NSUInteger>(modifierCode_)) != 0;
             if (active) {
-                DEBUG_LOG("Modifier 0x{:x} is active", modifierCode_);
+                DebugLog("Modifier 0x{:x} is active", modifierCode_);
             }
             return active;
         } catch (const std::bad_any_cast& e) {
-            DEBUG_LOG("Invalid event type in isModifierActive: {}", e.what());
+            DebugLog("Invalid event type in isModifierActive: {}", e.what());
         }
         return false;
     }
@@ -65,7 +65,7 @@ class ConfigurableInput::Impl {
         // CGEventSource provides real-time state
     }
 
-    ~Impl() { DEBUG_LOG("Destroying configurable input"); }
+    ~Impl() { DebugLog("Destroying configurable input"); }
 
    private:
     int keyCode_;       ///< Virtual key code for the input key
@@ -74,7 +74,7 @@ class ConfigurableInput::Impl {
 
 ConfigurableInput::ConfigurableInput(int keyCode, int modifierCode)
     : pImpl_(std::make_unique<Impl>(keyCode, modifierCode)) {
-    DEBUG_LOG("Creating configurable input");
+    DebugLog("Creating configurable input");
 }
 
 ConfigurableInput::~ConfigurableInput() = default;

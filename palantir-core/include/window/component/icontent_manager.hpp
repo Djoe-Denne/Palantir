@@ -23,7 +23,7 @@ public:
      *
      * @param nativeWindowHandle The native window handle.
      */
-    virtual auto initialize(void* nativeWindowHandle) -> void = 0;
+    virtual auto initialize(uintptr_t nativeWindowHandle) -> void = 0;
 
     /**
      * @brief Set the root content.

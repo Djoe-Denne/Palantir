@@ -86,7 +86,7 @@ private:
  */
 - (instancetype)initWithSignalManagerImpl:(palantir::signal::SignalManager::Impl*)impl {
     if ((self = [super init]) != nil) {
-        DEBUG_LOG("Initializing SignalChecker");
+        DebugLog("Initializing SignalChecker");
         self.pImpl_ = impl;
         [self setupEventMonitors];
     }
@@ -109,7 +109,7 @@ private:
  * to be granted by the user in System Preferences.
  */
 - (void)setupEventMonitors {
-    DEBUG_LOG("Setting up event monitors");
+    DebugLog("Setting up event monitors");
     // Monitor key down/up and modifier key events
     NSEventMask eventMask = NSEventMaskKeyDown | NSEventMaskKeyUp | NSEventMaskFlagsChanged;
 
@@ -118,7 +118,7 @@ private:
     self.globalMonitor =
         [NSEvent addGlobalMonitorForEventsMatchingMask:eventMask
                                                handler:^(NSEvent* event) {
-                                                   DEBUG_LOG("Global event received");
+                                                   DebugLog("Global event received");
                                                    [self handleKeyEvent:event];
                                                }];
 
@@ -127,13 +127,13 @@ private:
     self.localMonitor =
         [NSEvent addLocalMonitorForEventsMatchingMask:eventMask
                                               handler:^NSEvent*(NSEvent* event) {
-                                                  DEBUG_LOG("Local event received");
+                                                  DebugLog("Local event received");
                                                   [self handleKeyEvent:event];
                                                   return event;  // Return event to allow it to propagate
                                               }];
 
     if (self.globalMonitor == nil || self.localMonitor == nil) {
-        DEBUG_LOG("Warning: Failed to create one or more event monitors");
+        DebugLog("Warning: Failed to create one or more event monitors");
     }
 }
 
@@ -148,7 +148,7 @@ private:
 - (void)handleKeyEvent:(NSEvent*)event {
     // Dispatch signal check to main queue for thread safety
     dispatch_async(dispatch_get_main_queue(), ^{
-        DEBUG_LOG("Triggering signal check");
+        DebugLog("Triggering signal check");
         self.pImpl_->checkSignals(event);
     });
 }
@@ -159,7 +159,7 @@ private:
  * This method stops the event monitoring and cleans up the event monitors.
  */
 - (void)stopChecking {
-    DEBUG_LOG("Stopping event monitors");
+    DebugLog("Stopping event monitors");
     if (self.globalMonitor != nil) {
         [NSEvent removeMonitor:self.globalMonitor];
         self.globalMonitor = nil;
@@ -177,7 +177,7 @@ private:
  * memory leaks and invalid callbacks after the instance is destroyed.
  */
 - (void)dealloc {
-    DEBUG_LOG("Cleaning up SignalChecker");
+    DebugLog("Cleaning up SignalChecker");
     [self stopChecking];
 }
 
@@ -223,7 +223,7 @@ auto SignalManager::Impl::checkSignals(const std::any& event) -> void {
  *
  * Creates the private implementation which sets up the event monitoring system.
  */
-SignalManager::SignalManager() : pImpl_(std::make_unique<Impl>(this)) { DEBUG_LOG("Initializing SignalManager"); }
+SignalManager::SignalManager() : pImpl_(std::make_unique<Impl>(this)) { DebugLog("Initializing SignalManager"); }
 
 // Default destructor is sufficient as pImpl_ is a unique_ptr
 SignalManager::~SignalManager() = default;
@@ -236,7 +236,7 @@ SignalManager::~SignalManager() = default;
  * when keyboard events are received.
  */
 auto SignalManager::addSignal(std::unique_ptr<ISignal> signal) -> void {
-    DEBUG_LOG("Adding signal to manager");
+    DebugLog("Adding signal to manager");
     pImpl_->addSignal(std::move(signal));
 }
 
@@ -247,7 +247,7 @@ auto SignalManager::addSignal(std::unique_ptr<ISignal> signal) -> void {
  * The event monitoring system is already active from construction.
  */
 auto SignalManager::startSignals() -> void {
-    DEBUG_LOG("Starting signals");
+    DebugLog("Starting signals");
     pImpl_->startSignals();
 }
 
@@ -258,7 +258,7 @@ auto SignalManager::startSignals() -> void {
  * The event monitoring system remains active.
  */
 auto SignalManager::stopSignals() -> void {
-    DEBUG_LOG("Stopping signals");
+    DebugLog("Stopping signals");
     pImpl_->stopSignals();
 }
 

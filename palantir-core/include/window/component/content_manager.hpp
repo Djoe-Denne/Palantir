@@ -28,7 +28,7 @@ public:
      *
      * @param nativeWindowHandle The native window handle.
      */
-    auto initialize(void* nativeWindowHandle) -> void override {
+    auto initialize(uintptr_t nativeWindowHandle) -> void override {
         registerMessageStrategy(message::makeStrategy(std::make_unique<message::logger::LoggerStrategy>("*")));
         registerMessageStrategy(
 

@@ -49,7 +49,7 @@ auto run_app() -> int {
         return result;
 
     } catch (const std::exception& e) {
-        DEBUG_LOG("Fatal error: {}", e.what());
+        DebugLog("Fatal error: {}", e.what());
 #ifdef _WIN32
         MessageBoxA(nullptr, e.what(), "Fatal Error", MB_OK | MB_ICONERROR);
 #endif

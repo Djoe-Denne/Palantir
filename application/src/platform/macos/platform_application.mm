@@ -34,7 +34,7 @@ class PlatformApplication::Impl {
      */
     explicit Impl(signal::SignalManager& signalManager, std::shared_ptr<window::WindowManager> windowManager)
         : signalManager_(signalManager), windowManager_(windowManager) {
-        DEBUG_LOG("Initializing PlatformApplication");
+        DebugLog("Initializing PlatformApplication");
         [NSApplication sharedApplication];
         [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
 
@@ -42,15 +42,15 @@ class PlatformApplication::Impl {
         NSDictionary* const options = @{(__bridge id)kAXTrustedCheckOptionPrompt : @YES};
         const bool accessibilityEnabled = AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)options) != 0;
 
-        DEBUG_LOG("Accessibility status: %s", accessibilityEnabled ? "Enabled" : "Disabled");
+        DebugLog("Accessibility status: %s", accessibilityEnabled ? "Enabled" : "Disabled");
 
         if (!accessibilityEnabled) {
             NSString* const message = @"Please grant accessibility permissions in System Preferences > "
                                       @"Security & Privacy > Privacy > Accessibility";
-            DEBUG_LOG("%s", [message UTF8String]);
+            DebugLog("%s", [message UTF8String]);
         }
 
-        DEBUG_LOG("Application initialization complete");
+        DebugLog("Application initialization complete");
     }
 
     /**
@@ -61,7 +61,7 @@ class PlatformApplication::Impl {
      * is terminated. This is the main event processing loop for macOS.
      */
     [[nodiscard]] auto run() -> int {
-        DEBUG_LOG("Starting application run loop");
+        DebugLog("Starting application run loop");
         [NSApp run];
         return 0;
     }
@@ -72,7 +72,7 @@ class PlatformApplication::Impl {
      * Terminates the Cocoa application and cleans up resources.
      */
     auto quit() -> void {
-        DEBUG_LOG("Application quitting");
+        DebugLog("Application quitting");
         [NSApp terminate:nil];
     }
 
@@ -85,7 +85,7 @@ class PlatformApplication::Impl {
 
 PlatformApplication::PlatformApplication(const std::string& configPath)
     : Application(configPath), pImpl_(std::make_unique<Impl>(getSignalManager(), getWindowManager())) {
-    DEBUG_LOG("Creating MacOS platform application");
+    DebugLog("Creating MacOS platform application");
 }
 
 // Required for unique_ptr with incomplete type

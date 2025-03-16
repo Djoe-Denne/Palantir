@@ -19,7 +19,6 @@ class KeyRegisterImpl;
  * and retrieval of registered values.
  */
 class PALANTIR_CORE_API KeyRegister {
-
 public:
     virtual ~KeyRegister();
 
@@ -38,7 +37,7 @@ public:
 protected:
     // Private constructor for singleton
     KeyRegister();
-    
+
 private:
     // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
 #pragma warning(push)

@@ -118,7 +118,7 @@ public:
      * implementation will cast this to the appropriate type (e.g., HWND
      * for Windows or NSWindow* for macOS).
      */
-    [[nodiscard]] virtual auto getNativeHandle() const -> void* = 0;
+    [[nodiscard]] virtual auto getNativeHandle() const -> uintptr_t = 0;
 
     /**
      * @brief Get the window's content.

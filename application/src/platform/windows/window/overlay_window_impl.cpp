@@ -1,7 +1,7 @@
 #include "window/overlay_window_impl.hpp"
 
-#include <dwmapi.h>
 #include <Windows.h>
+#include <dwmapi.h>
 #include <windowsx.h>  // For GET_X_LPARAM and GET_Y_LPARAM
 
 #include <algorithm>  // For std::max
@@ -53,7 +53,8 @@ LRESULT CALLBACK OverlayWindow::Impl::WindowProc(HWND hwnd, UINT uMsg, WPARAM wP
     return DefWindowProcW(hwnd, uMsg, wParam, lParam);
 }
 
-auto OverlayWindow::Impl::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) const -> LRESULT {  // NOLINT
+auto OverlayWindow::Impl::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) const
+    -> LRESULT {  // NOLINT
     switch (uMsg) {
         case WM_DESTROY:
             PostQuitMessage(0);
@@ -84,7 +85,8 @@ auto OverlayWindow::Impl::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
                 int frameHeight = std::min(RIGHT_FRAME_WIDTH, windowHeight);
 
                 // If in the vertical center of the right frame (limited to frameHeight)
-                if (int verticalCenter = (rcWindow.top + rcWindow.bottom) / 2; point.y >= verticalCenter - frameHeight / 2 && point.y <= verticalCenter + frameHeight / 2) {
+                if (int verticalCenter = (rcWindow.top + rcWindow.bottom) / 2;
+                    point.y >= verticalCenter - frameHeight / 2 && point.y <= verticalCenter + frameHeight / 2) {
                     return HTCAPTION;  // Allow dragging from this area
                 }
 
@@ -127,7 +129,7 @@ auto OverlayWindow::Impl::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 }
 
 auto OverlayWindow::Impl::create() -> void {
-    DEBUG_LOG("Starting overlay window creation");
+    DebugLog("Starting overlay window creation");
 
     WNDCLASSEXW windowClass = {};
     windowClass.cbSize = sizeof(WNDCLASSEXW);
@@ -139,7 +141,7 @@ auto OverlayWindow::Impl::create() -> void {
 
     if (RegisterClassExW(&windowClass) == 0) {
         DWORD error = GetLastError();
-        DEBUG_LOG("Failed to register window class: %lu", error);
+        DebugLog("Failed to register window class: %lu", error);
         throw std::runtime_error("Failed to register window class");
     }
 
@@ -150,11 +152,11 @@ auto OverlayWindow::Impl::create() -> void {
 
     if (hwnd_ == nullptr) {
         DWORD error = GetLastError();
-        DEBUG_LOG("Failed to create window: %lu", error);
+        DebugLog("Failed to create window: %lu", error);
         throw std::runtime_error("Failed to create window");
     }
 
-    DEBUG_LOG("Window created successfully with handle: %p", hwnd_);
+    DebugLog("Window created successfully with handle: %p", hwnd_);
 
     // Make the window frameless with a semi-transparent background, but keep right frame
     makeWindowFrameless();
@@ -163,7 +165,7 @@ auto OverlayWindow::Impl::create() -> void {
     SetLayeredWindowAttributes(hwnd_, 0, WINDOW_ALPHA, LWA_ALPHA);
 
     // Set up Webview
-    contentManager_->initialize(hwnd_);
+    contentManager_->initialize(reinterpret_cast<uintptr_t>(hwnd_));
 
     // Make sure the window is always on top
     SetWindowPos(hwnd_, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
@@ -245,7 +247,7 @@ auto OverlayWindow::Impl::updateWindowSize(int contentWidth, int contentHeight) 
 
     // Only resize if the size has actually changed
     if (newWidth != currentWidth_ || newHeight != currentHeight_) {
-        DEBUG_LOG("Resizing window to %dx%d", newWidth, newHeight);
+        DebugLog("Resizing window to %dx%d", newWidth, newHeight);
 
         // Get current window position to maintain the same center point
         RECT windowRect;
@@ -328,20 +330,20 @@ auto OverlayWindow::Impl::setTransparency(int transparency) -> void {
 auto OverlayWindow::Impl::toggleWindowAnonymity() -> void {
     if (hwnd_ != nullptr) {
         if (DWORD affinity{WDA_NONE}; GetWindowDisplayAffinity(hwnd_, &affinity) ==
-            TRUE) {  // If the window is displayable, set the display affinity
-            DEBUG_LOG("Window display affinity:", affinity);
+                                      TRUE) {  // If the window is displayable, set the display affinity
+            DebugLog("Window display affinity:", affinity);
             if (affinity ==
                 WDA_EXCLUDEFROMCAPTURE) {  // If the window is excluded from capture, set the display affinity to none
-                DEBUG_LOG("Setting window display affinity to none");
+                DebugLog("Setting window display affinity to none");
                 SetWindowDisplayAffinity(hwnd_, WDA_NONE);
                 toggleWindowTool(false);
             } else {  // If the window is not excluded from capture, set the display affinity to exclude from capture
-                DEBUG_LOG("Setting window display affinity to exclude from capture");
+                DebugLog("Setting window display affinity to exclude from capture");
                 SetWindowDisplayAffinity(hwnd_, WDA_EXCLUDEFROMCAPTURE);
                 toggleWindowTool(true);
             }
         }
-        DEBUG_LOG("Setting window position");
+        DebugLog("Setting window position");
         SetWindowPos(hwnd_, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
     }
 }

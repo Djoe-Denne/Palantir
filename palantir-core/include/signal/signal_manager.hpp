@@ -47,7 +47,7 @@ public:
      * Cleans up all managed signals and releases any platform-specific
      * resources used for signal processing.
      */
-    ~SignalManager();
+    virtual ~SignalManager();
 
     // Delete copy and move operations
     SignalManager(const SignalManager&) = delete;

@@ -73,7 +73,7 @@ auto KeyConfig::loadConfig(const std::string& configPath) -> void {
         config.key.erase(0, config.key.find_first_not_of(" \t"));
         config.key.erase(config.key.find_last_not_of(" \t") + 1);
 
-        DEBUG_LOG("Loaded shortcut for {}: {}+{}", command, config.modifier, config.key);
+        DebugLog("Loaded shortcut for {}: {}+{}", command, config.modifier, config.key);
         shortcuts_[command] = std::move(config);
     }
 }

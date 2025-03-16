@@ -4,6 +4,6 @@
 // Declaration only
 void platform_log(const char* function, int line, const char* format, ...);
 
-#define DEBUG_LOG(format, ...)
+#define DebugLog(format, ...)
 
 #endif  // LOGGER_HPP

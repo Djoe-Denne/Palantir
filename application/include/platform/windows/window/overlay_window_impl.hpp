@@ -22,7 +22,7 @@ public:
     Impl(Impl&&) noexcept = delete;
     auto operator=(Impl&&) noexcept -> Impl& = delete;
 
-    static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);  // NOLINT
+    static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);   // NOLINT
     auto HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) const -> LRESULT;  // NOLINT
     auto create() -> void;
     auto show() -> void;

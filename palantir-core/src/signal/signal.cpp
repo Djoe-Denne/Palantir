@@ -10,16 +10,16 @@ namespace palantir::signal {
 
 Signal::Signal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command, const bool useDebounce)
     : input_(std::move(input)), command_(std::move(command)), useDebounce_(useDebounce) {
-    DEBUG_LOG("Creating signal");
+    DebugLog("Creating signal");
 }
 
 auto Signal::start() -> void {
-    DEBUG_LOG("Starting signal");
+    DebugLog("Starting signal");
     active_ = true;
 }
 
 auto Signal::stop() -> void {
-    DEBUG_LOG("Stopping signal");
+    DebugLog("Stopping signal");
     active_ = false;
 }
 
@@ -34,7 +34,7 @@ auto Signal::check(const std::any& event) -> void {
         const auto currentTime = std::chrono::steady_clock::now().time_since_epoch().count();
 
         if (!useDebounce_ || (currentTime - lastTriggerTime_ > DEBOUNCE_TIME)) {
-            DEBUG_LOG("Signal triggered");
+            DebugLog("Signal triggered");
             command_->execute();
             lastTriggerTime_ = currentTime;
         }

@@ -56,13 +56,13 @@ void ResourceUtils::initializeResourceDirectory() {
         resourceDirectory_ = std::filesystem::path("../../resource");
     }
 
-    DEBUG_LOG("Resource directory: ", resourceDirectory_.string());
+    DebugLog("Resource directory: ", resourceDirectory_.string());
 }
 
 auto ResourceUtils::readFile(const std::filesystem::path& filepath) const -> std::string {
     std::ifstream file(filepath);
     if (!file.is_open()) {
-        DEBUG_LOG("Failed to open file: ", filepath.string());
+        DebugLog("Failed to open file: ", filepath.string());
         throw std::runtime_error("Failed to open file: " + filepath.string());
     }
     return {std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
@@ -79,7 +79,7 @@ auto ResourceUtils::readAllFilesFromDirectory(const std::filesystem::path& direc
 
     for (const auto& entry : std::filesystem::directory_iterator(directory)) {
         if (entry.is_regular_file() && entry.path().extension() == extension) {
-            DEBUG_LOG("Found file: ", entry.path().filename().string());
+            DebugLog("Found file: ", entry.path().filename().string());
             files.emplace_back(entry.path().filename().string(), readFile(entry.path()));
         }
     }
