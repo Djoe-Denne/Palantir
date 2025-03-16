@@ -35,7 +35,7 @@ public:
                 signals.push_back(
                     std::make_unique<Signal>(std::move(input), std::move(command), command->useDebounce()));
             } else {
-                DEBUG_LOG("Unknown command in configuration: {}", commandName);
+                DebugLog("Unknown command in configuration: {}", commandName);
                 throw std::runtime_error("Unknown command in configuration: " + commandName);
             }
         }

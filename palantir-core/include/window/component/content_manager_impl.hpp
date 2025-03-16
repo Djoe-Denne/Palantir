@@ -13,8 +13,12 @@ namespace palantir::window::component {
 template <typename T>
 class ContentManager<T>::ContentManagerImpl {
 private:
-    std::shared_ptr<T> view_;
-    nlohmann::json content_;
+    std::shared_ptr<T> view_{std::make_shared<T>()};
+    nlohmann::json content_{
+        {{"explanation", ""},
+         {"response", ""},
+         {"complexity",
+          {{"time", {{"value", ""}, {"explanation", ""}}}, {"space", {{"value", ""}, {"explanation", ""}}}}}}};
     std::vector<IContentSizeObserver*> observers_;
     int currentContentWidth_ = 0;
     int currentContentHeight_ = 0;
@@ -31,33 +35,17 @@ private:
     void notifyObservers() {
         for (auto observer : observers_) {
             if (observer) {
-                DEBUG_LOG("Notifying observer of content size change: ", currentContentWidth_, "x",
-                          currentContentHeight_);
+                DebugLog("Notifying observer of content size change: ", currentContentWidth_, "x",
+                         currentContentHeight_);
                 observer->onContentSizeChanged(currentContentWidth_, currentContentHeight_);
             }
         }
     }
 
 public:
-    ContentManagerImpl()
-        : view_(new T()),
-          content_(
-              {{"explanation", ""},
-               {"response", ""},
-               {"complexity",
-                {{"time", {{"value", ""}, {"explanation", ""}}}, {"space", {{"value", ""}, {"explanation", ""}}}}}}) {
-        DEBUG_LOG("ContentManagerImpl default constructor");
-    }
+    ContentManagerImpl() = default;
 
-    explicit ContentManagerImpl(std::shared_ptr<T> view)
-        : view_(view),
-          content_(
-              {{"explanation", ""},
-               {"response", ""},
-               {"complexity",
-                {{"time", {{"value", ""}, {"explanation", ""}}}, {"space", {{"value", ""}, {"explanation", ""}}}}}}) {
-        DEBUG_LOG("ContentManagerImpl constructor with view");
-    }
+    explicit ContentManagerImpl(std::shared_ptr<T> view) : view_(view) {}
 
     ~ContentManagerImpl() = default;
 
@@ -66,11 +54,11 @@ public:
     ContentManagerImpl(ContentManagerImpl&&) noexcept = delete;
     auto operator=(ContentManagerImpl&&) noexcept -> ContentManagerImpl& = delete;
 
-    auto initialize(void* nativeWindowHandle) -> void {
+    auto initialize(uintptr_t nativeWindowHandle) -> void {
         if (view_) {
             // Initialize WebView2 with completion callback
-            view_->initialize(reinterpret_cast<uintptr_t>(nativeWindowHandle), [this]() {
-                DEBUG_LOG("WebView2 initialization callback - loading URL");
+            view_->initialize(nativeWindowHandle, [this]() {
+                DebugLog("WebView2 initialization callback - loading URL");
                 view_->loadURL("http://www.google.com");
             });
         }
@@ -78,7 +66,7 @@ public:
 
     auto setRootContent(const std::string& content) -> void {
         try {
-            DEBUG_LOG("Setting root content: %s", content.c_str());
+            DebugLog("Setting root content: %s", content.c_str());
             content_ = nlohmann::json::parse(content);
             updateWebView();
         } catch (const nlohmann::json::exception& e) {
@@ -103,7 +91,7 @@ public:
         }
     }
 
-    auto getContent(const std::string& elementId) -> std::string {
+    auto getContent(const std::string& elementId) const -> std::string {
         try {
             if (elementId == "explanation" || elementId == "response") {
                 return content_[elementId].get<std::string>();
@@ -135,7 +123,7 @@ public:
         }
     }
 
-    auto getContentVisibility(const std::string& elementId) -> bool {
+    auto getContentVisibility([[maybe_unused]] const std::string_view& elementId) const -> bool {
         // This would require a callback from JavaScript to C++
         // For now, we'll return true as default
         return true;
@@ -196,8 +184,9 @@ public:
     }
 
 private:
-    [[nodiscard]] auto split(const std::string& str, const std::string& delimiter) -> std::vector<std::string> {
-        std::vector<std::string> tokens;
+    [[nodiscard]] auto split(const std::string_view& str, const std::string_view& delimiter) const
+        -> std::vector<std::string_view> {
+        std::vector<std::string_view> tokens;
         size_t start = 0;
         size_t end = str.find(delimiter);
         while (end != std::string::npos) {

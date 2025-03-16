@@ -24,10 +24,10 @@ public:
      * @param parent Pointer to the owning SignalManager instance
      */
     explicit Impl(SignalManager* parent) : parent_(parent) {
-        DEBUG_LOG("Initializing SignalManager implementation");
+        DebugLog("Initializing SignalManager implementation");
         hook_ = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, GetModuleHandle(nullptr), 0);
         if (hook_ == nullptr) {
-            DEBUG_LOG("Failed to set keyboard hook");
+            DebugLog("Failed to set keyboard hook");
         }
     }
 
@@ -115,7 +115,7 @@ auto SignalManager::setInstance(const std::shared_ptr<SignalManager>& instance) 
 }
 
 SignalManager::SignalManager() : pImpl_(std::make_unique<Impl>(this)) {
-    DEBUG_LOG("Initializing SignalManager");
+    DebugLog("Initializing SignalManager");
     // Store the Impl pointer as a window property for the hook callback
     SetProp(GetActiveWindow(), L"SignalManagerImpl", reinterpret_cast<HANDLE>(pImpl_.get()));
 }
@@ -126,17 +126,17 @@ SignalManager::~SignalManager() {
 }
 
 auto SignalManager::addSignal(std::unique_ptr<ISignal> signal) -> void {
-    DEBUG_LOG("Adding signal to manager");
+    DebugLog("Adding signal to manager");
     pImpl_->addSignal(std::move(signal));
 }
 
 auto SignalManager::startSignals() -> void {
-    DEBUG_LOG("Starting signals");
+    DebugLog("Starting signals");
     pImpl_->startSignals();
 }
 
 auto SignalManager::stopSignals() -> void {
-    DEBUG_LOG("Stopping signals");
+    DebugLog("Stopping signals");
     pImpl_->stopSignals();
 }
 

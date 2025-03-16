@@ -19,16 +19,16 @@ auto SendSauronRequestCommand::useDebounce() -> bool {
 }
 
 auto SendSauronRequestCommand::execute() -> void {
-    DEBUG_LOG("Sending Sauron request...");
-    DEBUG_LOG("Prompt: ", prompt_); 
+    DebugLog("Sending Sauron request...");
+    DebugLog("Prompt: ", prompt_); 
     auto images = loadImagesFromFolder();
-    DEBUG_LOG("Images: ", images.size());
+    DebugLog("Images: ", images.size());
     auto sauronRegister = client::SauronRegister::getInstance();
     auto sauronClient = sauronRegister->getSauronClient();
-    DEBUG_LOG("Sauron client: ", sauronClient);
+    DebugLog("Sauron client: ", sauronClient);
 
     auto aiAlgorithmWithImageQuery = sauron::dto::AIQueryRequest(prompt_, sauron::dto::AIProvider::OPENAI, "gpt-4o");
-    DEBUG_LOG("AI algorithm with image query: ", aiAlgorithmWithImageQuery.toJson().dump(4));
+    DebugLog("AI algorithm with image query: ", aiAlgorithmWithImageQuery.toJson().dump(4));
     for (const auto& image : images) {
         aiAlgorithmWithImageQuery.addImage(image);
     }
@@ -36,9 +36,9 @@ auto SendSauronRequestCommand::execute() -> void {
     try {
         auto response = sauronClient->queryAlgorithm(aiAlgorithmWithImageQuery);
         responseStr = response.toJson().dump(4);
-        DEBUG_LOG("Response: ", responseStr);
+        DebugLog("Response: ", responseStr);
     } catch (const std::exception& e) {
-        DEBUG_LOG("Error: ", e.what());
+        DebugLog("Error: ", e.what());
         throw std::runtime_error("Failed to query AI algorithm");
     }
 

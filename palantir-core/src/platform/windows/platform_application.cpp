@@ -46,7 +46,7 @@ auto CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) -> L
 
         // Only check signals on key down or key up events
         if (wParam == WM_KEYDOWN || wParam == WM_KEYUP || wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP) {
-            DEBUG_LOG("Keyboard event: vkCode=0x%x, scanCode=0x%x, flags=0x%x", pKeyboard->vkCode, pKeyboard->scanCode,
+            DebugLog("Keyboard event: vkCode=0x%x, scanCode=0x%x, flags=0x%x", pKeyboard->vkCode, pKeyboard->scanCode,
                       pKeyboard->flags);
             g_signalManager->checkSignals(nullptr);
         }
@@ -85,7 +85,7 @@ public:
      */
     explicit Impl(signal::SignalManager& signalManager, window::WindowManager& windowManager)
         : signalManager_(signalManager), windowManager_(windowManager) {
-        DEBUG_LOG("Initializing Windows platform application");
+        DebugLog("Initializing Windows platform application");
 
         // Store signal manager pointer for hook callback
         g_signalManager = &signalManager;
@@ -95,11 +95,11 @@ public:
 
         if (g_keyboardHook == nullptr) {
             DWORD error = GetLastError();
-            DEBUG_LOG("Failed to install keyboard hook: error=%lu", error);
+            DebugLog("Failed to install keyboard hook: error=%lu", error);
             throw std::runtime_error("Failed to install keyboard hook");
         }
 
-        DEBUG_LOG("Keyboard hook installed successfully");
+        DebugLog("Keyboard hook installed successfully");
     }
 
     /**
@@ -111,7 +111,7 @@ public:
      * continues until a WM_QUIT message is received.
      */
     [[nodiscard]] auto run() -> int {
-        DEBUG_LOG("Starting message loop");
+        DebugLog("Starting message loop");
 
         MSG msg;
         BOOL result;
@@ -121,7 +121,7 @@ public:
         while ((result = GetMessage(&msg, nullptr, 0, 0)) != 0) {
             if (result == -1) {
                 DWORD error = GetLastError();
-                DEBUG_LOG("GetMessage failed: error=%lu", error);
+                DebugLog("GetMessage failed: error=%lu", error);
                 return 1;
             }
 
@@ -129,7 +129,7 @@ public:
             DispatchMessage(&msg);
         }
 
-        DEBUG_LOG("Message loop ended with exit code %d", static_cast<int>(msg.wParam));
+        DebugLog("Message loop ended with exit code %d", static_cast<int>(msg.wParam));
         return static_cast<int>(msg.wParam);
     }
 
@@ -141,7 +141,7 @@ public:
      * keyboard hook.
      */
     auto quit() -> void {
-        DEBUG_LOG("Application quitting");
+        DebugLog("Application quitting");
         PostQuitMessage(0);
     }
 
@@ -152,7 +152,7 @@ public:
      * signal manager pointer.
      */
     ~Impl() {
-        DEBUG_LOG("Application being destroyed");
+        DebugLog("Application being destroyed");
 
         if (g_keyboardHook != nullptr) {
             UnhookWindowsHookEx(g_keyboardHook);
@@ -176,7 +176,7 @@ private:
  */
 PlatformApplication::PlatformApplication(const std::string& configPath)
     : Application(configPath), pImpl_(std::make_unique<Impl>(getSignalManager(), getWindowManager())) {
-    DEBUG_LOG("Creating Windows platform application");
+    DebugLog("Creating Windows platform application");
 }
 
 // Required for unique_ptr with incomplete type

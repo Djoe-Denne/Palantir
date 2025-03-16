@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "command/icommand.hpp"
+#include "utils/string_utils.hpp"
 
 namespace palantir::command {
 
@@ -18,7 +19,8 @@ public:
     CommandFactoryImpl(CommandFactoryImpl&&) = delete;
     auto operator=(CommandFactoryImpl&&) -> CommandFactoryImpl& = delete;
 
-    std::unordered_map<std::string, CommandFactory::CommandCreator> commands_;
+    std::unordered_map<std::string, CommandFactory::CommandCreator, utils::StringUtils::StringHash, std::equal_to<>>
+        commands_;
 
     auto registerCommand(const std::string& commandName, CommandFactory::CommandCreator creator) -> void {
         commands_[commandName] = creator;

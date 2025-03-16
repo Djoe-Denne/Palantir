@@ -4,9 +4,9 @@
 
 namespace palantir::window {
 
-OverlayWindow::OverlayWindow() : pImpl_(std::make_unique<Impl>()), type_(WindowType::MAIN) {}            // NOLINT
-OverlayWindow::OverlayWindow(const WindowType& type) : pImpl_(std::make_unique<Impl>()), type_(type) {}  // NOLINT
-OverlayWindow::~OverlayWindow() { getContentManager()->removeContentSizeObserver(this); }                // NOLINT
+OverlayWindow::OverlayWindow() : pImpl_(std::make_unique<Impl>()), type_(WindowType::MAIN) {}             // NOLINT
+OverlayWindow::OverlayWindow(const WindowType& type) : pImpl_(std::make_unique<Impl>()), type_(type) {}   // NOLINT
+OverlayWindow::~OverlayWindow() { OverlayWindow::getContentManager()->removeContentSizeObserver(this); }  // NOLINT
 
 auto OverlayWindow::create() -> void {
     pImpl_->create();
@@ -21,7 +21,9 @@ auto OverlayWindow::close() -> void {
 }
 auto OverlayWindow::setTransparency(int transparency) -> void { pImpl_->setTransparency(transparency); }
 auto OverlayWindow::toggleWindowAnonymity() -> void { pImpl_->toggleWindowAnonymity(); }
-auto OverlayWindow::getNativeHandle() const -> void* { return pImpl_->getNativeHandle(); }
+auto OverlayWindow::getNativeHandle() const -> uintptr_t {
+    return reinterpret_cast<uintptr_t>(pImpl_->getNativeHandle());
+}
 auto OverlayWindow::isRunning() const -> bool { return pImpl_->isRunning(); }
 auto OverlayWindow::setRunning(bool runningState) -> void { pImpl_->setRunning(runningState); }
 auto OverlayWindow::getContentManager() const -> std::shared_ptr<component::IContentManager> {
@@ -34,7 +36,7 @@ auto OverlayWindow::onContentSizeChanged(int width, int height) -> void {
     width = std::min(width, screenWidth);
     height = std::min(height, screenHeight);
 
-    DEBUG_LOG("Content size changed notification received: %dx%d", width, height);
+    DebugLog("Content size changed notification received: %dx%d", width, height);
     if (width > 0 && height > 0) {
         updateWindowSize(width, height);
     }

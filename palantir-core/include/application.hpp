@@ -96,7 +96,7 @@ public:
      * Returns a reference to the application's signal manager, which handles
      * all input signals and their processing.
      */
-    [[nodiscard]] auto getSignalManager() -> std::shared_ptr<class signal::SignalManager>;
+    [[nodiscard]] auto getSignalManager() const -> std::shared_ptr<class signal::SignalManager>;
 
     /**
      * @brief Get the window manager.
@@ -105,7 +105,7 @@ public:
      * Returns a reference to the application's window manager, which handles
      * all application windows and their lifecycle.
      */
-    [[nodiscard]] auto getWindowManager() -> std::shared_ptr<class window::WindowManager>;
+    [[nodiscard]] auto getWindowManager() const -> std::shared_ptr<class window::WindowManager>;
 
     /**
      * @brief Initialize signals from configuration.

@@ -11,7 +11,7 @@ public:
     MockContentManager() = default;
     ~MockContentManager() override = default;
 
-    MOCK_METHOD(void, initialize, (void* nativeWindowHandle), (override));
+    MOCK_METHOD(void, initialize, (uintptr_t nativeWindowHandle), (override));
     MOCK_METHOD(void, setRootContent, (const std::string& content), (override));
     MOCK_METHOD(void, setContent, (const std::string& elementId, const std::string& content), (override));
     MOCK_METHOD(std::string, getContent, (const std::string& elementId), (override));

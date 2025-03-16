@@ -31,7 +31,7 @@ public:
     auto close() -> void override;
     auto setTransparency(int transparency) -> void override;
     auto toggleWindowAnonymity() -> void override;
-    [[nodiscard]] auto getNativeHandle() const -> void* override;
+    [[nodiscard]] auto getNativeHandle() const -> uintptr_t override;
 
     [[nodiscard]] auto isRunning() const -> bool override;
     auto setRunning(bool runningState) -> void override;

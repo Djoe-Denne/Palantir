@@ -3,11 +3,14 @@
 
 #include <algorithm>
 #include <array>
-#include <codecvt>
 #include <cwchar>
 #include <locale>
 #include <string>
 #include <vector>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #include "core_export.hpp"
 
@@ -33,10 +36,24 @@ public:
         return str;
     }
 
+#ifdef _WIN32
+    /**
+     * @brief Convert a wide string to a UTF-8 string.
+     * @param wstr The wide string to convert.
+     * @return The UTF-8 string.
+     */
     static auto wToStr(const std::wstring& wstr) -> std::string {
-        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-        return converter.to_bytes(wstr);
+        if (wstr.empty()) {
+            return std::string();
+        }
+        int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), static_cast<int>(wstr.length()), nullptr, 0,
+                                              nullptr, nullptr);
+        std::string str(size_needed, 0);
+        WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), static_cast<int>(wstr.length()), str.data(), size_needed, nullptr,
+                            nullptr);
+        return str;
     }
+#endif
 
     // Named constants for bitwise operations
     static constexpr unsigned char MASK_FC = 0xfcU;
@@ -101,6 +118,15 @@ public:
 
         return ret;
     }
+
+    struct StringHash {
+        using is_transparent = void;  // Enables heterogeneous operations.
+
+        std::size_t operator()(std::string_view sv) const {
+            std::hash<std::string_view> hasher;
+            return hasher(sv);
+        }
+    };
 
 #pragma warning(pop)
 };

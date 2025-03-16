@@ -1,6 +1,7 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
+#include <source_location>
 #include <sstream>
 #include <string>
 #include <string_view>
@@ -11,23 +12,23 @@ namespace palantir::utils {
 
 void PALANTIR_CORE_API PlatformLog(std::string_view function, int line, const std::string& message);
 
-template <typename T>
-void PALANTIR_CORE_API LogStream(std::ostringstream& stream, const T& value) {
-    stream << value;  // NOLINT (hicpp-no-array-decay)
-}
-
 template <typename T, typename... Args>
-void PALANTIR_CORE_API LogStream(std::ostringstream& stream, const T& value, const Args&... args) {
+auto PALANTIR_CORE_API LogStream(std::ostringstream& stream, const T& value, const Args&... args) -> void {
     stream << value;  // NOLINT
-    LogStream(stream, args...);
+    (stream << ... << args);
 }
 }  // namespace palantir::utils
 
-#define DEBUG_LOG(...)                                                      \
-    do {                                                                    \
-        std::ostringstream stream;                                          \
-        palantir::utils::LogStream(stream, __VA_ARGS__);                    \
-        palantir::utils::PlatformLog(__FUNCTION__, __LINE__, stream.str()); \
-    } while (0)
+template <typename... Args>
+auto PALANTIR_CORE_API DebugLog(const std::source_location& location, const Args&... args) -> void {
+    std::ostringstream stream;
+    palantir::utils::LogStream(stream, args...);
+    palantir::utils::PlatformLog(location.function_name(), location.line(), stream.str());
+}
+
+template <typename... Args>
+auto PALANTIR_CORE_API DebugLog(const Args&... args) -> void {
+    DebugLog(std::source_location::current(), args...);
+}
 
 #endif  // LOGGER_HPP
