@@ -42,7 +42,7 @@ runs:
         
         # Configure CMake with full path to cl.exe
         cmake -B ${{ inputs.build-dir }} `
-          -DCMAKE_BUILD_TYPE=Release `
+          -DCMAKE_BUILD_TYPE=Debug `
           -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE `
           -DGITHUB_TOKEN=${{ inputs.github-token }} `
           -DBUILD_TESTS=ON `

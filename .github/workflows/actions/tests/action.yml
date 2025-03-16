@@ -21,7 +21,7 @@ runs:
           ${{ inputs.build-dir }}/CMakeCache.txt
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-key }}
+        key: ${{ inputs.cache-key }}-build
 
     # Step 3: Create coverage directory
     - name: Create Coverage Directory
@@ -60,4 +60,4 @@ runs:
           ${{ inputs.build-dir }}/CMakeCache.txt
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-key }}-tests2
+        key: ${{ inputs.cache-key }}-tests
