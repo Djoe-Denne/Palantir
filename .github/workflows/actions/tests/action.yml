@@ -47,12 +47,6 @@ runs:
       run: |
         & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --input_coverage=${{ inputs.build-dir }}\bin\coverage\palantir-core.cov --export_type=cobertura:${{ inputs.build-dir }}\bin\coverage\final.xml --modules="${{ github.workspace }}\build\bin\commands-plugin.dll" --cover_children ${{ inputs.build-dir }}\bin\commands_plugin_tests.exe
 
-    - name: Display coverage
-      shell: pwsh
-      run: |
-        ls -R ${{ inputs.build-dir }}\bin\coverage
-        Write-Host "Coverage report found at ${{ inputs.build-dir }}\bin\coverage\final.xml with content: $(Get-Content ${{ inputs.build-dir }}\bin\coverage\final.xml)"
-
     # Step 3: Save build cache
     - name: Save Build Cache
       uses: actions/cache/save@v3
