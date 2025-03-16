@@ -43,7 +43,7 @@ runs:
       id: run-tests-commands-plugin
       shell: pwsh
       run: |
-        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --input_coverage=${{ inputs.build-dir }}\bin\coverage\palantir-core.cov --export_type=cobertura:${{ inputs.build-dir }}\bin\coverage\final.xml --modules="${{ github.workspace }}\build\bin\commands_plugin.dll" --cover_children ${{ inputs.build-dir }}\bin\commands_plugin_tests.exe
+        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --input_coverage=${{ inputs.build-dir }}\bin\coverage\palantir-core.cov --export_type=cobertura:${{ inputs.build-dir }}\bin\coverage\final.xml --modules="${{ github.workspace }}\build\bin\commands-plugin.dll" --cover_children ${{ inputs.build-dir }}\bin\commands_plugin_tests.exe
 
     - name: Display coverage
       shell: pwsh
