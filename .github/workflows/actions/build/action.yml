@@ -26,6 +26,13 @@ runs:
           ${{ inputs.build-dir }}/_deps
         key: ${{ inputs.cache-key }}
 
+    - name: Setup Visual Studio Developer Command Prompt
+      shell: pwsh
+      run: |
+        $vsPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+        Import-Module "$vsPath\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+        Enter-VsDevShell -VsInstallPath $vsPath -SkipAutomaticLocation -DevCmdArguments "-arch=x64"
+
     - name: Configure CMake
       shell: pwsh
       env:
