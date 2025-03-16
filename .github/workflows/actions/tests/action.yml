@@ -29,6 +29,7 @@ runs:
       shell: pwsh
       run: |
         Write-Host "Current directory: $(Get-Location)"
+        ls
         Remove-Item -Recurse -Force ${{ inputs.build-dir }}\bin\coverage
         mkdir -p ${{ inputs.build-dir }}\bin\coverage
 
