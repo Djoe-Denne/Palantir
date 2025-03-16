@@ -36,14 +36,14 @@ runs:
       id: run-tests-palantir-core
       shell: pwsh
       run: |
-        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --export_type=binary:${{ inputs.build-dir }}\bin\coverage\palantir-core.cov --sources="Palantir" --excluded_sources="Palantir\build" --cover_children ${{ inputs.build-dir }}\bin\palantir_core_tests.exe
+        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --export_type=binary:${{ inputs.build-dir }}\bin\coverage\palantir-core.cov --cover_children --sources="${{ github.workspace }}" ${{ inputs.build-dir }}\bin\palantir_core_tests.exe
 
     # Step 5: Run tests
     - name: Run Tests Commands Plugin
       id: run-tests-commands-plugin
       shell: pwsh
       run: |
-        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --input_coverage=${{ inputs.build-dir }}\bin\coverage\palantir-core.cov --export_type=cobertura:${{ inputs.build-dir }}\bin\coverage\final.xml  --sources="Palantir" --excluded_sources="Palantir\build" --cover_children ${{ inputs.build-dir }}\bin\commands_plugin_tests.exe
+        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --input_coverage=${{ inputs.build-dir }}\bin\coverage\palantir-core.cov --export_type=cobertura:${{ inputs.build-dir }}\bin\coverage\final.xml --cover_children --sources="${{ github.workspace }}" ${{ inputs.build-dir }}\bin\commands_plugin_tests.exe
 
     - name: Display coverage
       shell: pwsh
