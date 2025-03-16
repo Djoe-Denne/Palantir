@@ -32,6 +32,9 @@ runs:
         $coverage_dir = "${{ inputs.build-dir }}\bin\coverage"
         $merged_coverage = "${{ inputs.build-dir }}\coverage-merged.xml"
         if (Test-Path $coverage_dir) {
+            if (Test-Path $merged_coverage) {
+                Remove-Item -Force $merged_coverage
+            }
             # Merge all coverage files into one
             $coverage_files = Get-ChildItem -Path $coverage_dir -Filter *.xml
             $first = $true
