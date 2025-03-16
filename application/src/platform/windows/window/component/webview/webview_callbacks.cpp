@@ -13,7 +13,7 @@ void WebViewCallbacks::setInitCallback(std::function<void()> callback) { initCal
 auto WebViewCallbacks::getEnvironmentCompletedHandler(WebView* webview)
     -> Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler> {
     return Microsoft::WRL::Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(
-        [webview, this](HRESULT result, ICoreWebView2Environment* env) -> HRESULT {
+        [webview, this](HRESULT result, ICoreWebView2Environment* env) {
             if (FAILED(result)) {
                 DEBUG_LOG("Failed to create WebView2 environment: ", result);
                 return result;
@@ -24,7 +24,7 @@ auto WebViewCallbacks::getEnvironmentCompletedHandler(WebView* webview)
             }
 
             DEBUG_LOG("WebView2 environment created successfully");
-            auto nativeHandle = static_cast<HWND>(webview->getNativeHandle());
+            auto nativeHandle = reinterpret_cast<HWND>(webview->getNativeHandle());
             return env->CreateCoreWebView2Controller(nativeHandle, this->getControllerCompletedHandler(webview).Get());
         });
 }
@@ -32,7 +32,7 @@ auto WebViewCallbacks::getEnvironmentCompletedHandler(WebView* webview)
 auto WebViewCallbacks::getControllerCompletedHandler(WebView* webview)
     -> Microsoft::WRL::ComPtr<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler> {
     return Microsoft::WRL::Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
-        [webview, this](HRESULT result, ICoreWebView2Controller* controller) -> HRESULT {
+        [webview, this](HRESULT result, ICoreWebView2Controller* controller) {
             if (FAILED(result)) {
                 DEBUG_LOG("Failed to create WebView2 controller: ", result);
                 return result;
@@ -43,7 +43,7 @@ auto WebViewCallbacks::getControllerCompletedHandler(WebView* webview)
             }
 
             DEBUG_LOG("WebView2 controller created successfully");
-            HRESULT hResult = static_cast<HRESULT>(webview->initializeController(controller));
+            HRESULT hResult = webview->initializeController(reinterpret_cast<uintptr_t>(controller));  // NOLINT
             if (FAILED(hResult)) {
                 return hResult;
             }
@@ -58,14 +58,10 @@ auto WebViewCallbacks::getControllerCompletedHandler(WebView* webview)
 auto WebViewCallbacks::getWebMessageReceivedHandler(WebView* webview)
     -> Microsoft::WRL::ComPtr<ICoreWebView2WebMessageReceivedEventHandler> {
     return Microsoft::WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(
-        [webview, this](ICoreWebView2* sender, ICoreWebView2WebMessageReceivedEventArgs* args) -> HRESULT {
+        [webview]([[maybe_unused]] const ICoreWebView2* sender, ICoreWebView2WebMessageReceivedEventArgs* args) {
             LPWSTR message = nullptr;
-            LPWSTR uri = nullptr;
-            args->get_Source(&uri);
-            HRESULT hr = args->TryGetWebMessageAsString(&message);
-            if (hr == E_INVALIDARG) {
-                hr = args->get_WebMessageAsJson(&message);
-                if (hr == E_INVALIDARG) {
+            if (args->TryGetWebMessageAsString(&message) == E_INVALIDARG) {
+                if (args->get_WebMessageAsJson(&message) == E_INVALIDARG) {
                     DEBUG_LOG("Failed to get web message as String or JSON");
                     return S_OK;
                 }
@@ -77,17 +73,12 @@ auto WebViewCallbacks::getWebMessageReceivedHandler(WebView* webview)
                 DEBUG_LOG("Received WebView2 message: ", messageStr);
 
                 try {
-                    // Try to handle the message with the new MessageHandler first
                     webview->handleMessage(messageStr);
                 } catch (const std::exception& e) {
                     DEBUG_LOG("Exception in message handler: ", e.what());
-                } catch (...) {
-                    DEBUG_LOG("Unknown exception in message handler");
                 }
-
                 CoTaskMemFree(message);
             }
-
             return S_OK;
         });
 }
@@ -95,7 +86,7 @@ auto WebViewCallbacks::getWebMessageReceivedHandler(WebView* webview)
 auto WebViewCallbacks::getNavigationCompletedHandler(WebView* webview)
     -> Microsoft::WRL::ComPtr<ICoreWebView2NavigationCompletedEventHandler> {
     return Microsoft::WRL::Callback<ICoreWebView2NavigationCompletedEventHandler>(
-        [webview](ICoreWebView2* sender, ICoreWebView2NavigationCompletedEventArgs* args) -> HRESULT {
+        [](ICoreWebView2* sender, ICoreWebView2NavigationCompletedEventArgs* args) {
             DEBUG_LOG("Navigation completed callback triggered");
             BOOL success;
             args->get_IsSuccess(&success);
@@ -103,16 +94,9 @@ auto WebViewCallbacks::getNavigationCompletedHandler(WebView* webview)
                 COREWEBVIEW2_WEB_ERROR_STATUS status;
                 args->get_WebErrorStatus(&status);
                 DEBUG_LOG("Navigation failed with error status: ", status);
-
-                LPWSTR uri;
-                sender->get_Source(&uri);
-                std::string uriStr = palantir::utils::StringUtils::wToStr(uri);
-                DEBUG_LOG("Failed navigation URL: ", uriStr);
-                CoTaskMemFree(uri);
+                CoTaskMemFree(nullptr);
             } else {
                 DEBUG_LOG("Navigation completed successfully");
-
-                // Load and execute all JavaScript files in the post-nav directory
                 try {
                     auto resourceUtils = palantir::utils::ResourceUtils::getInstance();
                     auto scripts = resourceUtils->loadAllJavaScriptsFromDirectory("post-nav");
@@ -133,7 +117,7 @@ auto WebViewCallbacks::getNavigationCompletedHandler(WebView* webview)
 
 auto WebViewCallbacks::getSourceChangedHandler() -> Microsoft::WRL::ComPtr<ICoreWebView2SourceChangedEventHandler> {
     return Microsoft::WRL::Callback<ICoreWebView2SourceChangedEventHandler>(
-        [](ICoreWebView2* sender, ICoreWebView2SourceChangedEventArgs* args) -> HRESULT {
+        [](ICoreWebView2* sender, [[maybe_unused]] const ICoreWebView2SourceChangedEventArgs* args) {
             LPWSTR uri;
             sender->get_Source(&uri);
             std::string uriStr = palantir::utils::StringUtils::wToStr(uri);
@@ -145,16 +129,15 @@ auto WebViewCallbacks::getSourceChangedHandler() -> Microsoft::WRL::ComPtr<ICore
 
 auto WebViewCallbacks::getExecuteScriptCompletedHandler()
     -> Microsoft::WRL::ComPtr<ICoreWebView2ExecuteScriptCompletedHandler> {
-    return Microsoft::WRL::Callback<ICoreWebView2ExecuteScriptCompletedHandler>(
-        [](HRESULT error, LPCWSTR result) -> HRESULT {
-            if (FAILED(error)) {
-                DEBUG_LOG("Failed to execute script: ", error);
-            } else {
-                std::string resultStr = palantir::utils::StringUtils::wToStr(result);
-                DEBUG_LOG("Script executed successfully, result: ", resultStr);
-            }
-            return S_OK;
-        });
+    return Microsoft::WRL::Callback<ICoreWebView2ExecuteScriptCompletedHandler>([](HRESULT error, LPCWSTR result) {
+        if (FAILED(error)) {
+            DEBUG_LOG("Failed to execute script: ", error);
+        } else {
+            std::string resultStr = palantir::utils::StringUtils::wToStr(result);
+            DEBUG_LOG("Script executed successfully, result: ", resultStr);
+        }
+        return S_OK;
+    });
 }
 
 }  // namespace palantir::window::component::webview

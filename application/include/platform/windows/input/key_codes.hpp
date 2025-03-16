@@ -158,7 +158,8 @@ static const struct KeyCodeInitializer {
         // Special masks
         keyRegister->registerKey("KEY_PRESSED_MASK", 0x8000U);  // NOLINT
     }
-} keyCodeInitializer;  // NOLINT
+};
+KeyCodeInitializer keyCodeInitializer;
 
 }  // namespace palantir::input::KeyCodes
 

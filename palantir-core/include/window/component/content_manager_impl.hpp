@@ -69,7 +69,7 @@ public:
     auto initialize(void* nativeWindowHandle) -> void {
         if (view_) {
             // Initialize WebView2 with completion callback
-            view_->initialize(nativeWindowHandle, [this]() {
+            view_->initialize(reinterpret_cast<uintptr_t>(nativeWindowHandle), [this]() {
                 DEBUG_LOG("WebView2 initialization callback - loading URL");
                 view_->loadURL("http://www.google.com");
             });

@@ -1,6 +1,6 @@
 #include "input/configurable_input.hpp"
 
-#include <Windows.h>
+#include <windows.h>
 
 #include "input/key_register.hpp"
 #include "utils/logger.hpp"

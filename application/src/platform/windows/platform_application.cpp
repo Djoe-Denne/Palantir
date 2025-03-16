@@ -1,6 +1,6 @@
 #include "platform_application.hpp"
 
-#include <Windows.h>
+#include <windows.h>
 
 #include <cstdint>
 #include <memory>
@@ -42,7 +42,7 @@ HHOOK g_keyboardHook = nullptr;
  */
 auto CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) -> LRESULT {
     if (nCode == HC_ACTION && g_signalManager != nullptr) {
-        auto* pKeyboard = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);  // NOLINT
+        const auto* pKeyboard = reinterpret_cast<const KBDLLHOOKSTRUCT*>(lParam);  // NOLINT
 
         // Only check signals on key down or key up events
         if (wParam == WM_KEYDOWN || wParam == WM_KEYUP || wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP) {
@@ -111,11 +111,10 @@ public:
      * dispatching them to appropriate window procedures. The loop
      * continues until a WM_QUIT message is received.
      */
-    [[nodiscard]] auto run() -> int {
+    [[nodiscard]] auto run() const -> int {
         DEBUG_LOG("Starting message loop");
 
         MSG msg;
-        BOOL result;
 
         // Get the main window for regular updates
         auto mainWindow = windowManager_->getMainWindow();
@@ -153,11 +152,8 @@ public:
             }
 
             // Process any timer messages
-            if (msg.message == WM_TIMER && msg.wParam == timerId) {
-                // Timer-based update
-                if (mainWindow->isRunning()) {
-                    mainWindow->update();
-                }
+            if (msg.message == WM_TIMER && msg.wParam == timerId && mainWindow->isRunning()) {
+                mainWindow->update();
             }
         }
 
@@ -177,7 +173,7 @@ public:
      * the message loop to terminate. Also ensures cleanup of the
      * keyboard hook.
      */
-    auto quit() -> void {
+    auto quit() const -> void {
         DEBUG_LOG("Application quitting");
         PostQuitMessage(0);
     }
