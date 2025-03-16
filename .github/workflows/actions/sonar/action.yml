@@ -24,31 +24,13 @@ runs:
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
         key: ${{ inputs.cache-key }}-tests
-
         
     - name: Prepare coverage reports
       shell: pwsh
       run: |
-        $coverage_dir = "${{ inputs.build-dir }}\bin\Release\coverage"
-        $merged_coverage = "${{ inputs.build-dir }}\coverage-merged.xml"
-        if (Test-Path $coverage_dir) {
-            # Merge all coverage files into one
-            $coverage_files = Get-ChildItem -Path $coverage_dir -Filter *.xml
-            $first = $true
-            foreach ($file in $coverage_files) {
-            if ($first) {
-                Copy-Item $file.FullName $merged_coverage
-                $first = $false
-            } else {
-                # Here you would merge the coverage files
-                # For now we'll just use the last one
-                Copy-Item $file.FullName $merged_coverage -Force
-            }
-            }
-        }
-
-        if (Test-Path $merged_coverage) {
-            Write-Host "Coverage report found at $merged_coverage with content: $(Get-Content $merged_coverage)"
+        $coverage_dir = "${{ inputs.build-dir }}\bin\coverage"
+        if (Test-Path $coverage_dir\final.xml) {
+            Write-Host "Coverage report found at $coverage_dir\final.xml"
         } else {
             Write-Host "No coverage report found"
         }

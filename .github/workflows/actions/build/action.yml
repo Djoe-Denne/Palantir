@@ -26,28 +26,40 @@ runs:
           ${{ inputs.build-dir }}/_deps
         key: ${{ inputs.cache-key }}
 
-    - name: Configure CMake
+    - name: Configure CMake with Visual Studio
       shell: pwsh
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
-        cmake -B ${{ inputs.build-dir }} -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE -DGITHUB_TOKEN=${{ inputs.github-token }} -DBUILD_TESTS=ON
+        # Setup Visual Studio Developer environment
+        $vsPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+        Import-Module "$vsPath\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+        Enter-VsDevShell -VsInstallPath $vsPath -SkipAutomaticLocation -DevCmdArguments "-arch=x64"
+        
+        # Find cl.exe path and display it for debugging
+        $clPath = (Get-Command cl.exe -ErrorAction SilentlyContinue).Path
+        Write-Host "cl.exe path: $clPath"
+        
+        # Configure CMake with full path to cl.exe
+        cmake -B ${{ inputs.build-dir }} `
+          -DCMAKE_BUILD_TYPE=Debug `
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE `
+          -DGITHUB_TOKEN=${{ inputs.github-token }} `
+          -DBUILD_TESTS=ON `
+          -DCMAKE_C_COMPILER="$clPath" `
+          -DCMAKE_CXX_COMPILER="$clPath" `
+          -G Ninja
 
     # Build the project
     - name: Build
       shell: pwsh
       run: |
+        # Setup Visual Studio Developer environment again for build step
+        $vsPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+        Import-Module "$vsPath\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+        Enter-VsDevShell -VsInstallPath $vsPath -SkipAutomaticLocation -DevCmdArguments "-arch=x64"
+        
         cmake --build ${{ inputs.build-dir }} --config Release --verbose
-        Get-ChildItem -Path ${{ inputs.build-dir }}/bin -Recurse
-        Get-ChildItem -Path ${{ inputs.build-dir }}/bin -Recurse | ForEach-Object {
-          if (-not $_.PSIsContainer) {
-            try {
-              Move-Item -Path $_.FullName -Destination ${{ inputs.build-dir }}/bin/Release/
-            } catch {
-              Write-Host "Error moving $($_.FullName): $_"
-            }
-          }
-        }
 
     # Restore CMake configuration from cache
     - name: Restore CMake cache

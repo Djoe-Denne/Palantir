@@ -31,7 +31,9 @@ runs:
       shell: pwsh
       run: |
         gh cache list --ref ${{ github.ref }} --limit 10 --json id --jq '.[].id' | ForEach-Object {
-          gh cache delete $_
+          if ($_ -notlike "**-deps**") {
+            gh cache delete $_
+          }
         }
       env:
         GH_TOKEN: ${{ inputs.github-token }}

@@ -28,23 +28,24 @@ runs:
       id: create-coverage-dir
       shell: pwsh
       run: |
-        mkdir -p ${{ inputs.build-dir }}\bin\Release\coverage
+        if (Test-Path ${{ inputs.build-dir }}\bin\coverage) {
+          Remove-Item -Recurse -Force ${{ inputs.build-dir }}\bin\coverage
+        }
+        mkdir -p ${{ inputs.build-dir }}\bin\coverage
 
     # Step 4: Run tests
     - name: Run Tests Palantir-Core
       id: run-tests-palantir-core
       shell: pwsh
       run: |
-        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --export_type=cobertura:${{ inputs.build-dir }}\bin\Release\coverage\palantir-core.xml --cover_children --sources="palantir-core\src" --sources="palantir-core\include" \
-        ${{ inputs.build-dir }}\bin\Release\palantir_core_tests.exe
+        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --export_type=binary:${{ inputs.build-dir }}\bin\coverage\palantir-core.cov --modules="${{ github.workspace }}\build\bin\palantir-core.dll" --cover_children ${{ inputs.build-dir }}\bin\palantir_core_tests.exe
 
     # Step 5: Run tests
     - name: Run Tests Commands Plugin
       id: run-tests-commands-plugin
       shell: pwsh
       run: |
-        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --export_type=cobertura:${{ inputs.build-dir }}\bin\Release\coverage\commands-plugin.xml --cover_children --sources="plugins\commands\src" --sources="plugins\commands\include" \
-        ${{ inputs.build-dir }}\bin\Release\commands_plugin_tests.exe
+        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --input_coverage=${{ inputs.build-dir }}\bin\coverage\palantir-core.cov --export_type=cobertura:${{ inputs.build-dir }}\bin\coverage\final.xml --modules="${{ github.workspace }}\build\bin\commands-plugin.dll" --cover_children ${{ inputs.build-dir }}\bin\commands_plugin_tests.exe
 
     # Step 3: Save build cache
     - name: Save Build Cache
