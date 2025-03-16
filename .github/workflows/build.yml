@@ -95,3 +95,18 @@ jobs:
           build-dir: ${{ env.CMAKE_BUILD_DIR }}
           sonar-token: ${{ secrets.SONAR_TOKEN }}
           cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}
+
+  clear-run-caches:
+    name: Clear Run Caches
+    needs: [sonar-analysis]  # Changed to run after sonar analysis
+    if: always()
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clear Run Caches
+        uses: ./.github/workflows/actions/clear-run-caches
+        with:
+          github-token: ${{ secrets.PALANTIR_GHA }}
+          build-dir: ${{ env.CMAKE_BUILD_DIR }}
+          cache-key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}-${{ github.ref }}
+          
