@@ -1,5 +1,5 @@
 #include "plugin_loader/plugin_loader.hpp"
-#include <windows.h>
+#include <Windows.h>
 
 namespace palantir::plugin {
 

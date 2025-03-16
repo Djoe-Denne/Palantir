@@ -1,7 +1,7 @@
 #ifdef _WIN32
 
 #include "command/window_screenshot_command.hpp"
-#include <windows.h>
+#include <Windows.h>
 #include <objidl.h>  // Required for GDI+
 #include <gdiplus.h>
 #include <iostream>

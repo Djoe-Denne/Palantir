@@ -1,7 +1,7 @@
 #ifndef PALANTIR_KEY_CODES_HPP
 #define PALANTIR_KEY_CODES_HPP
 
-#include <windows.h>
+#include <Windows.h>
 
 #include "input/key_register.hpp"
 #include "utils/string_utils.hpp"
@@ -159,7 +159,7 @@ static const struct KeyCodeInitializer {
         keyRegister->registerKey("KEY_PRESSED_MASK", 0x8000U);  // NOLINT
     }
 };
-KeyCodeInitializer keyCodeInitializer;
+const KeyCodeInitializer keyCodeInitializer;
 
 }  // namespace palantir::input::KeyCodes
 

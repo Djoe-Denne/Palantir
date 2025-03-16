@@ -11,7 +11,7 @@
 #include "platform_application.hpp"
 
 #if defined(_WIN32) && !defined(_CONSOLE)
-#include <windows.h>
+#include <Windows.h>
 #endif
 
 using palantir::Application;

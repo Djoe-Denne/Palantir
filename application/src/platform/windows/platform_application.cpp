@@ -1,6 +1,6 @@
 #include "platform_application.hpp"
 
-#include <windows.h>
+#include <Windows.h>
 
 #include <cstdint>
 #include <memory>

@@ -1,6 +1,6 @@
 #include "signal/signal_manager.hpp"
 
-#include <windows.h>
+#include <Windows.h>
 #include <vector>
 
 #include "signal/isignal.hpp"

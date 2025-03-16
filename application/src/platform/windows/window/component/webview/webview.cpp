@@ -7,7 +7,7 @@
 // clang-format off
 // order of includes is important
 #include <objbase.h>
-#include <windows.h>
+#include <Windows.h>
 #include <WebView2.h>
 #include <WebView2EnvironmentOptions.h>
 #include <wrl.h>

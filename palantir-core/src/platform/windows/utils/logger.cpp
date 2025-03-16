@@ -1,6 +1,6 @@
 #include "utils/logger.hpp"
 
-#include <windows.h>
+#include <Windows.h>
 
 #include <sstream>
 

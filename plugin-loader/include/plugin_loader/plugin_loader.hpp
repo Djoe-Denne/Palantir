@@ -5,7 +5,7 @@
 #include "plugin/iplugin.hpp"
 
 #ifdef _WIN32
-    #include <windows.h>
+    #include <Windows.h>
     using LibraryHandle = HMODULE;
 #else
     using LibraryHandle = void*;

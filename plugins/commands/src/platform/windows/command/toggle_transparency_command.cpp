@@ -1,6 +1,6 @@
 #include "command/toggle_transparency_command.hpp"
 
-#include <windows.h>
+#include <Windows.h>
 
 #include "window/window_manager.hpp"
 #include "window/iwindow.hpp"

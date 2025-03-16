@@ -3,7 +3,7 @@
 // clang-format off
 // order of includes is important
 #include <objbase.h>
-#include <windows.h>
+#include <Windows.h>
 #include <WebView2.h>
 #include <WebView2EnvironmentOptions.h>
 #include <wrl.h>
@@ -47,6 +47,14 @@ public:
     auto getExecuteScriptCompletedHandler() -> Microsoft::WRL::ComPtr<ICoreWebView2ExecuteScriptCompletedHandler>;
 
 private:
+    // Handler implementations
+    auto handleEnvironmentCompleted(HRESULT result, ICoreWebView2Environment* env, class WebView* webview) -> HRESULT;
+    auto handleControllerCompleted(HRESULT result, ICoreWebView2Controller* controller, class WebView* webview) -> HRESULT;
+    auto handleWebMessageReceived(const ICoreWebView2* sender, ICoreWebView2WebMessageReceivedEventArgs* args, class WebView* webview) -> HRESULT;
+    auto handleNavigationCompleted(ICoreWebView2* sender, ICoreWebView2NavigationCompletedEventArgs* args) -> HRESULT;
+    auto handleSourceChanged(ICoreWebView2* sender, const ICoreWebView2SourceChangedEventArgs* args) -> HRESULT;
+    auto handleExecuteScriptCompleted(HRESULT error, LPCWSTR result) -> HRESULT;
+
     std::function<void()> initCallback_;
 };
 

@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "command/window_screenshot_command.hpp"
-#include <windows.h>
+#include <Windows.h>
 #include <filesystem>
 
 namespace palantir::command::test {
