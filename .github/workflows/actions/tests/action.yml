@@ -21,7 +21,7 @@ runs:
           ${{ inputs.build-dir }}/CMakeCache.txt
           ${{ inputs.build-dir }}/CMakeFiles
           ${{ inputs.build-dir }}/_deps
-        key: ${{ inputs.cache-key }}-build
+        key: ${{ inputs.cache-key }}
 
     # Step 3: Create coverage directory
     - name: Create Coverage Directory
@@ -35,16 +35,19 @@ runs:
       id: run-tests-palantir-core
       shell: pwsh
       run: |
-        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --export_type=cobertura:${{ inputs.build-dir }}\bin\coverage\palantir-core.xml --cover_children --sources="palantir-core\src" --sources="palantir-core\include" \
-        ${{ inputs.build-dir }}\bin\palantir_core_tests.exe
+        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --export_type=cobertura:${{ inputs.build-dir }}\bin\coverage\palantir-core.xml --cover_children --sources="palantir-core\src" --sources="palantir-core\include" ${{ inputs.build-dir }}\bin\palantir_core_tests.exe
 
     # Step 5: Run tests
     - name: Run Tests Commands Plugin
       id: run-tests-commands-plugin
       shell: pwsh
       run: |
-        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --export_type=cobertura:${{ inputs.build-dir }}\bin\coverage\commands-plugin.xml --cover_children --sources="plugins\commands\src" --sources="plugins\commands\include" \
-        ${{ inputs.build-dir }}\bin\commands_plugin_tests.exe
+        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --export_type=cobertura:${{ inputs.build-dir }}\bin\coverage\commands-plugin.xml --cover_children --sources="plugins\commands\src" --sources="plugins\commands\include" ${{ inputs.build-dir }}\bin\commands_plugin_tests.exe
+
+    - name: Display coverage
+      shell: pwsh
+      run: |
+        ls -R ${{ inputs.build-dir }}\bin\coverage
 
     # Step 3: Save build cache
     - name: Save Build Cache
