@@ -60,16 +60,6 @@ runs:
         Enter-VsDevShell -VsInstallPath $vsPath -SkipAutomaticLocation -DevCmdArguments "-arch=x64"
         
         cmake --build ${{ inputs.build-dir }} --config Release --verbose
-        Get-ChildItem -Path ${{ inputs.build-dir }}/bin -Recurse
-        Get-ChildItem -Path ${{ inputs.build-dir }}/bin -Recurse | ForEach-Object {
-          if (-not $_.PSIsContainer) {
-            try {
-              Move-Item -Path $_.FullName -Destination ${{ inputs.build-dir }}/bin/Release/
-            } catch {
-              Write-Host "Error moving $($_.FullName): $_"
-            }
-          }
-        }
 
     # Restore CMake configuration from cache
     - name: Restore CMake cache

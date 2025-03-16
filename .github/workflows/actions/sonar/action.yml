@@ -29,7 +29,7 @@ runs:
     - name: Prepare coverage reports
       shell: pwsh
       run: |
-        $coverage_dir = "${{ inputs.build-dir }}\bin\Release\coverage"
+        $coverage_dir = "${{ inputs.build-dir }}\bin\coverage"
         $merged_coverage = "${{ inputs.build-dir }}\coverage-merged.xml"
         if (Test-Path $coverage_dir) {
             # Merge all coverage files into one
