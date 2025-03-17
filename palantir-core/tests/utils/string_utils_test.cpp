@@ -71,3 +71,11 @@ TEST_F(StringUtilsTest, Base64EncodePadding) {
     EXPECT_EQ(StringUtils::base64_encode(data2), "Zm8=");
     EXPECT_EQ(StringUtils::base64_encode(data3), "Zm9v");
 } 
+
+TEST_F(StringUtilsTest, StrToW) {
+    EXPECT_EQ(StringUtils::strToW("Hello"), L"Hello");
+}
+
+TEST_F(StringUtilsTest, WToStr) {
+    EXPECT_EQ(StringUtils::wToStr(L"Hello"), "Hello");
+}
