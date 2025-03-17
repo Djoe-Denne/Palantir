@@ -30,6 +30,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+include(setup-modern-exception)
+setup_modern_exception()
 
 # Project root directory for convenience
 set(PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
@@ -41,6 +43,7 @@ setup_help_target()
 # Setup clang tools before adding targets
 include(setup-clang-tools)
 setup_clang_tools()
+
 
 if(WIN32 OR QUALITY_ONLY)
     include(platform/windows)
