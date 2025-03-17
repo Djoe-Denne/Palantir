@@ -5,6 +5,7 @@
 #include "utils/string_utils.hpp"
 #include "utils/logger.hpp"
 #include "nlohmann/json.hpp"
+#include "exception/exceptions.hpp"
 #include <string>
 #include <filesystem>
 #include <fstream>
@@ -39,7 +40,7 @@ auto SendSauronRequestCommand::execute() const -> void {
         DebugLog("Response: ", responseStr);
     } catch (const std::exception& e) {
         DebugLog("Error: ", e.what());
-        throw std::runtime_error("Failed to query AI algorithm");
+        throw palantir::exception::TraceableException<palantir::exception::BaseException>("Failed to query AI algorithm");
     }
 
     auto windowManager = app_->getWindowManager();
@@ -48,10 +49,10 @@ auto SendSauronRequestCommand::execute() const -> void {
         if (contentManager) {
             contentManager->setRootContent(responseStr);
         } else {
-            throw std::runtime_error("Content manager not found");
+            throw palantir::exception::TraceableContentManagerException("Content manager not found");
         }
     } else {
-        throw std::runtime_error("Window not found");
+        throw palantir::exception::TraceableUIComponentNotFoundException("Window not found");
     }
 }
 

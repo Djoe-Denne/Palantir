@@ -16,6 +16,7 @@
 #include <stdexcept>
 #include <string>
 
+#include "exception/application_exceptions.hpp"
 #include "utils/logger.hpp"
 
 using Microsoft::WRL::ComPtr;
@@ -62,7 +63,7 @@ WebView::~WebView() = default;
 auto WebView::initialize(uintptr_t nativeWindowHandle, std::function<void()> initCallback) -> void {
     pimpl_->hwnd_ = reinterpret_cast<HWND>(nativeWindowHandle);
     if (!pimpl_->hwnd_) {
-        throw std::runtime_error("Invalid window handle");
+        throw palantir::exception::TraceableInvalidHandleException("Invalid window handle");
     }
 
     pimpl_->callbacks_->setInitCallback(std::move(initCallback));
@@ -71,7 +72,8 @@ auto WebView::initialize(uintptr_t nativeWindowHandle, std::function<void()> ini
 
     auto options = Microsoft::WRL::Make<CoreWebView2EnvironmentOptions>();
     if (!options) {
-        throw std::runtime_error("Failed to create WebView2 environment options");
+        throw palantir::exception::TraceableWebViewInitializationException(
+            "Failed to create WebView2 environment options");
     }
 
     options->put_AdditionalBrowserArguments(L"--disable-background-timer-throttling");
@@ -82,13 +84,13 @@ auto WebView::initialize(uintptr_t nativeWindowHandle, std::function<void()> ini
         options.Get(), pimpl_->callbacks_->getEnvironmentCompletedHandler(this).Get());
 
     if (FAILED(hResult)) {
-        throw std::runtime_error("Failed to create WebView2 environment");
+        throw palantir::exception::TraceableWebViewInitializationException("Failed to create WebView2 environment");
     }
 }
 
 auto WebView::initializeController(uintptr_t controller) -> intptr_t {
     if (controller == 0) {
-        throw std::runtime_error("Invalid controller pointer");
+        throw palantir::exception::TraceableInvalidHandleException("Invalid controller pointer");
     }
 
     pimpl_->controller_ = reinterpret_cast<ICoreWebView2Controller*>(controller);
@@ -158,7 +160,7 @@ auto WebView::loadURL(const std::string& url) -> void {
     std::wstring wurl(url.begin(), url.end());
     HRESULT hResult = pimpl_->webView_->Navigate(wurl.c_str());
     if (FAILED(hResult)) {
-        throw std::runtime_error("Failed to navigate to URL");
+        throw palantir::exception::TraceableNavigationException("Failed to navigate to URL");
     }
 }
 
@@ -170,7 +172,7 @@ auto WebView::executeJavaScript(const std::string& script) -> void {
     std::wstring wscript(script.begin(), script.end());
     HRESULT hResult = pimpl_->webView_->ExecuteScript(wscript.c_str(), nullptr);
     if (FAILED(hResult)) {
-        throw std::runtime_error("Failed to execute JavaScript");
+        throw palantir::exception::TraceableJavaScriptExecutionException("Failed to execute JavaScript");
     }
 }
 
@@ -182,7 +184,7 @@ auto WebView::sendMessageToJS(const std::string& message) -> void {
     std::wstring wmessage(message.begin(), message.end());
     HRESULT hResult = pimpl_->webView_->PostWebMessageAsString(wmessage.c_str());
     if (FAILED(hResult)) {
-        throw std::runtime_error("Failed to send message to JavaScript");
+        throw palantir::exception::TraceableMessageSendException("Failed to send message to JavaScript");
     }
 }
 
@@ -193,7 +195,7 @@ auto WebView::reload() -> void {
 
     HRESULT hResult = pimpl_->webView_->Reload();
     if (FAILED(hResult)) {
-        throw std::runtime_error("Failed to reload WebView2");
+        throw palantir::exception::TraceableNavigationException("Failed to reload WebView2");
     }
 }
 
@@ -204,7 +206,7 @@ auto WebView::goBack() -> void {
 
     HRESULT hResult = pimpl_->webView_->GoBack();
     if (FAILED(hResult)) {
-        throw std::runtime_error("Failed to navigate back");
+        throw palantir::exception::TraceableNavigationException("Failed to navigate back");
     }
 }
 
@@ -215,7 +217,7 @@ auto WebView::goForward() -> void {
 
     HRESULT hResult = pimpl_->webView_->GoForward();
     if (FAILED(hResult)) {
-        throw std::runtime_error("Failed to navigate forward");
+        throw palantir::exception::TraceableNavigationException("Failed to navigate forward");
     }
 }
 
@@ -226,7 +228,7 @@ auto WebView::stop() -> void {
 
     HRESULT hResult = pimpl_->webView_->Stop();
     if (FAILED(hResult)) {
-        throw std::runtime_error("Failed to stop navigation");
+        throw palantir::exception::TraceableNavigationException("Failed to stop navigation");
     }
 }
 
@@ -237,7 +239,7 @@ auto WebView::openDevTools() -> void {
 
     HRESULT hResult = pimpl_->webView_->OpenDevToolsWindow();
     if (FAILED(hResult)) {
-        throw std::runtime_error("Failed to open DevTools window");
+        throw palantir::exception::TraceableWebViewInitializationException("Failed to open DevTools window");
     }
 }
 
@@ -248,7 +250,7 @@ auto WebView::setZoomFactor(float factor) -> void {
 
     HRESULT hResult = pimpl_->controller_->put_ZoomFactor(factor);
     if (FAILED(hResult)) {
-        throw std::runtime_error("Failed to set zoom factor");
+        throw palantir::exception::TraceableWebViewInitializationException("Failed to set zoom factor");
     }
 }
 
@@ -305,7 +307,7 @@ auto WebView::resize(int width, int height) -> void {
 
     HRESULT hResult = pimpl_->controller_->put_Bounds(bounds);
     if (FAILED(hResult)) {
-        throw std::runtime_error("Failed to resize WebView2");
+        throw palantir::exception::TraceableWebViewInitializationException("Failed to resize WebView2");
     }
 }
 

@@ -1,6 +1,7 @@
 #include "command/toggle_window_anonymity_command.hpp"
 #include "window/window_manager.hpp"
 #include "window/iwindow.hpp"
+#include "exception/exceptions.hpp"
 
 namespace palantir::command {
 
@@ -9,7 +10,7 @@ auto ToggleWindowAnonymityCommand::execute() const -> void {
     if (auto window = windowManager->getMainWindow()) {
         window->toggleWindowAnonymity();
     } else {
-        throw std::runtime_error("No window found");
+        throw palantir::exception::TraceableUIComponentNotFoundException("No window found");
     }
 }
 

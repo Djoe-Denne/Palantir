@@ -9,6 +9,7 @@
 #include "input/key_codes.hpp"
 #include "signal/signal_manager.hpp"
 #include "utils/logger.hpp"
+#include "exception/exceptions.hpp"
 
 namespace {
 
@@ -96,7 +97,7 @@ public:
         if (g_keyboardHook == nullptr) {
             DWORD error = GetLastError();
             DebugLog("Failed to install keyboard hook: error=%lu", error);
-            throw std::runtime_error("Failed to install keyboard hook");
+            throw exception::KeyboardHookException("Failed to install keyboard hook");
         }
 
         DebugLog("Keyboard hook installed successfully");

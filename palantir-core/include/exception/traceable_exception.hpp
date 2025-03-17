@@ -32,17 +32,24 @@
 
 namespace palantir::exception {
 
+class PALANTIR_CORE_API TraceableBaseException : public std::exception {
+public:
+    virtual ~TraceableBaseException() = default;
+    virtual std::string getStackTraceString() const = 0;
+};
+
 template <typename E>
     requires std::is_base_of_v<std::exception, E>
-class PALANTIR_CORE_API TraceableException : public E {
+class PALANTIR_CORE_API TraceableException : public E, public TraceableBaseException {
+public:
+    ~TraceableException() override = default;
 #if defined(HAS_STD_STACKTRACE)
     // Modern C++23 implementation
-public:
     explicit TraceableException(const std::string &what) : E(what) { stackTrace = std::stacktrace::current(); }
 
     const std::stacktrace &getStackTrace() const { return stackTrace; }
 
-    std::string getStackTraceString() const { return format_stacktrace(stackTrace); }
+    std::string getStackTraceString() const override { return format_stacktrace(stackTrace); }
 
 private:
 #pragma warning(push)
@@ -50,7 +57,7 @@ private:
     std::stacktrace stackTrace;
 #pragma warning(pop)
 
-    std::string format_stacktrace(const std::stacktrace &st) {
+    std::string format_stacktrace(const std::stacktrace &st) const {
         std::ostringstream oss;
         for (const auto &entry : st) {
             oss << entry << '\n';
@@ -59,10 +66,9 @@ private:
     }
 #elif defined(OS_WINDOWS)
     // Windows-specific implementation
-public:
     explicit TraceableException(const std::string& what) : E(what) { captureStackTrace(); }
 
-    std::string getStackTraceString() const { return stackTraceStr; }
+    std::string getStackTraceString() const override { return stackTraceStr; }
 
 private:
     static const int MAX_STACK_FRAMES = 64;
@@ -100,10 +106,9 @@ private:
     }
 #elif defined(OS_LINUX) || defined(OS_MACOS)
     // Linux/macOS implementation using execinfo
-public:
     explicit TraceableException(const std::string& what) : E(what) { captureStackTrace(); }
 
-    std::string getStackTraceString() const { return stackTraceStr; }
+    std::string getStackTraceString() const override { return stackTraceStr; }
 
 private:
     static const int MAX_STACK_FRAMES = 64;
@@ -197,10 +202,9 @@ private:
     }
 #else
     // Fallback implementation for unsupported platforms
-public:
     explicit TraceableException(const std::string &what) : E(what) {}
 
-    std::string getStackTraceString() const { return "Stack trace not available on this platform"; }
+    std::string getStackTraceString() const override { return "Stack trace not available on this platform"; }
 #endif
 };
 

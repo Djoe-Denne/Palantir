@@ -4,6 +4,7 @@
 #include <sstream>
 #include <stdexcept>
 
+#include "exception/exceptions.hpp"
 #include "utils/logger.hpp"
 
 namespace palantir::input {
@@ -13,7 +14,7 @@ KeyConfig::KeyConfig(const std::filesystem::path& configPath) { loadConfig(confi
 auto KeyConfig::loadConfig(const std::filesystem::path& configPath) -> void {
     std::ifstream configFile(configPath);
     if (!configFile) {
-        throw std::runtime_error("Failed to open config file: " + configPath.string());
+        throw palantir::exception::TraceableConfigFileException("Failed to open config file: " + configPath.string());
     }
 
     std::string line;
@@ -59,7 +60,8 @@ auto KeyConfig::loadConfig(const std::filesystem::path& configPath) -> void {
         // Parse modifier+key format
         auto plusPos = shortcut.find('+');
         if (plusPos == std::string::npos) {
-            throw std::runtime_error("Invalid shortcut format for command: " + command);
+            throw palantir::exception::TraceableShortcutConfigurationException("Invalid shortcut format for command: " +
+                                                                               command);
         }
 
         ShortcutConfig config;
@@ -79,7 +81,8 @@ auto KeyConfig::loadConfig(const std::filesystem::path& configPath) -> void {
 
 auto KeyConfig::getShortcut(const std::string& commandName) const -> const ShortcutConfig& {
     if (!hasShortcut(commandName)) {
-        throw std::runtime_error("No shortcut configured for command: " + commandName);
+        throw palantir::exception::TraceableShortcutConfigurationException("No shortcut configured for command: " +
+                                                                           commandName);
     }
     return shortcuts_.at(commandName);
 }

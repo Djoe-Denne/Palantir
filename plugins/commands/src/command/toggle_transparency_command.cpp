@@ -1,6 +1,7 @@
 #include "command/toggle_transparency_command.hpp"
 #include "window/window_manager.hpp"
 #include "window/iwindow.hpp"
+#include "exception/exceptions.hpp"
 
 namespace palantir::command {
     
@@ -14,7 +15,7 @@ auto ToggleTransparencyCommand::execute() const -> void {
             window->setTransparency(100);
         }
     } else {
-        throw std::runtime_error("No window found");
+        throw palantir::exception::TraceableUIComponentNotFoundException("No window found");
     }
 }
 

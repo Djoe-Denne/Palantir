@@ -5,6 +5,7 @@
 #include <memory>
 #include <stdexcept>
 
+#include "exception/exceptions.hpp"
 #include "input/configurable_input.hpp"
 #include "input/key_mapper.hpp"
 #include "utils/logger.hpp"
@@ -48,7 +49,8 @@ public:
     auto createDefaultConfig(const std::filesystem::path& configPath) const -> void {
         std::ofstream configFile(configPath);
         if (!configFile) {
-            throw std::runtime_error("Failed to create default config file: " + configPath.string());
+            throw palantir::exception::TraceableConfigFileException("Failed to create default config file: " +
+                                                                    configPath.string());
         }
 
         // Write default configuration
@@ -78,13 +80,15 @@ public:
             << "\n";
 
         if (!configFile) {
-            throw std::runtime_error("Failed to write default configuration to: " + configPath.string());
+            throw palantir::exception::TraceableConfigFileException("Failed to write default configuration to: " +
+                                                                    configPath.string());
         }
     }
 
     [[nodiscard]] auto createInput(const std::string& commandName) const -> std::unique_ptr<ConfigurableInput> {
         if (!keyConfig_) {
-            throw std::runtime_error("InputFactory not initialized. Call initialize() first.");
+            throw palantir::exception::TraceableInputFactoryException(
+                "InputFactory not initialized. Call initialize() first.");
         }
         const auto& shortcut = keyConfig_->getShortcut(commandName);
         if (!KeyMapper::isValidKey(shortcut.key) || !KeyMapper::isValidModifier(shortcut.modifier)) {
@@ -97,14 +101,16 @@ public:
 
     [[nodiscard]] auto hasShortcut(const std::string& commandName) const -> bool {
         if (!keyConfig_) {
-            throw std::runtime_error("InputFactory not initialized. Call initialize() first.");
+            throw palantir::exception::TraceableInputFactoryException(
+                "InputFactory not initialized. Call initialize() first.");
         }
         return keyConfig_->hasShortcut(commandName);
     }
 
     [[nodiscard]] auto getConfiguredCommands() const -> std::vector<std::string> {
         if (!keyConfig_) {
-            throw std::runtime_error("InputFactory not initialized. Call initialize() first.");
+            throw palantir::exception::TraceableInputFactoryException(
+                "InputFactory not initialized. Call initialize() first.");
         }
         return keyConfig_->getConfiguredCommands();
     }

@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 
+#include "exception/exceptions.hpp"
 #include "utils/logger.hpp"
 
 namespace palantir::utils {
@@ -63,7 +64,7 @@ auto ResourceUtils::readFile(const std::filesystem::path& filepath) const -> std
     std::ifstream file(filepath);
     if (!file.is_open()) {
         DebugLog("Failed to open file: ", filepath.string());
-        throw std::runtime_error("Failed to open file: " + filepath.string());
+        throw palantir::exception::TraceableResourceLoadingException("Failed to open file: " + filepath.string());
     }
     return {std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
 }
