@@ -14,8 +14,8 @@ namespace palantir::exception {
 #pragma warning(disable : 4251)
 class PALANTIR_CORE_API BaseException : public std::runtime_error {
 public:
-    explicit BaseException(const std::string& message) : std::runtime_error(message) {}
-    virtual ~BaseException() = default;
+    using std::runtime_error::runtime_error;
+    ~BaseException() override = default;
 };
 #pragma warning(pop)
 }  // namespace palantir::exception

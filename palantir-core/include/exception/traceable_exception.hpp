@@ -31,16 +31,18 @@
 #include "core_export.hpp"
 
 namespace palantir::exception {
-
+#pragma warning(push)
+#pragma warning(disable : 4251)
 class PALANTIR_CORE_API TraceableBaseException : public std::exception {
 public:
-    virtual ~TraceableBaseException() = default;
+    ~TraceableBaseException() override = default;
     virtual std::string getStackTraceString() const = 0;
 };
 
 template <typename E>
     requires std::is_base_of_v<std::exception, E>
 class PALANTIR_CORE_API TraceableException : public E, public TraceableBaseException {
+#pragma warning(pop)
 public:
     ~TraceableException() override = default;
 #if defined(HAS_STD_STACKTRACE)

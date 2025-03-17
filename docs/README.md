@@ -21,6 +21,7 @@ This directory contains comprehensive documentation for the Palantir application
 - [Command System](technical/command_system.md): Details about the command system and available commands
 - [Plugin System](technical/plugin_system.md): Information about the plugin architecture
 - [Input System](technical/input_system.md): Details about keyboard input handling
+- [Exception System](technical/exception_system.md): Robust error handling with stack trace support
 - [CMake Configuration](technical/cmake-configuration.md): Build system configuration
 - [GitHub Actions](technical/github-actions.md): CI/CD pipeline configuration
 - [Clang Tools](technical/clang-tools.md): Code formatting and static analysis
@@ -38,6 +39,7 @@ For development-related information, refer to:
 - [Clang Tools](technical/clang-tools.md)
 - [GitHub Actions](technical/github-actions.md)
 - [C++20 Features and Message Strategy Pattern](technical/cpp20_message_strategy.md)
+- [Exception System](technical/exception_system.md)
 
 The project requires a C++20 compatible compiler.
 
