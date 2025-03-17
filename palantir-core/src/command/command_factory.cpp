@@ -22,7 +22,7 @@ public:
     std::unordered_map<std::string, CommandFactory::CommandCreator, utils::StringUtils::StringHash, std::equal_to<>>
         commands_;
 
-    auto registerCommand(const std::string& commandName, CommandFactory::CommandCreator creator) -> void {
+    auto registerCommand(const std::string& commandName, const CommandCreator& creator) -> void {
         commands_[commandName] = creator;
     }
 
@@ -49,7 +49,7 @@ auto CommandFactory::getInstance() -> std::shared_ptr<CommandFactory> {
 
 auto CommandFactory::setInstance(const std::shared_ptr<CommandFactory>& instance) -> void { instance_ = instance; }
 
-auto CommandFactory::registerCommand(const std::string& commandName, CommandCreator creator) -> void {
+auto CommandFactory::registerCommand(const std::string& commandName, const CommandCreator& creator) -> void {
     pimpl_->registerCommand(commandName, creator);
 }
 

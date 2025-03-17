@@ -23,7 +23,7 @@ public:
      * @brief Construct the implementation
      * @param parent Pointer to the owning SignalManager instance
      */
-    explicit Impl() {
+    Impl() {
         DebugLog("Initializing SignalManager implementation");
         hook_ = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, GetModuleHandle(nullptr), 0);
         if (hook_ == nullptr) {
@@ -86,11 +86,7 @@ private:
      */
     static auto CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) -> LRESULT {
         if (nCode == HC_ACTION && wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN || wParam == WM_KEYUP || wParam == WM_SYSKEYUP) {
-            // Get the Impl instance from the hook handle
-            auto* impl = static_cast<Impl*>(GetProp(GetActiveWindow(), L"SignalManagerImpl"));
-            if (impl != nullptr) {
-                impl->checkSignals(nullptr);
-            }
+            instance_->checkSignals(nullptr);
         }
         return CallNextHookEx(nullptr, nCode, wParam, lParam);
     }
@@ -112,15 +108,9 @@ auto SignalManager::setInstance(const std::shared_ptr<SignalManager>& instance) 
 }
 
 SignalManager::SignalManager() : pImpl_(std::make_unique<Impl>()) {
-    DebugLog("Initializing SignalManager");
-    // Store the Impl pointer as a window property for the hook callback
-    SetProp(GetActiveWindow(), L"SignalManagerImpl", static_cast<HANDLE>(pImpl_.get()));
 }
 
-SignalManager::~SignalManager() {
-    // Remove the window property
-    RemoveProp(GetActiveWindow(), L"SignalManagerImpl");
-}
+SignalManager::~SignalManager() = default;
 
 auto SignalManager::addSignal(std::unique_ptr<ISignal> signal) -> void {
     DebugLog("Adding signal to manager");
