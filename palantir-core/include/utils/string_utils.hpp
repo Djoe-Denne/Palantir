@@ -53,15 +53,6 @@ public:
                             nullptr);
         return str;
     }
-
-    /**
-     * @brief Convert a UTF-8 string to a wide string.
-     * @param str The UTF-8 string to convert.
-     * @return The wide string.
-     */
-    static auto strToW(const std::string& str) -> std::wstring {
-        return std::wstring(str.begin(), str.end());
-    }
 #endif
 
     // Named constants for bitwise operations
