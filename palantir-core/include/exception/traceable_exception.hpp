@@ -14,9 +14,11 @@
 // OS detection
 #if !defined(_GLIBCXX_HAVE_STACKTRACE) && (defined(_WIN32) || defined(_WIN64))
 #define OS_WINDOWS
-#include <DbgHelp.h>
+// clang-format off
 #include <windows.h>
+#include <DbgHelp.h>
 #pragma comment(lib, "DbgHelp.lib")
+// clang-format on
 #elif !defined(_GLIBCXX_HAVE_STACKTRACE) && (defined(__APPLE__) || defined(__MACH__))
 #define OS_MACOS
 #include <cxxabi.h>
