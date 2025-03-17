@@ -8,6 +8,8 @@
 #include "window/component/message/logger/logger_strategy.hpp"
 #include "window/component/message/message_handler.hpp"
 
+#include "exception/exceptions.hpp"
+
 namespace palantir::window::component {
 
 template <typename T>
@@ -71,7 +73,7 @@ public:
             updateWebView();
         } catch (const nlohmann::json::exception& e) {
             // Handle JSON parsing error
-            throw std::runtime_error("Invalid JSON format: " + std::string(e.what()));
+            throw palantir::exception::TraceableContentManagerException("Invalid JSON format: " + std::string(e.what()));
         }
     }
 
@@ -87,7 +89,7 @@ public:
             }
             updateWebView();
         } catch (const std::exception& e) {
-            throw std::runtime_error("Failed to set content: " + std::string(e.what()));
+            throw palantir::exception::TraceableContentManagerException("Failed to set content: " + std::string(e.what()));
         }
     }
 
@@ -101,9 +103,9 @@ public:
                     return content_["complexity"][parts[0]][parts[1]].get<std::string>();
                 }
             }
-            throw std::runtime_error("Invalid element ID");
+            throw palantir::exception::TraceableContentManagerException("Invalid element ID");
         } catch (const std::exception& e) {
-            throw std::runtime_error("Failed to get content: " + std::string(e.what()));
+            throw palantir::exception::TraceableContentManagerException("Failed to get content: " + std::string(e.what()));
         }
     }
 
