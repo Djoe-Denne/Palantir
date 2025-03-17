@@ -104,7 +104,7 @@ public:
      * Takes ownership of the provided command and executes it. The command
      * should be window-related and may affect one or more managed windows.
      */
-    virtual auto executeCommand(std::unique_ptr<palantir::command::ICommand> command) -> void;
+    virtual auto executeCommand(std::unique_ptr<palantir::command::ICommand> command) const -> void;
 
 protected:
     // Protected constructor for testing

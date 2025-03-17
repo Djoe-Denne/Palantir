@@ -36,7 +36,7 @@ public:
      *
      * @param message The JSON message to handle as a string.
      */
-    auto handleMessage(const std::string& message) -> void;
+    auto handleMessage(const std::string& message) const -> void;
 
 private:
 #pragma warning(push)

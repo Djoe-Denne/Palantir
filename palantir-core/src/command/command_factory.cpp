@@ -32,7 +32,7 @@ public:
 
     auto getCommand(const std::string& name) -> std::unique_ptr<ICommand> {
         auto maybeCommand = commands_.find(name);
-        return maybeCommand != commands_.end() ? std::move(maybeCommand->second()) : nullptr;
+        return maybeCommand != commands_.end() ? maybeCommand->second() : nullptr;
     }
 };
 
@@ -58,7 +58,7 @@ auto CommandFactory::unregisterCommand(const std::string& commandName) -> bool {
 }
 
 auto CommandFactory::getCommand(const std::string& name) -> std::unique_ptr<ICommand> {
-    return std::move(pimpl_->getCommand(name));
+    return pimpl_->getCommand(name);
 }
 
 }  // namespace palantir::command

@@ -2,10 +2,8 @@
 
 namespace palantir::command {
 
-StopCommand::StopCommand() : app_(Application::getInstance()) {}  // NOLINT
+auto StopCommand::execute() const -> void { app_->quit(); }
 
-auto StopCommand::execute() -> void { app_->quit(); }
-
-auto StopCommand::useDebounce() -> bool { return false; }
+auto StopCommand::useDebounce() const -> bool { return false; }
 
 } // namespace palantir::command 

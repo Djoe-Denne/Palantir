@@ -4,9 +4,7 @@
 
 namespace palantir::command {
 
-ShowCommand::ShowCommand() : app_(Application::getInstance()) {}  // NOLINT
-
-auto ShowCommand::execute() -> void {
+auto ShowCommand::execute() const -> void {
     auto windowManager = app_->getWindowManager();
     if (auto window = windowManager->getMainWindow()) {
         window->show();
@@ -15,6 +13,6 @@ auto ShowCommand::execute() -> void {
     }
 }
 
-auto ShowCommand::useDebounce() -> bool { return true; }
+auto ShowCommand::useDebounce() const -> bool { return true; }
 
 } // namespace palantir::command 

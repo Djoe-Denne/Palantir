@@ -26,7 +26,7 @@ auto WindowScreenshotCommand::generateFilePath() const -> std::string {
 }
 
 // Calls platform-specific implementation
-auto WindowScreenshotCommand::execute() -> void {
+auto WindowScreenshotCommand::execute() const -> void {
     captureScreenshot();
 }
 

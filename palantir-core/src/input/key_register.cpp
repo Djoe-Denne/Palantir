@@ -1,6 +1,6 @@
 #include "input/key_register.hpp"  // Include the corresponding header file
 
-#include <map>
+#include <unordered_map>
 #include <stdexcept>
 #include <string>
 
@@ -11,7 +11,7 @@ namespace palantir::input {
 std::shared_ptr<KeyRegister> KeyRegister::instance_ = nullptr;
 class KeyRegisterImpl {
 public:
-    std::map<std::string, int> keyMap;
+    std::unordered_map<std::string, int, utils::StringUtils::StringHash, std::equal_to<>> keyMap;
 
     auto registerKey(const std::string& key, int value) -> void { keyMap[utils::StringUtils::toUpper(key)] = value; }
 
@@ -24,7 +24,7 @@ public:
     }
 
     [[nodiscard]] auto hasKey(const std::string& key) const -> bool {
-        return keyMap.find(utils::StringUtils::toUpper(key)) != keyMap.end();
+        return keyMap.contains(utils::StringUtils::toUpper(key));
     }
 };
 

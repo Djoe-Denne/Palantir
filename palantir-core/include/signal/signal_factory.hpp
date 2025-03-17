@@ -70,7 +70,7 @@ public:
      * This includes both toggle and stop signals, configured according
      * to the application's settings.
      */
-    [[nodiscard]] virtual auto createSignals(const std::shared_ptr<Application>& app)
+    [[nodiscard]] virtual auto createSignals() const
         -> std::vector<std::unique_ptr<ISignal>>;
 
 protected:

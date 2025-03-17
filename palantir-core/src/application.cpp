@@ -25,7 +25,7 @@ public:
     auto attachSignals() const -> void {
         DebugLog("Attaching signals from configuration");
         auto app = Application::getInstance();
-        auto signals = signal::SignalFactory::getInstance()->createSignals(app);
+        auto signals = signal::SignalFactory::getInstance()->createSignals();
         for (auto& signal : signals) {
             signal::SignalManager::getInstance()->addSignal(std::move(signal));
         }
