@@ -7,7 +7,7 @@
 
 namespace palantir::command {
 
-auto ToggleTransparencyCommand::getTransparency() -> int {
+auto ToggleTransparencyCommand::getTransparency() const -> int {
     auto windowManager = app_->getWindowManager();
     if (auto window = windowManager->getMainWindow()) {
         auto hwnd = reinterpret_cast<HWND>(window->getNativeHandle());

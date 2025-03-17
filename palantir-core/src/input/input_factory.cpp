@@ -23,11 +23,10 @@ public:
     InputFactoryImpl(InputFactoryImpl&&) = delete;
     auto operator=(InputFactoryImpl&&) -> InputFactoryImpl& = delete;
 
-    auto initialize(const std::string& configPath) -> void {
+    auto initialize(const std::filesystem::path& configPath) -> void {
         // Create directory if it doesn't exist
-        const auto directory = std::filesystem::path(configPath).parent_path();
-        if (!std::filesystem::exists(directory)) {
-            std::filesystem::create_directories(directory);
+        if (!std::filesystem::exists(configPath.parent_path())) {
+            std::filesystem::create_directories(configPath.parent_path());
         }
 
         // Create default config if file doesn't exist
@@ -46,10 +45,10 @@ public:
      * when no configuration file exists.
      * @throws std::runtime_error if the file cannot be created or written to.
      */
-    auto createDefaultConfig(const std::string& configPath) -> void {
+    auto createDefaultConfig(const std::filesystem::path& configPath) const -> void {
         std::ofstream configFile(configPath);
         if (!configFile) {
-            throw std::runtime_error("Failed to create default config file: " + configPath);
+            throw std::runtime_error("Failed to create default config file: " + configPath.string());
         }
 
         // Write default configuration
@@ -79,11 +78,11 @@ public:
             << "\n";
 
         if (!configFile) {
-            throw std::runtime_error("Failed to write default configuration to: " + configPath);
+            throw std::runtime_error("Failed to write default configuration to: " + configPath.string());
         }
     }
 
-    [[nodiscard]] auto createInput(const std::string& commandName) -> std::unique_ptr<ConfigurableInput> {
+    [[nodiscard]] auto createInput(const std::string& commandName) const -> std::unique_ptr<ConfigurableInput> {
         if (!keyConfig_) {
             throw std::runtime_error("InputFactory not initialized. Call initialize() first.");
         }
@@ -96,14 +95,14 @@ public:
         return std::make_unique<ConfigurableInput>(keyCode, modifierCode);
     }
 
-    auto hasShortcut(const std::string& commandName) -> bool {
+    [[nodiscard]] auto hasShortcut(const std::string& commandName) const -> bool {
         if (!keyConfig_) {
             throw std::runtime_error("InputFactory not initialized. Call initialize() first.");
         }
         return keyConfig_->hasShortcut(commandName);
     }
 
-    auto getConfiguredCommands() -> std::vector<std::string> {
+    [[nodiscard]] auto getConfiguredCommands() const -> std::vector<std::string> {
         if (!keyConfig_) {
             throw std::runtime_error("InputFactory not initialized. Call initialize() first.");
         }
@@ -126,7 +125,7 @@ auto InputFactory::getInstance() -> std::shared_ptr<InputFactory> {
 
 auto InputFactory::setInstance(const std::shared_ptr<InputFactory>& instance) -> void { instance_ = instance; }
 
-auto InputFactory::initialize(const std::string& configPath) -> void { pimpl_->initialize(configPath); }
+auto InputFactory::initialize(const std::filesystem::path& configPath) -> void { pimpl_->initialize(configPath); }
 
 /**
  * @brief Create a new input object from configuration.
@@ -137,7 +136,8 @@ auto InputFactory::initialize(const std::string& configPath) -> void { pimpl_->i
  * Delegates to the implementation's createInput method to handle
  * input object creation and configuration.
  */
-[[nodiscard]] auto InputFactory::createInput(const std::string& commandName) -> std::unique_ptr<ConfigurableInput> {
+[[nodiscard]] auto InputFactory::createInput(const std::string& commandName) const
+    -> std::unique_ptr<ConfigurableInput> {
     return pimpl_->createInput(commandName);
 }
 

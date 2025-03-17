@@ -50,10 +50,10 @@ public:
      * This method should be implemented by concrete commands to define
      * their specific behavior when executed.
      */
-    virtual auto execute() -> void = 0;
+    virtual auto execute() const -> void = 0;
 
     /** @brief Whether the command should use debounce. */
-    virtual auto useDebounce() -> bool = 0;
+    virtual auto useDebounce() const -> bool = 0;
 
 protected:
     /** @brief Protected default constructor to prevent direct instantiation. */

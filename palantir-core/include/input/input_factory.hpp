@@ -10,6 +10,7 @@
 #ifndef INPUT_FACTORY_HPP
 #define INPUT_FACTORY_HPP
 
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <vector>
@@ -71,7 +72,7 @@ public:
      * It loads and validates the configuration file, creating a default one
      * if it doesn't exist.
      */
-    virtual auto initialize(const std::string& configPath) -> void;
+    virtual auto initialize(const std::filesystem::path& configPath) -> void;
 
     /**
      * @brief Create an input handler for a specific command.
@@ -83,7 +84,7 @@ public:
      * @throws std::runtime_error if the factory is not initialized or the command
      * is not found in configuration.
      */
-    [[nodiscard]] virtual auto createInput(const std::string& commandName) -> std::unique_ptr<ConfigurableInput>;
+    [[nodiscard]] virtual auto createInput(const std::string& commandName) const -> std::unique_ptr<ConfigurableInput>;
 
     /**
      * @brief Check if a shortcut exists for a command.

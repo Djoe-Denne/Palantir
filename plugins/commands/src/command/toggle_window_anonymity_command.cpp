@@ -4,9 +4,7 @@
 
 namespace palantir::command {
 
-ToggleWindowAnonymityCommand::ToggleWindowAnonymityCommand() : app_(Application::getInstance()) {}  // NOLINT
-
-auto ToggleWindowAnonymityCommand::execute() -> void {
+auto ToggleWindowAnonymityCommand::execute() const -> void {
     auto windowManager = app_->getWindowManager();
     if (auto window = windowManager->getMainWindow()) {
         window->toggleWindowAnonymity();
@@ -15,6 +13,6 @@ auto ToggleWindowAnonymityCommand::execute() -> void {
     }
 }
 
-auto ToggleWindowAnonymityCommand::useDebounce() -> bool { return true; }
+auto ToggleWindowAnonymityCommand::useDebounce() const -> bool { return true; }
 
 } // namespace palantir::command 

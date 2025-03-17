@@ -8,12 +8,12 @@
 
 namespace palantir::input {
 
-KeyConfig::KeyConfig(const std::string& configPath) { loadConfig(configPath); }
+KeyConfig::KeyConfig(const std::filesystem::path& configPath) { loadConfig(configPath); }
 
-auto KeyConfig::loadConfig(const std::string& configPath) -> void {
+auto KeyConfig::loadConfig(const std::filesystem::path& configPath) -> void {
     std::ifstream configFile(configPath);
     if (!configFile) {
-        throw std::runtime_error("Failed to open config file: " + configPath);
+        throw std::runtime_error("Failed to open config file: " + configPath.string());
     }
 
     std::string line;
@@ -79,16 +79,13 @@ auto KeyConfig::loadConfig(const std::string& configPath) -> void {
 }
 
 auto KeyConfig::getShortcut(const std::string& commandName) const -> const ShortcutConfig& {
-    auto iterator = shortcuts_.find(commandName);
-    if (iterator == shortcuts_.end()) {
+    if (!hasShortcut(commandName)) {
         throw std::runtime_error("No shortcut configured for command: " + commandName);
     }
-    return iterator->second;
+    return shortcuts_.at(commandName);
 }
 
-auto KeyConfig::hasShortcut(const std::string& commandName) const -> bool {
-    return shortcuts_.find(commandName) != shortcuts_.end();
-}
+auto KeyConfig::hasShortcut(const std::string& commandName) const -> bool { return shortcuts_.contains(commandName); }
 
 auto KeyConfig::getConfiguredCommands() const -> std::vector<std::string> {
     std::vector<std::string> commands;

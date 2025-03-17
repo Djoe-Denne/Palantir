@@ -16,12 +16,12 @@ public:
     ClearScreenshotCommand(ClearScreenshotCommand&&) = delete;
     auto operator=(ClearScreenshotCommand&&) -> ClearScreenshotCommand& = delete;
 
-    auto execute() -> void override;
-    auto useDebounce() -> bool override { return false; }
+    auto execute() const -> void override;
+    auto useDebounce() const -> bool override { return false; }
 
 private:
     [[nodiscard]] auto getScreenshotFolder() const -> std::string;
-    auto clearFolder() -> void;
+    auto clearFolder() const -> void;
 };
 
 } // namespace palantir::command

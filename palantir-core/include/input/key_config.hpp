@@ -10,6 +10,7 @@
 #ifndef KEY_CONFIG_HPP
 #define KEY_CONFIG_HPP
 
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -55,7 +56,7 @@ public:
      * command_name = modifier+key
      * @throws std::runtime_error if the configuration file cannot be loaded or parsed.
      */
-    explicit KeyConfig(const std::string& configPath);
+    explicit KeyConfig(const std::filesystem::path& configPath);
 
     /**
      * @brief Destructor for KeyConfig.
@@ -110,7 +111,7 @@ private:
      * @param configPath Path to the INI configuration file.
      * @throws std::runtime_error if the configuration file cannot be loaded or parsed.
      */
-    auto loadConfig(const std::string& configPath) -> void;
+    auto loadConfig(const std::filesystem::path& configPath) -> void;
 };
 
 }  // namespace palantir::input

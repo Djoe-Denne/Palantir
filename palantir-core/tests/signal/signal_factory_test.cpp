@@ -51,7 +51,7 @@ TEST_F(SignalFactoryTest, CreateSignals_NoCommands_ReturnsEmptyVector) {
     EXPECT_CALL(*mockInputFactory, getConfiguredCommands())
         .WillOnce(Return(std::vector<std::string>()));
 
-    auto signals = signalFactory->createSignals(mockApp);
+    auto signals = signalFactory->createSignals();
     EXPECT_TRUE(signals.empty());
 }
 
@@ -73,7 +73,7 @@ TEST_F(SignalFactoryTest, CreateSignals_WithValidCommand_ReturnsSignal) {
     EXPECT_CALL(*mockCommandFactory, getCommand("test_command"))
         .WillOnce(Return(std::move(mockCommand)));
 
-    auto signals = signalFactory->createSignals(mockApp);
+    auto signals = signalFactory->createSignals();
     EXPECT_EQ(signals.size(), 1);
     EXPECT_NE(signals[0], nullptr);
 }
@@ -89,7 +89,7 @@ TEST_F(SignalFactoryTest, CreateSignals_WithInvalidCommand_ThrowsException) {
     EXPECT_CALL(*mockCommandFactory, getCommand("invalid_command"))
         .WillOnce(Return(nullptr));
 
-    EXPECT_THROW(signalFactory->createSignals(mockApp), std::runtime_error);
+    EXPECT_THROW(signalFactory->createSignals(), std::runtime_error);
 }
 
 TEST_F(SignalFactoryTest, CreateSignals_MultipleCommands_ReturnsMultipleSignals) {
@@ -117,7 +117,7 @@ TEST_F(SignalFactoryTest, CreateSignals_MultipleCommands_ReturnsMultipleSignals)
         .WillOnce(Return(std::move(mockCommand1)))
         .WillOnce(Return(std::move(mockCommand2)));
 
-    auto signals = signalFactory->createSignals(mockApp);
+    auto signals = signalFactory->createSignals();
     EXPECT_EQ(signals.size(), 2);
     EXPECT_NE(signals[0], nullptr);
     EXPECT_NE(signals[1], nullptr);

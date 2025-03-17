@@ -42,7 +42,7 @@ public:
      * Uses the Windows GetAsyncKeyState API to check if the configured
      * key is currently in a pressed state.
      */
-    [[nodiscard]] auto isKeyPressed(const std::any& event) const -> bool {
+    [[nodiscard]] auto isKeyPressed([[maybe_unused]] const std::any& event) const -> bool {
         bool pressed = (static_cast<uint16_t>(GetAsyncKeyState(keyCode_)) &
                         static_cast<uint16_t>(KeyRegister::getInstance()->get("KEY_PRESSED_MASK"))) != 0;
         if (pressed) {
@@ -83,7 +83,7 @@ public:
      *
      * Currently a no-op as the implementation doesn't own any resources.
      */
-    ~Impl() { DebugLog("Destroying configurable input"); }
+    ~Impl() = default;
 
 private:
     int keyCode_;       ///< Virtual key code for the input key

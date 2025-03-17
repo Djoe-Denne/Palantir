@@ -25,7 +25,7 @@ public:
     SignalFactoryImpl(SignalFactoryImpl&&) = delete;
     auto operator=(SignalFactoryImpl&&) -> SignalFactoryImpl& = delete;
 
-    auto createSignals(const std::shared_ptr<Application>& app) -> std::vector<std::unique_ptr<ISignal>> {
+    auto createSignals() const -> std::vector<std::unique_ptr<ISignal>> {
         std::vector<std::unique_ptr<ISignal>> signals;
 
         for (const auto& commandName : input::InputFactory::getInstance()->getConfiguredCommands()) {
@@ -57,8 +57,6 @@ auto SignalFactory::getInstance() -> std::shared_ptr<SignalFactory> {
 
 auto SignalFactory::setInstance(const std::shared_ptr<SignalFactory>& instance) -> void { instance_ = instance; }
 
-auto SignalFactory::createSignals(const std::shared_ptr<Application>& app) -> std::vector<std::unique_ptr<ISignal>> {
-    return pimpl_->createSignals(app);
-}
+auto SignalFactory::createSignals() const -> std::vector<std::unique_ptr<ISignal>> { return pimpl_->createSignals(); }
 
 }  // namespace palantir::signal

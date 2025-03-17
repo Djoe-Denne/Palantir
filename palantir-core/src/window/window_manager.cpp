@@ -35,7 +35,7 @@ public:
         return std::any_of(windows_.begin(), windows_.end(), [](const auto& window) { return window->isRunning(); });
     }
 
-    auto executeCommand(std::unique_ptr<palantir::command::ICommand> command) -> void {
+    auto executeCommand(std::unique_ptr<palantir::command::ICommand> command) const -> void {
         if (command) {
             command->execute();
         }
@@ -71,7 +71,7 @@ auto WindowManager::getMainWindow() const -> std::shared_ptr<IWindow> { return p
 
 auto WindowManager::hasRunningWindows() const -> bool { return pimpl_->hasRunningWindows(); }
 
-auto WindowManager::executeCommand(std::unique_ptr<palantir::command::ICommand> command) -> void {
+auto WindowManager::executeCommand(std::unique_ptr<palantir::command::ICommand> command) const -> void {
     pimpl_->executeCommand(std::move(command));
 }
 

@@ -9,7 +9,7 @@
 #include <vector>
 
 #ifdef _WIN32
-#include <windows.h>
+#include <Windows.h>
 #endif
 
 #include "core_export.hpp"
