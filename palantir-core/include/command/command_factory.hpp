@@ -3,7 +3,6 @@
 #include <functional>
 #include <memory>
 #include <string>
-#include <functional>
 
 #include "core_export.hpp"
 

@@ -14,7 +14,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <filesystem>
 
 #include "core_export.hpp"
 #include "input/configurable_input.hpp"

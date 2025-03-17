@@ -136,7 +136,8 @@ auto InputFactory::initialize(const std::filesystem::path& configPath) -> void {
  * Delegates to the implementation's createInput method to handle
  * input object creation and configuration.
  */
-[[nodiscard]] auto InputFactory::createInput(const std::string& commandName) const -> std::unique_ptr<ConfigurableInput> {
+[[nodiscard]] auto InputFactory::createInput(const std::string& commandName) const
+    -> std::unique_ptr<ConfigurableInput> {
     return pimpl_->createInput(commandName);
 }
 
