@@ -64,17 +64,17 @@ public:
     /**
      * @brief Start processing all managed signals.
      */
-    virtual auto startSignals() -> void;
+    virtual auto startSignals() const -> void;
 
     /**
      * @brief Stop processing all managed signals.
      */
-    virtual auto stopSignals() -> void;
+    virtual auto stopSignals() const -> void;
 
     /**
      * @brief Check all managed signals.
      */
-    virtual auto checkSignals(const std::any& event) -> void;
+    virtual auto checkSignals(const std::any& event) const -> void;
 
 protected:
     // Private constructor for singleton

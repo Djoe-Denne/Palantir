@@ -16,12 +16,12 @@ public:
     WindowScreenshotCommand(WindowScreenshotCommand&&) = delete;
     auto operator=(WindowScreenshotCommand&&) -> WindowScreenshotCommand& = delete;
 
-    auto execute() -> void override;
-    auto useDebounce() -> bool override { return false; }
+    auto execute() const -> void override;
+    auto useDebounce() const -> bool override { return false; }
 
 private:
     [[nodiscard]] auto generateFilePath() const -> std::string;
-    auto captureScreenshot() -> void; // Implemented separately per platform
+    auto captureScreenshot() const -> void; // Implemented separately per platform
 };
 
 } // namespace palantir::command

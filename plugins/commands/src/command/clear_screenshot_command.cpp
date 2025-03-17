@@ -10,7 +10,7 @@ auto ClearScreenshotCommand::getScreenshotFolder() const -> std::string {
     return "./screenshot";
 }
 
-auto ClearScreenshotCommand::clearFolder() -> void {
+auto ClearScreenshotCommand::clearFolder() const -> void {
     std::string folderPath = getScreenshotFolder();
     if (!fs::exists(folderPath)) {
         DebugLog("Screenshot folder does not exist: ", folderPath);
@@ -31,6 +31,6 @@ auto ClearScreenshotCommand::clearFolder() -> void {
     }
 }
 
-auto ClearScreenshotCommand::execute() -> void { clearFolder(); }
+auto ClearScreenshotCommand::execute() const -> void { clearFolder(); }
 
 } // namespace palantir::command

@@ -48,9 +48,9 @@ void ResourceUtils::initializeResourceDirectory() {
     char* envResourceDir = nullptr;
     size_t len = 0;
     _dupenv_s(&envResourceDir, &len, "PALANTIR_RESOURCE_DIR");
-    auto envGuard = std::unique_ptr<char, decltype(&free)>(envResourceDir, free);
 
-    if (envGuard && std::filesystem::exists(envGuard.get())) {
+    if (auto envGuard = std::unique_ptr<char, decltype(&free)>(envResourceDir, &free);
+        envGuard && std::filesystem::exists(envGuard.get())) {
         resourceDirectory_ = std::filesystem::path(envGuard.get());
     } else {
         resourceDirectory_ = std::filesystem::path("../../resource");

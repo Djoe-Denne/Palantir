@@ -1,7 +1,9 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <string>
+#include <functional>
 
 #include "core_export.hpp"
 
@@ -19,7 +21,7 @@ class ICommand;  // Forward declaration
  */
 class PALANTIR_CORE_API CommandFactory {
 public:
-    using CommandCreator = std::unique_ptr<ICommand> (*)();  // Function pointer to create a command
+    using CommandCreator = std::function<std::unique_ptr<ICommand>()>;  // Function to create a command
 
     /** @brief Get the singleton instance of the factory. */
     static auto getInstance() -> std::shared_ptr<CommandFactory>;

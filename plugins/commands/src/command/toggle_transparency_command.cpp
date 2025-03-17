@@ -3,10 +3,8 @@
 #include "window/iwindow.hpp"
 
 namespace palantir::command {
-
-ToggleTransparencyCommand::ToggleTransparencyCommand() : app_(Application::getInstance()) {}  // NOLINT
-
-auto ToggleTransparencyCommand::execute() -> void {
+    
+auto ToggleTransparencyCommand::execute() const -> void {
     auto windowManager = app_->getWindowManager();
     if (auto window = windowManager->getMainWindow()) {
         int transparency = getTransparency();
@@ -20,6 +18,6 @@ auto ToggleTransparencyCommand::execute() -> void {
     }
 }
 
-auto ToggleTransparencyCommand::useDebounce() -> bool { return true; }
+auto ToggleTransparencyCommand::useDebounce() const -> bool { return true; }
 
 } // namespace palantir::command 

@@ -12,13 +12,13 @@
 
 namespace palantir::command {
 
-SendSauronRequestCommand::SendSauronRequestCommand(std::string prompt) : prompt_(prompt), app_(Application::getInstance()) {}  // NOLINT
+SendSauronRequestCommand::SendSauronRequestCommand(std::string prompt) : prompt_(prompt) {}  // NOLINT
 
-auto SendSauronRequestCommand::useDebounce() -> bool {
+auto SendSauronRequestCommand::useDebounce() const -> bool {
     return false;
 }
 
-auto SendSauronRequestCommand::execute() -> void {
+auto SendSauronRequestCommand::execute() const -> void {
     DebugLog("Sending Sauron request...");
     DebugLog("Prompt: ", prompt_); 
     auto images = loadImagesFromFolder();

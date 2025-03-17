@@ -4,7 +4,7 @@
 #include "plugin_export.hpp"
 #include <string>
 #include <memory>
-#include "Application.hpp"
+#include "application.hpp"
 #include <vector>
 
 namespace palantir::command {
@@ -19,8 +19,8 @@ public:
     SendSauronRequestCommand(SendSauronRequestCommand&&) = delete;
     auto operator=(SendSauronRequestCommand&&) -> SendSauronRequestCommand& = delete;
 
-    auto execute() -> void override;
-    auto useDebounce() -> bool override;
+    auto execute() const -> void override;
+    auto useDebounce() const -> bool override;
 
 private:
     [[nodiscard]] auto loadImagesFromFolder() const -> std::vector<std::string>;
@@ -28,7 +28,7 @@ private:
 #pragma warning(push)
 #pragma warning(disable: 4251)
     std::string prompt_;
-    std::shared_ptr<Application> app_;
+    std::shared_ptr<Application> app_{Application::getInstance()};
 #pragma warning(pop)
 };
 

@@ -17,7 +17,7 @@ auto MessageHandler::registerStrategy(std::unique_ptr<MessageStrategyBase> strat
     DebugLog("Registered strategy for event type: ", eventType);
 }
 
-auto MessageHandler::handleMessage(const std::string& message) -> void {
+auto MessageHandler::handleMessage(const std::string& message) const -> void {
     try {
         nlohmann::json jsonMessage = nlohmann::json::parse(message);
 
