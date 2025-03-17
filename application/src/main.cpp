@@ -9,6 +9,7 @@
 #include "plugin_loader/plugin_manager.hpp"
 
 #include "platform_application.hpp"
+#include "exception/application_exceptions.hpp"
 
 #if defined(_WIN32) && !defined(_CONSOLE)
 #include <Windows.h>
@@ -47,7 +48,18 @@ auto run_app() -> int {
         int result = app->run();
 
         return result;
-
+    } catch (const palantir::exception::TraceableBaseException& e) {
+        DebugLog("Fatal error: ", e.what());
+        DebugLog(e.getStackTraceString());
+#ifdef _WIN32
+#if defined(_DEBUG)
+        MessageBoxA(nullptr, (e.what() + e.getStackTraceString()).c_str(), "Fatal Error", MB_OK | MB_ICONERROR);
+#else
+        
+        MessageBoxA(nullptr, e.what(), "Fatal Error", MB_OK | MB_ICONERROR);
+#endif
+#endif
+        return 1;
     } catch (const std::exception& e) {
         DebugLog("Fatal error: {}", e.what());
 #ifdef _WIN32

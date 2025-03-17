@@ -5,6 +5,7 @@
 #include "application.hpp"
 #include "command/command_factory.hpp"
 #include "command/icommand.hpp"
+#include "exception/exceptions.hpp"
 #include "input/configurable_input.hpp"
 #include "input/input_factory.hpp"
 #include "signal/signal.hpp"
@@ -36,7 +37,8 @@ public:
                     std::make_unique<Signal>(std::move(input), std::move(command), command->useDebounce()));
             } else {
                 DebugLog("Unknown command in configuration: {}", commandName);
-                throw std::runtime_error("Unknown command in configuration: " + commandName);
+                throw palantir::exception::TraceableUnknownCommandException("Unknown command in configuration: " +
+                                                                            commandName);
             }
         }
 

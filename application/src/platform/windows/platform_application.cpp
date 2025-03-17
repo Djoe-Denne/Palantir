@@ -6,6 +6,7 @@
 #include <memory>
 #include <stdexcept>
 
+#include "exception/application_exceptions.hpp"
 #include "input/key_codes.hpp"
 #include "signal/signal_manager.hpp"
 #include "utils/logger.hpp"
@@ -97,7 +98,7 @@ public:
         if (g_keyboardHook == nullptr) {
             DWORD error = GetLastError();
             DebugLog("Failed to install keyboard hook: error=%lu", error);
-            throw std::runtime_error("Failed to install keyboard hook");
+            throw palantir::exception::TraceableKeyboardHookException("Failed to install keyboard hook");
         }
 
         DebugLog("Keyboard hook installed successfully");

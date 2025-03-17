@@ -6,6 +6,7 @@
 
 #include <algorithm>  // For std::max
 
+#include "exception/application_exceptions.hpp"
 #include "utils/logger.hpp"
 #include "window/component/content_manager.hpp"
 #include "window/component/webview/webview.hpp"
@@ -142,7 +143,7 @@ auto OverlayWindow::Impl::create() -> void {
     if (RegisterClassExW(&windowClass) == 0) {
         DWORD error = GetLastError();
         DebugLog("Failed to register window class: %lu", error);
-        throw std::runtime_error("Failed to register window class");
+        throw palantir::exception::TraceableWindowOperationException("Failed to register window class");
     }
 
     // Create window with WS_POPUP style and WS_THICKFRAME to allow resizing
@@ -153,7 +154,7 @@ auto OverlayWindow::Impl::create() -> void {
     if (hwnd_ == nullptr) {
         DWORD error = GetLastError();
         DebugLog("Failed to create window: %lu", error);
-        throw std::runtime_error("Failed to create window");
+        throw palantir::exception::TraceableWindowOperationException("Failed to create window");
     }
 
     DebugLog("Window created successfully with handle: %p", hwnd_);

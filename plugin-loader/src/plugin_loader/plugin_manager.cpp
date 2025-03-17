@@ -1,7 +1,7 @@
 #include "plugin_loader/plugin_manager.hpp"
 #include <filesystem>
 #include <algorithm>
-#include <stdexcept>
+#include "exception/exceptions.hpp"
 
 namespace palantir::plugin {
 
@@ -92,10 +92,10 @@ auto PluginManager::setupFromDirectory(const std::filesystem::path& pluginsDir) 
             
             // Initialize all loaded plugins
             if (!this->initializeAll()) {
-                throw std::runtime_error("Some plugins failed to initialize");
+                throw palantir::exception::TraceablePluginInitializationException("Some plugins failed to initialize");
             }
         } else {
-            throw std::runtime_error("Plugins directory not found: " + pluginsDir.string());
+            throw palantir::exception::TraceableResourceLoadingException("Plugins directory not found: " + pluginsDir.string());
         }
         return true;
 }
