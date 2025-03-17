@@ -45,7 +45,7 @@ public:
      * @param commandName Name of the command to register
      * @param creator Function to create the command
      */
-    virtual auto registerCommand(const std::string& commandName, CommandCreator creator) -> void;
+    virtual auto registerCommand(const std::string& commandName, const CommandCreator& creator) -> void;
 
     /**
      * @brief Unregister a command from the factory.

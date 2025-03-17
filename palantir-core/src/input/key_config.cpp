@@ -51,8 +51,7 @@ auto KeyConfig::loadConfig(const std::filesystem::path& configPath) -> void {
         shortcut.erase(shortcut.find_last_not_of(" \t") + 1);
 
         // Remove comment if present
-        auto commentPos = shortcut.find(';');
-        if (commentPos != std::string::npos) {
+        if (auto commentPos = shortcut.find(';'); commentPos != std::string::npos) {
             shortcut.erase(commentPos);
             shortcut.erase(shortcut.find_last_not_of(" \t") + 1);
         }

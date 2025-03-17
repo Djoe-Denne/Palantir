@@ -58,7 +58,7 @@ public:
      * Uses the Windows GetAsyncKeyState API to check if the configured
      * modifier key is currently in a pressed state.
      */
-    [[nodiscard]] auto isModifierActive(const std::any& event) const -> bool {
+    [[nodiscard]] auto isModifierActive([[maybe_unused]] const std::any& event) const -> bool {
         bool active = (static_cast<uint16_t>(GetAsyncKeyState(modifierCode_)) &
                        static_cast<uint16_t>(KeyRegister::getInstance()->get("KEY_PRESSED_MASK"))) != 0;
         if (active) {

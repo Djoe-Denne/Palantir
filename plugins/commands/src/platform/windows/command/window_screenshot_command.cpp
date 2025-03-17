@@ -8,14 +8,10 @@
 #include <codecvt>
 #include <locale>
 
+#include "utils/string_utils.hpp"
 #pragma comment(lib, "Gdiplus.lib")
 
 namespace palantir::command {
-
-auto stringToWString(const std::string& str) -> std::wstring {
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-    return converter.from_bytes(str);
-}
 
 
 auto GetEncoderClsid(const WCHAR* format, CLSID* pClsid) -> int {
@@ -82,10 +78,9 @@ auto WindowScreenshotCommand::captureScreenshot() const -> void {
 
     CLSID pngClsid;
     GetEncoderClsid(L"image/png", &pngClsid);
-    std::wstring wFilePath = stringToWString(generateFilePath());
-
+    
     // ✅ Ensure Bitmap is saved BEFORE GdiplusShutdown
-    if (bitmap->Save(wFilePath.c_str(), &pngClsid, nullptr) != Ok) {
+    if (bitmap->Save(utils::StringUtils::strToW(generateFilePath()).c_str(), &pngClsid, nullptr) != Ok) {
         std::cerr << "Failed to save screenshot!" << std::endl;
     }
 

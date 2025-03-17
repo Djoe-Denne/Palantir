@@ -185,8 +185,6 @@ public:
      * signal manager pointer.
      */
     ~Impl() {
-        DebugLog("Application being destroyed");
-
         if (g_keyboardHook != nullptr) {
             UnhookWindowsHookEx(g_keyboardHook);
             g_keyboardHook = nullptr;
