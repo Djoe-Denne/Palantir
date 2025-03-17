@@ -9,7 +9,7 @@
 #include <vector>
 
 #ifdef _WIN32
-    #include <Windows.h>
+#include <Windows.h>
 #endif
 
 #include "core_export.hpp"
@@ -59,9 +59,7 @@ public:
      * @param str The UTF-8 string to convert.
      * @return The wide string.
      */
-    static auto strToW(const std::string_view& str) -> std::wstring {
-        return std::wstring(str.begin(), str.end());
-    }
+    static auto strToW(const std::string_view& str) -> std::wstring { return std::wstring(str.begin(), str.end()); }
 #endif
 
     // Named constants for bitwise operations
