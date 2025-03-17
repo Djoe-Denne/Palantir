@@ -85,7 +85,9 @@ auto KeyConfig::getShortcut(const std::string& commandName) const -> const Short
     return shortcuts_.at(commandName);
 }
 
-auto KeyConfig::hasShortcut(const std::string& commandName) const -> bool { return shortcuts_.contains(commandName); }
+auto KeyConfig::hasShortcut(const std::string& commandName) const -> bool {
+    return shortcuts_.contains(commandName);
+}
 
 auto KeyConfig::getConfiguredCommands() const -> std::vector<std::string> {
     std::vector<std::string> commands;

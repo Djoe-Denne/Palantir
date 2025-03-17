@@ -1,5 +1,6 @@
 #include "input/key_register.hpp"  // Include the corresponding header file
 
+#include <unordered_map>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
