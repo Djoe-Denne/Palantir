@@ -16,16 +16,8 @@ We have multiple workflows to optimize CI/CD performance:
 1. **Build Workflow** (`build.yml`)
    - Builds the project (currently Windows only)
    - Runs tests after successful build
+   - Runs SonarQube analysis after tests
    - Cleans up caches after completion
-
-2. **Code Quality Master** (`code-quality-master.yml`)
-   - Runs code quality checks on the master branch
-   - Triggered on pushes to master
-
-3. **Code Quality PR** (`code-quality-pr.yml`)
-   - Runs code quality checks on PRs when requested via comment
-   - Creates and updates check runs for visibility
-   - Posts lint reports as PR comments
 
 4. **Cache Management** (`clear-caches-master.yml`, `clear-caches-pr.yml`)
    - Manages workflow caches for both master and PR builds
@@ -42,24 +34,6 @@ Steps:
 2. Build using custom build action
 3. Run tests after successful build
 4. Clear run caches after completion
-
-### 2. Code Quality (`code-quality`)
-
-Runs on Ubuntu to ensure consistent code quality checks.
-
-Steps:
-1. For PRs:
-   - Triggered by "run code quality" comment
-   - Creates in-progress check status
-   - Checks out PR code with full history
-   - Runs quality checks
-   - Posts lint report as comment
-   - Updates check status with results
-
-2. For master:
-   - Runs automatically on push
-   - Performs quality checks
-   - Uses same quality action as PR workflow
 
 ## Job Dependencies
 
@@ -94,7 +68,7 @@ Workflows use these GitHub permissions:
 Workflows use several custom actions located in `.github/workflows/actions/`:
 - `build` - Handles build process
 - `tests` - Runs test suite
-- `quality` - Performs code quality checks
+- `sonar` - Performs SonarQube analysis
 - `clear-run-caches` - Manages workflow caches
 
 ## Cache Management

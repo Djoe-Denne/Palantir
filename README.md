@@ -1,5 +1,7 @@
 # Palantir Project
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Djoe-Denne_Palantir&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Djoe-Denne_Palantir) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Djoe-Denne_Palantir&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Djoe-Denne_Palantir) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Djoe-Denne_Palantir&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Djoe-Denne_Palantir) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=Djoe-Denne_Palantir&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=Djoe-Denne_Palantir)
+
 ## Overview
 The Palantir project is a cross-platform application designed to create an overlay window that can be controlled via keyboard shortcuts. It utilizes a modular architecture with interfaces and command patterns to manage window operations and input signals. The application includes AI integration through Sauron SDK for assisting with coding interviews.
 
