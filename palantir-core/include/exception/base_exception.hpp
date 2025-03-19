@@ -15,6 +15,12 @@ namespace palantir::exception {
 class PALANTIR_CORE_API BaseException : public std::runtime_error {
 public:
     using std::runtime_error::runtime_error;
+
+    BaseException(const BaseException&) = delete;
+    auto operator=(const BaseException&) -> BaseException& = delete;
+    BaseException(BaseException&&) = delete;
+    auto operator=(BaseException&&) -> BaseException& = delete;
+
     ~BaseException() override = default;
 };
 #pragma warning(pop)

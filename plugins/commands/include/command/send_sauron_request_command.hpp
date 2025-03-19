@@ -11,7 +11,7 @@ namespace palantir::command {
 
 class COMMANDS_PLUGIN_API SendSauronRequestCommand : public ICommand {
 public:
-    explicit SendSauronRequestCommand(std::string prompt);
+    explicit SendSauronRequestCommand(const std::string& prompt);
     ~SendSauronRequestCommand() override = default;
 
     SendSauronRequestCommand(const SendSauronRequestCommand&) = delete;

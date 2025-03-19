@@ -44,7 +44,7 @@ public:
      */
     static auto wToStr(const std::wstring& wstr) -> std::string {
         if (wstr.empty()) {
-            return std::string();
+            return {};
         }
         int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), static_cast<int>(wstr.length()), nullptr, 0,
                                               nullptr, nullptr);
@@ -59,7 +59,7 @@ public:
      * @param str The UTF-8 string to convert.
      * @return The wide string.
      */
-    static auto strToW(const std::string_view& str) -> std::wstring { return std::wstring(str.begin(), str.end()); }
+    static auto strToW(const std::string_view& str) -> std::wstring { return {str.begin(), str.end()}; }
 #endif
 
     // Named constants for bitwise operations

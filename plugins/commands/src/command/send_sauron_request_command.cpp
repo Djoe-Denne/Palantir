@@ -13,7 +13,7 @@
 
 namespace palantir::command {
 
-SendSauronRequestCommand::SendSauronRequestCommand(std::string prompt) : prompt_(prompt) {}  // NOLINT
+SendSauronRequestCommand::SendSauronRequestCommand(const std::string& prompt) : prompt_(prompt) {}  // NOLINT
 
 auto SendSauronRequestCommand::useDebounce() const -> bool {
     return false;

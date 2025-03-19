@@ -3,12 +3,11 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 
+#include "exception/exceptions.hpp"
 #include "utils/logger.hpp"
 #include "window/component/icontent_size_observer.hpp"
 #include "window/component/message/logger/logger_strategy.hpp"
 #include "window/component/message/message_handler.hpp"
-
-#include "exception/exceptions.hpp"
 
 namespace palantir::window::component {
 
@@ -73,7 +72,8 @@ public:
             updateWebView();
         } catch (const nlohmann::json::exception& e) {
             // Handle JSON parsing error
-            throw palantir::exception::TraceableContentManagerException("Invalid JSON format: " + std::string(e.what()));
+            throw palantir::exception::TraceableContentManagerException("Invalid JSON format: " +
+                                                                        std::string(e.what()));
         }
     }
 
@@ -89,11 +89,12 @@ public:
             }
             updateWebView();
         } catch (const std::exception& e) {
-            throw palantir::exception::TraceableContentManagerException("Failed to set content: " + std::string(e.what()));
+            throw palantir::exception::TraceableContentManagerException("Failed to set content: " +
+                                                                        std::string(e.what()));
         }
     }
 
-    auto getContent(const std::string& elementId) const -> std::string {
+    [[nodiscard]] auto getContent(const std::string& elementId) const -> std::string {
         try {
             if (elementId == "explanation" || elementId == "response") {
                 return content_[elementId].get<std::string>();
@@ -105,7 +106,8 @@ public:
             }
             throw palantir::exception::TraceableContentManagerException("Invalid element ID");
         } catch (const std::exception& e) {
-            throw palantir::exception::TraceableContentManagerException("Failed to get content: " + std::string(e.what()));
+            throw palantir::exception::TraceableContentManagerException("Failed to get content: " +
+                                                                        std::string(e.what()));
         }
     }
 
@@ -125,7 +127,7 @@ public:
         }
     }
 
-    auto getContentVisibility([[maybe_unused]] const std::string_view& elementId) const -> bool {
+    [[nodiscard]] auto getContentVisibility([[maybe_unused]] const std::string_view& elementId) const -> bool {
         // This would require a callback from JavaScript to C++
         // For now, we'll return true as default
         return true;

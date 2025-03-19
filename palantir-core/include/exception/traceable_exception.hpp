@@ -37,8 +37,15 @@ namespace palantir::exception {
 #pragma warning(disable : 4251)
 class PALANTIR_CORE_API TraceableBaseException : public std::exception {
 public:
+    using std::exception::exception;
+
+    TraceableBaseException(const TraceableBaseException &) = delete;
+    auto operator=(const TraceableBaseException &) -> TraceableBaseException & = delete;
+    TraceableBaseException(TraceableBaseException &&) = delete;
+    auto operator=(TraceableBaseException &&) -> TraceableBaseException & = delete;
+
     ~TraceableBaseException() override = default;
-    virtual std::string getStackTraceString() const = 0;
+    [[nodiscard]] virtual auto getStackTraceString() const -> std::string = 0;
 };
 
 template <typename E>
@@ -51,9 +58,9 @@ public:
     // Modern C++23 implementation
     explicit TraceableException(const std::string &what) : E(what) { stackTrace = std::stacktrace::current(); }
 
-    const std::stacktrace &getStackTrace() const { return stackTrace; }
+    [[nodiscard]] auto getStackTrace() const -> const std::stacktrace & { return stackTrace; }
 
-    std::string getStackTraceString() const override { return format_stacktrace(stackTrace); }
+    [[nodiscard]] auto getStackTraceString() const -> std::string override { return format_stacktrace(stackTrace); }
 
 private:
 #pragma warning(push)
@@ -61,7 +68,7 @@ private:
     std::stacktrace stackTrace;
 #pragma warning(pop)
 
-    std::string format_stacktrace(const std::stacktrace &st) const {
+    [[nodiscard]] auto format_stacktrace(const std::stacktrace &st) const -> std::string {
         std::ostringstream oss;
         for (const auto &entry : st) {
             oss << entry << '\n';
@@ -72,13 +79,13 @@ private:
     // Windows-specific implementation
     explicit TraceableException(const std::string& what) : E(what) { captureStackTrace(); }
 
-    std::string getStackTraceString() const override { return stackTraceStr; }
+    [[nodiscard]] auto getStackTraceString() const -> std::string override { return stackTraceStr; }
 
 private:
-    static const int MAX_STACK_FRAMES = 64;
+    static constexpr int MAX_STACK_FRAMES = 64;
     std::string stackTraceStr;
 
-    void captureStackTrace() {
+    auto captureStackTrace() -> void {
         HANDLE process = GetCurrentProcess();
         SymInitialize(process, NULL, TRUE);
 
@@ -112,13 +119,13 @@ private:
     // Linux/macOS implementation using execinfo
     explicit TraceableException(const std::string& what) : E(what) { captureStackTrace(); }
 
-    std::string getStackTraceString() const override { return stackTraceStr; }
+    [[nodiscard]] auto getStackTraceString() const -> std::string override { return stackTraceStr; }
 
 private:
     static const int MAX_STACK_FRAMES = 64;
     std::string stackTraceStr;
 
-    void captureStackTrace() {
+    auto captureStackTrace() -> void {
         void* callstack[MAX_STACK_FRAMES];
         int frames = backtrace(callstack, MAX_STACK_FRAMES);
         char** strs = backtrace_symbols(callstack, frames);
@@ -206,9 +213,11 @@ private:
     }
 #else
     // Fallback implementation for unsupported platforms
-    explicit TraceableException(const std::string &what) : E(what) {}
+    explicit TraceableException(const std::string& what) : E(what) {}
 
-    std::string getStackTraceString() const override { return "Stack trace not available on this platform"; }
+    [[nodiscard]] auto getStackTraceString() const -> std::string override {
+        return "Stack trace not available on this platform";
+    }
 #endif
 };
 

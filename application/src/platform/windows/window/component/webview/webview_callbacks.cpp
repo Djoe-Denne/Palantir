@@ -22,7 +22,7 @@ auto WebViewCallbacks::handleEnvironmentCompleted(HRESULT result, ICoreWebView2E
     }
 
     DebugLog("WebView2 environment created successfully");
-    auto nativeHandle = reinterpret_cast<HWND>(webview->getNativeHandle());
+    auto nativeHandle = reinterpret_cast<HWND>(webview->getNativeHandle());  // NOLINT
     return env->CreateCoreWebView2Controller(nativeHandle, this->getControllerCompletedHandler(webview).Get());
 }
 
@@ -59,16 +59,12 @@ auto WebViewCallbacks::handleWebMessageReceived([[maybe_unused]] const ICoreWebV
         return S_OK;
     }
 
-    if (message) {
+    if (message != nullptr) {
         std::wstring wmessage(message);
         std::string messageStr(wmessage.begin(), wmessage.end());
         DebugLog("Received WebView2 message: ", messageStr);
 
-        try {
-            webview->handleMessage(messageStr);
-        } catch (const std::exception& e) {
-            DebugLog("Exception in message handler: ", e.what());
-        }
+        webview->handleMessage(messageStr);
         CoTaskMemFree(message);
     }
     return S_OK;
@@ -86,18 +82,19 @@ auto WebViewCallbacks::handleNavigationCompleted(ICoreWebView2* sender,
         CoTaskMemFree(nullptr);
     } else {
         DebugLog("Navigation completed successfully");
+        auto resourceUtils = palantir::utils::ResourceUtils::getInstance();
+        std::vector<std::pair<std::string, std::string>> scripts;
         try {
-            auto resourceUtils = palantir::utils::ResourceUtils::getInstance();
-            auto scripts = resourceUtils->loadAllJavaScriptsFromDirectory("post-nav");
-
-            for (const auto& [filename, script] : scripts) {
-                DebugLog("Executing post-navigation script: ", filename);
-
-                std::wstring wScript(script.begin(), script.end());
-                sender->ExecuteScript(wScript.c_str(), nullptr);
-            }
-        } catch (const std::exception& e) {
+            scripts = resourceUtils->loadAllJavaScriptsFromDirectory("post-nav");
+        } catch (const std::ifstream::failure& e) {
             DebugLog("Failed to load and execute post-navigation scripts: ", e.what());
+        }
+
+        for (const auto& [filename, script] : scripts) {
+            DebugLog("Executing post-navigation script: ", filename);
+
+            std::wstring wScript(script.begin(), script.end());
+            sender->ExecuteScript(wScript.c_str(), nullptr);
         }
     }
     return S_OK;
