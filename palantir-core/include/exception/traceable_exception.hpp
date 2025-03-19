@@ -39,10 +39,10 @@ class PALANTIR_CORE_API TraceableBaseException : public std::exception {
 public:
     using std::exception::exception;
 
-    TraceableBaseException(const TraceableBaseException &) = delete;
-    auto operator=(const TraceableBaseException &) -> TraceableBaseException & = delete;
-    TraceableBaseException(TraceableBaseException &&) = delete;
-    auto operator=(TraceableBaseException &&) -> TraceableBaseException & = delete;
+    TraceableBaseException(const TraceableBaseException &) = default;
+    auto operator=(const TraceableBaseException &) -> TraceableBaseException & = default;
+    TraceableBaseException(TraceableBaseException &&) = default;
+    auto operator=(TraceableBaseException &&) -> TraceableBaseException & = default;
 
     ~TraceableBaseException() override = default;
     [[nodiscard]] virtual auto getStackTraceString() const -> std::string = 0;
@@ -77,7 +77,7 @@ private:
     }
 #elif defined(OS_WINDOWS)
     // Windows-specific implementation
-    explicit TraceableException(const std::string& what) : E(what) { captureStackTrace(); }
+    explicit TraceableException(const std::string &what) : E(what) { captureStackTrace(); }
 
     [[nodiscard]] auto getStackTraceString() const -> std::string override { return stackTraceStr; }
 
@@ -89,10 +89,10 @@ private:
         HANDLE process = GetCurrentProcess();
         SymInitialize(process, NULL, TRUE);
 
-        void* stack[MAX_STACK_FRAMES];
+        void *stack[MAX_STACK_FRAMES];
         WORD frames = CaptureStackBackTrace(0, MAX_STACK_FRAMES, stack, NULL);
 
-        SYMBOL_INFO* symbol = (SYMBOL_INFO*)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
+        SYMBOL_INFO *symbol = (SYMBOL_INFO *)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
         symbol->MaxNameLen = 255;
         symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
 
@@ -213,7 +213,7 @@ private:
     }
 #else
     // Fallback implementation for unsupported platforms
-    explicit TraceableException(const std::string& what) : E(what) {}
+    explicit TraceableException(const std::string &what) : E(what) {}
 
     [[nodiscard]] auto getStackTraceString() const -> std::string override {
         return "Stack trace not available on this platform";

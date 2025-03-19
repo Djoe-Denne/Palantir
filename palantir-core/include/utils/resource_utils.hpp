@@ -40,14 +40,14 @@ public:
      * @return String containing the file content
      * @throws std::runtime_error if the file cannot be loaded
      */
-    [[nodiscard]] auto loadJavaScript(const std::string& filename) const -> std::string;
+    [[nodiscard]] auto loadJavaScript(const std::filesystem::path& filename) const -> std::string;
 
     /**
      * @brief Load all JavaScript files from a specific subdirectory
      * @param subdirectory The subdirectory within the resource directory
      * @return Vector of pairs containing filename and file content
      */
-    [[nodiscard]] auto loadAllJavaScriptsFromDirectory(const std::string& subdirectory) const
+    [[nodiscard]] auto loadAllJavaScriptsFromDirectory(const std::filesystem::path& subdirectory) const
         -> std::vector<std::pair<std::string, std::string>>;
 
     /**
@@ -56,14 +56,8 @@ public:
      */
     [[nodiscard]] auto getResourceDirectory() const -> std::filesystem::path;
 
-private:
+protected:
     ResourceUtils();
-#pragma warning(push)
-#pragma warning(disable : 4251)
-    static std::shared_ptr<ResourceUtils> instance_;
-    std::filesystem::path resourceDirectory_;
-#pragma warning(pop)
-
     /**
      * @brief Initialize the resource directory path
      */
@@ -84,7 +78,19 @@ private:
     [[nodiscard]] auto readAllFilesFromDirectory(const std::filesystem::path& directory,
                                                  const std::string& extension) const
         -> std::vector<std::pair<std::string, std::string>>;
+
+    /**
+     * @brief Set the resource directory
+     * @param path Path to the resource directory
+     */
+    auto setResourceDirectory(const std::filesystem::path& path) -> void;
+private:
     // clang-format on
+#pragma warning(push)
+#pragma warning(disable : 4251)
+    static std::shared_ptr<ResourceUtils> instance_;
+    std::filesystem::path resourceDirectory_;
+#pragma warning(pop)
 };
 
 }  // namespace palantir::utils

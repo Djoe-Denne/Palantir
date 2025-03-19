@@ -15,7 +15,7 @@ class PALANTIR_CORE_API ContentManager : public IContentManager,
 public:
     using std::enable_shared_from_this<ContentManager<T>>::shared_from_this;
     ContentManager() : pimpl_(std::make_unique<ContentManagerImpl>()) {}  // NOLINT
-    explicit ContentManager(std::unique_ptr<T> view) : pimpl_(std::make_unique<ContentManagerImpl>(view)) {}
+    explicit ContentManager(std::shared_ptr<T> view) : pimpl_(std::make_unique<ContentManagerImpl>(view)) {}
     ~ContentManager() override = default;
 
     ContentManager(const ContentManager&) = delete;
@@ -30,10 +30,8 @@ public:
      */
     auto initialize(uintptr_t nativeWindowHandle) -> void override {
         registerMessageStrategy(message::makeStrategy(std::make_unique<message::logger::LoggerStrategy>("*")));
-        registerMessageStrategy(
-
-            message::makeStrategy(std::make_unique<message::resize::ResizeStrategy>(
-                "contentSize", std::static_pointer_cast<IContentManager>(shared_from_this()))));
+        registerMessageStrategy(message::makeStrategy(std::make_unique<message::resize::ResizeStrategy>(
+            "contentSize", std::static_pointer_cast<IContentManager>(shared_from_this()))));
         pimpl_->initialize(nativeWindowHandle);
     }
 
