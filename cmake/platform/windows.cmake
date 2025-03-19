@@ -127,3 +127,28 @@ function(setup_windows_platform_webview target_name)
     
     target_link_libraries(${target_name} PRIVATE "${WEBVIEW2_LIB_PATH}")
 endfunction()
+
+function(setup_detours target_name)
+    if(NOT Detours_FOUND AND MAGIC_DEPS_INSTALL)
+        setup_vcpkg()
+        # use kcpkg to install detours v4.0.1
+        execute_process(
+            COMMAND ${VCPKG_EXECUTABLE} install detours
+            OUTPUT_VARIABLE VCPKG_OUTPUT
+            RESULT_VARIABLE VCPKG_RESULT
+        )
+        if(VCPKG_RESULT EQUAL 0)
+            message(STATUS "Detours installed successfully!")
+            set(Detours_FOUND TRUE CACHE BOOL "Detours found")
+        else()
+            message(FATAL_ERROR "Failed to install Detours! Error: ${VCPKG_RESULT}")
+        endif()
+        
+    endif()
+    find_path(DETOURS_INCLUDE_DIRS "detours/detours.h")
+    find_library(DETOURS_LIBRARY detours REQUIRED)
+
+    target_include_directories(${target_name} PRIVATE ${DETOURS_INCLUDE_DIRS})
+    target_link_libraries(${target_name} PRIVATE ${DETOURS_LIBRARY})
+endfunction()
+
