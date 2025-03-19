@@ -13,6 +13,9 @@ using namespace palantir::window::component;
 using namespace palantir::test;
 using namespace testing;
 
+// necessary for testing coverage, as this class is templated, coverage tool will not count it if not present in one of the modules binary
+template class ContentManager<MockView>;
+
 // Test fixture for ContentManagerImpl
 class ContentManagerTest : public ::testing::Test {
 protected:

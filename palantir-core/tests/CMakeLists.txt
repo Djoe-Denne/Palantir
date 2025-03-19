@@ -4,6 +4,7 @@ set(TEST_TARGET_NAME palantir_core_tests)
 add_executable(${TEST_TARGET_NAME}
     # Add test source files here
         main_test.cpp
+    client/sauron_register_test.cpp
     command/command_factory_test.cpp
     input/key_config_test.cpp
     input/key_mapper_test.cpp

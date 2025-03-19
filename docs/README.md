@@ -25,6 +25,8 @@ This directory contains comprehensive documentation for the Palantir application
 - [CMake Configuration](technical/cmake-configuration.md): Build system configuration
 - [GitHub Actions](technical/github-actions.md): CI/CD pipeline configuration
 - [Clang Tools](technical/clang-tools.md): Code formatting and static analysis
+- [Testing Template HPP Classes](technical/testing_template_hpp_classes.md): How to test template HPP classes
+- [C++20 Features and Message Strategy Pattern](technical/cpp20_message_strategy.md): C++20 features and message strategy pattern
 
 ## Getting Started
 
