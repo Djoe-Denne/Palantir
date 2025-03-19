@@ -27,14 +27,16 @@ auto ResourceUtils::setInstance(const std::shared_ptr<ResourceUtils>& instance) 
  * @return String containing the file content
  * @throws std::runtime_error if the file cannot be loaded
  */
-auto ResourceUtils::loadJavaScript(const std::string& filename) const -> std::string { return readFile(filename); }
+auto ResourceUtils::loadJavaScript(const std::filesystem::path& filename) const -> std::string {
+    return readFile(filename);
+}
 
 /**
  * @brief Load all JavaScript files from a specific subdirectory
  * @param subdirectory The subdirectory within the resource directory
  * @return Vector of pairs containing filename and file content
  */
-auto ResourceUtils::loadAllJavaScriptsFromDirectory(const std::string& subdirectory) const
+auto ResourceUtils::loadAllJavaScriptsFromDirectory(const std::filesystem::path& subdirectory) const
     -> std::vector<std::pair<std::string, std::string>> {
     return readAllFilesFromDirectory(getResourceDirectory() / subdirectory, ".js");
 }
@@ -68,6 +70,8 @@ auto ResourceUtils::readFile(const std::filesystem::path& filepath) const -> std
     }
     return {std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
 }
+
+auto ResourceUtils::setResourceDirectory(const std::filesystem::path& path) -> void { resourceDirectory_ = path; }
 
 // clang-format off
 auto ResourceUtils::readAllFilesFromDirectory(const std::filesystem::path& directory,

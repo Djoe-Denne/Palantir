@@ -16,9 +16,11 @@ add_executable(${TEST_TARGET_NAME}
     signal/signal_manager_windows_test.cpp
     window/window_manager_test.cpp
     utils/string_utils_test.cpp
+    utils/resource_utils_test.cpp
     window/component/message/message_handler_test.cpp
     window/component/message/resize/resize_message_mapper_test.cpp
     window/component/message/resize/resize_strategy_test.cpp
+    window/component/content_manager_test.cpp
 )
 
 message(STATUS "Setting up testing for target ${TEST_TARGET_NAME}")

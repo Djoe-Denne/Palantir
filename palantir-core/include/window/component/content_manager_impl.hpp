@@ -5,6 +5,7 @@
 
 #include "exception/exceptions.hpp"
 #include "utils/logger.hpp"
+#include "window/component/content_manager.hpp"
 #include "window/component/icontent_size_observer.hpp"
 #include "window/component/message/logger/logger_strategy.hpp"
 #include "window/component/message/message_handler.hpp"

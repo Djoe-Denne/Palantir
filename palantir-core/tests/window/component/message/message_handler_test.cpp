@@ -7,17 +7,12 @@
 #include "window/component/message/resize/resize_strategy.hpp"
 #include "window/component/message/resize/resize_message_vo.hpp"
 #include "mock/window/component/mock_content_manager.hpp"
+#include "mock/window/component/message/mock_message_strategy.hpp"
 
 using namespace palantir::window::component::message;
 using namespace palantir::window::component::message::resize;
 using namespace palantir::test;
 using namespace testing;
-
-class MockMessageStrategy : public MessageStrategyBase {
-public:
-    MOCK_METHOD(const std::string&, getEventType, (), (const, override));
-    MOCK_METHOD(void, executeJson, (const nlohmann::json&), (override));
-};
 
 class MessageHandlerTest : public Test {
 protected:
