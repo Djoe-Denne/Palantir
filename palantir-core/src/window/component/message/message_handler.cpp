@@ -2,6 +2,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include "exception/exceptions.hpp"
 #include "utils/logger.hpp"
 
 namespace palantir::window::component::message {
@@ -38,8 +39,9 @@ auto MessageHandler::handleMessage(const std::string& message) const -> void {
 
     } catch (const nlohmann::json::parse_error& e) {
         DebugLog("Failed to parse message as JSON: ", e.what(), " Message: ", message);
-    } catch (const std::exception& e) {
+    } catch (const palantir::exception::TraceableBaseException& e) {
         DebugLog("Exception in handleMessage: ", e.what());
+        DebugLog("Stack trace: ", e.getStackTraceString());
     } catch (...) {
         DebugLog("Unknown exception in handleMessage");
     }

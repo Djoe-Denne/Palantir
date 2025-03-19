@@ -53,7 +53,7 @@ public:
     virtual auto execute() const -> void = 0;
 
     /** @brief Whether the command should use debounce. */
-    virtual auto useDebounce() const -> bool = 0;
+    [[nodiscard]] virtual auto useDebounce() const -> bool = 0;
 
 protected:
     /** @brief Protected default constructor to prevent direct instantiation. */

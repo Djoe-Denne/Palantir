@@ -16,7 +16,7 @@ public:
         try {
             sauronClient->login(sauron::dto::LoginRequest(
                 "sk-proj-*****", sauron::dto::AIProvider::OPENAI));  // put that outside the constructor
-        } catch (const std::exception& e) {
+        } catch (const std::runtime_error& e) {
             DebugLog("Failed to login to Sauron: {}", e.what());
         }
     }

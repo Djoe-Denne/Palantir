@@ -13,10 +13,10 @@ namespace palantir::window::component::message {
  * This concept allows for different parameter types in the execute method
  */
 template <typename T>
-concept MessageStrategyConcept = requires(T strategy, const std::string& event_type, typename T::VOType vo) {
+concept MessageStrategyConcept = requires(T strategy, const std::string& event_type, typename T::VOType voType) {
     // Require that the strategy has a getEventType method that returns a string
     { strategy.getEventType() } -> std::convertible_to<const std::string&>;
-    { strategy.execute(vo) };
+    { strategy.execute(voType) };
 };
 
 /**
