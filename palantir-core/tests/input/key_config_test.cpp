@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include "input/key_config.hpp"
+#include "exception/exceptions.hpp"
 
 using namespace palantir::input;
 using namespace testing;
@@ -62,7 +63,7 @@ TEST_F(KeyConfigTest, GetShortcut_ExistingCommand_ReturnsCorrectShortcut) {
 
 TEST_F(KeyConfigTest, GetShortcut_NonExistentCommand_ThrowsException) {
     // Test getting a shortcut for a non-existent command
-    EXPECT_THROW(keyConfig->getShortcut("non.existent.command"), std::runtime_error);
+    EXPECT_THROW(keyConfig->getShortcut("non.existent.command"), palantir::exception::TraceableShortcutConfigurationException);
 }
 
 TEST_F(KeyConfigTest, HasShortcut_ExistingCommand_ReturnsTrue) {
@@ -94,6 +95,79 @@ TEST_F(KeyConfigTest, Constructor_InvalidConfigFile_ThrowsException) {
         fs::remove(nonExistentPath);
     }
     
-    // Expect an exception when creating KeyConfig with a non-existent file
-    EXPECT_THROW(KeyConfig invalidConfig(nonExistentPath.string()), std::runtime_error);
+    // Expect the correct exception type when creating KeyConfig with a non-existent file
+    EXPECT_THROW({
+        try {
+            KeyConfig invalidConfig(nonExistentPath.string());
+        } catch (const palantir::exception::TraceableConfigFileException& e) {
+            // This is the correct exception type
+            throw;
+        } catch (...) {
+            FAIL() << "Wrong exception type thrown";
+        }
+    }, palantir::exception::TraceableConfigFileException);
+}
+
+TEST_F(KeyConfigTest, LoadConfig_NonCommandSection_SkipsSection) {
+    // Create a temporary config file with a non-command section
+    fs::path tempPath = fs::temp_directory_path() / "test_non_command_section.ini";
+    
+    // Write test configuration with a non-command section
+    std::ofstream configFile(tempPath);
+    configFile << "[not_commands]\n";
+    configFile << "test.command = Ctrl+F1\n";
+    configFile << "[commands]\n";
+    configFile << "valid.command = Shift+S\n";
+    configFile.close();
+    
+    // Create KeyConfig with this file
+    KeyConfig config(tempPath.string());
+    
+    // Verify only the command in the [commands] section was loaded
+    EXPECT_FALSE(config.hasShortcut("test.command"));
+    EXPECT_TRUE(config.hasShortcut("valid.command"));
+    
+    // Clean up
+    fs::remove(tempPath);
+}
+
+TEST_F(KeyConfigTest, LoadConfig_InvalidLineFormat_SkipsLine) {
+    // Create a temporary config file with an invalid line format
+    fs::path tempPath = fs::temp_directory_path() / "test_invalid_line.ini";
+    
+    // Write test configuration with an invalid line (no equals sign)
+    std::ofstream configFile(tempPath);
+    configFile << "[commands]\n";
+    configFile << "test.command1 = Alt+F4\n";
+    configFile << "invalid line without equals sign\n";
+    configFile << "test.command2 = Ctrl+S\n";
+    configFile.close();
+    
+    // Create KeyConfig with this file
+    KeyConfig config(tempPath.string());
+    
+    // Verify the invalid line was skipped and valid ones were loaded
+    EXPECT_TRUE(config.hasShortcut("test.command1"));
+    EXPECT_TRUE(config.hasShortcut("test.command2"));
+    EXPECT_EQ(config.getConfiguredCommands().size(), 2);
+    
+    // Clean up
+    fs::remove(tempPath);
+}
+
+TEST_F(KeyConfigTest, LoadConfig_InvalidShortcutFormat_ThrowsCorrectException) {
+    // Create a temporary config file with an invalid shortcut format
+    fs::path tempPath = fs::temp_directory_path() / "test_invalid_shortcut.ini";
+    
+    // Write test configuration with an invalid shortcut format (no plus sign)
+    std::ofstream configFile(tempPath);
+    configFile << "[commands]\n";
+    configFile << "test.command = InvalidFormatNoPlus\n";
+    configFile.close();
+    
+    // Expect the correct exception type when creating KeyConfig with this file
+    EXPECT_THROW(KeyConfig config(tempPath.string()), palantir::exception::TraceableShortcutConfigurationException);
+    
+    // Clean up
+    fs::remove(tempPath);
 } 

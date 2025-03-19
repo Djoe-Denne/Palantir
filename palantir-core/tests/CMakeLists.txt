@@ -1,5 +1,6 @@
 set(TEST_TARGET_NAME palantir_core_tests)
 
+
 add_executable(${TEST_TARGET_NAME}
     # Add test source files here
         main_test.cpp
@@ -11,6 +12,8 @@ add_executable(${TEST_TARGET_NAME}
     input/input_factory_test.cpp
     signal/signal_factory_test.cpp
     signal/signal_test.cpp
+    signal/signal_manager_test.cpp
+    signal/signal_manager_windows_test.cpp
     window/window_manager_test.cpp
     utils/string_utils_test.cpp
     window/component/message/message_handler_test.cpp
@@ -28,6 +31,8 @@ target_link_libraries(${TEST_TARGET_NAME}
     PRIVATE
         palantir-core
 )
+
+setup_detours(${TEST_TARGET_NAME})
 
 target_include_directories(${TEST_TARGET_NAME}
     PRIVATE
