@@ -14,11 +14,14 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <tuple>
+#include <utility>
 
 #include "core_export.hpp"
 #include "input/keyboard_Input.hpp"
 #include "input/key_config.hpp"
 #include "input/key_mapper.hpp"
+#include "input/iinput.hpp"
 
 namespace palantir::input {
 
@@ -26,15 +29,18 @@ namespace palantir::input {
  * @class InputFactory
  * @brief Factory class for creating input handlers.
  *
- * This static factory class is responsible for creating and managing input
+ * This template factory class is responsible for creating and managing input
  * handlers based on configuration. It provides a centralized way to create
- * input handlers and manage their configuration. The class is non-instantiable
- * and provides only static methods.
+ * input handlers and manage their configuration. The class accepts a list of
+ * concrete factory types as template parameters.
+ * 
+ * @tparam ConcreteFactories The concrete factory types that will be used to create inputs
  */
+template<typename... ConcreteFactories>
 class PALANTIR_CORE_API InputFactory {
 public:
-    /** @brief Deleted destructor to prevent instantiation. */
-    virtual ~InputFactory();
+    /** @brief Virtual destructor. */
+    virtual ~InputFactory() = default;
 
     // Delete copy operations
     /** @brief Deleted copy constructor to prevent instantiation. */
@@ -54,7 +60,12 @@ public:
      *
      * Returns the singleton instance of the InputFactory.
      */
-    [[nodiscard]] static auto getInstance() -> std::shared_ptr<InputFactory>;
+    [[nodiscard]] static auto getInstance() -> std::shared_ptr<InputFactory> {
+        if (!instance_) {
+            instance_ = std::shared_ptr<InputFactory>(new InputFactory());
+        }
+        return instance_;
+    }
 
     /**
      * @brief Set the singleton instance of the InputFactory.
@@ -62,7 +73,9 @@ public:
      *
      * Sets the singleton instance of the InputFactory.
      */
-    static auto setInstance(const std::shared_ptr<InputFactory>& instance) -> void;
+    static auto setInstance(const std::shared_ptr<InputFactory>& instance) -> void {
+        instance_ = instance;
+    }
 
     /**
      * @brief Initialize the input factory with configuration.
@@ -72,7 +85,10 @@ public:
      * It loads and validates the configuration file, creating a default one
      * if it doesn't exist.
      */
-    virtual auto initialize(const std::filesystem::path& configPath) -> void;
+    virtual auto initialize(const std::filesystem::path& configPath) -> void {
+        // Call initialize on each concrete factory
+        (std::get<std::unique_ptr<ConcreteFactories>>(factories_)->initialize(configPath), ...);
+    }
 
     /**
      * @brief Create an input handler for a specific command.
@@ -84,7 +100,22 @@ public:
      * @throws std::runtime_error if the factory is not initialized or the command
      * is not found in configuration.
      */
-    [[nodiscard]] virtual auto createInput(const std::string& commandName) const -> std::unique_ptr<IInput>;
+    [[nodiscard]] virtual auto createInput(const std::string& commandName) const -> std::unique_ptr<IInput> {
+        // Try each factory until one returns a valid input
+        std::unique_ptr<IInput> input;
+        
+        // Helper function to try creating input from each factory
+        auto tryCreateInput = [&](const auto& factory) {
+            if (!input && factory->hasShortcut(commandName)) {
+                input = factory->createInput(commandName);
+            }
+        };
+        
+        // Try each factory
+        (tryCreateInput(std::get<std::unique_ptr<ConcreteFactories>>(factories_)), ...);
+        
+        return input;
+    }
 
     /**
      * @brief Check if a shortcut exists for a command.
@@ -94,7 +125,10 @@ public:
      * Checks if there is a configured shortcut for the specified command.
      * @throws std::runtime_error if the factory is not initialized.
      */
-    [[nodiscard]] virtual auto hasShortcut(const std::string& commandName) const -> bool;
+    [[nodiscard]] virtual auto hasShortcut(const std::string& commandName) const -> bool {
+        // Check each factory
+        return (... || std::get<std::unique_ptr<ConcreteFactories>>(factories_)->hasShortcut(commandName));
+    }
 
     /**
      * @brief Get a list of all configured commands.
@@ -104,19 +138,35 @@ public:
      * configuration file.
      * @throws std::runtime_error if the factory is not initialized.
      */
-    [[nodiscard]] virtual auto getConfiguredCommands() const -> std::vector<std::string>;
+    [[nodiscard]] virtual auto getConfiguredCommands() const -> std::vector<std::string> {
+        std::vector<std::string> commands;
+        
+        // Helper function to gather commands from each factory
+        auto gatherCommands = [&](const auto& factory) {
+            auto factoryCommands = factory->getConfiguredCommands();
+            commands.insert(commands.end(), factoryCommands.begin(), factoryCommands.end());
+        };
+        
+        // Gather commands from each factory
+        (gatherCommands(std::get<std::unique_ptr<ConcreteFactories>>(factories_)), ...);
+        
+        return commands;
+    }
 
 protected:
-    InputFactory();
+    InputFactory() : factories_(std::make_tuple(std::make_unique<ConcreteFactories>()...)) {}
 
 private:
-    class InputFactoryImpl;
 #pragma warning(push)
-#pragma warning(disable : 4251)
-    std::unique_ptr<InputFactoryImpl> pimpl_;
+#pragma warning(disable: 4267)
+    std::tuple<std::unique_ptr<ConcreteFactories>...> factories_;
     static std::shared_ptr<InputFactory> instance_;
 #pragma warning(pop)
 };
+
+// Initialize the static instance
+template<typename... ConcreteFactories>
+std::shared_ptr<InputFactory<ConcreteFactories...>> InputFactory<ConcreteFactories...>::instance_;
 
 }  // namespace palantir::input
 

@@ -1,15 +1,13 @@
 #pragma once
 
 #include "mock/palantir_mock.hpp"
-#include "input/input_factory.hpp"
 #include "input/keyboard_input_factory.hpp"
 
 namespace palantir::test {
 
-template<typename... ConcreteFactories>
-class MockInputFactory : public input::InputFactory<ConcreteFactories...>, public PalantirMock {
+class MockKeyboardInputFactory : public input::KeyboardInputFactory, public PalantirMock {
 public:
-    ~MockInputFactory() override = default;
+    ~MockKeyboardInputFactory() override = default;
 
     MOCK_METHOD(void, initialize, (const std::filesystem::path&), (override));
     MOCK_METHOD(std::unique_ptr<input::IInput>, createInput, (const std::string&), (const, override));
@@ -17,4 +15,4 @@ public:
     MOCK_METHOD(std::vector<std::string>, getConfiguredCommands, (), (const, override));
 };
 
-}  // namespace palantir::test
+}  // namespace palantir::test 

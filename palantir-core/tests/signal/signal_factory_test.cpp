@@ -20,19 +20,27 @@ using namespace palantir::command;
 using namespace palantir::test;
 using namespace testing;
 
+template class SignalFactory<KeyboardInputSignalFactory>;
+
+class SignalFactoryTestSubject : public SignalFactory<KeyboardInputSignalFactory> {
+public:
+    using SignalFactory<KeyboardInputSignalFactory>::SignalFactory;
+};
+
+
 class SignalFactoryTest : public Test {
 protected:
     void SetUp() override {
         mockApp = std::make_shared<MockApplication>("");
-        mockInputFactory = std::make_shared<MockInputFactory>();
+        mockInputFactory = std::make_shared<MockInputFactory<KeyboardInputFactory>>();
         mockCommandFactory = std::make_shared<MockCommandFactory>();
 
-        InputFactory::setInstance(mockInputFactory);
+        signalFactory->setInputFactory(mockInputFactory);
         CommandFactory::setInstance(mockCommandFactory);
     }
 
     void TearDown() override {
-        InputFactory::setInstance(nullptr);
+        InputFactory<KeyboardInputFactory>::setInstance(nullptr);
         CommandFactory::setInstance(nullptr);
 
         mockApp.reset();
@@ -43,7 +51,7 @@ protected:
     std::shared_ptr<KeyboardInputSignalFactory> signalFactory = std::make_shared<KeyboardInputSignalFactory>();
 
     std::shared_ptr<MockApplication> mockApp;
-    std::shared_ptr<MockInputFactory> mockInputFactory;
+    std::shared_ptr<MockInputFactory<KeyboardInputFactory>> mockInputFactory;
     std::shared_ptr<MockCommandFactory> mockCommandFactory;
 };
 

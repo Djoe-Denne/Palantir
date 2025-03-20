@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 #include "input/input_factory.hpp"
+#include "input/keyboard_input_factory.hpp"
 #include "signal/signal_factory.hpp"
 #include "signal/keyboard_input_signal_factory.hpp"
 #include "signal/signal_manager.hpp"
@@ -19,7 +20,7 @@ class Application::ApplicationImpl {
 public:
     explicit ApplicationImpl(const std::string& configPath) : configPath_(configPath) {
         DebugLog("Creating application with config: {}", configPath);
-        input::InputFactory::getInstance()->initialize(configPath_);
+        input::InputFactory<input::KeyboardInputFactory>::getInstance()->initialize(configPath_);
         DebugLog("Input configuration initialized");
     }
 

@@ -28,7 +28,7 @@ set(WINDOW_PALANTIR_SOURCES
 )
 
 set(INPUT_PALANTIR_SOURCES
-    ${PROJECT_ROOT}/palantir-core/src/input/input_factory.cpp
+    ${PROJECT_ROOT}/palantir-core/src/input/keyboard_input_factory.cpp
     ${PROJECT_ROOT}/palantir-core/src/input/key_config.cpp
     ${PROJECT_ROOT}/palantir-core/src/input/key_mapper.cpp
     ${PROJECT_ROOT}/palantir-core/src/input/key_register.cpp

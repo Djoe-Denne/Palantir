@@ -18,6 +18,7 @@
 #include "core_export.hpp"
 #include "exception/exceptions.hpp"
 #include "input/input_factory.hpp"
+#include "input/keyboard_input_factory.hpp"
 #include "input/iinput.hpp"
 #include "signal/input_signal.hpp"
 #include "signal/isignal.hpp"
@@ -37,6 +38,7 @@ public:
     KeyboardInputSignalFactory() = default;
     virtual ~KeyboardInputSignalFactory() = default;
 
+
     // Delete copy operations
     KeyboardInputSignalFactory(const KeyboardInputSignalFactory&) = delete;
     auto operator=(const KeyboardInputSignalFactory&) -> KeyboardInputSignalFactory& = delete;
@@ -46,12 +48,21 @@ public:
     auto operator=(KeyboardInputSignalFactory&&) -> KeyboardInputSignalFactory& = delete;
 
     /**
+     * @brief Set the input factory.
+     * @param inputFactory The input factory to set.
+     */
+    void setInputFactory(std::shared_ptr<input::InputFactory<input::KeyboardInputFactory>> inputFactory);
+
+    /**
      * @brief Create all configured keyboard input signals.
      * @return Vector of unique pointers to created signals.
      *
      * Creates and returns all keyboard input signals configured for the application.
      */
     [[nodiscard]] auto createSignals() const -> std::vector<std::unique_ptr<ISignal>>;
+
+protected:
+    std::shared_ptr<input::InputFactory<input::KeyboardInputFactory>> inputFactory_;
 };
 
 }  // namespace palantir::signal
