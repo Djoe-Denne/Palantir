@@ -143,7 +143,7 @@ auto InputFactory::initialize(const std::filesystem::path& configPath) -> void {
  * input object creation and configuration.
  */
 [[nodiscard]] auto InputFactory::createInput(const std::string& commandName) const
-    -> std::unique_ptr<KeyboardInput> {
+    -> std::unique_ptr<IInput> {
     return pimpl_->createInput(commandName);
 }
 

@@ -1,5 +1,5 @@
 /**
- * @file signal.hpp
+ * @file input_signal.hpp
  * @brief Defines the concrete signal implementation.
  *
  * This file contains the Signal class which provides a concrete implementation
@@ -29,7 +29,7 @@ namespace palantir::signal {
  * processing system. It connects an input handler with a command and manages
  * the signal's lifecycle, including optional debouncing of rapid inputs.
  */
-class PALANTIR_CORE_API Signal final : public ISignal {
+class PALANTIR_CORE_API InputSignal final : public ISignal {
 public:
     /**
      * @brief Construct a new Signal object.
@@ -41,23 +41,23 @@ public:
      * specified command. Optionally enables debouncing to prevent rapid
      * repeated triggering of the command.
      */
-    explicit Signal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command,
+    explicit InputSignal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command,
                     bool useDebounce = false);
 
     /** @brief Default destructor. */
-    ~Signal() override = default;
+    ~InputSignal() override = default;
 
     // Delete copy operations
     /** @brief Deleted copy constructor to prevent signal duplication. */
-    Signal(const Signal&) = delete;
+    InputSignal(const InputSignal&) = delete;
     /** @brief Deleted copy assignment to prevent signal duplication. */
-    auto operator=(const Signal&) -> Signal& = delete;
+    auto operator=(const InputSignal&) -> InputSignal& = delete;
 
     // Define move operations
     /** @brief Default move constructor for transfer of signal ownership. */
-    Signal(Signal&&) noexcept = delete;
+    InputSignal(InputSignal&&) noexcept = delete;
     /** @brief Default move assignment for transfer of signal ownership. */
-    auto operator=(Signal&&) noexcept -> Signal& = delete;
+    auto operator=(InputSignal&&) noexcept -> InputSignal& = delete;
 
     /**
      * @brief Start monitoring for the signal's conditions.

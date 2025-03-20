@@ -84,7 +84,7 @@ public:
      * @throws std::runtime_error if the factory is not initialized or the command
      * is not found in configuration.
      */
-    [[nodiscard]] virtual auto createInput(const std::string& commandName) const -> std::unique_ptr<KeyboardInput>;
+    [[nodiscard]] virtual auto createInput(const std::string& commandName) const -> std::unique_ptr<IInput>;
 
     /**
      * @brief Check if a shortcut exists for a command.

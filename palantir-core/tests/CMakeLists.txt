@@ -11,8 +11,8 @@ add_executable(${TEST_TARGET_NAME}
     input/key_register_test.cpp
     input/keyboard_Input_test.cpp
     input/input_factory_test.cpp
-    signal/signal_factory_test.cpp
-    signal/signal_test.cpp
+    signal/keyboard_input_signal_factory_test.cpp
+    signal/input_signal_test.cpp
     signal/signal_manager_test.cpp
     signal/signal_manager_windows_test.cpp
     window/window_manager_test.cpp

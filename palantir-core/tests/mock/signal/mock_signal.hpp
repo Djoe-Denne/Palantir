@@ -1,7 +1,7 @@
 #pragma once
 
 #include "mock/palantir_mock.hpp"
-#include "signal/signal.hpp"
+#include "signal/input_signal.hpp"
 
 namespace palantir::test {
 

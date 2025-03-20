@@ -3,7 +3,7 @@
 #include <any>
 #include <memory>
 
-#include "signal/signal.hpp"
+#include "signal/input_signal.hpp"
 #include "mock/input/mock_keyboard_Input.hpp"
 #include "mock/command/mock_command.hpp"
 
@@ -18,7 +18,7 @@ protected:
     void SetUp() override {
         mockInput = std::make_shared<MockKeyboardInput>(0,0);
         mockCommand = std::make_shared<MockCommand>();
-        signal = std::make_unique<Signal>(
+        signal = std::make_unique<InputSignal>(
             std::unique_ptr<IInput>(mockInput.get()),
             std::unique_ptr<ICommand>(mockCommand.get()),
             false
@@ -31,7 +31,7 @@ protected:
 
     std::shared_ptr<MockKeyboardInput> mockInput;
     std::shared_ptr<MockCommand> mockCommand;
-    std::unique_ptr<Signal> signal;
+    std::unique_ptr<InputSignal> signal;
     std::any emptyEvent;
 };
 
@@ -82,7 +82,7 @@ TEST_F(SignalTest, Check_WithDebounce_LimitsCommandExecution) {
     EXPECT_CALL(*mockInput1, isActive(_)).Times(2).WillRepeatedly(Return(true));
     EXPECT_CALL(*mockCommand1, execute()).Times(1);  // Should only execute once due to debounce
 
-    auto debouncedSignal = std::make_unique<Signal>(
+    auto debouncedSignal = std::make_unique<InputSignal>(
         std::move(mockInput1),
         std::move(mockCommand1),
         true

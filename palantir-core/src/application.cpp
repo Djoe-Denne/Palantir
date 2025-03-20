@@ -4,6 +4,7 @@
 
 #include "input/input_factory.hpp"
 #include "signal/signal_factory.hpp"
+#include "signal/keyboard_input_signal_factory.hpp"
 #include "signal/signal_manager.hpp"
 #include "utils/logger.hpp"
 #include "window/window_manager.hpp"
@@ -25,7 +26,7 @@ public:
     auto attachSignals() const -> void {
         DebugLog("Attaching signals from configuration");
         auto app = Application::getInstance();
-        auto signals = signal::SignalFactory::getInstance()->createSignals();
+        auto signals = signal::SignalFactory<signal::KeyboardInputSignalFactory>::getInstance()->createSignals();
         for (auto& signal : signals) {
             signal::SignalManager::getInstance()->addSignal(std::move(signal));
         }

@@ -12,8 +12,8 @@ set(CLIENT_PALANTIR_SOURCES
 )
 
 set(SIGNAL_PALANTIR_SOURCES
-    ${PROJECT_ROOT}/palantir-core/src/signal/signal.cpp
-    ${PROJECT_ROOT}/palantir-core/src/signal/signal_factory.cpp
+    ${PROJECT_ROOT}/palantir-core/src/signal/input_signal.cpp
+    ${PROJECT_ROOT}/palantir-core/src/signal/keyboard_input_signal_factory.cpp
 )
 
 set(UTILS_PALANTIR_SOURCES

@@ -1,4 +1,4 @@
-#include "signal/signal.hpp"
+#include "signal/input_signal.hpp"
 
 #include <chrono>
 
@@ -8,24 +8,24 @@
 
 namespace palantir::signal {
 
-Signal::Signal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command, const bool useDebounce)
+InputSignal::InputSignal(std::unique_ptr<input::IInput> input, std::unique_ptr<command::ICommand> command, const bool useDebounce)
     : input_(std::move(input)), command_(std::move(command)), useDebounce_(useDebounce) {
     DebugLog("Creating signal");
 }
 
-auto Signal::start() -> void {
+auto InputSignal::start() -> void {
     DebugLog("Starting signal");
     active_ = true;
 }
 
-auto Signal::stop() -> void {
+auto InputSignal::stop() -> void {
     DebugLog("Stopping signal");
     active_ = false;
 }
 
-[[nodiscard]] auto Signal::isActive() const -> bool { return active_; }
+[[nodiscard]] auto InputSignal::isActive() const -> bool { return active_; }
 
-auto Signal::check(const std::any& event) -> void {
+auto InputSignal::check(const std::any& event) -> void {
     if (!active_ || !input_ || !command_) {
         return;
     }

@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include "signal/signal_factory.hpp"
+#include "signal/keyboard_input_signal_factory.hpp"
 #include "input/input_factory.hpp"
 #include "command/command_factory.hpp"
 #include "mock/mock_application.hpp"
@@ -13,6 +13,7 @@
 #include "mock/command/mock_command.hpp"
 #include "mock/command/mock_command_factory.hpp"
 #include "mock/signal/mock_signal_factory.hpp"
+
 using namespace palantir::signal;
 using namespace palantir::input;
 using namespace palantir::command;
@@ -39,7 +40,7 @@ protected:
         mockCommandFactory.reset();
     }
 
-    std::shared_ptr<SignalFactory> signalFactory = SignalFactory::getInstance();
+    std::shared_ptr<KeyboardInputSignalFactory> signalFactory = std::make_shared<KeyboardInputSignalFactory>();
 
     std::shared_ptr<MockApplication> mockApp;
     std::shared_ptr<MockInputFactory> mockInputFactory;

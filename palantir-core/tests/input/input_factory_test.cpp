@@ -82,7 +82,7 @@ TEST_F(InputFactoryTest, GetConfiguredCommands_ReturnsAllCommands) {
 
 TEST_F(InputFactoryTest, CreateInput_ExistingCommand_ReturnsConfiguredInput) {
     // Test creating input for an existing command
-    std::unique_ptr<KeyboardInput> input = inputFactory->createInput("test.command1");
+    auto input = inputFactory->createInput("test.command1");
     
     // Verify that the input was created
     EXPECT_NE(input, nullptr);

@@ -2,11 +2,12 @@
 
 #include "mock/palantir_mock.hpp"
 #include "signal/signal_factory.hpp"
-
+#include "signal/keyboard_input_signal_factory.hpp"
 
 namespace palantir::test {
 
-class MockSignalFactory : public signal::SignalFactory, public PalantirMock {
+template<typename... ConcreteFactories>
+class MockSignalFactory : public signal::SignalFactory<ConcreteFactories...>, public PalantirMock {
 public:
     ~MockSignalFactory() override = default;
 
