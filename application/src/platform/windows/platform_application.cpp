@@ -206,8 +206,8 @@ private:
  * Creates a new Windows platform application instance, initializing the base
  * Application class and creating the platform-specific implementation.
  */
-PlatformApplication::PlatformApplication(const std::string& configPath)
-    : Application(configPath), pImpl_(std::make_unique<Impl>(getSignalManager(), getWindowManager())) {
+PlatformApplication::PlatformApplication()
+    : Application(), pImpl_(std::make_unique<Impl>(getSignalManager(), getWindowManager())) {
     DebugLog("Creating Windows platform application");
 }
 

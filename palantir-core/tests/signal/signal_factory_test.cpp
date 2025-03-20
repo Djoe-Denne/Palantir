@@ -12,7 +12,7 @@
 #include "mock/input/mock_input_factory.hpp"
 #include "mock/command/mock_command.hpp"
 #include "mock/command/mock_command_factory.hpp"
-#include "mock/signal/mock_signal_factory.hpp"
+
 using namespace palantir::signal;
 using namespace palantir::input;
 using namespace palantir::command;
@@ -26,12 +26,11 @@ protected:
         mockInputFactory = std::make_shared<MockInputFactory>();
         mockCommandFactory = std::make_shared<MockCommandFactory>();
 
-        InputFactory::setInstance(mockInputFactory);
+        signalFactory = std::make_shared<SignalFactory>(mockInputFactory);
         CommandFactory::setInstance(mockCommandFactory);
     }
 
     void TearDown() override {
-        InputFactory::setInstance(nullptr);
         CommandFactory::setInstance(nullptr);
 
         mockApp.reset();
@@ -39,7 +38,7 @@ protected:
         mockCommandFactory.reset();
     }
 
-    std::shared_ptr<SignalFactory> signalFactory = SignalFactory::getInstance();
+    std::shared_ptr<SignalFactory> signalFactory;
 
     std::shared_ptr<MockApplication> mockApp;
     std::shared_ptr<MockInputFactory> mockInputFactory;
