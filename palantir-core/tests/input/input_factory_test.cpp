@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include "input/input_factory.hpp"
-#include "input/configurable_input.hpp"
+#include "input/keyboard_Input.hpp"
 #include "mock/input/mock_key_register.hpp"
 #include "exception/exceptions.hpp"
 
@@ -82,7 +82,7 @@ TEST_F(InputFactoryTest, GetConfiguredCommands_ReturnsAllCommands) {
 
 TEST_F(InputFactoryTest, CreateInput_ExistingCommand_ReturnsConfiguredInput) {
     // Test creating input for an existing command
-    std::unique_ptr<ConfigurableInput> input = inputFactory->createInput("test.command1");
+    std::unique_ptr<KeyboardInput> input = inputFactory->createInput("test.command1");
     
     // Verify that the input was created
     EXPECT_NE(input, nullptr);

@@ -8,7 +8,7 @@
 #include "input/input_factory.hpp"
 #include "command/command_factory.hpp"
 #include "mock/mock_application.hpp"
-#include "mock/input/mock_configurable_input.hpp"
+#include "mock/input/mock_keyboard_Input.hpp"
 #include "mock/input/mock_input_factory.hpp"
 #include "mock/command/mock_command.hpp"
 #include "mock/command/mock_command_factory.hpp"
@@ -57,7 +57,7 @@ TEST_F(SignalFactoryTest, CreateSignals_NoCommands_ReturnsEmptyVector) {
 
 TEST_F(SignalFactoryTest, CreateSignals_WithValidCommand_ReturnsSignal) {
     std::vector<std::string> commands = {"test_command"};
-    std::unique_ptr<MockConfigurableInput> mockInput = std::make_unique<MockConfigurableInput>(0,0);
+    std::unique_ptr<MockKeyboardInput> mockInput = std::make_unique<MockKeyboardInput>(0,0);
     std::unique_ptr<MockCommand> mockCommand = std::make_unique<MockCommand>();
     
     EXPECT_CALL(*mockCommand, useDebounce())
@@ -94,8 +94,8 @@ TEST_F(SignalFactoryTest, CreateSignals_WithInvalidCommand_ThrowsException) {
 
 TEST_F(SignalFactoryTest, CreateSignals_MultipleCommands_ReturnsMultipleSignals) {
     std::vector<std::string> commands = {"command1", "command2"};
-    std::unique_ptr<MockConfigurableInput> mockInput1 = std::make_unique<MockConfigurableInput>(0,0);
-    std::unique_ptr<MockConfigurableInput> mockInput2 = std::make_unique<MockConfigurableInput>(0,0);
+    std::unique_ptr<MockKeyboardInput> mockInput1 = std::make_unique<MockKeyboardInput>(0,0);
+    std::unique_ptr<MockKeyboardInput> mockInput2 = std::make_unique<MockKeyboardInput>(0,0);
     std::unique_ptr<MockCommand> mockCommand1 = std::make_unique<MockCommand>();
     std::unique_ptr<MockCommand> mockCommand2 = std::make_unique<MockCommand>();
     

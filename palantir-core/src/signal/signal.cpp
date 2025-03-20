@@ -30,7 +30,7 @@ auto Signal::check(const std::any& event) -> void {
         return;
     }
 
-    if (input_->isModifierActive(event) && input_->isKeyPressed(event)) {
+    if (input_->isActive(event)) {
         const auto currentTime = std::chrono::steady_clock::now().time_since_epoch().count();
 
         if (!useDebounce_ || (currentTime - lastTriggerTime_ > DEBOUNCE_TIME)) {

@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "signal/signal.hpp"
-#include "mock/input/mock_configurable_input.hpp"
+#include "mock/input/mock_keyboard_Input.hpp"
 #include "mock/command/mock_command.hpp"
 
 using namespace palantir::input;
@@ -16,7 +16,7 @@ using namespace testing;
 class SignalTest : public Test {
 protected:
     void SetUp() override {
-        mockInput = std::make_shared<MockConfigurableInput>(0,0);
+        mockInput = std::make_shared<MockKeyboardInput>(0,0);
         mockCommand = std::make_shared<MockCommand>();
         signal = std::make_unique<Signal>(
             std::unique_ptr<IInput>(mockInput.get()),
@@ -29,7 +29,7 @@ protected:
         signal.release();
     }
 
-    std::shared_ptr<MockConfigurableInput> mockInput;
+    std::shared_ptr<MockKeyboardInput> mockInput;
     std::shared_ptr<MockCommand> mockCommand;
     std::unique_ptr<Signal> signal;
     std::any emptyEvent;
@@ -51,38 +51,25 @@ TEST_F(SignalTest, Stop_ClearsActiveState) {
 }
 
 TEST_F(SignalTest, Check_InactiveSignal_DoesNotExecuteCommand) {
-    EXPECT_CALL(*mockInput, isModifierActive(_)).Times(0);
-    EXPECT_CALL(*mockInput, isKeyPressed(_)).Times(0);
+    EXPECT_CALL(*mockInput, isActive(_)).Times(0);
     EXPECT_CALL(*mockCommand, execute()).Times(0);
 
     signal->check(emptyEvent);
 }
 
-TEST_F(SignalTest, Check_ActiveSignalWithKeyPressAndModifier_ExecutesCommand) {
+TEST_F(SignalTest, Check_ActiveSignalWithActiveInput_ExecutesCommand) {
     signal->start();
 
-    EXPECT_CALL(*mockInput, isModifierActive(_)).WillOnce(Return(true));
-    EXPECT_CALL(*mockInput, isKeyPressed(_)).WillOnce(Return(true));
+    EXPECT_CALL(*mockInput, isActive(_)).WillOnce(Return(true));
     EXPECT_CALL(*mockCommand, execute()).Times(1);
 
     signal->check(emptyEvent);
 }
 
-TEST_F(SignalTest, Check_ActiveSignalWithoutModifier_DoesNotExecuteCommand) {
+TEST_F(SignalTest, Check_ActiveSignalWhileInactive_DoesNotExecuteCommand) {
     signal->start();
 
-    EXPECT_CALL(*mockInput, isModifierActive(_)).WillOnce(Return(false));
-    EXPECT_CALL(*mockInput, isKeyPressed(_)).Times(0);
-    EXPECT_CALL(*mockCommand, execute()).Times(0);
-
-    signal->check(emptyEvent);
-}
-
-TEST_F(SignalTest, Check_ActiveSignalWithModifierNoKeyPress_DoesNotExecuteCommand) {
-    signal->start();
-
-    EXPECT_CALL(*mockInput, isModifierActive(_)).WillOnce(Return(true));
-    EXPECT_CALL(*mockInput, isKeyPressed(_)).WillOnce(Return(false));
+    EXPECT_CALL(*mockInput, isActive(_)).WillOnce(Return(false));
     EXPECT_CALL(*mockCommand, execute()).Times(0);
 
     signal->check(emptyEvent);
@@ -90,10 +77,9 @@ TEST_F(SignalTest, Check_ActiveSignalWithModifierNoKeyPress_DoesNotExecuteComman
 
 TEST_F(SignalTest, Check_WithDebounce_LimitsCommandExecution) {
 
-    auto mockInput1 = std::make_unique<MockConfigurableInput>(0,0);
+    auto mockInput1 = std::make_unique<MockKeyboardInput>(0,0);
     auto mockCommand1 = std::make_unique<MockCommand>();
-    EXPECT_CALL(*mockInput1, isModifierActive(_)).Times(2).WillRepeatedly(Return(true));
-    EXPECT_CALL(*mockInput1, isKeyPressed(_)).Times(2).WillRepeatedly(Return(true));
+    EXPECT_CALL(*mockInput1, isActive(_)).Times(2).WillRepeatedly(Return(true));
     EXPECT_CALL(*mockCommand1, execute()).Times(1);  // Should only execute once due to debounce
 
     auto debouncedSignal = std::make_unique<Signal>(

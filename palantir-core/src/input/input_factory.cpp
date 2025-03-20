@@ -6,7 +6,7 @@
 #include <stdexcept>
 
 #include "exception/exceptions.hpp"
-#include "input/configurable_input.hpp"
+#include "input/keyboard_Input.hpp"
 #include "input/key_mapper.hpp"
 #include "utils/logger.hpp"
 
@@ -85,7 +85,7 @@ public:
         }
     }
 
-    [[nodiscard]] auto createInput(const std::string& commandName) const -> std::unique_ptr<ConfigurableInput> {
+    [[nodiscard]] auto createInput(const std::string& commandName) const -> std::unique_ptr<KeyboardInput> {
         if (!keyConfig_) {
             throw palantir::exception::TraceableInputFactoryException(
                 "InputFactory not initialized. Call initialize() first.");
@@ -96,7 +96,7 @@ public:
         }
         int keyCode = KeyMapper::getKeyCode(shortcut.key);
         int modifierCode = KeyMapper::getModifierCode(shortcut.modifier);
-        return std::make_unique<ConfigurableInput>(keyCode, modifierCode);
+        return std::make_unique<KeyboardInput>(keyCode, modifierCode);
     }
 
     [[nodiscard]] auto hasShortcut(const std::string& commandName) const -> bool {
@@ -143,7 +143,7 @@ auto InputFactory::initialize(const std::filesystem::path& configPath) -> void {
  * input object creation and configuration.
  */
 [[nodiscard]] auto InputFactory::createInput(const std::string& commandName) const
-    -> std::unique_ptr<ConfigurableInput> {
+    -> std::unique_ptr<KeyboardInput> {
     return pimpl_->createInput(commandName);
 }
 

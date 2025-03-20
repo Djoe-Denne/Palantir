@@ -1,5 +1,5 @@
 set(COMMON_WINDOWS_PALANTIR_SOURCES
-    ${PROJECT_ROOT}/palantir-core/src/platform/windows/input/configurable_input.cpp
+    ${PROJECT_ROOT}/palantir-core/src/platform/windows/input/keyboard_Input.cpp
     ${PROJECT_ROOT}/palantir-core/src/platform/windows/signal/signal_manager.cpp
     ${PROJECT_ROOT}/palantir-core/src/platform/windows/utils/logger.cpp
 )

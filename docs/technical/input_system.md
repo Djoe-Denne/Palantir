@@ -35,7 +35,7 @@ The input system follows a modular, layered architecture that separates concerns
   - Provides key and modifier state detection
   - Allows for different input implementations
 
-- **ConfigurableInput**: Implementation for keyboard shortcuts
+- **KeyboardInput**: Implementation for keyboard shortcuts
   - Handles key and modifier combinations
   - Platform-agnostic interface
   - PIMPL pattern for platform-specific details

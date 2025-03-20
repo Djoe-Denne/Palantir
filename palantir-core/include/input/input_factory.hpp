@@ -16,7 +16,7 @@
 #include <vector>
 
 #include "core_export.hpp"
-#include "input/configurable_input.hpp"
+#include "input/keyboard_Input.hpp"
 #include "input/key_config.hpp"
 #include "input/key_mapper.hpp"
 
@@ -84,7 +84,7 @@ public:
      * @throws std::runtime_error if the factory is not initialized or the command
      * is not found in configuration.
      */
-    [[nodiscard]] virtual auto createInput(const std::string& commandName) const -> std::unique_ptr<ConfigurableInput>;
+    [[nodiscard]] virtual auto createInput(const std::string& commandName) const -> std::unique_ptr<KeyboardInput>;
 
     /**
      * @brief Check if a shortcut exists for a command.
