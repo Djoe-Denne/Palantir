@@ -39,6 +39,7 @@ namespace palantir::input {
 template<typename... ConcreteFactories>
 class PALANTIR_CORE_API InputFactory {
 public:
+    InputFactory() : factories_(std::make_tuple(std::make_unique<ConcreteFactories>()...)) {}
     /** @brief Virtual destructor. */
     virtual ~InputFactory() = default;
 
@@ -53,29 +54,6 @@ public:
     InputFactory(InputFactory&&) = delete;
     /** @brief Deleted move assignment to prevent instantiation. */
     auto operator=(InputFactory&&) -> InputFactory& = delete;
-
-    /**
-     * @brief Get the singleton instance of the InputFactory.
-     * @return A shared pointer to the InputFactory instance.
-     *
-     * Returns the singleton instance of the InputFactory.
-     */
-    [[nodiscard]] static auto getInstance() -> std::shared_ptr<InputFactory> {
-        if (!instance_) {
-            instance_ = std::shared_ptr<InputFactory>(new InputFactory());
-        }
-        return instance_;
-    }
-
-    /**
-     * @brief Set the singleton instance of the InputFactory.
-     * @param instance A shared pointer to the InputFactory instance.
-     *
-     * Sets the singleton instance of the InputFactory.
-     */
-    static auto setInstance(const std::shared_ptr<InputFactory>& instance) -> void {
-        instance_ = instance;
-    }
 
     /**
      * @brief Initialize the input factory with configuration.
@@ -153,20 +131,12 @@ public:
         return commands;
     }
 
-protected:
-    InputFactory() : factories_(std::make_tuple(std::make_unique<ConcreteFactories>()...)) {}
-
 private:
 #pragma warning(push)
 #pragma warning(disable: 4267)
     std::tuple<std::unique_ptr<ConcreteFactories>...> factories_;
-    static std::shared_ptr<InputFactory> instance_;
 #pragma warning(pop)
 };
-
-// Initialize the static instance
-template<typename... ConcreteFactories>
-std::shared_ptr<InputFactory<ConcreteFactories...>> InputFactory<ConcreteFactories...>::instance_;
 
 }  // namespace palantir::input
 

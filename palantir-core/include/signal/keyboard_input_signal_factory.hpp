@@ -62,7 +62,7 @@ public:
     [[nodiscard]] auto createSignals() const -> std::vector<std::unique_ptr<ISignal>>;
 
 protected:
-    std::shared_ptr<input::InputFactory<input::KeyboardInputFactory>> inputFactory_;
+    std::shared_ptr<input::InputFactory<input::KeyboardInputFactory>> inputFactory_{std::make_shared<input::InputFactory<input::KeyboardInputFactory>>()};
 };
 
 }  // namespace palantir::signal

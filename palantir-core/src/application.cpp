@@ -18,16 +18,18 @@ std::shared_ptr<Application> Application::instance_ = nullptr;
 // Implementation class definition
 class Application::ApplicationImpl {
 public:
-    explicit ApplicationImpl(const std::string& configPath) : configPath_(configPath) {
+    explicit ApplicationImpl(const std::string& configPath) {
         DebugLog("Creating application with config: {}", configPath);
-        input::InputFactory<input::KeyboardInputFactory>::getInstance()->initialize(configPath_);
+        inputFactory_->initialize();
         DebugLog("Input configuration initialized");
     }
 
     auto attachSignals() const -> void {
         DebugLog("Attaching signals from configuration");
         auto app = Application::getInstance();
-        auto signals = signal::SignalFactory<signal::KeyboardInputSignalFactory>::getInstance()->createSignals();
+        auto signalFactory = std::make_shared<signal::SignalFactory<signal::KeyboardInputSignalFactory>>();
+        signalFactory->setInputFactory(inputFactory_);
+        auto signals = signalFactory->createSignals();
         for (auto& signal : signals) {
             signal::SignalManager::getInstance()->addSignal(std::move(signal));
         }
@@ -36,7 +38,7 @@ public:
     }
 
 private:
-    const std::string configPath_;
+    std::shared_ptr<input::InputFactory<input::KeyboardInputFactory>> inputFactory_{std::make_shared<input::InputFactory<input::KeyboardInputFactory>>()};
 };
 
 auto Application::getInstance() -> std::shared_ptr<Application> { return instance_; }
