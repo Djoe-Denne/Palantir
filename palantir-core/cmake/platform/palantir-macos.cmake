@@ -1,5 +1,5 @@
 set(COMMON_MACOS_PALANTIR_SOURCES
-    ${PROJECT_ROOT}/palantir-core/src/platform/macos/input/configurable_input.mm
+    ${PROJECT_ROOT}/palantir-core/src/platform/macos/input/keyboard_Input.mm
     ${PROJECT_ROOT}/palantir-core/src/platform/macos/signal/signal_manager.mm
     ${PROJECT_ROOT}/palantir-core/src/platform/macos/utils/logger.mm
 )

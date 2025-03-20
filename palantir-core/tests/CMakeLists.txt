@@ -9,7 +9,7 @@ add_executable(${TEST_TARGET_NAME}
     input/key_config_test.cpp
     input/key_mapper_test.cpp
     input/key_register_test.cpp
-    input/configurable_input_test.cpp
+    input/keyboard_Input_test.cpp
     input/input_factory_test.cpp
     signal/signal_factory_test.cpp
     signal/signal_test.cpp

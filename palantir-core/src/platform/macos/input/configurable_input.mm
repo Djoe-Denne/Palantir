@@ -1,4 +1,4 @@
-#include "input/configurable_input.hpp"
+#include "input/keyboard_Input.hpp"
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 #include <any>
@@ -8,7 +8,7 @@
 
 namespace palantir::input {
 
-class ConfigurableInput::Impl {
+class KeyboardInput::Impl {
    public:
     explicit Impl(const int keyCode, const int modifierCode) : keyCode_(keyCode), modifierCode_(modifierCode) {
         DebugLog("Initializing configurable input: key=0x{:x}, modifier=0x{:x}", keyCode, modifierCode);
@@ -72,17 +72,17 @@ class ConfigurableInput::Impl {
     int modifierCode_;  ///< Virtual key code for the modifier key
 };
 
-ConfigurableInput::ConfigurableInput(int keyCode, int modifierCode)
+KeyboardInput::KeyboardInput(int keyCode, int modifierCode)
     : pImpl_(std::make_unique<Impl>(keyCode, modifierCode)) {
     DebugLog("Creating configurable input");
 }
 
-ConfigurableInput::~ConfigurableInput() = default;
+KeyboardInput::~KeyboardInput() = default;
 
-auto ConfigurableInput::isKeyPressed(const std::any& event) const -> bool { return pImpl_->isKeyPressed(event); }
-auto ConfigurableInput::isModifierActive(const std::any& event) const -> bool {
+auto KeyboardInput::isKeyPressed(const std::any& event) const -> bool { return pImpl_->isKeyPressed(event); }
+auto KeyboardInput::isModifierActive(const std::any& event) const -> bool {
     return pImpl_->isModifierActive(event);
 }
-auto ConfigurableInput::update() -> void { pImpl_->update(); }
+auto KeyboardInput::update() -> void { pImpl_->update(); }
 
 }  // namespace palantir::input

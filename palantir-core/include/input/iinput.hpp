@@ -43,23 +43,14 @@ public:
     auto operator=(IInput&&) noexcept -> IInput& = delete;
 
     /**
-     * @brief Check if the configured key is currently pressed.
-     * @return true if the key is pressed, false otherwise.
+     * @brief Check if the configured input is currently active.
+     * @return true if the input is active, false otherwise.
      *
      * This method should be implemented to check the current state of the
-     * configured key in a platform-specific way.
+     * configured input in a platform-specific way. Can be Keys, Mouse, or other input devices. Or touch and gestures
+     * for mobile devices.
      */
-    [[nodiscard]] virtual auto isKeyPressed(const std::any& event) const -> bool = 0;
-
-    /**
-     * @brief Check if the configured modifier key is currently active.
-     * @return true if the modifier is active, false otherwise.
-     *
-     * This method should be implemented to check the current state of the
-     * configured modifier key (Ctrl, Alt, etc.) in a platform-specific way.
-     */
-    [[nodiscard]] virtual auto isModifierActive(const std::any& event) const -> bool = 0;
-
+    [[nodiscard]] virtual auto isActive(const std::any& event) const -> bool = 0;
     /**
      * @brief Update the input handler's state.
      *

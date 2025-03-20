@@ -1,4 +1,4 @@
-#include "input/configurable_input.hpp"
+#include "input/keyboard_Input.hpp"
 
 #include <Windows.h>
 
@@ -14,7 +14,7 @@ namespace palantir::input {
  * using the PIMPL idiom. It manages the key and modifier codes, and provides methods
  * to check their states using platform-specific APIs.
  */
-class ConfigurableInput::Impl {
+class KeyboardInput::Impl {
 public:
     // Delete copy operations
     Impl(const Impl& other) = delete;
@@ -33,6 +33,17 @@ public:
      */
     Impl(int keyCode, int modifierCode) : keyCode_(keyCode), modifierCode_(modifierCode) {
         DebugLog("Initializing configurable input: key=0x{:x}, modifier=0x{:x}", keyCode, modifierCode);
+    }
+
+    /** 
+     * @brief Check if the configured input is currently active.
+     * @return true if the input is active, false otherwise.
+     *
+     * Implements the IInput interface method to check the current state of the
+     * configured input in a platform-specific way. Can be Keys, Mouse, or other input devices. Or touch and gestures for mobile devices.
+     */
+    [[nodiscard]] auto isActive(const std::any& event) const -> bool {
+        return isKeyPressed(event) || isModifierActive(event);
     }
 
     /**
@@ -90,23 +101,19 @@ private:
     int modifierCode_;  ///< Virtual key code for the modifier key
 };
 
-ConfigurableInput::~ConfigurableInput() = default;
+KeyboardInput::~KeyboardInput() = default;
 
 // Public interface implementation
-ConfigurableInput::ConfigurableInput(int keyCode, int modifierCode)
+KeyboardInput::KeyboardInput(int keyCode, int modifierCode)
     : pImpl_(std::make_unique<Impl>(keyCode, modifierCode)) {
     DebugLog("Creating configurable input");
 }
 
-auto ConfigurableInput::isKeyPressed(const std::any& event) const -> bool {
-    return pImpl_->isKeyPressed(event);
+auto KeyboardInput::isActive(const std::any& event) const -> bool {
+    return pImpl_->isActive(event);
 }
 
-auto ConfigurableInput::isModifierActive(const std::any& event) const -> bool {
-    return pImpl_->isModifierActive(event);
-}
-
-auto ConfigurableInput::update() -> void {
+auto KeyboardInput::update() -> void {
     pImpl_->update();
 }
 

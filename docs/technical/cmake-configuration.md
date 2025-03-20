@@ -92,7 +92,7 @@ Platform-specific sources are defined in their respective CMake files:
 #### Windows (`windows.cmake`)
 ```cmake
 set(WINDOWS_SOURCES
-    ${PROJECT_ROOT}/palantir-core/src/platform/windows/input/configurable_input.cpp
+    ${PROJECT_ROOT}/palantir-core/src/platform/windows/input/keyboard_Input.cpp
     # ... other Windows sources
 )
 
@@ -106,7 +106,7 @@ set(ALL_SOURCES
 #### macOS (`macos.cmake`)
 ```cmake
 set(MACOS_SOURCES
-    ${PROJECT_ROOT}/palantir-core/src/platform/macos/input/configurable_input.mm
+    ${PROJECT_ROOT}/palantir-core/src/platform/macos/input/keyboard_Input.mm
     # ... other macOS sources
 )
 

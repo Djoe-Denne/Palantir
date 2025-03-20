@@ -1,8 +1,8 @@
 /**
- * @file configurable_input.hpp
+ * @file keyboard_Input.hpp
  * @brief Defines the configurable input handler class.
  *
- * This file contains the ConfigurableInput class which implements the IInput
+ * This file contains the KeyboardInput class which implements the IInput
  * interface to provide a configurable input handler that can be set up with
  * specific key and modifier codes at runtime.
  */
@@ -18,70 +18,47 @@
 namespace palantir::input {
 
 /**
- * @class ConfigurableInput
+ * @class KeyboardInput
  * @brief Configurable implementation of the input handler interface.
  *
  * This class provides a concrete implementation of IInput that can be configured
  * with specific key and modifier codes at runtime. It uses the PIMPL idiom to
  * hide platform-specific implementation details and provide a clean interface.
  */
-class PALANTIR_CORE_API ConfigurableInput : public IInput {
+class PALANTIR_CORE_API KeyboardInput : public IInput {
 public:
     /**
-     * @brief Construct a new ConfigurableInput object.
+     * @brief Construct a new KeyboardInput object.
      * @param keyCode Platform-specific code for the main key.
      * @param modifierCode Platform-specific code for the modifier key.
      *
      * Creates an input handler configured with the specified key and modifier
      * codes. The codes should be obtained through the KeyMapper utility.
      */
-    ConfigurableInput(int keyCode, int modifierCode);
+    KeyboardInput(int keyCode, int modifierCode);
 
     /**
-     * @brief Destroy the ConfigurableInput object.
+     * @brief Destroy the KeyboardInput object.
      *
      * Virtual destructor to ensure proper cleanup of the implementation.
      * Required for proper PIMPL pattern usage with unique_ptr.
      */
-    ~ConfigurableInput() override;
+    ~KeyboardInput() override;
 
     // Delete copy operations
     /** @brief Deleted copy constructor to prevent resource duplication. */
-    ConfigurableInput(const ConfigurableInput&) = delete;
+    KeyboardInput(const KeyboardInput&) = delete;
     /** @brief Deleted copy assignment to prevent resource duplication. */
-    auto operator=(const ConfigurableInput&) -> ConfigurableInput& = delete;
+    auto operator=(const KeyboardInput&) -> KeyboardInput& = delete;
 
     // Define move operations
     /** @brief Default move constructor for transfer of input handler ownership. */
-    ConfigurableInput(ConfigurableInput&&) noexcept = delete;
+    KeyboardInput(KeyboardInput&&) noexcept = delete;
     /** @brief Default move assignment for transfer of input handler ownership. */
-    auto operator=(ConfigurableInput&&) noexcept -> ConfigurableInput& = delete;
+    auto operator=(KeyboardInput&&) noexcept -> KeyboardInput& = delete;
 
-    /**
-     * @brief Check if the configured key is currently pressed.
-     * @return true if the key is pressed, false otherwise.
-     *
-     * Implements the IInput interface method to check the state of the
-     * configured key using platform-specific mechanisms.
-     */
-    [[nodiscard]] auto isKeyPressed(const std::any& event) const -> bool override;
+    [[nodiscard]] auto isActive(const std::any& event) const -> bool override;
 
-    /**
-     * @brief Check if the configured modifier key is currently active.
-     * @return true if the modifier is active, false otherwise.
-     *
-     * Implements the IInput interface method to check the state of the
-     * configured modifier key using platform-specific mechanisms.
-     */
-    [[nodiscard]] auto isModifierActive(const std::any& event) const -> bool override;
-
-    /**
-     * @brief Update the input handler's state.
-     *
-     * Implements the IInput interface method to perform any necessary
-     * updates to the input handler's state. The implementation may be
-     * empty if no state updates are required.
-     */
     auto update() -> void override;
 
 private:
