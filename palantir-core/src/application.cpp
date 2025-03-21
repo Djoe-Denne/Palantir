@@ -16,16 +16,15 @@ std::shared_ptr<Application> Application::instance_ = nullptr;
 // Implementation class definition
 class Application::ApplicationImpl {
 public:
-    explicit ApplicationImpl(const std::string& configPath) : configPath_(configPath) {
-        DebugLog("Creating application with config: {}", configPath);
-        input::InputFactory::getInstance()->initialize(configPath_);
-        DebugLog("Input configuration initialized");
+    explicit ApplicationImpl() {
+        DebugLog("Creating application");
+        signalFactory_ = std::make_shared<signal::SignalFactory>();
     }
 
     auto attachSignals() const -> void {
         DebugLog("Attaching signals from configuration");
         auto app = Application::getInstance();
-        auto signals = signal::SignalFactory::getInstance()->createSignals();
+        auto signals = signalFactory_->createSignals();
         for (auto& signal : signals) {
             signal::SignalManager::getInstance()->addSignal(std::move(signal));
         }
@@ -34,7 +33,7 @@ public:
     }
 
 private:
-    const std::string configPath_;
+    std::shared_ptr<signal::SignalFactory> signalFactory_;
 };
 
 auto Application::getInstance() -> std::shared_ptr<Application> { return instance_; }
@@ -43,9 +42,7 @@ auto Application::getInstance() -> std::shared_ptr<Application> { return instanc
 auto Application::setInstance(const std::shared_ptr<Application>& instance) -> void { instance_ = instance; }
 
 // Constructor and destructor
-Application::Application(const std::string& configPath) : pImpl_(std::make_unique<ApplicationImpl>(configPath)) {}
-
-Application::Application() = default;
+Application::Application() : pImpl_(std::make_unique<ApplicationImpl>()) {}
 
 Application::~Application() = default;
 

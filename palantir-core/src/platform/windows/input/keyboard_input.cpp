@@ -43,7 +43,7 @@ public:
      * configured input in a platform-specific way. Can be Keys, Mouse, or other input devices. Or touch and gestures for mobile devices.
      */
     [[nodiscard]] auto isActive(const std::any& event) const -> bool {
-        return isKeyPressed(event) || isModifierActive(event);
+        return isKeyPressed(event) && isModifierActive(event);
     }
 
     /**

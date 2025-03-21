@@ -24,7 +24,7 @@ using palantir::plugin::PluginManager;
 auto run_app() -> int {
     try {
         // Create and initialize application
-        auto app = Application::getInstance<PlatformApplication>("config/shortcuts.ini");
+        auto app = Application::getInstance<PlatformApplication>();
 
         // Initialize plugin manager and load plugins
         auto pluginManager = std::make_unique<PluginManager>();

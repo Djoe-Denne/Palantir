@@ -12,11 +12,6 @@ using namespace palantir::test;
 using namespace testing;
 namespace fs = std::filesystem;
 
-class InputFactoryPublicConstructor : public InputFactory {
-public:
-    using InputFactory::InputFactory;
-};
-
 // Test fixture for InputFactory tests
 class InputFactoryTest : public Test {
 protected:
@@ -38,10 +33,8 @@ protected:
         ON_CALL(*mockKeyRegister, hasKey(StrEq("1"))).WillByDefault(Return(true));
 
         KeyRegister::setInstance(mockKeyRegister);
-        // Initialize the InputFactory with the test config
-        inputFactory = InputFactory::getInstance();
-        inputFactory->initialize(tempConfigPath.string());
-
+        inputFactory = std::make_shared<InputFactory>();
+        inputFactory->initialize(tempConfigPath);
     }
 
     void TearDown() override {
@@ -138,15 +131,12 @@ TEST_F(InputFactoryTest, Initialize_NonExistentDirectory_CreatesDirectoryAndDefa
 }
 
 // Test for lines 52-53 - createDefaultConfig throws exception when file can't be created
-TEST_F(InputFactoryTest, CreateDefaultConfig_CannotCreateFile_ThrowsException) {
-    // Create a new InputFactory instance
-    auto factory = InputFactory::getInstance();
-    
+TEST_F(InputFactoryTest, CreateDefaultConfig_CannotCreateFile_ThrowsException) {    
     // Use a path that cannot be written to (this varies by system, using a special character path)
     fs::path invalidPath = fs::temp_directory_path() / "\0invalid.ini";
     
     // Initialize with an invalid path should throw
-    EXPECT_THROW(factory->initialize(invalidPath.string()), palantir::exception::TraceableConfigFileException);
+    EXPECT_THROW(inputFactory->initialize(invalidPath.string()), palantir::exception::TraceableConfigFileException);
 }
 
 // Test for lines 83-84 - createInput throws when key/modifier is invalid
@@ -163,12 +153,10 @@ TEST_F(InputFactoryTest, CreateInput_InvalidKeyOrModifier_ThrowsException) {
     ON_CALL(*mockKeyRegister, hasKey(StrEq("INVALIDMODIFIER"))).WillByDefault(Return(false));
     ON_CALL(*mockKeyRegister, hasKey(StrEq("INVALIDKEY"))).WillByDefault(Return(false));
     
-    // Initialize with the invalid config
-    auto factory = InputFactory::getInstance();
-    factory->initialize(invalidConfigPath.string());
+    inputFactory->initialize(invalidConfigPath.string());
     
     // Creating input for the invalid command should throw
-    EXPECT_THROW(factory->createInput("test.invalid"), std::invalid_argument);
+    EXPECT_THROW(inputFactory->createInput("test.invalid"), std::invalid_argument);
     
     // Clean up
     if (fs::exists(invalidConfigPath)) {
@@ -179,45 +167,19 @@ TEST_F(InputFactoryTest, CreateInput_InvalidKeyOrModifier_ThrowsException) {
 // Test for line 95 - hasShortcut throws when InputFactory is not initialized
 TEST_F(InputFactoryTest, HasShortcut_NotInitialized_ThrowsException) {
     // Create a new InputFactory instance without initializing it
-    auto newFactory = std::make_shared<InputFactoryPublicConstructor>();
-    
-    // Temporarily set the instance to our new factory
-    InputFactory::setInstance(newFactory);
+    auto newFactory = std::make_shared<InputFactory>();
     
     // hasShortcut should throw when factory is not initialized
     EXPECT_THROW(newFactory->hasShortcut("test.command"), palantir::exception::TraceableInputFactoryException);
     
-    // Reset the instance
-    InputFactory::setInstance(inputFactory);
 }
 
 // Test for lines 104-105 - getConfiguredCommands throws when InputFactory is not initialized
 TEST_F(InputFactoryTest, GetConfiguredCommands_NotInitialized_ThrowsException) {
     // Create a new InputFactory instance without initializing it
-    auto newFactory = std::make_shared<InputFactoryPublicConstructor>();
-    
-    // Temporarily set the instance to our new factory
-    InputFactory::setInstance(newFactory);
+    auto newFactory = std::make_shared<InputFactory>();
     
     // getConfiguredCommands should throw when factory is not initialized
     EXPECT_THROW(newFactory->getConfiguredCommands(), palantir::exception::TraceableInputFactoryException);
     
-    // Reset the instance
-    InputFactory::setInstance(inputFactory);
 }
-
-// Test for lines 112-113 - setInstance sets the singleton instance
-TEST_F(InputFactoryTest, SetInstance_NewInstance_InstanceIsSet) {
-    // Create a new InputFactory instance
-    auto newFactory = std::make_shared<InputFactoryPublicConstructor>();
-    
-    // Set the instance to our new factory
-    InputFactory::setInstance(newFactory);
-    
-    // Get the instance and verify it's our new factory
-    auto instance = InputFactory::getInstance();
-    EXPECT_EQ(instance, newFactory);
-    
-    // Reset the instance
-    InputFactory::setInstance(inputFactory);
-} 
