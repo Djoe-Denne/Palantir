@@ -13,13 +13,17 @@
 #include <memory>
 #include <vector>
 
-#include "application.hpp"
 #include "core_export.hpp"
 #include "signal/isignal.hpp"
+#include "concept/config_concept.hpp"
 #include "input/input_factory.hpp"
 #include "window/window_manager.hpp"
 
-namespace palantir::signal {
+namespace palantir {
+namespace config {
+class Config;
+}
+namespace signal {
 
 /**
  * @class SignalFactory
@@ -33,8 +37,7 @@ namespace palantir::signal {
 class PALANTIR_CORE_API SignalFactory {
 public:
     /** @brief Constructor. */
-    SignalFactory();
-    SignalFactory(const std::shared_ptr<input::InputFactory>& inputFactory);
+    SignalFactory(const config::Config& config);
     
     /** @brief Virtual destructor. */
     virtual ~SignalFactory();
@@ -70,6 +73,7 @@ private:
 #pragma warning(pop)
 };
 
-}  // namespace palantir::signal
+}  // namespace signal
+}  // namespace palantir
 
 #endif  // SIGNAL_FACTORY_HPP

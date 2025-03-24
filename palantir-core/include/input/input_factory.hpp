@@ -13,25 +13,19 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <type_traits>
 #include <tuple>
-
+#include "config/config.hpp"
+#include "concept/input_concept.hpp"
+#include "concept/config_concept.hpp"
 #include "core_export.hpp"
 #include "input/keyboard_Input.hpp"
 #include "input/key_config.hpp"
 #include "input/key_mapper.hpp"
+#include "exception/exceptions.hpp"
 
 namespace palantir::input {
 
-#if __cplusplus >= 202002L
-template<typename CF>
-concept ConcreteFactory = requires(CF cf) {
-    { cf.initialize() } -> std::same_as<void>;
-    { cf.createInput(std::string()) } -> std::same_as<std::unique_ptr<IInput>>;
-    { cf.hasShortcut(std::string()) } -> std::same_as<bool>;
-    { cf.getConfiguredCommands() } -> std::same_as<std::vector<std::string>>;
-};
-#endif
+
 /**
  * @class InputFactory
  * @brief Templated factory class for managing concrete input handlers factories.
@@ -40,11 +34,7 @@ concept ConcreteFactory = requires(CF cf) {
  * It provides a centralized way to access different input factory implementations.
  * @tparam ConcreteFactories A list of concrete factory classes that will be used to create inputs.
  */
-#if __cplusplus >= 202002L
-template<ConcreteFactory... ConcreteFactories>
-#else
-template<typename... ConcreteFactories>
-#endif
+template<INPUT_FACTORY_TEMPLATE... ConcreteFactories>
 class PALANTIR_CORE_API InputFactory {
     // Check that all types are valid and inherit from the expected base class
     static_assert(sizeof...(ConcreteFactories) > 0, "At least one concrete factory must be provided");
@@ -53,7 +43,9 @@ public:
     /**
      * @brief Constructor that initializes all concrete factories.
      */
-    InputFactory() : factories_(std::make_tuple(std::make_unique<ConcreteFactories>()...)) {}
+    CONFIG_CHECKS
+    InputFactory(const CONFIG_TYPE& config) : factories_(std::make_tuple(std::make_unique<ConcreteFactories>(config)...)) {
+    }
 
     /**
      * @brief Destructor.
@@ -69,19 +61,6 @@ public:
     auto operator=(InputFactory&&) -> InputFactory& = delete;
 
     /**
-     * @brief Initialize all factories with the given configuration path.
-     * @param configPath Path to the configuration file.
-     *
-     * This method must be called before using any other methods.
-     * It calls the initialize method on all concrete factories.
-     */
-    auto initialize() -> void {
-        std::apply([&](auto&... factoryPtrs) {
-            (factoryPtrs->initialize(), ...);
-        }, factories_);
-    }
-
-    /**
      * @brief Create an input handler for a specific command.
      * @param commandName Name of the command to create input for.
      * @return A unique pointer to the created input handler.
@@ -92,7 +71,7 @@ public:
      * @throws NoCommandFoundException if no command is found.
      */
     
-[[nodiscard]] virtual auto createInput(const std::string& commandName) const -> std::unique_ptr<IInput> override {
+[[nodiscard]] virtual auto createInput(const std::string& commandName) const -> std::unique_ptr<IInput> {
     return tryCreateInput(commandName, std::make_index_sequence<sizeof...(ConcreteFactories)>{});
 }
 
@@ -101,7 +80,7 @@ public:
  * @param commandName Name of the command to check.
  * @return true if a shortcut exists, false otherwise.
  */
-[[nodiscard]] virtual auto hasShortcut(const std::string& commandName) const -> bool override {
+[[nodiscard]] virtual auto hasShortcut(const std::string& commandName) const -> bool {
     return tryHasShortcut(commandName, std::make_index_sequence<sizeof...(ConcreteFactories)>{});
 }
 
@@ -109,7 +88,7 @@ public:
  * @brief Get all configured commands.
  * @return A vector of all configured commands.
  */
-[[nodiscard]] virtual auto getConfiguredCommands() const -> std::vector<std::string> override {
+[[nodiscard]] virtual auto getConfiguredCommands() const -> std::vector<std::string> {
     std::vector<std::string> commands;
     std::apply([&](const auto&... factoryPtrs) {
         (commands.insert(commands.end(),
@@ -131,7 +110,7 @@ private:
                     : nullptr, result != nullptr) || ...);
 
         if (!found) {
-            throw exception::TraceableNoCommandFoundException("No command found");
+            throw palantir::exception::TraceableNoCommandFoundException("No command found");
         }
         return result;
     }

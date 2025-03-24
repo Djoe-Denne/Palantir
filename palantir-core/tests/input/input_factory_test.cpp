@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 #include <filesystem>
 #include <fstream>
-#include "input/input_factory.hpp"
+#include "input/keyboard_input_factory.hpp"
 #include "input/keyboard_Input.hpp"
 #include "mock/input/mock_key_register.hpp"
 #include "exception/exceptions.hpp"
@@ -12,8 +12,8 @@ using namespace palantir::test;
 using namespace testing;
 namespace fs = std::filesystem;
 
-// Test fixture for InputFactory tests
-class InputFactoryTest : public Test {
+// Test fixture for KeyboardInputFactory tests
+class KeyboardInputFactoryTest : public Test {
 protected:
     void SetUp() override {
         // Create a temporary config file for testing
@@ -33,7 +33,7 @@ protected:
         ON_CALL(*mockKeyRegister, hasKey(StrEq("1"))).WillByDefault(Return(true));
 
         KeyRegister::setInstance(mockKeyRegister);
-        inputFactory = std::make_shared<InputFactory>();
+        inputFactory = std::make_shared<KeyboardInputFactory>();
         inputFactory->initialize(tempConfigPath);
     }
 
@@ -49,23 +49,23 @@ protected:
     }
 
     fs::path tempConfigPath;
-    std::shared_ptr<InputFactory> inputFactory;
+    std::shared_ptr<KeyboardInputFactory> inputFactory;
     std::shared_ptr<MockKeyRegister> mockKeyRegister;
 };
 
-TEST_F(InputFactoryTest, HasShortcut_ExistingCommand_ReturnsTrue) {
+TEST_F(KeyboardInputFactoryTest, HasShortcut_ExistingCommand_ReturnsTrue) {
     // Test checking if shortcuts exist for existing commands
     EXPECT_TRUE(inputFactory->hasShortcut("test.command1"));
     EXPECT_TRUE(inputFactory->hasShortcut("test.command2"));
     EXPECT_TRUE(inputFactory->hasShortcut("test.command3"));
 }
 
-TEST_F(InputFactoryTest, HasShortcut_NonExistentCommand_ReturnsFalse) {
+TEST_F(KeyboardInputFactoryTest, HasShortcut_NonExistentCommand_ReturnsFalse) {
     // Test checking if a shortcut exists for a non-existent command
     EXPECT_FALSE(inputFactory->hasShortcut("non.existent.command"));
 }
 
-TEST_F(InputFactoryTest, GetConfiguredCommands_ReturnsAllCommands) {
+TEST_F(KeyboardInputFactoryTest, GetConfiguredCommands_ReturnsAllCommands) {
     // Test getting all configured commands
     std::vector<std::string> commands = inputFactory->getConfiguredCommands();
     
@@ -73,7 +73,7 @@ TEST_F(InputFactoryTest, GetConfiguredCommands_ReturnsAllCommands) {
     EXPECT_THAT(commands, UnorderedElementsAre("test.command1", "test.command2", "test.command3"));
 }
 
-TEST_F(InputFactoryTest, CreateInput_ExistingCommand_ReturnsConfiguredInput) {
+TEST_F(KeyboardInputFactoryTest, CreateInput_ExistingCommand_ReturnsConfiguredInput) {
     // Test creating input for an existing command
     std::unique_ptr<KeyboardInput> input = inputFactory->createInput("test.command1");
     
@@ -81,12 +81,12 @@ TEST_F(InputFactoryTest, CreateInput_ExistingCommand_ReturnsConfiguredInput) {
     EXPECT_NE(input, nullptr);
 }
 
-TEST_F(InputFactoryTest, CreateInput_NonExistentCommand_ThrowsException) {
+TEST_F(KeyboardInputFactoryTest, CreateInput_NonExistentCommand_ThrowsException) {
     // Test creating input for a non-existent command
     EXPECT_THROW(inputFactory->createInput("non.existent.command"), std::runtime_error);
 }
 
-TEST_F(InputFactoryTest, Initialize_InvalidConfigFile_CreatesDefaultConfig) {
+TEST_F(KeyboardInputFactoryTest, Initialize_InvalidConfigFile_CreatesDefaultConfig) {
     // Test with a non-existent config file
     fs::path nonExistentPath = fs::temp_directory_path() / "non_existent_config.ini";
     
@@ -108,7 +108,7 @@ TEST_F(InputFactoryTest, Initialize_InvalidConfigFile_CreatesDefaultConfig) {
 }
 
 // Test for line 30 - directory doesn't exist case
-TEST_F(InputFactoryTest, Initialize_NonExistentDirectory_CreatesDirectoryAndDefaultConfig) {
+TEST_F(KeyboardInputFactoryTest, Initialize_NonExistentDirectory_CreatesDirectoryAndDefaultConfig) {
     // Create a path with a non-existent directory
     fs::path nonExistentDirPath = fs::temp_directory_path() / "non_existent_dir" / "config.ini";
     
@@ -119,7 +119,7 @@ TEST_F(InputFactoryTest, Initialize_NonExistentDirectory_CreatesDirectoryAndDefa
     }
     
     // Initialize with a path where the directory doesn't exist
-    EXPECT_NO_THROW(inputFactory->initialize(nonExistentDirPath.string()));
+    EXPECT_NO_THROW(inputFactory->initialize());
     
     // Verify that the directory and file were created
     EXPECT_TRUE(fs::exists(nonExistentDirPath));
@@ -131,16 +131,16 @@ TEST_F(InputFactoryTest, Initialize_NonExistentDirectory_CreatesDirectoryAndDefa
 }
 
 // Test for lines 52-53 - createDefaultConfig throws exception when file can't be created
-TEST_F(InputFactoryTest, CreateDefaultConfig_CannotCreateFile_ThrowsException) {    
+TEST_F(KeyboardInputFactoryTest, CreateDefaultConfig_CannotCreateFile_ThrowsException) {    
     // Use a path that cannot be written to (this varies by system, using a special character path)
     fs::path invalidPath = fs::temp_directory_path() / "\0invalid.ini";
     
     // Initialize with an invalid path should throw
-    EXPECT_THROW(inputFactory->initialize(invalidPath.string()), palantir::exception::TraceableConfigFileException);
+    EXPECT_THROW(inputFactory->initialize(), palantir::exception::TraceableConfigFileException);
 }
 
 // Test for lines 83-84 - createInput throws when key/modifier is invalid
-TEST_F(InputFactoryTest, CreateInput_InvalidKeyOrModifier_ThrowsException) {
+TEST_F(KeyboardInputFactoryTest, CreateInput_InvalidKeyOrModifier_ThrowsException) {
     // Create a temporary config file with invalid key
     fs::path invalidConfigPath = fs::temp_directory_path() / "invalid_key_config.ini";
     
@@ -153,7 +153,7 @@ TEST_F(InputFactoryTest, CreateInput_InvalidKeyOrModifier_ThrowsException) {
     ON_CALL(*mockKeyRegister, hasKey(StrEq("INVALIDMODIFIER"))).WillByDefault(Return(false));
     ON_CALL(*mockKeyRegister, hasKey(StrEq("INVALIDKEY"))).WillByDefault(Return(false));
     
-    inputFactory->initialize(invalidConfigPath.string());
+    inputFactory->initialize();
     
     // Creating input for the invalid command should throw
     EXPECT_THROW(inputFactory->createInput("test.invalid"), std::invalid_argument);
@@ -164,20 +164,20 @@ TEST_F(InputFactoryTest, CreateInput_InvalidKeyOrModifier_ThrowsException) {
     }
 }
 
-// Test for line 95 - hasShortcut throws when InputFactory is not initialized
-TEST_F(InputFactoryTest, HasShortcut_NotInitialized_ThrowsException) {
-    // Create a new InputFactory instance without initializing it
-    auto newFactory = std::make_shared<InputFactory>();
+// Test for line 95 - hasShortcut throws when KeyboardInputFactory is not initialized
+TEST_F(KeyboardInputFactoryTest, HasShortcut_NotInitialized_ThrowsException) {
+    // Create a new KeyboardInputFactory instance without initializing it
+    auto newFactory = std::make_shared<KeyboardInputFactory>();
     
     // hasShortcut should throw when factory is not initialized
     EXPECT_THROW(newFactory->hasShortcut("test.command"), palantir::exception::TraceableInputFactoryException);
     
 }
 
-// Test for lines 104-105 - getConfiguredCommands throws when InputFactory is not initialized
-TEST_F(InputFactoryTest, GetConfiguredCommands_NotInitialized_ThrowsException) {
-    // Create a new InputFactory instance without initializing it
-    auto newFactory = std::make_shared<InputFactory>();
+// Test for lines 104-105 - getConfiguredCommands throws when KeyboardInputFactory is not initialized
+TEST_F(KeyboardInputFactoryTest, GetConfiguredCommands_NotInitialized_ThrowsException) {
+    // Create a new KeyboardInputFactory instance without initializing it
+    auto newFactory = std::make_shared<KeyboardInputFactory>();
     
     // getConfiguredCommands should throw when factory is not initialized
     EXPECT_THROW(newFactory->getConfiguredCommands(), palantir::exception::TraceableInputFactoryException);

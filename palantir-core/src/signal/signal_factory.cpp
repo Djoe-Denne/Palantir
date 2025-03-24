@@ -9,6 +9,7 @@
 #include "exception/exceptions.hpp"
 #include "input/keyboard_input.hpp"
 #include "input/input_factory.hpp"
+#include "input/keyboard_input_factory.hpp"
 #include "signal/signal.hpp"
 #include "utils/logger.hpp"
 #include "window/window_manager.hpp"
@@ -17,8 +18,7 @@ namespace palantir::signal {
 
 class SignalFactory::SignalFactoryImpl {
 public:
-    SignalFactoryImpl() = default;
-    SignalFactoryImpl(const std::shared_ptr<input::InputFactory>& inputFactory) : inputFactory_(inputFactory) {}
+    SignalFactoryImpl(const config::Config& config) : inputFactory_(std::make_unique<input::InputFactory<input::KeyboardInputFactory>>(config)) {}
     ~SignalFactoryImpl() = default;
 
     SignalFactoryImpl(const SignalFactoryImpl&) = delete;
@@ -28,7 +28,6 @@ public:
 
     auto createSignals() const -> std::vector<std::unique_ptr<ISignal>> {
         std::vector<std::unique_ptr<ISignal>> signals;
-        inputFactory_->initialize(config::CONFIG_SHORTCUTS_PATH);
         for (const auto& commandName : inputFactory_->getConfiguredCommands()) {
             auto command = command::CommandFactory::getInstance()->getCommand(commandName);
             if (command) {
@@ -46,12 +45,10 @@ public:
     }
 
 private:
-    std::shared_ptr<input::InputFactory> inputFactory_{std::make_shared<input::InputFactory>()};
+    std::unique_ptr<input::InputFactory<input::KeyboardInputFactory>> inputFactory_;
 };
 
-SignalFactory::SignalFactory() : pimpl_(std::make_unique<SignalFactoryImpl>()) {}  // NOLINT
-SignalFactory::SignalFactory(const std::shared_ptr<input::InputFactory>& inputFactory)
-    : pimpl_(std::make_unique<SignalFactoryImpl>(inputFactory)) {}
+SignalFactory::SignalFactory(const config::Config& config) : pimpl_(std::make_unique<SignalFactoryImpl>(config)) {}
 
 SignalFactory::~SignalFactory() = default;
 

@@ -15,6 +15,8 @@
 #include <vector>
 
 #include "core_export.hpp"
+#include "concept/input_concept.hpp"
+#include "concept/config_concept.hpp"
 #include "input/keyboard_Input.hpp"
 #include "input/key_config.hpp"
 #include "input/key_mapper.hpp"
@@ -31,8 +33,22 @@ namespace palantir::input {
  */
 class PALANTIR_CORE_API KeyboardInputFactory {
 public:
-    KeyboardInputFactory();
-    virtual ~KeyboardInputFactory();
+    CONFIG_CHECKS
+    KeyboardInputFactory(const CONFIG_TYPE& config) {    
+        // Create directory if it doesn't exist
+        std::filesystem::path configPath = config.getShortcutsPath();
+        if (!std::filesystem::exists(configPath.parent_path())) {
+            std::filesystem::create_directories(configPath.parent_path());
+        }
+
+        // Create default config if file doesn't exist
+        if (!std::filesystem::exists(configPath)) {
+            createDefaultConfig(configPath);
+        }
+
+        keyConfig_ = std::make_unique<KeyConfig>(configPath);
+    }
+    virtual ~KeyboardInputFactory() = default;
 
     // Delete copy operations
     KeyboardInputFactory(const KeyboardInputFactory&) = delete;
@@ -41,16 +57,6 @@ public:
     // Delete move operations
     KeyboardInputFactory(KeyboardInputFactory&&) = delete;
     auto operator=(KeyboardInputFactory&&) -> KeyboardInputFactory& = delete;
-
-    /**
-     * @brief Initialize the keyboard input factory with configuration.
-     * @param configPath Path to the configuration file.
-     *
-     * This method must be called before using any other methods of the factory.
-     * It loads and validates the configuration file, creating a default one
-     * if it doesn't exist.
-     */
-    virtual auto initialize() -> void;
 
     /**
      * @brief Create a keyboard input handler for a specific command.
@@ -85,11 +91,17 @@ public:
     [[nodiscard]] virtual auto getConfiguredCommands() const -> std::vector<std::string>;
 
 private:
-    class KeyboardInputFactoryImpl;
-#pragma warning(push)
-#pragma warning(disable : 4251)
-    std::unique_ptr<KeyboardInputFactoryImpl> pimpl_;
-#pragma warning(pop)
+    std::unique_ptr<KeyConfig> keyConfig_;
+
+    /**
+     * @brief Create a default configuration file.
+     * @param configPath Path where the default configuration should be created.
+     *
+     * Creates a default configuration file with platform-specific shortcuts
+     * when no configuration file exists.
+     * @throws palantir::exception::TraceableConfigFileException if the file cannot be created or written to.
+     */
+    auto createDefaultConfig(const std::filesystem::path& configPath) const -> void;
 };
 
 }  // namespace palantir::input
