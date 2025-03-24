@@ -4,9 +4,11 @@
 
 #include "input/input_factory.hpp"
 #include "signal/signal_factory.hpp"
+#include "signal/keyboard_input_signal_factory.hpp"
 #include "signal/signal_manager.hpp"
 #include "utils/logger.hpp"
 #include "window/window_manager.hpp"
+#include "config/desktop_config.hpp"
 
 namespace palantir {
 
@@ -18,7 +20,7 @@ class Application::ApplicationImpl {
 public:
     explicit ApplicationImpl() {
         DebugLog("Creating application");
-        signalFactory_ = std::make_shared<signal::SignalFactory>();
+        signalFactory_ = std::make_shared<signal::SignalFactory<signal::KeyboardInputSignalFactory>>(config::DesktopConfig());
     }
 
     auto attachSignals() const -> void {
@@ -33,7 +35,7 @@ public:
     }
 
 private:
-    std::shared_ptr<signal::SignalFactory> signalFactory_;
+    std::shared_ptr<signal::SignalFactory<signal::KeyboardInputSignalFactory>> signalFactory_;
 };
 
 auto Application::getInstance() -> std::shared_ptr<Application> { return instance_; }

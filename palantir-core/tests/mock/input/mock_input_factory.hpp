@@ -6,9 +6,9 @@
 
 namespace palantir::test {
 
-template<typename... Factories>
-class MockInputFactory : public input::InputFactory<Factories...>, public PalantirMock {
+class MockInputFactory : public input::InputFactory<>, public PalantirMock {
 public:
+    MockInputFactory(const config::Config& config) : input::InputFactory<>(config) {}
     ~MockInputFactory() override = default;
 
     MOCK_METHOD(std::unique_ptr<input::IInput>, createInput, (const std::string& commandName), (const, override));

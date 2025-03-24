@@ -16,7 +16,7 @@
 
 #include "core_export.hpp"
 #include "concept/input_concept.hpp"
-#include "concept/config_concept.hpp"
+#include "config/config.hpp"
 #include "input/keyboard_Input.hpp"
 #include "input/key_config.hpp"
 #include "input/key_mapper.hpp"
@@ -33,21 +33,7 @@ namespace palantir::input {
  */
 class PALANTIR_CORE_API KeyboardInputFactory {
 public:
-    CONFIG_CHECKS
-    KeyboardInputFactory(const CONFIG_TYPE& config) {    
-        // Create directory if it doesn't exist
-        std::filesystem::path configPath = config.getShortcutsPath();
-        if (!std::filesystem::exists(configPath.parent_path())) {
-            std::filesystem::create_directories(configPath.parent_path());
-        }
-
-        // Create default config if file doesn't exist
-        if (!std::filesystem::exists(configPath)) {
-            createDefaultConfig(configPath);
-        }
-
-        keyConfig_ = std::make_unique<KeyConfig>(configPath);
-    }
+    KeyboardInputFactory(const config::Config& config);
     virtual ~KeyboardInputFactory() = default;
 
     // Delete copy operations

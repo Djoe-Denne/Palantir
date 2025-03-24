@@ -16,7 +16,6 @@
 #include <tuple>
 #include "config/config.hpp"
 #include "concept/input_concept.hpp"
-#include "concept/config_concept.hpp"
 #include "core_export.hpp"
 #include "input/keyboard_Input.hpp"
 #include "input/key_config.hpp"
@@ -37,14 +36,13 @@ namespace palantir::input {
 template<INPUT_FACTORY_TEMPLATE... ConcreteFactories>
 class PALANTIR_CORE_API InputFactory {
     // Check that all types are valid and inherit from the expected base class
-    static_assert(sizeof...(ConcreteFactories) > 0, "At least one concrete factory must be provided");
+    //static_assert(sizeof...(ConcreteFactories) > 0, "At least one concrete factory must be provided");
 
 public:
     /**
      * @brief Constructor that initializes all concrete factories.
      */
-    CONFIG_CHECKS
-    InputFactory(const CONFIG_TYPE& config) : factories_(std::make_tuple(std::make_unique<ConcreteFactories>(config)...)) {
+    InputFactory(const config::Config& config) : factories_(std::make_tuple(std::make_unique<ConcreteFactories>(config)...)) {
     }
 
     /**

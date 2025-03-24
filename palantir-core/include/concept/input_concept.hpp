@@ -3,7 +3,7 @@
 #if __has_include(<concepts>)
 #include <concepts>
 #include <type_traits>
-#define PALANTIR_HAS_CONCEPTS
+#define PALANTIR_HAS_INPUT_CONCEPTS
 #endif
 
 namespace palantir {
@@ -12,7 +12,7 @@ class IInput;
 }
 namespace rules {
 
-#ifdef PALANTIR_HAS_CONCEPTS
+#ifdef PALANTIR_HAS_INPUT_CONCEPTS
 
 
 // Checks that cf.createInput(std::string) returns std::unique_ptr<IInput>

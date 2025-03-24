@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include "signal/signal_factory.hpp"
+#include "signal/keyboard_input_signal_factory.hpp"
 #include "input/input_factory.hpp"
 #include "command/command_factory.hpp"
 #include "mock/mock_application.hpp"
@@ -12,21 +12,31 @@
 #include "mock/input/mock_input_factory.hpp"
 #include "mock/command/mock_command.hpp"
 #include "mock/command/mock_command_factory.hpp"
+#include "config/config.hpp"
+#include "config/desktop_config.hpp"
 
 using namespace palantir::signal;
 using namespace palantir::input;
 using namespace palantir::command;
+using namespace palantir::config;
 using namespace palantir::test;
 using namespace testing;
+
+class KeyboardInputSignalFactoryTestable : public KeyboardInputSignalFactory {
+public:
+    explicit KeyboardInputSignalFactoryTestable(std::unique_ptr<MockInputFactory> inputFactory)
+        : KeyboardInputSignalFactory(std::move(inputFactory)) {
+    }
+};
 
 class SignalFactoryTest : public Test {
 protected:
     void SetUp() override {
         mockApp = std::make_shared<MockApplication>("");
-        mockInputFactory = std::make_shared<MockInputFactory>();
+        mockInputFactory = std::make_shared<MockInputFactory>(DesktopConfig());
         mockCommandFactory = std::make_shared<MockCommandFactory>();
 
-        signalFactory = std::make_shared<SignalFactory>(mockInputFactory);
+        signalFactory = std::make_shared<KeyboardInputSignalFactoryTestable>(std::unique_ptr<MockInputFactory>(mockInputFactory.get()));
         CommandFactory::setInstance(mockCommandFactory);
     }
 
@@ -34,11 +44,10 @@ protected:
         CommandFactory::setInstance(nullptr);
 
         mockApp.reset();
-        mockInputFactory.reset();
         mockCommandFactory.reset();
     }
 
-    std::shared_ptr<SignalFactory> signalFactory;
+    std::shared_ptr<KeyboardInputSignalFactoryTestable> signalFactory;
 
     std::shared_ptr<MockApplication> mockApp;
     std::shared_ptr<MockInputFactory> mockInputFactory;

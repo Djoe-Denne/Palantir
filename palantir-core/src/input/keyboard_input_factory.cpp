@@ -13,6 +13,21 @@
 
 namespace palantir::input {
 
+KeyboardInputFactory::KeyboardInputFactory(const config::Config& config) {    
+    // Create directory if it doesn't exist
+    std::filesystem::path configPath = config.getShortcutsPath();
+    if (!std::filesystem::exists(configPath.parent_path())) {
+        std::filesystem::create_directories(configPath.parent_path());
+    }
+
+    // Create default config if file doesn't exist
+    if (!std::filesystem::exists(configPath)) {
+        createDefaultConfig(configPath);
+    }
+
+    keyConfig_ = std::make_unique<KeyConfig>(configPath);
+}
+
 auto KeyboardInputFactory::createDefaultConfig(const std::filesystem::path& configPath) const -> void {
     std::ofstream configFile(configPath);
     if (!configFile) {
