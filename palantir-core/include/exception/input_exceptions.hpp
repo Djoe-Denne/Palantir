@@ -23,4 +23,10 @@ public:
         : BaseException(message) {}
 };
 
+/**
+ * @brief Thrown when no command is found
+ */
+class PALANTIR_CORE_API NoCommandFoundException : public BaseException {
+    explicit NoCommandFoundException(const std::string& message = "No command found") : BaseException(message) {}
+};
 }  // namespace palantir::exception

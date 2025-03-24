@@ -1,4 +1,4 @@
-#include "input/input_factory.hpp"
+#include "input/keyboard_input_factory.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -9,21 +9,23 @@
 #include "input/keyboard_Input.hpp"
 #include "input/key_mapper.hpp"
 #include "utils/logger.hpp"
+#include "config/config.hpp"
 
 namespace palantir::input {
 
-class InputFactory::InputFactoryImpl {
+class KeyboardInputFactory::KeyboardInputFactoryImpl {
 public:
-    InputFactoryImpl() = default;
-    ~InputFactoryImpl() = default;
+    KeyboardInputFactoryImpl() = default;
+    ~KeyboardInputFactoryImpl() = default;
 
-    InputFactoryImpl(const InputFactoryImpl&) = delete;
-    auto operator=(const InputFactoryImpl&) -> InputFactoryImpl& = delete;
-    InputFactoryImpl(InputFactoryImpl&&) = delete;
-    auto operator=(InputFactoryImpl&&) -> InputFactoryImpl& = delete;
+    KeyboardInputFactoryImpl(const KeyboardInputFactoryImpl&) = delete;
+    auto operator=(const KeyboardInputFactoryImpl&) -> KeyboardInputFactoryImpl& = delete;
+    KeyboardInputFactoryImpl(KeyboardInputFactoryImpl&&) = delete;
+    auto operator=(KeyboardInputFactoryImpl&&) -> KeyboardInputFactoryImpl& = delete;
 
-    auto initialize(const std::filesystem::path& configPath) -> void {
+    auto initialize() -> void {
         // Create directory if it doesn't exist
+        std::filesystem::path configPath = config::CONFIG_SHORTCUTS_PATH;
         if (!std::filesystem::exists(configPath.parent_path())) {
             std::filesystem::create_directories(configPath.parent_path());
         }
@@ -85,8 +87,8 @@ public:
 
     [[nodiscard]] auto createInput(const std::string& commandName) const -> std::unique_ptr<KeyboardInput> {
         if (!keyConfig_) {
-            throw palantir::exception::TraceableInputFactoryException(
-                "InputFactory not initialized. Call initialize() first.");
+            throw palantir::exception::TraceableKeyboardInputFactoryException(
+                "KeyboardInputFactory not initialized. Call initialize() first.");
         }
         const auto& shortcut = keyConfig_->getShortcut(commandName);
         if (!KeyMapper::isValidKey(shortcut.key) || !KeyMapper::isValidModifier(shortcut.modifier)) {
@@ -99,16 +101,16 @@ public:
 
     [[nodiscard]] auto hasShortcut(const std::string& commandName) const -> bool {
         if (!keyConfig_) {
-            throw palantir::exception::TraceableInputFactoryException(
-                "InputFactory not initialized. Call initialize() first.");
+            throw palantir::exception::TraceableKeyboardInputFactoryException(
+                "KeyboardInputFactory not initialized. Call initialize() first.");
         }
         return keyConfig_->hasShortcut(commandName);
     }
 
     [[nodiscard]] auto getConfiguredCommands() const -> std::vector<std::string> {
         if (!keyConfig_) {
-            throw palantir::exception::TraceableInputFactoryException(
-                "InputFactory not initialized. Call initialize() first.");
+            throw palantir::exception::TraceableKeyboardInputFactoryException(
+                "KeyboardInputFactory not initialized. Call initialize() first.");
         }
         return keyConfig_->getConfiguredCommands();
     }
@@ -117,10 +119,10 @@ private:
     std::unique_ptr<KeyConfig> keyConfig_;
 };
 
-InputFactory::InputFactory() : pimpl_(std::make_unique<InputFactoryImpl>()) {}
-InputFactory::~InputFactory() = default;
+KeyboardInputFactory::KeyboardInputFactory() : pimpl_(std::make_unique<KeyboardInputFactoryImpl>()) {}
+KeyboardInputFactory::~KeyboardInputFactory() = default;
 
-auto InputFactory::initialize(const std::filesystem::path& configPath) -> void { pimpl_->initialize(configPath); }
+auto KeyboardInputFactory::initialize() -> void { pimpl_->initialize(); }
 
 /**
  * @brief Create a new input object from configuration.
@@ -131,15 +133,15 @@ auto InputFactory::initialize(const std::filesystem::path& configPath) -> void {
  * Delegates to the implementation's createInput method to handle
  * input object creation and configuration.
  */
-[[nodiscard]] auto InputFactory::createInput(const std::string& commandName) const
+[[nodiscard]] auto KeyboardInputFactory::createInput(const std::string& commandName) const
     -> std::unique_ptr<KeyboardInput> {
     return pimpl_->createInput(commandName);
 }
 
-auto InputFactory::hasShortcut(const std::string& commandName) const -> bool {
+auto KeyboardInputFactory::hasShortcut(const std::string& commandName) const -> bool {
     return pimpl_->hasShortcut(commandName);
 }
 
-auto InputFactory::getConfiguredCommands() const -> std::vector<std::string> { return pimpl_->getConfiguredCommands(); }
+auto KeyboardInputFactory::getConfiguredCommands() const -> std::vector<std::string> { return pimpl_->getConfiguredCommands(); }
 
 }  // namespace palantir::input

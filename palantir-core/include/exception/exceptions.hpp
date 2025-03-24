@@ -17,5 +17,6 @@ using TraceablePluginInitializationException = TraceableException<PluginInitiali
 using TraceableUnknownCommandException = TraceableException<UnknownCommandException>;
 using TraceableUIComponentNotFoundException = TraceableException<UIComponentNotFoundException>;
 using TraceableShortcutConfigurationException = TraceableException<ShortcutConfigurationException>;
+using TraceableNoCommandFoundException = TraceableException<NoCommandFoundException>;
 
 }  // namespace palantir::exception
