@@ -38,7 +38,7 @@ public:
      * Creates a Windows-specific application instance, initializing Windows
      * API resources and setting up the message loop infrastructure.
      */
-    explicit PlatformApplication(const std::string& configPath);
+    explicit PlatformApplication();
 
     /**
      * @brief Destroy the PlatformApplication object.

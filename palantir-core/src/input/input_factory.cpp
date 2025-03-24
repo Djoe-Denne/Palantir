@@ -12,8 +12,6 @@
 
 namespace palantir::input {
 
-std::shared_ptr<InputFactory> InputFactory::instance_;
-
 class InputFactory::InputFactoryImpl {
 public:
     InputFactoryImpl() = default;
@@ -121,15 +119,6 @@ private:
 
 InputFactory::InputFactory() : pimpl_(std::make_unique<InputFactoryImpl>()) {}
 InputFactory::~InputFactory() = default;
-
-auto InputFactory::getInstance() -> std::shared_ptr<InputFactory> {
-    if (!instance_) {
-        instance_ = std::shared_ptr<InputFactory>(new InputFactory());
-    }
-    return instance_;
-}
-
-auto InputFactory::setInstance(const std::shared_ptr<InputFactory>& instance) -> void { instance_ = instance; }
 
 auto InputFactory::initialize(const std::filesystem::path& configPath) -> void { pimpl_->initialize(configPath); }
 

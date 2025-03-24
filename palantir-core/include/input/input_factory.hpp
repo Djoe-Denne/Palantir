@@ -33,6 +33,7 @@ namespace palantir::input {
  */
 class PALANTIR_CORE_API InputFactory {
 public:
+    InputFactory();
     /** @brief Deleted destructor to prevent instantiation. */
     virtual ~InputFactory();
 
@@ -47,22 +48,6 @@ public:
     InputFactory(InputFactory&&) = delete;
     /** @brief Deleted move assignment to prevent instantiation. */
     auto operator=(InputFactory&&) -> InputFactory& = delete;
-
-    /**
-     * @brief Get the singleton instance of the InputFactory.
-     * @return A shared pointer to the InputFactory instance.
-     *
-     * Returns the singleton instance of the InputFactory.
-     */
-    [[nodiscard]] static auto getInstance() -> std::shared_ptr<InputFactory>;
-
-    /**
-     * @brief Set the singleton instance of the InputFactory.
-     * @param instance A shared pointer to the InputFactory instance.
-     *
-     * Sets the singleton instance of the InputFactory.
-     */
-    static auto setInstance(const std::shared_ptr<InputFactory>& instance) -> void;
 
     /**
      * @brief Initialize the input factory with configuration.
@@ -106,15 +91,11 @@ public:
      */
     [[nodiscard]] virtual auto getConfiguredCommands() const -> std::vector<std::string>;
 
-protected:
-    InputFactory();
-
 private:
     class InputFactoryImpl;
 #pragma warning(push)
 #pragma warning(disable : 4251)
     std::unique_ptr<InputFactoryImpl> pimpl_;
-    static std::shared_ptr<InputFactory> instance_;
 #pragma warning(pop)
 };
 

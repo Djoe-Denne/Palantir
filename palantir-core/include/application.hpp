@@ -41,9 +41,9 @@ public:
      * based on the compilation target.
      */
     template <typename T>
-    static auto getInstance(const std::string& configPath) -> std::shared_ptr<T> {
+    static auto getInstance() -> std::shared_ptr<T> {
         if (getInstance() == nullptr) {
-            setInstance(std::shared_ptr<T>(new T(configPath)));
+            setInstance(std::shared_ptr<T>(new T()));
         }
         return std::static_pointer_cast<T>(getInstance());
     }
@@ -124,8 +124,7 @@ protected:
      * Protected constructor to enforce singleton pattern. Initializes
      * the application with the specified configuration path.
      */
-    explicit Application(const std::string& configPath);
-    Application();  // for testing and mocking
+    Application();
 
 private:
     // PIMPL implementation

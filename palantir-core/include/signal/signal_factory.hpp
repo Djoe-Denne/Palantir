@@ -16,6 +16,7 @@
 #include "application.hpp"
 #include "core_export.hpp"
 #include "signal/isignal.hpp"
+#include "input/input_factory.hpp"
 #include "window/window_manager.hpp"
 
 namespace palantir::signal {
@@ -24,42 +25,31 @@ namespace palantir::signal {
  * @class SignalFactory
  * @brief Factory class for creating signal handlers.
  *
- * This static factory class is responsible for creating and managing signal
+ * This factory class is responsible for creating and managing signal
  * handlers that connect inputs to commands. It provides methods to create
  * specific types of signals as well as collections of signals based on
- * configuration. The class is non-instantiable and provides only static methods.
+ * configuration.
  */
 class PALANTIR_CORE_API SignalFactory {
 public:
+    /** @brief Constructor. */
+    SignalFactory();
+    SignalFactory(const std::shared_ptr<input::InputFactory>& inputFactory);
+    
+    /** @brief Virtual destructor. */
     virtual ~SignalFactory();
 
     // Delete copy operations
-    /** @brief Deleted copy constructor to prevent instantiation. */
+    /** @brief Deleted copy constructor. */
     SignalFactory(const SignalFactory&) = delete;
-    /** @brief Deleted copy assignment to prevent instantiation. */
+    /** @brief Deleted copy assignment. */
     auto operator=(const SignalFactory&) -> SignalFactory& = delete;
 
     // Delete move operations
-    /** @brief Deleted move constructor to prevent instantiation. */
+    /** @brief Deleted move constructor. */
     SignalFactory(SignalFactory&&) = delete;
-    /** @brief Deleted move assignment to prevent instantiation. */
+    /** @brief Deleted move assignment. */
     auto operator=(SignalFactory&&) -> SignalFactory& = delete;
-
-    /**
-     * @brief Get the singleton instance of the SignalFactory.
-     * @return A shared pointer to the SignalFactory instance.
-     *
-     * Returns the singleton instance of the SignalFactory.
-     */
-    [[nodiscard]] static auto getInstance() -> std::shared_ptr<SignalFactory>;
-
-    /**
-     * @brief Set the singleton instance of the SignalFactory.
-     * @param instance A shared pointer to the SignalFactory instance.
-     *
-     * Sets the singleton instance of the SignalFactory.
-     */
-    static auto setInstance(const std::shared_ptr<SignalFactory>& instance) -> void;
 
     /**
      * @brief Create all configured signals for the application.
@@ -72,15 +62,11 @@ public:
      */
     [[nodiscard]] virtual auto createSignals() const -> std::vector<std::unique_ptr<ISignal>>;
 
-protected:
-    SignalFactory();
-
 private:
     class SignalFactoryImpl;
 #pragma warning(push)
 #pragma warning(disable : 4251)
     std::unique_ptr<SignalFactoryImpl> pimpl_;
-    static std::shared_ptr<SignalFactory> instance_;
 #pragma warning(pop)
 };
 
