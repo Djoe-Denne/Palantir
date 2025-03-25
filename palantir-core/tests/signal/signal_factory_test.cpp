@@ -12,18 +12,21 @@
 #include "mock/input/mock_input_factory.hpp"
 #include "mock/command/mock_command.hpp"
 #include "mock/command/mock_command_factory.hpp"
+#include "config/desktop_config.hpp"
 
 using namespace palantir::signal;
 using namespace palantir::input;
 using namespace palantir::command;
+using namespace palantir::config;
 using namespace palantir::test;
 using namespace testing;
 
 class SignalFactoryTest : public Test {
 protected:
     void SetUp() override {
+        const auto config = std::make_shared<DesktopConfig>();
         mockApp = std::make_shared<MockApplication>("");
-        mockInputFactory = std::make_shared<MockInputFactory>();
+        mockInputFactory = std::make_shared<MockInputFactory>(config);
         mockCommandFactory = std::make_shared<MockCommandFactory>();
 
         signalFactory = std::make_shared<SignalFactory>(mockInputFactory);
