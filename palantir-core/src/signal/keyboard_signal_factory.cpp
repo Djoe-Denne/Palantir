@@ -1,8 +1,7 @@
-#include "signal/signal_factory.hpp"
+#include "signal/keyboard_signal_factory.hpp"
 
 #include <stdexcept>
 
-#include "application.hpp"
 #include "command/command_factory.hpp"
 #include "command/icommand.hpp"
 #include "config/config.hpp"
@@ -12,21 +11,20 @@
 #include "input/keyboard_input.hpp"
 #include "signal/signal.hpp"
 #include "utils/logger.hpp"
-#include "window/window_manager.hpp"
 
 namespace palantir::signal {
 
-class SignalFactory::SignalFactoryImpl {
+class KeyboardSignalFactory::KeyboardSignalFactoryImpl {
 public:
-    SignalFactoryImpl()
+    KeyboardSignalFactoryImpl()
         : inputFactory_(std::make_shared<input::KeyboardInputFactory>(std::make_shared<config::DesktopConfig>())) {}
-    SignalFactoryImpl(const std::shared_ptr<input::IInputFactory>& inputFactory) : inputFactory_(inputFactory) {}
-    ~SignalFactoryImpl() = default;
+    KeyboardSignalFactoryImpl(const std::shared_ptr<input::IInputFactory>& inputFactory) : inputFactory_(inputFactory) {}
+    ~KeyboardSignalFactoryImpl() = default;
 
-    SignalFactoryImpl(const SignalFactoryImpl&) = delete;
-    auto operator=(const SignalFactoryImpl&) -> SignalFactoryImpl& = delete;
-    SignalFactoryImpl(SignalFactoryImpl&&) = delete;
-    auto operator=(SignalFactoryImpl&&) -> SignalFactoryImpl& = delete;
+    KeyboardSignalFactoryImpl(const KeyboardSignalFactoryImpl&) = delete;
+    auto operator=(const KeyboardSignalFactoryImpl&) -> KeyboardSignalFactoryImpl& = delete;
+    KeyboardSignalFactoryImpl(KeyboardSignalFactoryImpl&&) = delete;
+    auto operator=(KeyboardSignalFactoryImpl&&) -> KeyboardSignalFactoryImpl& = delete;
 
     auto createSignals() const -> std::vector<std::unique_ptr<ISignal>> {
         std::vector<std::unique_ptr<ISignal>> signals;
@@ -51,12 +49,12 @@ private:
     std::shared_ptr<input::IInputFactory> inputFactory_;
 };
 
-SignalFactory::SignalFactory() : pimpl_(std::make_unique<SignalFactoryImpl>()) {}  // NOLINT
-SignalFactory::SignalFactory(const std::shared_ptr<input::IInputFactory>& inputFactory)
-    : pimpl_(std::make_unique<SignalFactoryImpl>(inputFactory)) {}
+KeyboardSignalFactory::KeyboardSignalFactory() : pimpl_(std::make_unique<KeyboardSignalFactoryImpl>()) {}  // NOLINT
+KeyboardSignalFactory::KeyboardSignalFactory(const std::shared_ptr<input::IInputFactory>& inputFactory)
+    : pimpl_(std::make_unique<KeyboardSignalFactoryImpl>(inputFactory)) {}
 
-SignalFactory::~SignalFactory() = default;
+KeyboardSignalFactory::~KeyboardSignalFactory() = default;
 
-auto SignalFactory::createSignals() const -> std::vector<std::unique_ptr<ISignal>> { return pimpl_->createSignals(); }
+auto KeyboardSignalFactory::createSignals() const -> std::vector<std::unique_ptr<ISignal>> { return pimpl_->createSignals(); }
 
 }  // namespace palantir::signal

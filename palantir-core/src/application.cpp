@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-#include "signal/signal_factory.hpp"
+#include "signal/keyboard_signal_factory.hpp"
 #include "signal/signal_manager.hpp"
 #include "utils/logger.hpp"
 #include "window/window_manager.hpp"
@@ -17,7 +17,7 @@ class Application::ApplicationImpl {
 public:
     explicit ApplicationImpl() {
         DebugLog("Creating application");
-        signalFactory_ = std::make_shared<signal::SignalFactory>();
+        signalFactory_ = std::make_shared<signal::KeyboardSignalFactory>();
     }
 
     auto attachSignals() const -> void {
@@ -32,7 +32,7 @@ public:
     }
 
 private:
-    std::shared_ptr<signal::SignalFactory> signalFactory_;
+    std::shared_ptr<signal::ISignalFactory> signalFactory_;
 };
 
 auto Application::getInstance() -> std::shared_ptr<Application> { return instance_; }
