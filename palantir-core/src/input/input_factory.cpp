@@ -5,16 +5,17 @@
 #include <memory>
 #include <stdexcept>
 
+#include "config/config.hpp"
 #include "exception/exceptions.hpp"
-#include "input/keyboard_Input.hpp"
 #include "input/key_mapper.hpp"
+#include "input/keyboard_Input.hpp"
 #include "utils/logger.hpp"
 
 namespace palantir::input {
 
 class InputFactory::InputFactoryImpl {
 public:
-    InputFactoryImpl() = default;
+    InputFactoryImpl(const std::shared_ptr<config::Config>& config) : config_(config) {}
     ~InputFactoryImpl() = default;
 
     InputFactoryImpl(const InputFactoryImpl&) = delete;
@@ -22,7 +23,8 @@ public:
     InputFactoryImpl(InputFactoryImpl&&) = delete;
     auto operator=(InputFactoryImpl&&) -> InputFactoryImpl& = delete;
 
-    auto initialize(const std::filesystem::path& configPath) -> void {
+    auto initialize() -> void {
+        auto configPath = config_->getConfigPath() / ("shortcuts." + config_->getConfigurationFormat());
         // Create directory if it doesn't exist
         if (!std::filesystem::exists(configPath.parent_path())) {
             std::filesystem::create_directories(configPath.parent_path());
@@ -83,7 +85,7 @@ public:
         }
     }
 
-    [[nodiscard]] auto createInput(const std::string& commandName) const -> std::unique_ptr<KeyboardInput> {
+    [[nodiscard]] auto createInput(const std::string& commandName) const -> std::unique_ptr<IInput> {
         if (!keyConfig_) {
             throw palantir::exception::TraceableInputFactoryException(
                 "InputFactory not initialized. Call initialize() first.");
@@ -115,12 +117,14 @@ public:
 
 private:
     std::unique_ptr<KeyConfig> keyConfig_;
+    std::shared_ptr<config::Config> config_;
 };
 
-InputFactory::InputFactory() : pimpl_(std::make_unique<InputFactoryImpl>()) {}
+InputFactory::InputFactory(const std::shared_ptr<config::Config>& config)
+    : pimpl_(std::make_unique<InputFactoryImpl>(config)) {}
 InputFactory::~InputFactory() = default;
 
-auto InputFactory::initialize(const std::filesystem::path& configPath) -> void { pimpl_->initialize(configPath); }
+auto InputFactory::initialize() -> void { pimpl_->initialize(); }
 
 /**
  * @brief Create a new input object from configuration.
@@ -131,8 +135,7 @@ auto InputFactory::initialize(const std::filesystem::path& configPath) -> void {
  * Delegates to the implementation's createInput method to handle
  * input object creation and configuration.
  */
-[[nodiscard]] auto InputFactory::createInput(const std::string& commandName) const
-    -> std::unique_ptr<KeyboardInput> {
+[[nodiscard]] auto InputFactory::createInput(const std::string& commandName) const -> std::unique_ptr<IInput> {
     return pimpl_->createInput(commandName);
 }
 

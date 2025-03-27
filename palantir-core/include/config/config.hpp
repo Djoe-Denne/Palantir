@@ -1,14 +1,17 @@
 #pragma once
 
 #include <filesystem>
-#include <string_view>
+#include <string>
+
 #include "core_export.hpp"
 
 namespace palantir::config {
 
-constexpr const char* CONFIG_SHORTCUTS_PATH = "config/shortcuts.ini";
-// Alternative options:
-// constexpr std::string_view CONFIG_SHORTCUTS_PATH = "config/shortcuts.ini";
-// inline const std::filesystem::path CONFIG_SHORTCUTS_PATH = "config/shortcuts.ini";
+class PALANTIR_CORE_API Config {
+public:
+    virtual ~Config() = default;
+    virtual auto getConfigurationFormat() const -> std::string = 0;
+    virtual auto getConfigPath() const -> std::filesystem::path = 0;
+};
 
-} // namespace palantir::config
+}  // namespace palantir::config

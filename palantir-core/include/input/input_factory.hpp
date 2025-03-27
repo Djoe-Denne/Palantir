@@ -15,11 +15,11 @@
 #include <string>
 #include <vector>
 
+#include "config/config.hpp"
 #include "core_export.hpp"
-#include "input/keyboard_Input.hpp"
 #include "input/key_config.hpp"
 #include "input/key_mapper.hpp"
-
+#include "input/keyboard_Input.hpp"
 namespace palantir::input {
 
 /**
@@ -33,7 +33,7 @@ namespace palantir::input {
  */
 class PALANTIR_CORE_API InputFactory {
 public:
-    InputFactory();
+    InputFactory(const std::shared_ptr<config::Config>& config);
     /** @brief Deleted destructor to prevent instantiation. */
     virtual ~InputFactory();
 
@@ -50,16 +50,6 @@ public:
     auto operator=(InputFactory&&) -> InputFactory& = delete;
 
     /**
-     * @brief Initialize the input factory with configuration.
-     * @param configPath Path to the configuration file.
-     *
-     * This method must be called before using any other methods of the factory.
-     * It loads and validates the configuration file, creating a default one
-     * if it doesn't exist.
-     */
-    virtual auto initialize(const std::filesystem::path& configPath) -> void;
-
-    /**
      * @brief Create an input handler for a specific command.
      * @param commandName Name of the command to create input for.
      * @return A unique pointer to the created input handler.
@@ -69,7 +59,7 @@ public:
      * @throws std::runtime_error if the factory is not initialized or the command
      * is not found in configuration.
      */
-    [[nodiscard]] virtual auto createInput(const std::string& commandName) const -> std::unique_ptr<KeyboardInput>;
+    [[nodiscard]] virtual auto createInput(const std::string& commandName) const -> std::unique_ptr<IInput>;
 
     /**
      * @brief Check if a shortcut exists for a command.
@@ -90,6 +80,15 @@ public:
      * @throws std::runtime_error if the factory is not initialized.
      */
     [[nodiscard]] virtual auto getConfiguredCommands() const -> std::vector<std::string>;
+
+    /**
+     * @brief Initialize the input factory with configuration.
+     *
+     * This method must be called before using any other methods of the factory.
+     * It loads and validates the configuration file, creating a default one
+     * if it doesn't exist.
+     */
+    virtual auto initialize() -> void;
 
 private:
     class InputFactoryImpl;

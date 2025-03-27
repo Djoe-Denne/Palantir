@@ -15,8 +15,8 @@
 
 #include "application.hpp"
 #include "core_export.hpp"
-#include "signal/isignal.hpp"
 #include "input/input_factory.hpp"
+#include "signal/isignal.hpp"
 #include "window/window_manager.hpp"
 
 namespace palantir::signal {
@@ -35,7 +35,7 @@ public:
     /** @brief Constructor. */
     SignalFactory();
     SignalFactory(const std::shared_ptr<input::InputFactory>& inputFactory);
-    
+
     /** @brief Virtual destructor. */
     virtual ~SignalFactory();
 
