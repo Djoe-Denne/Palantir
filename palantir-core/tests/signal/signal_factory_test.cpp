@@ -5,7 +5,6 @@
 #include <string>
 
 #include "signal/signal_factory.hpp"
-#include "input/input_factory.hpp"
 #include "command/command_factory.hpp"
 #include "mock/mock_application.hpp"
 #include "mock/input/mock_keyboard_Input.hpp"

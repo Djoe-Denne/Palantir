@@ -2,7 +2,6 @@
 
 #include <stdexcept>
 
-#include "input/input_factory.hpp"
 #include "signal/signal_factory.hpp"
 #include "signal/signal_manager.hpp"
 #include "utils/logger.hpp"
