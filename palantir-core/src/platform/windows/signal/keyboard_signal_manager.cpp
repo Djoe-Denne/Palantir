@@ -1,4 +1,4 @@
-#include "signal/signal_manager.hpp"
+#include "signal/keyboard_signal_manager.hpp"
 
 #include <Windows.h>
 #include <vector>
@@ -8,7 +8,6 @@
 
 namespace palantir::signal {
 
-std::shared_ptr<SignalManager> SignalManager::instance_;
 
 /**
  * @brief Windows-specific implementation of SignalManager
@@ -17,29 +16,30 @@ std::shared_ptr<SignalManager> SignalManager::instance_;
  * It uses the Windows Low Level Keyboard Hook to capture keyboard events
  * globally, even when the application is not in focus.
  */
-class SignalManager::Impl {
+class KeyboardSignalManager::KeyboardSignalManagerImpl {
 public:
     /**
      * @brief Construct the implementation
      * @param parent Pointer to the owning SignalManager instance
      */
-    Impl() {
+    KeyboardSignalManagerImpl() {
         DebugLog("Initializing SignalManager implementation");
         hook_ = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, GetModuleHandle(nullptr), 0);
         if (hook_ == nullptr) {
             DebugLog("Failed to set keyboard hook");
         }
+        instance_ = this;
     }
 
-    Impl(const Impl&) = delete;
-    auto operator=(const Impl&) -> Impl& = delete;
-    Impl(Impl&&) = delete;
-    auto operator=(Impl&&) -> Impl& = delete;
+    KeyboardSignalManagerImpl(const KeyboardSignalManagerImpl&) = delete;
+    auto operator=(const KeyboardSignalManagerImpl&) -> KeyboardSignalManagerImpl& = delete;
+    KeyboardSignalManagerImpl(KeyboardSignalManagerImpl&&) = delete;
+    auto operator=(KeyboardSignalManagerImpl&&) -> KeyboardSignalManagerImpl& = delete;
 
     /**
      * @brief Destroy the implementation
      */
-    ~Impl() {
+    ~KeyboardSignalManagerImpl() {
         if (hook_ != nullptr) {
             UnhookWindowsHookEx(hook_);
             hook_ = nullptr;
@@ -93,41 +93,34 @@ private:
 
     HHOOK hook_{nullptr};                                  ///< Windows keyboard hook handle
     std::vector<std::unique_ptr<ISignal>> signals_;       ///< Collection of managed signals
+    static KeyboardSignalManagerImpl* instance_;          ///< Singleton instance
 };
 
-// Singleton instance
-auto SignalManager::getInstance() -> std::shared_ptr<SignalManager> {
-    if (!instance_) {
-        instance_ = std::shared_ptr<SignalManager>(new SignalManager());
-    }
-    return instance_;
+
+
+KeyboardSignalManager::KeyboardSignalManagerImpl* KeyboardSignalManager::KeyboardSignalManagerImpl::instance_ = nullptr;
+
+KeyboardSignalManager::KeyboardSignalManager() : pImpl_(std::make_unique<KeyboardSignalManagerImpl>()) {
 }
 
-auto SignalManager::setInstance(const std::shared_ptr<SignalManager>& instance) -> void {
-    instance_ = instance;
-}
+KeyboardSignalManager::~KeyboardSignalManager() = default;
 
-SignalManager::SignalManager() : pImpl_(std::make_unique<Impl>()) {
-}
-
-SignalManager::~SignalManager() = default;
-
-auto SignalManager::addSignal(std::unique_ptr<ISignal> signal) -> void {
+auto KeyboardSignalManager::addSignal(std::unique_ptr<ISignal> signal) -> void {
     DebugLog("Adding signal to manager");
     pImpl_->addSignal(std::move(signal));
 }
 
-auto SignalManager::startSignals() const -> void {
+auto KeyboardSignalManager::startSignals() const -> void {
     DebugLog("Starting signals");
     pImpl_->startSignals();
 }
 
-auto SignalManager::stopSignals() const -> void {
+auto KeyboardSignalManager::stopSignals() const -> void {
     DebugLog("Stopping signals");
     pImpl_->stopSignals();
 }
 
-auto SignalManager::checkSignals(const std::any& event) const -> void {
+auto KeyboardSignalManager::checkSignals(const std::any& event) const -> void {
     pImpl_->checkSignals(event);
 }
 

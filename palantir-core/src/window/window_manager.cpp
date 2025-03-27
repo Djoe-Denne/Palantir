@@ -46,7 +46,7 @@ private:
 };
 
 // Singleton implementation
-auto WindowManager::getInstance() -> std::shared_ptr<WindowManager> {
+auto WindowManager::getInstance() -> const std::shared_ptr<WindowManager>& {
     if (!instance_) {
         // Create a new instance using make_shared
         instance_ = std::shared_ptr<WindowManager>(new WindowManager());

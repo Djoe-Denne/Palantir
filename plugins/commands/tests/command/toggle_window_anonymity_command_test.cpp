@@ -20,7 +20,7 @@ protected:
 
         // Set up default behaviors
         EXPECT_CALL(*mockApp, getWindowManager())
-            .WillRepeatedly(Return(mockWindowManager));
+            .WillRepeatedly(ReturnRef(mockWindowManager));
             
         palantir::Application::setInstance(mockApp);
         palantir::window::WindowManager::setInstance(mockWindowManager);

@@ -38,7 +38,7 @@ public:
      * @brief Get the singleton instance of the WindowManager.
      * @return Shared pointer to the WindowManager instance.
      */
-    static auto getInstance() -> std::shared_ptr<WindowManager>;
+    static auto getInstance() -> const std::shared_ptr<WindowManager>&;
 
     static auto setInstance(const std::shared_ptr<WindowManager>& instance) -> void;
 

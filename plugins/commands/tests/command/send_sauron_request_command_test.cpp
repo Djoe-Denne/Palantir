@@ -78,7 +78,7 @@ TEST_F(SendSauronRequestCommandTest, ExecuteSetsContentWhenWindowExists) {
         .WillOnce(Return(mockWindow));
         
     EXPECT_CALL(*mockApp, getWindowManager())
-        .WillRepeatedly(Return(mockWindowManager));
+        .WillRepeatedly(ReturnRef(mockWindowManager));
     
     EXPECT_CALL(*mockWindow, getContentManager())
         .WillRepeatedly(Return(mockContentManager));
@@ -109,7 +109,7 @@ TEST_F(SendSauronRequestCommandTest, ExecuteSendPrompt) {
         .WillOnce(Return(mockWindow));
         
     EXPECT_CALL(*mockApp, getWindowManager())
-        .WillRepeatedly(Return(mockWindowManager));
+        .WillRepeatedly(ReturnRef(mockWindowManager));
     
     EXPECT_CALL(*mockWindow, getContentManager())
         .WillRepeatedly(Return(mockContentManager));
@@ -148,7 +148,7 @@ TEST_F(SendSauronRequestCommandTest, ExecuteReadScreenshotImage) {
         .WillOnce(Return(mockWindow));
         
     EXPECT_CALL(*mockApp, getWindowManager())
-        .WillRepeatedly(Return(mockWindowManager));
+        .WillRepeatedly(ReturnRef(mockWindowManager));
     
     EXPECT_CALL(*mockWindow, getContentManager())
         .WillRepeatedly(Return(mockContentManager));
@@ -181,7 +181,7 @@ TEST_F(SendSauronRequestCommandTest, ExecuteSendAIProvider) {
         .WillOnce(Return(mockWindow));
         
     EXPECT_CALL(*mockApp, getWindowManager())
-        .WillRepeatedly(Return(mockWindowManager));
+        .WillRepeatedly(ReturnRef(mockWindowManager));
     
     EXPECT_CALL(*mockWindow, getContentManager())
         .WillRepeatedly(Return(mockContentManager));
@@ -214,7 +214,7 @@ TEST_F(SendSauronRequestCommandTest, ExecuteSendAIModel) {
         .WillOnce(Return(mockWindow));
         
     EXPECT_CALL(*mockApp, getWindowManager())
-        .WillRepeatedly(Return(mockWindowManager));
+        .WillRepeatedly(ReturnRef(mockWindowManager));
     
     EXPECT_CALL(*mockWindow, getContentManager())
         .WillRepeatedly(Return(mockContentManager));

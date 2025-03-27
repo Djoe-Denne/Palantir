@@ -15,7 +15,7 @@
 #include <string>
 
 #include "core_export.hpp"
-#include "signal/signal_manager.hpp"
+#include "signal/isignal_manager.hpp"
 #include "window/window_manager.hpp"
 
 namespace palantir {
@@ -96,7 +96,7 @@ public:
      * Returns a reference to the application's signal manager, which handles
      * all input signals and their processing.
      */
-    [[nodiscard]] auto getSignalManager() const -> std::shared_ptr<class signal::SignalManager>;
+    [[nodiscard]] virtual auto getSignalManager() const -> const std::shared_ptr<signal::ISignalManager>&;
 
     /**
      * @brief Get the window manager.
@@ -105,7 +105,7 @@ public:
      * Returns a reference to the application's window manager, which handles
      * all application windows and their lifecycle.
      */
-    [[nodiscard]] auto getWindowManager() const -> std::shared_ptr<class window::WindowManager>;
+    [[nodiscard]] virtual auto getWindowManager() const -> const std::shared_ptr<window::WindowManager>&;
 
     /**
      * @brief Initialize signals from configuration.
@@ -114,7 +114,7 @@ public:
      * This includes creating appropriate signal handlers and connecting
      * them to commands.
      */
-    auto attachSignals() -> void;
+    virtual auto attachSignals() -> void;
 
 protected:
     /**

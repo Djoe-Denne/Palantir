@@ -1,15 +1,6 @@
-/**
- * @file signal_manager.hpp
- * @brief Defines the signal management system.
- *
- * This file contains the SignalManager class which is responsible for managing
- * the lifecycle and processing of all signals in the application. It handles
- * signal registration, activation, and checking.
- */
+#pragma once
 
-#ifndef SIGNAL_MANAGER_HPP
-#define SIGNAL_MANAGER_HPP
-
+#include "signal/isignal_manager.hpp"
 #include <any>
 #include <core_export.hpp>
 #include <memory>
@@ -27,33 +18,23 @@ class ISignal;
  * signal processing, and check signal conditions. The class is implemented
  * as a singleton with PIMPL idiom to prevent C4251 warnings.
  */
-class PALANTIR_CORE_API SignalManager {
+class PALANTIR_CORE_API KeyboardSignalManager : public ISignalManager {
 public:
-    /**
-     * @brief Get the singleton instance of SignalManager
-     * @return Reference to the singleton instance
-     */
-    static auto getInstance() -> std::shared_ptr<SignalManager>;
+    KeyboardSignalManager();
 
     /**
-     * @brief Set the singleton instance of SignalManager
-     * @param instance The instance to set
-     */
-    static auto setInstance(const std::shared_ptr<SignalManager>& instance) -> void;
-
-    /**
-     * @brief Destroy the SignalManager object.
+     * @brief Destroy the KeyboardSignalManager object.
      *
      * Cleans up all managed signals and releases any platform-specific
      * resources used for signal processing.
      */
-    virtual ~SignalManager();
+    virtual ~KeyboardSignalManager();
 
     // Delete copy and move operations
-    SignalManager(const SignalManager&) = delete;
-    auto operator=(const SignalManager&) -> SignalManager& = delete;
-    SignalManager(SignalManager&&) = delete;
-    auto operator=(SignalManager&&) = delete;
+    KeyboardSignalManager(const KeyboardSignalManager&) = delete;
+    auto operator=(const KeyboardSignalManager&) -> KeyboardSignalManager& = delete;
+    KeyboardSignalManager(KeyboardSignalManager&&) = delete;
+    auto operator=(KeyboardSignalManager&&) -> KeyboardSignalManager& = delete;
 
     /**
      * @brief Add a new signal to be managed.
@@ -76,21 +57,14 @@ public:
      */
     virtual auto checkSignals(const std::any& event) const -> void;
 
-protected:
-    // Private constructor for singleton
-    SignalManager();
-
 private:
     // Forward declaration of platform-specific implementation
-    class Impl;
+    class KeyboardSignalManagerImpl;
     // Suppress C4251 warning for this specific line as Impl clas is never accessed by client
 #pragma warning(push)
 #pragma warning(disable : 4251)
-    std::unique_ptr<Impl> pImpl_;  ///< Platform-specific implementation details
-    static std::shared_ptr<SignalManager> instance_;
+    std::unique_ptr<KeyboardSignalManagerImpl> pImpl_;  ///< Platform-specific implementation details
 #pragma warning(pop)
 };
 
 }  // namespace palantir::signal
-
-#endif  // SIGNAL_MANAGER_HPP

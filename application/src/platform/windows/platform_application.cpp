@@ -8,56 +8,8 @@
 
 #include "exception/application_exceptions.hpp"
 #include "input/key_codes.hpp"
-#include "signal/signal_manager.hpp"
+#include "signal/keyboard_signal_manager.hpp"
 #include "utils/logger.hpp"
-
-namespace {
-
-/**
- * @brief Global pointer to the signal manager instance.
- *
- * Used by the low-level keyboard hook to access the signal manager
- * for checking signals when keyboard events occur.
- */
-palantir::signal::SignalManager* g_signalManager = nullptr;
-
-/**
- * @brief Global keyboard hook handle.
- *
- * Windows hook handle for the low-level keyboard hook that captures
- * keyboard events system-wide.
- */
-HHOOK g_keyboardHook = nullptr;
-
-/**
- * @brief Low-level keyboard hook procedure.
- * @param nCode Hook code indicating if the hook should process the message.
- * @param wParam Message identifier (key up/down/etc).
- * @param lParam Pointer to keyboard event data.
- * @return LRESULT indicating if the hook chain should continue.
- *
- * This callback is invoked by Windows when keyboard events occur.
- * It processes the events and triggers signal checks when appropriate.
- * The hook is installed system-wide to capture keyboard events regardless
- * of which window has focus.
- */
-auto CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) -> LRESULT {
-    if (nCode == HC_ACTION && g_signalManager != nullptr) {
-        const auto* pKeyboard = reinterpret_cast<const KBDLLHOOKSTRUCT*>(lParam);  // NOLINT
-
-        // Only check signals on key down or key up events
-        if (wParam == WM_KEYDOWN || wParam == WM_KEYUP || wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP) {
-            DebugLog("Keyboard event: vkCode=0x%x, scanCode=0x%x, flags=0x%x", pKeyboard->vkCode, pKeyboard->scanCode,
-                     pKeyboard->flags);
-            g_signalManager->checkSignals(nullptr);
-        }
-    }
-
-    // Always call the next hook in the chain
-    return CallNextHookEx(nullptr, nCode, wParam, lParam);
-}
-
-}  // namespace
 
 namespace palantir {
 
@@ -84,24 +36,10 @@ public:
      * Initializes the implementation with references to the managers and sets up
      * the Windows keyboard hook for global input monitoring.
      */
-    explicit Impl(const std::shared_ptr<signal::SignalManager>& signalManager,
+    explicit Impl(const std::shared_ptr<signal::ISignalManager>& signalManager,
                   const std::shared_ptr<window::WindowManager>& windowManager)
         : signalManager_(signalManager), windowManager_(windowManager) {
         DebugLog("Initializing Windows platform application");
-
-        // Store signal manager pointer for hook callback
-        g_signalManager = signalManager.get();
-
-        // Install keyboard hook
-        g_keyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, GetModuleHandle(nullptr), 0);
-
-        if (g_keyboardHook == nullptr) {
-            DWORD error = GetLastError();
-            DebugLog("Failed to install keyboard hook: error=%lu", error);
-            throw palantir::exception::TraceableKeyboardHookException("Failed to install keyboard hook");
-        }
-
-        DebugLog("Keyboard hook installed successfully");
     }
 
     /**
@@ -185,17 +123,10 @@ public:
      * Ensures proper cleanup of the keyboard hook and global
      * signal manager pointer.
      */
-    ~Impl() {
-        if (g_keyboardHook != nullptr) {
-            UnhookWindowsHookEx(g_keyboardHook);
-            g_keyboardHook = nullptr;
-        }
-
-        g_signalManager = nullptr;
-    }
+    ~Impl() = default;
 
 private:
-    std::shared_ptr<signal::SignalManager> signalManager_;  ///< Reference to the signal manager
+    std::shared_ptr<signal::ISignalManager> signalManager_;  ///< Reference to the signal manager
     std::shared_ptr<window::WindowManager> windowManager_;  ///< Reference to the window manager
 };
 

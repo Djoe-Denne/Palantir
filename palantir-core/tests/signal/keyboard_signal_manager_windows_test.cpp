@@ -5,7 +5,7 @@
 #include <Windows.h>
 #include <detours/detours.h>
 
-#include "signal/signal_manager.hpp"
+#include "signal/keyboard_signal_manager.hpp"
 #include "signal/isignal.hpp"
 #include "mock/signal/mock_signal.hpp"
 
@@ -59,8 +59,6 @@ protected:
         DetourAttach(&(PVOID&)OriginalUnhookWindowsHookEx, MockUnhookWindowsHookEx);
         DetourAttach(&(PVOID&)OriginalCallNextHookEx, MockCallNextHookEx);
         
-        // Reset the singleton instance before each test
-        SignalManager::setInstance(nullptr);
     }
 
     void TearDown() override {
@@ -68,26 +66,22 @@ protected:
         DetourDetach(&(PVOID&)OriginalSetWindowsHookEx, MockSetWindowsHookEx);
         DetourDetach(&(PVOID&)OriginalUnhookWindowsHookEx, MockUnhookWindowsHookEx);
         DetourDetach(&(PVOID&)OriginalCallNextHookEx, MockCallNextHookEx);
-        
-        // Reset the singleton instance
-        SignalManager::setInstance(nullptr);
     }
 };
 
 // Note: The tests below require the Microsoft Detours library for mocking Windows API functions
 // and may need to be skipped in environments where that's not available
 
-#ifdef HAVE_DETOURS
 TEST_F(SignalManagerWindowsTest, KeyboardHook_IsInstalled) {
     // This test verifies that the keyboard hook is installed when SignalManager is created
-    auto manager = SignalManager::getInstance();
+    auto manager = std::make_shared<KeyboardSignalManager>();
     
     // The hook proc should have been captured
     EXPECT_NE(capturedKeyboardProc, nullptr);
 }
 
 TEST_F(SignalManagerWindowsTest, KeyboardHook_CallsCheckSignals) {
-    auto manager = SignalManager::getInstance();
+    auto manager = std::make_shared<KeyboardSignalManager>();
     auto mockSignal = std::make_unique<MockSignal>();
     auto* mockSignalPtr = mockSignal.get();
     
@@ -107,7 +101,7 @@ TEST_F(SignalManagerWindowsTest, KeyboardHook_CallsCheckSignals) {
 }
 
 TEST_F(SignalManagerWindowsTest, KeyboardHook_DoesNotCallCheckSignals_WhenNonKeyEvent) {
-    auto manager = SignalManager::getInstance();
+    auto manager = std::make_shared<KeyboardSignalManager>();
     auto mockSignal = std::make_unique<MockSignal>();
     auto* mockSignalPtr = mockSignal.get();
     
@@ -128,7 +122,7 @@ TEST_F(SignalManagerWindowsTest, FailedHookInstallation_StillWorks) {
     setHookFails = true;
     
     // The SignalManager should still initialize without crashing
-    auto manager = SignalManager::getInstance();
+    auto manager = std::make_shared<KeyboardSignalManager>();
     auto mockSignal = std::make_unique<MockSignal>();
     auto* mockSignalPtr = mockSignal.get();
     
@@ -141,4 +135,3 @@ TEST_F(SignalManagerWindowsTest, FailedHookInstallation_StillWorks) {
     
     // No assertions here, we're just testing that we don't crash
 }
-#endif // HAVE_DETOURS 
