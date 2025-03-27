@@ -1,14 +1,14 @@
 #pragma once
 
 #include "mock/palantir_mock.hpp"
-#include "input/input_factory.hpp"
+#include "input/iinput_factory.hpp"
 #include "config/config.hpp"
 
 namespace palantir::test {
 
-class MockInputFactory : public input::InputFactory, public PalantirMock {
+class MockInputFactory : public input::IInputFactory, public PalantirMock {
 public:
-    MockInputFactory(const std::shared_ptr<config::Config>& config) : InputFactory(config) {}
+    MockInputFactory(const std::shared_ptr<config::Config>& config) : IInputFactory() {}
     ~MockInputFactory() override = default;
 
     MOCK_METHOD(void, initialize, (), (override));

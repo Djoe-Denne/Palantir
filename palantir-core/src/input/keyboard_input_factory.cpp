@@ -1,4 +1,4 @@
-#include "input/input_factory.hpp"
+#include "input/keyboard_input_factory.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -8,20 +8,21 @@
 #include "config/config.hpp"
 #include "exception/exceptions.hpp"
 #include "input/key_mapper.hpp"
+#include "input/key_config.hpp"
 #include "input/keyboard_Input.hpp"
 #include "utils/logger.hpp"
 
 namespace palantir::input {
 
-class InputFactory::InputFactoryImpl {
+class KeyboardInputFactory::KeyboardInputFactoryImpl {
 public:
-    InputFactoryImpl(const std::shared_ptr<config::Config>& config) : config_(config) {}
-    ~InputFactoryImpl() = default;
+    KeyboardInputFactoryImpl(const std::shared_ptr<config::Config>& config) : config_(config) {}
+    ~KeyboardInputFactoryImpl() = default;
 
-    InputFactoryImpl(const InputFactoryImpl&) = delete;
-    auto operator=(const InputFactoryImpl&) -> InputFactoryImpl& = delete;
-    InputFactoryImpl(InputFactoryImpl&&) = delete;
-    auto operator=(InputFactoryImpl&&) -> InputFactoryImpl& = delete;
+    KeyboardInputFactoryImpl(const KeyboardInputFactoryImpl&) = delete;
+    auto operator=(const KeyboardInputFactoryImpl&) -> KeyboardInputFactoryImpl& = delete;
+    KeyboardInputFactoryImpl(KeyboardInputFactoryImpl&&) = delete;
+    auto operator=(KeyboardInputFactoryImpl&&) -> KeyboardInputFactoryImpl& = delete;
 
     auto initialize() -> void {
         auto configPath = config_->getConfigPath() / ("shortcuts." + config_->getConfigurationFormat());
@@ -120,11 +121,11 @@ private:
     std::shared_ptr<config::Config> config_;
 };
 
-InputFactory::InputFactory(const std::shared_ptr<config::Config>& config)
-    : pimpl_(std::make_unique<InputFactoryImpl>(config)) {}
-InputFactory::~InputFactory() = default;
+KeyboardInputFactory::KeyboardInputFactory(const std::shared_ptr<config::Config>& config)
+    : pimpl_(std::make_unique<KeyboardInputFactoryImpl>(config)) {}
+KeyboardInputFactory::~KeyboardInputFactory() = default;
 
-auto InputFactory::initialize() -> void { pimpl_->initialize(); }
+auto KeyboardInputFactory::initialize() -> void { pimpl_->initialize(); }
 
 /**
  * @brief Create a new input object from configuration.
@@ -135,14 +136,16 @@ auto InputFactory::initialize() -> void { pimpl_->initialize(); }
  * Delegates to the implementation's createInput method to handle
  * input object creation and configuration.
  */
-[[nodiscard]] auto InputFactory::createInput(const std::string& commandName) const -> std::unique_ptr<IInput> {
+[[nodiscard]] auto KeyboardInputFactory::createInput(const std::string& commandName) const -> std::unique_ptr<IInput> {
     return pimpl_->createInput(commandName);
 }
 
-auto InputFactory::hasShortcut(const std::string& commandName) const -> bool {
+auto KeyboardInputFactory::hasShortcut(const std::string& commandName) const -> bool {
     return pimpl_->hasShortcut(commandName);
 }
 
-auto InputFactory::getConfiguredCommands() const -> std::vector<std::string> { return pimpl_->getConfiguredCommands(); }
+auto KeyboardInputFactory::getConfiguredCommands() const -> std::vector<std::string> {
+    return pimpl_->getConfiguredCommands();
+}
 
 }  // namespace palantir::input
