@@ -13,11 +13,10 @@
 #include <memory>
 #include <string>
 
-
-#include "input/iinput_factory.hpp"
 #include "config/config.hpp"
-#include "input/iinput.hpp"
 #include "core_export.hpp"
+#include "input/iinput.hpp"
+#include "input/iinput_factory.hpp"
 
 namespace palantir::input {
 

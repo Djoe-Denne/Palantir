@@ -5,8 +5,14 @@ set(MODULE_NAME "palantir-core")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/palantir-core/cmake")
 
 include(palantir-common-source)
-include(platform/palantir-windows)
-include(platform/palantir-macos)
+
+if(WIN32 OR QUALITY_ONLY)
+    include(platform/palantir-windows)
+endif()
+if(APPLE)
+    include(platform/palantir-macos)
+endif()
+
 if(NOT QUALITY_ONLY)
     include(install-palantir-deps)
     install_palantir_deps()
@@ -39,12 +45,6 @@ set_target_properties(${MODULE_NAME} PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 )
 
-# Setup platform-specific configuration
-if(WIN32)
-    setup_windows_platform_core()
-elseif(APPLE)
-    setup_macos_platform_core()
-endif()
 
 # Enable testing for this component
 if(BUILD_TESTS)

@@ -127,7 +127,7 @@ public:
 
 private:
     std::shared_ptr<signal::ISignalManager> signalManager_;  ///< Reference to the signal manager
-    std::shared_ptr<window::WindowManager> windowManager_;  ///< Reference to the window manager
+    std::shared_ptr<window::WindowManager> windowManager_;   ///< Reference to the window manager
 };
 
 /**

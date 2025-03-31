@@ -7,8 +7,8 @@
 #include "config/config.hpp"
 #include "config/desktop_config.hpp"
 #include "exception/exceptions.hpp"
-#include "input/keyboard_input_factory.hpp"
 #include "input/keyboard_input.hpp"
+#include "input/keyboard_input_factory.hpp"
 #include "signal/signal.hpp"
 #include "utils/logger.hpp"
 
@@ -18,7 +18,8 @@ class KeyboardSignalFactory::KeyboardSignalFactoryImpl {
 public:
     KeyboardSignalFactoryImpl()
         : inputFactory_(std::make_shared<input::KeyboardInputFactory>(std::make_shared<config::DesktopConfig>())) {}
-    KeyboardSignalFactoryImpl(const std::shared_ptr<input::IInputFactory>& inputFactory) : inputFactory_(inputFactory) {}
+    KeyboardSignalFactoryImpl(const std::shared_ptr<input::IInputFactory>& inputFactory)
+        : inputFactory_(inputFactory) {}
     ~KeyboardSignalFactoryImpl() = default;
 
     KeyboardSignalFactoryImpl(const KeyboardSignalFactoryImpl&) = delete;
@@ -55,6 +56,8 @@ KeyboardSignalFactory::KeyboardSignalFactory(const std::shared_ptr<input::IInput
 
 KeyboardSignalFactory::~KeyboardSignalFactory() = default;
 
-auto KeyboardSignalFactory::createSignals() const -> std::vector<std::unique_ptr<ISignal>> { return pimpl_->createSignals(); }
+auto KeyboardSignalFactory::createSignals() const -> std::vector<std::unique_ptr<ISignal>> {
+    return pimpl_->createSignals();
+}
 
 }  // namespace palantir::signal

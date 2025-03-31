@@ -1,26 +1,37 @@
 #pragma once
 
-#include "signal/isignal_manager.hpp"
 #include <any>
 #include <core_export.hpp>
 #include <memory>
+
+#include "signal/isignal_manager.hpp"
+#include "signal/keyboard_api.hpp"
 
 namespace palantir::signal {
 // Forward declaration for ISignal
 class ISignal;
 
 /**
- * @class SignalManager
- * @brief Manager class for handling multiple signals.
+ * @class KeyboardSignalManager
+ * @brief Manager class for handling multiple signals that respond to keyboard events.
  *
  * This class manages a collection of signals, controlling their lifecycle
  * and processing. It provides methods to add new signals, start and stop
  * signal processing, and check signal conditions. The class is implemented
- * as a singleton with PIMPL idiom to prevent C4251 warnings.
+ * using the PIMPL idiom to hide platform-specific implementation details.
  */
 class PALANTIR_CORE_API KeyboardSignalManager : public ISignalManager {
 public:
     KeyboardSignalManager();
+
+    /**
+     * @brief Construct a new KeyboardSignalManager object
+     * @param keyboardApi Optional custom keyboard API implementation (for testing)
+     *
+     * Default constructor creates a standard keyboard API wrapper for the current platform.
+     * For testing, a mock implementation can be provided.
+     */
+    explicit KeyboardSignalManager(std::unique_ptr<KeyboardApi> keyboardApi);
 
     /**
      * @brief Destroy the KeyboardSignalManager object.

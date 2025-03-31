@@ -14,7 +14,7 @@ class ISignal;
  *
  * This class defines the interface for signal management. It provides methods
  * for adding signals, starting and stopping signal processing, and checking
-*/
+ */
 class PALANTIR_CORE_API ISignalManager {
 public:
     /**

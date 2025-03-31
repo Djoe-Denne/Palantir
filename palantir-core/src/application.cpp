@@ -31,7 +31,7 @@ public:
         signalManager_->startSignals();
         DebugLog("Signals attached and started");
     }
-    
+
     [[nodiscard]] auto getSignalManager() const -> const std::shared_ptr<signal::ISignalManager>& {
         return signalManager_;
     }
