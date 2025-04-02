@@ -27,7 +27,6 @@ namespace palantir::signal {
  */
 class PALANTIR_CORE_API ISignalFactory {
 public:
-
     /** @brief Virtual destructor. */
     virtual ~ISignalFactory() = default;
 

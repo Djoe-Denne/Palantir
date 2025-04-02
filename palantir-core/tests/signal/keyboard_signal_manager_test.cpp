@@ -3,7 +3,7 @@
 #include <memory>
 #include <any>
 
-#include "signal/signal_manager.hpp"
+#include "signal/keyboard_signal_manager.hpp"
 #include "signal/isignal.hpp"
 #include "mock/signal/mock_signal.hpp"
 
@@ -11,34 +11,20 @@ using namespace palantir::signal;
 using namespace palantir::test;
 using namespace testing;
 
-class SignalManagerPublicConstructor : public SignalManager {
-public:
-    using SignalManager::SignalManager;
-};
-
-class SignalManagerTest : public Test {
+class KeyboardSignalManagerTest : public Test {
 protected:
     void SetUp() override {
-        // Reset the singleton instance before each test
-        SignalManager::setInstance(nullptr);
-        manager = SignalManager::getInstance();
+        manager = std::make_shared<KeyboardSignalManager>();
     }
 
     void TearDown() override {
-        SignalManager::setInstance(nullptr);
     }
 
-    std::shared_ptr<SignalManager> manager;
+    std::shared_ptr<KeyboardSignalManager> manager;
     std::any emptyEvent;
 };
 
-TEST_F(SignalManagerTest, GetInstance_ReturnsSameInstance) {
-    auto instance1 = SignalManager::getInstance();
-    auto instance2 = SignalManager::getInstance();
-    EXPECT_EQ(instance1, instance2);
-}
-
-TEST_F(SignalManagerTest, AddSignal_SignalIsAdded) {
+TEST_F(KeyboardSignalManagerTest, AddSignal_SignalIsAdded) {
     auto mockSignal = std::make_unique<MockSignal>();
     auto* mockSignalPtr = mockSignal.get();
     
@@ -48,7 +34,7 @@ TEST_F(SignalManagerTest, AddSignal_SignalIsAdded) {
     manager->checkSignals(emptyEvent);
 }
 
-TEST_F(SignalManagerTest, StartSignals_CallsStartOnAllSignals) {
+TEST_F(KeyboardSignalManagerTest, StartSignals_CallsStartOnAllSignals) {
     auto mockSignal1 = std::make_unique<MockSignal>();
     auto mockSignal2 = std::make_unique<MockSignal>();
     auto* mockSignalPtr1 = mockSignal1.get();
@@ -62,7 +48,7 @@ TEST_F(SignalManagerTest, StartSignals_CallsStartOnAllSignals) {
     manager->startSignals();
 }
 
-TEST_F(SignalManagerTest, StopSignals_CallsStopOnAllSignals) {
+TEST_F(KeyboardSignalManagerTest, StopSignals_CallsStopOnAllSignals) {
     auto mockSignal1 = std::make_unique<MockSignal>();
     auto mockSignal2 = std::make_unique<MockSignal>();
     auto* mockSignalPtr1 = mockSignal1.get();
@@ -76,7 +62,7 @@ TEST_F(SignalManagerTest, StopSignals_CallsStopOnAllSignals) {
     manager->stopSignals();
 }
 
-TEST_F(SignalManagerTest, CheckSignals_CallsCheckOnAllSignals) {
+TEST_F(KeyboardSignalManagerTest, CheckSignals_CallsCheckOnAllSignals) {
     auto mockSignal1 = std::make_unique<MockSignal>();
     auto mockSignal2 = std::make_unique<MockSignal>();
     auto* mockSignalPtr1 = mockSignal1.get();
@@ -90,7 +76,7 @@ TEST_F(SignalManagerTest, CheckSignals_CallsCheckOnAllSignals) {
     manager->checkSignals(emptyEvent);
 }
 
-TEST_F(SignalManagerTest, MultipleOperations_SignalsHandledCorrectly) {
+TEST_F(KeyboardSignalManagerTest, MultipleOperations_SignalsHandledCorrectly) {
     auto mockSignal = std::make_unique<MockSignal>();
     auto* mockSignalPtr = mockSignal.get();
     
@@ -107,7 +93,7 @@ TEST_F(SignalManagerTest, MultipleOperations_SignalsHandledCorrectly) {
     manager->stopSignals();
 }
 
-TEST_F(SignalManagerTest, CheckSignals_WithEvent_PassesEventCorrectly) {
+TEST_F(KeyboardSignalManagerTest, CheckSignals_WithEvent_PassesEventCorrectly) {
     auto mockSignal = std::make_unique<MockSignal>();
     auto* mockSignalPtr = mockSignal.get();
     
@@ -120,15 +106,7 @@ TEST_F(SignalManagerTest, CheckSignals_WithEvent_PassesEventCorrectly) {
     manager->checkSignals(testEvent);
 }
 
-TEST_F(SignalManagerTest, SetInstance_CustomInstanceIsUsed) {
-    auto customManager = std::make_shared<SignalManagerPublicConstructor>();
-    SignalManager::setInstance(customManager);
-    
-    auto retrievedInstance = SignalManager::getInstance();
-    EXPECT_EQ(customManager, retrievedInstance);
-}
-
-TEST_F(SignalManagerTest, AddMultipleSignals_AllSignalsAreAdded) {
+TEST_F(KeyboardSignalManagerTest, AddMultipleSignals_AllSignalsAreAdded) {
     auto mockSignal1 = std::make_unique<MockSignal>();
     auto mockSignal2 = std::make_unique<MockSignal>();
     auto mockSignal3 = std::make_unique<MockSignal>();
@@ -148,7 +126,7 @@ TEST_F(SignalManagerTest, AddMultipleSignals_AllSignalsAreAdded) {
     manager->checkSignals(emptyEvent);
 }
 
-TEST_F(SignalManagerTest, CheckSignalsWithComplexEvent_EventIsProperlyPassed) {
+TEST_F(KeyboardSignalManagerTest, CheckSignalsWithComplexEvent_EventIsProperlyPassed) {
     struct ComplexEvent {
         int id;
         std::string name;
@@ -176,7 +154,7 @@ TEST_F(SignalManagerTest, CheckSignalsWithComplexEvent_EventIsProperlyPassed) {
     manager->checkSignals(complexEvent);
 }
 
-TEST_F(SignalManagerTest, EmptySignalManager_NoErrors) {
+TEST_F(KeyboardSignalManagerTest, EmptySignalManager_NoErrors) {
     // This test verifies that operations on an empty signal manager don't cause errors
     EXPECT_NO_THROW(manager->startSignals());
     EXPECT_NO_THROW(manager->stopSignals());

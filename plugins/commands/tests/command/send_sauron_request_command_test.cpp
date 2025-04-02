@@ -27,6 +27,9 @@ protected:
         mockSauronClient = std::make_shared<MockSauronClient>();
         mockSauronRegister = std::make_shared<MockSauronRegister>(mockSauronClient);
 
+        EXPECT_CALL(*mockApp, getWindowManager())
+            .WillRepeatedly(ReturnRef(palantir::window::WindowManager::getInstance()));
+
         // Set the mock client in the register
         palantir::client::SauronRegister::setInstance(mockSauronRegister);
         palantir::Application::setInstance(mockApp);
@@ -76,9 +79,6 @@ TEST_F(SendSauronRequestCommandTest, ExecuteSetsContentWhenWindowExists) {
     
     EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(mockWindow));
-        
-    EXPECT_CALL(*mockApp, getWindowManager())
-        .WillRepeatedly(Return(mockWindowManager));
     
     EXPECT_CALL(*mockWindow, getContentManager())
         .WillRepeatedly(Return(mockContentManager));
@@ -107,9 +107,6 @@ TEST_F(SendSauronRequestCommandTest, ExecuteSendPrompt) {
 
     EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(mockWindow));
-        
-    EXPECT_CALL(*mockApp, getWindowManager())
-        .WillRepeatedly(Return(mockWindowManager));
     
     EXPECT_CALL(*mockWindow, getContentManager())
         .WillRepeatedly(Return(mockContentManager));
@@ -146,9 +143,6 @@ TEST_F(SendSauronRequestCommandTest, ExecuteReadScreenshotImage) {
 
     EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(mockWindow));
-        
-    EXPECT_CALL(*mockApp, getWindowManager())
-        .WillRepeatedly(Return(mockWindowManager));
     
     EXPECT_CALL(*mockWindow, getContentManager())
         .WillRepeatedly(Return(mockContentManager));
@@ -179,10 +173,7 @@ TEST_F(SendSauronRequestCommandTest, ExecuteSendAIProvider) {
  
     EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(mockWindow));
-        
-    EXPECT_CALL(*mockApp, getWindowManager())
-        .WillRepeatedly(Return(mockWindowManager));
-    
+           
     EXPECT_CALL(*mockWindow, getContentManager())
         .WillRepeatedly(Return(mockContentManager));
     
@@ -213,9 +204,6 @@ TEST_F(SendSauronRequestCommandTest, ExecuteSendAIModel) {
     EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(mockWindow));
         
-    EXPECT_CALL(*mockApp, getWindowManager())
-        .WillRepeatedly(Return(mockWindowManager));
-    
     EXPECT_CALL(*mockWindow, getContentManager())
         .WillRepeatedly(Return(mockContentManager));
     
@@ -275,7 +263,7 @@ TEST_F(SendSauronRequestCommandTest, ExecuteThrowsWhenNoWindow) {
 TEST_F(SendSauronRequestCommandTest, ExecuteThrowsWhenNoContentManager) {
     // Arrange
     const std::string testPrompt = "Test prompt";
-    
+
     EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(mockWindow));
     

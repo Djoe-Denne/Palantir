@@ -13,8 +13,7 @@ add_executable(${TEST_TARGET_NAME}
     input/keyboard_input_factory_test.cpp
     signal/keyboard_signal_factory_test.cpp
     signal/signal_test.cpp
-    signal/signal_manager_test.cpp
-    signal/signal_manager_windows_test.cpp
+    signal/keyboard_signal_manager_test.cpp
     window/window_manager_test.cpp
     utils/string_utils_test.cpp
     utils/resource_utils_test.cpp
@@ -34,8 +33,6 @@ target_link_libraries(${TEST_TARGET_NAME}
     PRIVATE
         palantir-core
 )
-
-setup_detours(${TEST_TARGET_NAME})
 
 target_include_directories(${TEST_TARGET_NAME}
     PRIVATE

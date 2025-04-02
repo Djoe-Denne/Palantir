@@ -21,7 +21,7 @@ protected:
         EXPECT_CALL(*mock_window_manager_, getMainWindow())
             .WillRepeatedly(Return(mock_window_));
         EXPECT_CALL(*mock_app_, getWindowManager())
-            .WillRepeatedly(Return(mock_window_manager_));
+            .WillRepeatedly(ReturnRef(mock_window_manager_));
 
         palantir::Application::setInstance(mock_app_);
         palantir::window::WindowManager::setInstance(mock_window_manager_);

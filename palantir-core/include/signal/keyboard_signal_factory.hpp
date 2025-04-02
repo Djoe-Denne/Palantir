@@ -9,13 +9,12 @@
 
 #pragma once
 
-#include "signal/isignal_factory.hpp"
-
 #include <memory>
 #include <vector>
 
 #include "core_export.hpp"
 #include "input/iinput_factory.hpp"
+#include "signal/isignal_factory.hpp"
 
 namespace palantir::signal {
 

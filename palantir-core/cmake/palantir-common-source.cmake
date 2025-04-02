@@ -14,6 +14,7 @@ set(CLIENT_PALANTIR_SOURCES
 set(SIGNAL_PALANTIR_SOURCES
     ${PROJECT_ROOT}/palantir-core/src/signal/signal.cpp
     ${PROJECT_ROOT}/palantir-core/src/signal/keyboard_signal_factory.cpp
+    ${PROJECT_ROOT}/palantir-core/src/signal/keyboard_signal_manager.cpp
 )
 
 set(UTILS_PALANTIR_SOURCES
@@ -53,7 +54,6 @@ endif()
 # Common include directories for all platforms
 set(COMMON_PALANTIR_INCLUDE_DIRS 
     ${PROJECT_ROOT}/palantir-core/include
-    ${PROJECT_ROOT}/palantir-core/include/platform
     ${COMMON_PALANTIR_INCLUDES}
 )
 

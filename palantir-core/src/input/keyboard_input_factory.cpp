@@ -7,8 +7,8 @@
 
 #include "config/config.hpp"
 #include "exception/exceptions.hpp"
-#include "input/key_mapper.hpp"
 #include "input/key_config.hpp"
+#include "input/key_mapper.hpp"
 #include "input/keyboard_Input.hpp"
 #include "utils/logger.hpp"
 

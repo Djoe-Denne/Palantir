@@ -12,8 +12,9 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "input/iinput.hpp"
+
 #include "core_export.hpp"
+#include "input/iinput.hpp"
 
 namespace palantir::input {
 
