@@ -254,6 +254,9 @@ TEST_F(SendSauronRequestCommandTest, ExecuteThrowsWhenNoWindow) {
     // Arrange
     const std::string testPrompt = "Test prompt";
     
+    EXPECT_CALL(*mockApp, getWindowManager())
+        .WillRepeatedly(ReturnRef(mockWindowManager));
+        
     EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(nullptr));
     
@@ -275,6 +278,9 @@ TEST_F(SendSauronRequestCommandTest, ExecuteThrowsWhenNoWindow) {
 TEST_F(SendSauronRequestCommandTest, ExecuteThrowsWhenNoContentManager) {
     // Arrange
     const std::string testPrompt = "Test prompt";
+
+    EXPECT_CALL(*mockApp, getWindowManager())
+        .WillRepeatedly(ReturnRef(mockWindowManager));
     
     EXPECT_CALL(*mockWindowManager, getMainWindow())
         .WillOnce(Return(mockWindow));
