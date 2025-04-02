@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
+# waiting for nlohmann/json to update CMake minimum version and create tag
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+
 option(BUILD_TESTS "Build tests" OFF)
 # Option to control automatic installation
 option(AUTO_INSTALL_MISSING_TOOLS "Automatically try to install missing clang tools via package managers" ON)
