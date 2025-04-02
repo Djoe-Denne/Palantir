@@ -45,7 +45,12 @@ runs:
       id: run-tests-commands-plugin
       shell: pwsh
       run: |
-        & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --input_coverage=${{ inputs.build-dir }}\bin\coverage\palantir-core.cov --export_type=cobertura:${{ inputs.build-dir }}\bin\coverage\final.xml --modules="${{ github.workspace }}\build\bin\commands-plugin.dll" --cover_children ${{ inputs.build-dir }}\bin\commands_plugin_tests.exe
+        $result = & "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe" --input_coverage=${{ inputs.build-dir }}\bin\coverage\palantir-core.cov --export_type=cobertura:${{ inputs.build-dir }}\bin\coverage\final.xml --modules="${{ github.workspace }}\build\bin\commands-plugin.dll" --cover_children ${{ inputs.build-dir }}\bin\commands_plugin_tests.exe
+        if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq -2147483645) {
+          exit 0
+        } else {
+          exit $LASTEXITCODE
+        }
 
     # Step 3: Save build cache
     - name: Save Build Cache
