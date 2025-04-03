@@ -7,13 +7,15 @@
 namespace palantir::signal {
 // Forward declaration for ISignal
 class ISignal;
+// Forward declaration for ISignalFactory
+class ISignalFactory;
 
 /**
  * @class ISignalManager
  * @brief Interface for signal management.
  *
  * This class defines the interface for signal management. It provides methods
- * for adding signals, starting and stopping signal processing, and checking
+ * for starting and stopping signal processing, and checking signal conditions.
  */
 class PALANTIR_CORE_API ISignalManager {
 public:
@@ -32,13 +34,8 @@ public:
     auto operator=(ISignalManager&&) -> ISignalManager& = delete;
 
     /**
-     * @brief Add a new signal to be managed.
-     * @param signal Unique pointer to the signal to be added.
-     */
-    virtual auto addSignal(std::unique_ptr<ISignal> signal) -> void = 0;
-
-    /**
      * @brief Start processing all managed signals.
+     * If no signals are present, will use the factory to create them.
      */
     virtual auto startSignals() const -> void = 0;
 
