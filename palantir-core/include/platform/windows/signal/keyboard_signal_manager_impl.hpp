@@ -57,6 +57,12 @@ public:
     auto addSignal(std::unique_ptr<ISignal> signal) -> void { signals_.push_back(std::move(signal)); }
 
     /**
+     * @brief Check if the manager has any signals
+     * @return true if signals_ is not empty, false otherwise
+     */
+    auto hasSignals() const -> bool { return !signals_.empty(); }
+
+    /**
      * @brief Start all signals
      */
     auto startSignals() const -> void {

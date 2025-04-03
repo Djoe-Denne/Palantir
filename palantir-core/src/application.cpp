@@ -17,17 +17,11 @@ class Application::ApplicationImpl {
 public:
     explicit ApplicationImpl() {
         DebugLog("Creating application");
-        signalFactory_ = std::make_shared<signal::KeyboardSignalFactory>();
         signalManager_ = std::make_shared<signal::KeyboardSignalManager>();
     }
 
     auto attachSignals() const -> void {
         DebugLog("Attaching signals from configuration");
-        auto app = Application::getInstance();
-        auto signals = signalFactory_->createSignals();
-        for (auto& signal : signals) {
-            signalManager_->addSignal(std::move(signal));
-        }
         signalManager_->startSignals();
         DebugLog("Signals attached and started");
     }
@@ -37,7 +31,6 @@ public:
     }
 
 private:
-    std::shared_ptr<signal::ISignalFactory> signalFactory_;
     std::shared_ptr<signal::ISignalManager> signalManager_;
 };
 
